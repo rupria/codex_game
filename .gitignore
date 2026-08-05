@@ -28,6 +28,7 @@ Thumbs.db
 Desktop.ini
 
 # Local-only files
+/obsidian/
 *.local
 *.bak
 *.swp
