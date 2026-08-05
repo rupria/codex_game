@@ -6,10 +6,10 @@ OpenAI Game Builders Seoul Track 1 참가작의 코드 저장소입니다.
 
 이 저장소는 실행 가능한 게임 코드, 자동화 테스트, 빌드·배포 설정, GitHub Issue와 Pull Request 기록의 기준입니다.
 
-게임 기획, 총괄 현황, 의사결정과 장기 문서는 상위 문서 작업공간에서 관리합니다.
+게임 기획, 총괄 현황, 의사결정과 장기 문서는 Git 추적에서 제외된 별도 Obsidian 문서 작업공간에서 관리합니다.
 
-- 문서 작업공간: `G:\내 드라이브\codex_game`
-- 로컬 코드 저장소: `G:\내 드라이브\codex_game\codex_game`
+- 문서 작업공간: `G:\내 드라이브\codex_game\obsidian`
+- 로컬 코드 저장소: `G:\내 드라이브\codex_game`
 - GitHub: https://github.com/rupria/codex_game
 - 협업 규칙: [core/TEAM_WORKFLOW.md](core/TEAM_WORKFLOW.md)
 
