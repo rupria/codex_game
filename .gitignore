@@ -29,6 +29,7 @@ Desktop.ini
 
 # Local-only files
 /obsidian/
+/.obsidian/
 *.local
 *.bak
 *.swp
