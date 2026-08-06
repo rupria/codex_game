@@ -1,0 +1,18 @@
+{
+  "dotnet.defaultSolution": "programer/dotnet/CodexGame.SmokeTests/CodexGame.SmokeTests.csproj",
+  "editor.formatOnSave": true,
+  "files.exclude": {
+    "**/.local-tools": true,
+    "**/.unity-cache": true,
+    "**/Library": true,
+    "**/Logs": true,
+    "**/Temp": true
+  },
+  "search.exclude": {
+    "**/.local-tools/**": true,
+    "**/.unity-cache/**": true,
+    "**/Library/**": true,
+    "**/Logs/**": true,
+    "**/Temp/**": true
+  }
+}
