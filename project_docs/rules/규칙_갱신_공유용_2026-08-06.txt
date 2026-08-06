@@ -1,0 +1,46 @@
+[codex_game 다중 PC 작업환경 규칙]
+
+적용일: 2026-08-06
+
+1. 코드와 문서 분리
+
+- 코드는 각 PC의 C:\sk-encoa\codex_game에서 작업한다.
+- 코드는 GitHub dev 브랜치로 기기 간 동기화한다.
+- 기획, 규칙, 기술 검토, QA, PM, 제출 자료는 G:\내 드라이브\codex_game\obsidian에서 작업한다.
+- G:\내 드라이브\codex_game 최상위의 예전 .git은 사용하지 않는다.
+- G:\내 드라이브\codex_game은 Google Drive 동기화 기준 공간이며 Obsidian 자료를 포함한다.
+- 코드가 아닌 업무도 사용자가 Git 공유를 지정했거나 공동 검토·이력 관리·자동화에 필요한 경우에는 별도 목적의 Git 커밋으로 공유할 수 있다.
+- 이 경우 Drive 원본과 Git 사본을 동시에 독립 수정하지 않고 기준 원본과 공유 목적을 명시한다.
+
+2. 다른 PC 설치
+
+- G:\내 드라이브\codex_game\multi_pc\SETUP_OTHER_PC.ps1을 실행한다.
+- Google Drive 문자가 G가 아니면 DriveWorkspacePath를 실제 경로로 지정한다.
+- Obsidian에서는 G:\내 드라이브\codex_game\obsidian만 Vault로 연다.
+
+3. 작업 시작
+
+- SYNC_CHECK.ps1로 코드 브랜치, 커밋과 Drive 연결을 확인한다.
+- 공통 규칙과 자신의 역할 규칙을 확인한다.
+- 다른 작업자의 미커밋 파일을 임의로 변경하거나 커밋하지 않는다.
+
+4. 작업 종료
+
+- 코드는 commit과 push를 완료한다.
+- 문서는 Drive 동기화 완료를 확인한다.
+- 브랜치, 커밋 SHA, 변경 문서, 검증 결과와 남은 문제를 공유한다.
+- 같은 브랜치의 미푸시 작업을 여러 PC에 동시에 남기지 않는다.
+
+5. 역할별 위치
+
+- 기획: obsidian\core\designer
+- 기술 검토와 작업 메모: obsidian\core\programer
+- 실제 게임 코드: C:\sk-encoa\codex_game\programer
+- QA 기록과 증거: obsidian\core\QA
+- PM 일정, 위험과 제출 운영: obsidian\core\PM
+
+6. 브랜치
+
+- dev: 일반 개발과 검증
+- pub: 총괄 승인 후 통합 빌드와 공개 배포
+- dev 검증 통과는 pub 반영의 자동 승인이 아니다.
