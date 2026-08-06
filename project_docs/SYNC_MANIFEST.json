@@ -1,19 +1,19 @@
 {
     "schemaVersion":  2,
     "syncId":  "2026-08-06-03",
-    "generatedAt":  "2026-08-06T16:21:46.4129246+09:00",
+    "generatedAt":  "2026-08-06T17:12:22.7447326+09:00",
     "branch":  "dev",
-    "snapshotParentGitCommit":  "3c6d3505d90d8027d9d3905f7eba3860401795db",
+    "snapshotParentGitCommit":  "b9222119bbd91d3e2c011cc2901011ed81782de4",
     "implementationBaseCommit":  "4f9fb12940bbc024c4db720092d441b291f78975",
     "driveCanonicalRoot":  "G:\\내 드라이브\\codex_game\\obsidian",
     "gitSnapshotRoot":  "project_docs",
-    "specRevision":  "FEFFE457B12D1F26137991A4084700AB7F26D5D01628456E0AA2BE625A1CFF73",
+    "specRevision":  "C34AF6FDAC2117A5188FC2548D2F6EEBCE8AC91CBB04BC128C025731C7BB12D2",
     "entries":  [
                     {
                         "role":  "designer",
                         "source":  "G:\\내 드라이브\\codex_game\\obsidian\\core\\designer\\00_기획_현재기준.md",
                         "snapshot":  "project_docs/designer/00_기획_현재기준.md",
-                        "sha256":  "45E2576B14512849F6EC2EA78F1C63AE05703FF086C0A39CF71CB508B1386E36",
+                        "sha256":  "1BDFE61D5CC00A6251C1DC64AD7CC2C65257D81CF0B2C853ECB9151EF04C28E5",
                         "matchesSource":  true
                     },
                     {
@@ -27,7 +27,7 @@
                         "role":  "designer",
                         "source":  "G:\\내 드라이브\\codex_game\\obsidian\\core\\designer\\게임진행플로우_0.03.md",
                         "snapshot":  "project_docs/designer/게임진행플로우_0.03.md",
-                        "sha256":  "FEFFE457B12D1F26137991A4084700AB7F26D5D01628456E0AA2BE625A1CFF73",
+                        "sha256":  "C34AF6FDAC2117A5188FC2548D2F6EEBCE8AC91CBB04BC128C025731C7BB12D2",
                         "matchesSource":  true
                     },
                     {
@@ -244,7 +244,7 @@
                         "role":  "coordination",
                         "source":  "G:\\내 드라이브\\codex_game\\obsidian\\core\\00_전체업무_동기화_현황.md",
                         "snapshot":  "project_docs/CURRENT_SYNC.md",
-                        "sha256":  "FB89824A592C8C7463468041146697ED9371BB2DB14AE6350952741F6C45AA46",
+                        "sha256":  "4836599C26603DECECE4CF09CEA9E957C63E8D9202C5CCB16A978171528BDBC7",
                         "matchesSource":  true
                     }
                 ],
