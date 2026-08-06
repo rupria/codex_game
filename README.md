@@ -5,10 +5,21 @@ OpenAI Game 2026 출품작의 코드 저장소입니다.
 ## 작업공간
 
 - 로컬 Git·코드·테스트·빌드: `C:\sk-encoa\codex_game`
-- 업무 문서·규칙·기획·QA·PM: [Google Drive 문서 공간](https://drive.google.com/drive/folders/1XvoJlNKxS_BgFIEHBQxTwNC5ujtJHBHm)
+- Drive 문서·규칙·기획·QA·PM: `G:\내 드라이브\codex_game\obsidian`
+- 다른 PC 설치·점검 자료: `G:\내 드라이브\codex_game\multi_pc`
 - 원격 저장소: <https://github.com/rupria/codex_game>
 
 Git에는 실행 가능한 게임 코드와 빌드·배포 설정만 둡니다. 기획서, 회의·검토 메모, QA 기록, PM 일정과 제출 자료는 Drive에서 관리합니다.
+
+## 다른 PC 시작
+
+Google Drive 동기화 후 다음 파일을 실행합니다.
+
+```powershell
+powershell -ExecutionPolicy Bypass -File "G:\내 드라이브\codex_game\multi_pc\SETUP_OTHER_PC.ps1"
+```
+
+Drive 문자가 다르면 스크립트의 `DriveWorkspacePath` 매개변수로 실제 경로를 지정합니다. Drive 최상위의 예전 `.git`은 사용하지 않습니다.
 
 ## 브랜치
 

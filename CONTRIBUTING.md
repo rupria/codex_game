@@ -3,9 +3,10 @@
 ## 작업 위치
 
 - 코드·테스트·빌드·배포 설정: `C:\sk-encoa\codex_game`
-- 기획·검토·QA·PM·제출 문서: [Google Drive 문서 공간](https://drive.google.com/drive/folders/1XvoJlNKxS_BgFIEHBQxTwNC5ujtJHBHm)
+- 기획·검토·QA·PM·제출 문서: `G:\내 드라이브\codex_game\obsidian`
+- 다른 PC 설치·점검 자료: `G:\내 드라이브\codex_game\multi_pc`
 
-Git 작업트리에 업무 문서나 Drive 동기화 사본을 추가하지 않습니다.
+Git 작업트리에 업무 문서나 Drive 동기화 사본을 추가하지 않습니다. Drive 최상위의 예전 `.git`도 개발에 사용하지 않습니다.
 
 ## 코드 변경 절차
 
@@ -22,3 +23,4 @@ Git 작업트리에 업무 문서나 Drive 동기화 사본을 추가하지 않�
 - 다른 작업자의 미커밋·미추적 파일을 수정하거나 함께 커밋하지 않습니다.
 - 비밀키, 개인 계정 정보와 라이선스가 불명확한 에셋을 커밋하지 않습니다.
 - 브라우저 웹 빌드와 공개 플레이 링크 요구사항을 깨뜨리는 변경은 병합하지 않습니다.
+- 기기를 바꾸기 전에 코드 push와 Drive 동기화 완료를 각각 확인합니다.

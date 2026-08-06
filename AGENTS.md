@@ -3,25 +3,26 @@
 ## 기준 작업공간
 
 - 유일한 Git·코드·테스트·빌드 작업공간은 `C:\sk-encoa\codex_game`이다.
-- 업무 문서의 기준 원본은 Google Drive의 `codex_game_documents` 폴더다.
+- 업무 문서의 기준 원본은 `G:\내 드라이브\codex_game\obsidian`이다.
+- 다른 PC 설치·점검·복구 자료는 `G:\내 드라이브\codex_game\multi_pc`에 둔다.
 - Git 저장소 안에 Obsidian Vault, Drive 동기화 폴더 또는 업무 문서 사본을 만들지 않는다.
 - 여러 PC의 코드는 GitHub `dev`를 기준으로 동기화한다.
-
-문서 공간: <https://drive.google.com/drive/folders/1XvoJlNKxS_BgFIEHBQxTwNC5ujtJHBHm>
+- G 최상위의 예전 `.git`은 이전 작업 보존본이며 Git 명령에 사용하지 않는다.
 
 ## 작업 시작 전
 
-1. Drive의 공통 규칙과 자신의 역할 폴더를 확인한다.
+1. Drive의 `obsidian\rules`에서 공통 규칙과 자신의 역할 규칙을 확인한다.
 2. `git -C C:\sk-encoa\codex_game status --short --branch`로 기존 변경을 확인한다.
 3. 기존 변경은 사용자나 다른 작업자의 작업으로 간주하고 보존한다.
 4. 작업 대상이 코드인지 문서인지 판단한다. 코드는 Git, 문서는 Drive에서 작업한다.
+5. 다른 PC에서는 `multi_pc\SYNC_CHECK.ps1`로 Git과 Drive 상태를 함께 확인한다.
 
 ## 파일 위치
 
 - 게임 코드와 코드에 필요한 에셋: `programer/`
 - 테스트 코드: 게임 프로젝트 내부 테스트 디렉터리
 - 빌드·배포 자동화: `.github/`와 `tools/`
-- 기획·규칙·검토·QA·PM·제출 문서: Google Drive
+- 기획·규칙·검토·QA·PM·제출 문서: `G:\내 드라이브\codex_game\obsidian`
 - 저장소에 허용되는 문서: `README.md`, `AGENTS.md`, `CONTRIBUTING.md`와 코드 실행에 반드시 필요한 최소 안내
 
 ## Git과 릴리스
@@ -31,6 +32,7 @@
 - 한 커밋에는 하나의 목적만 포함하며 다른 작업자의 변경을 함께 커밋하지 않는다.
 - 강제 푸시, 강제 초기화와 이력 재작성은 합의 없이 수행하지 않는다.
 - 데스크톱과 노트북에 같은 브랜치의 미푸시 변경을 동시에 남기지 않는다.
+- 기기를 바꾸기 전에 코드는 commit·push, 문서는 Drive 동기화 완료를 확인한다.
 
 ## 제품 기준
 
