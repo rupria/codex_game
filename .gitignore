@@ -15,6 +15,30 @@ coverage/
 .tmp/
 tmp/
 
+# Local .NET build output
+/programer/dotnet/**/[Bb]in/
+/programer/dotnet/**/[Oo]bj/
+
+# Repository-scoped local tools and caches
+/.local-tools/
+/.unity-cache/
+
+# Unity generated output (project: programer/CodexGame)
+/programer/CodexGame/[Ll]ibrary/
+/programer/CodexGame/[Tt]emp/
+/programer/CodexGame/[Oo]bj/
+/programer/CodexGame/[Bb]uild/
+/programer/CodexGame/[Bb]uilds/
+/programer/CodexGame/[Ll]ogs/
+/programer/CodexGame/[Uu]ser[Ss]ettings/
+/programer/CodexGame/[Mm]emoryCaptures/
+/programer/CodexGame/[Rr]ecordings/
+/programer/CodexGame/*.csproj
+/programer/CodexGame/*.sln
+/programer/CodexGame/*.suo
+/programer/CodexGame/*.user
+/programer/CodexGame/.vsconfig
+
 # Test and runtime output
 playwright-report/
 test-results/
@@ -22,7 +46,9 @@ test-results/
 
 # Editors and operating systems
 .idea/
-.vscode/
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
 .DS_Store
 Thumbs.db
 Desktop.ini
