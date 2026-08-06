@@ -14,8 +14,10 @@
 1. Drive의 `obsidian\rules`에서 공통 규칙과 자신의 역할 규칙을 확인한다.
 2. `git -C C:\sk-encoa\codex_game status --short --branch`로 기존 변경을 확인한다.
 3. 기존 변경은 사용자나 다른 작업자의 작업으로 간주하고 보존한다.
-4. 작업 대상이 코드인지 문서인지 판단한다. 코드는 Git, 문서는 Drive에서 작업한다.
-5. 다른 PC에서는 `multi_pc\SYNC_CHECK.ps1`로 Git과 Drive 상태를 함께 확인한다.
+4. 작업 대상이 코드인지 문서인지 판단한다. 코드는 Git, 문서는 Drive에서 작업하는 것을 기본으로 한다.
+5. 코드가 아닌 업무도 사용자가 Git 공유를 지정했거나 공동 검토·이력 관리·자동화에 필요한 경우 별도 목적의 Git 공유 대상으로 둘 수 있다.
+6. 비코드 업무를 Git에 공유할 때는 Drive 기준 원본 여부를 명시하고, 같은 문서를 Drive와 Git에서 독립적으로 수정하지 않는다.
+7. 다른 PC에서는 `multi_pc\SYNC_CHECK.ps1`로 Git과 Drive 상태를 함께 확인한다.
 
 ## 파일 위치
 
@@ -24,6 +26,7 @@
 - 빌드·배포 자동화: `.github/`와 `tools/`
 - 기획·규칙·검토·QA·PM·제출 문서: `G:\내 드라이브\codex_game\obsidian`
 - 저장소에 허용되는 문서: `README.md`, `AGENTS.md`, `CONTRIBUTING.md`와 코드 실행에 반드시 필요한 최소 안내
+- 예외: 사용자가 명시적으로 Git 공유를 요청한 비코드 산출물. 기준 원본과 공유 목적을 기록하고 Drive 전체를 중복 적재하지 않는다.
 
 ## Git과 릴리스
 
