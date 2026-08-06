@@ -1,9 +1,9 @@
 {
     "schemaVersion":  2,
     "syncId":  "2026-08-06-03",
-    "generatedAt":  "2026-08-06T17:12:22.7447326+09:00",
+    "generatedAt":  "2026-08-06T17:29:18.9696411+09:00",
     "branch":  "dev",
-    "snapshotParentGitCommit":  "b9222119bbd91d3e2c011cc2901011ed81782de4",
+    "snapshotParentGitCommit":  "11e26b16ab1e1af83d10a6da3f1827e025e5d04e",
     "implementationBaseCommit":  "4f9fb12940bbc024c4db720092d441b291f78975",
     "driveCanonicalRoot":  "G:\\내 드라이브\\codex_game\\obsidian",
     "gitSnapshotRoot":  "project_docs",
@@ -13,7 +13,7 @@
                         "role":  "designer",
                         "source":  "G:\\내 드라이브\\codex_game\\obsidian\\core\\designer\\00_기획_현재기준.md",
                         "snapshot":  "project_docs/designer/00_기획_현재기준.md",
-                        "sha256":  "1BDFE61D5CC00A6251C1DC64AD7CC2C65257D81CF0B2C853ECB9151EF04C28E5",
+                        "sha256":  "449393727CDCDDC2C3A95A835B912FB5019E5CD27FFE63E664BE613D892F6999",
                         "matchesSource":  true
                     },
                     {
@@ -244,7 +244,21 @@
                         "role":  "coordination",
                         "source":  "G:\\내 드라이브\\codex_game\\obsidian\\core\\00_전체업무_동기화_현황.md",
                         "snapshot":  "project_docs/CURRENT_SYNC.md",
-                        "sha256":  "4836599C26603DECECE4CF09CEA9E957C63E8D9202C5CCB16A978171528BDBC7",
+                        "sha256":  "E826028F2F8894B6C10E9B5749A5DECA61CC7EA5029DEC0C1CD27FD8472CF7CC",
+                        "matchesSource":  true
+                    },
+                    {
+                        "role":  "programer",
+                        "source":  "G:\\내 드라이브\\codex_game\\obsidian\\core\\programer\\26.08.06_PM요청_프로토타입_아트소스_진행기준.md",
+                        "snapshot":  "project_docs/programer/26.08.06_PM요청_프로토타입_아트소스_진행기준.md",
+                        "sha256":  "AF5044B180715D9CE03ED1B3D7860DF5B7D77D150989C54F0D35E45322852473",
+                        "matchesSource":  true
+                    },
+                    {
+                        "role":  "designer",
+                        "source":  "G:\\내 드라이브\\codex_game\\obsidian\\core\\designer\\프로토타입_아트소스_기획기준.md",
+                        "snapshot":  "project_docs/designer/프로토타입_아트소스_기획기준.md",
+                        "sha256":  "96E647A97B2F5CDF301E319880C5FA725214CAE0494BAD8DC42C021347BCEA46",
                         "matchesSource":  true
                     }
                 ],
