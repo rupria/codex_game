@@ -34,3 +34,14 @@ Desktop.ini
 *.bak
 *.swp
 *~
+
+# Document workspaces are managed in Google Drive
+/docs/
+/documents/
+/core/
+/designer/
+/QA/
+/PM/
+/programer/**/*.md
+/programer/**/*.pdf
+/programer/**/*.xmind
