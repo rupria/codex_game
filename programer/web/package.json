@@ -1,0 +1,15 @@
+{
+  "name": "codex-game-web-api",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "wrangler pages dev public",
+    "test": "node --test"
+  },
+  "dependencies": {
+    "@tidbcloud/serverless": "0.3.0"
+  },
+  "devDependencies": {
+    "wrangler": "4.119.0"
+  }
+}

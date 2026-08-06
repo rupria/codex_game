@@ -45,3 +45,19 @@ Drive 문자가 다르면 스크립트의 `DriveWorkspacePath` 매개변수로 �
 - 첫 30초 이해와 3분 코어 재미
 
 현재 `programer/CodexGame`에 Unity 6.3 LTS·C#·URP 초기 프로젝트와 코어 규칙 코드가 있습니다. C# 스모크 테스트는 통과했으며 Unity 내부 컴파일과 WebGL 빌드는 아직 검증 전입니다.
+
+## 로그인 없는 온라인 기록
+
+programer/web에는 Cloudflare Pages Functions와 TiDB Cloud Starter를 연결하는 최소 API가 있습니다.
+Unity WebGL은 같은 도메인의 /api만 호출하며, 로그인 화면 없이 서명된 익명 쿠키를 발급받습니다.
+API 또는 DB가 실패해도 코어 플레이는 계속되고 전송하지 못한 경기 결과는 브라우저 로컬 큐에 보관합니다.
+
+- 공개 파일: Unity WebGL 빌드
+- 서버 API: Cloudflare Pages Functions
+- 온라인 DB: TiDB Cloud Starter
+- 비밀 설정: Cloudflare의 DATABASE_URL, GUEST_TOKEN_SECRET
+
+비밀 값은 Git이나 Unity 프로젝트에 넣지 않습니다. DB 초기 테이블은
+programer/web/sql/001_initial.sql을 사용합니다.
+
+검증 상태 업데이트(2026-08-06): C# 스모크 테스트와 저장소 전용 Unity 6.3 LTS 배치 컴파일은 통과했으며 WebGL 빌드는 아직 검증 전입니다.
