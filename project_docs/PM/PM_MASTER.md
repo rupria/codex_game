@@ -13,7 +13,7 @@
 | 영역 | 상태 | 근거·다음 행동 |
 |---|---|---|
 | 게임 기획 | In Progress | [[../designer/게임진행플로우_0.03|0.03]]이 현재 기준, P0 세부 규칙 3건 추가 확정 필요 |
-| Git 저장소 | Ready | `dev` 최신 `11afb647712423904b694b7797aa3b1f0236417f`; Unity/C# 초기 코어 도입 `4f9fb12940bbc024c4db720092d441b291f78975` |
+| Git 저장소 | Ready | Unity/C# 구현 기준 `dev` `4f9fb12940bbc024c4db720092d441b291f78975`; 문서 동기화 버전은 Git `project_docs/CURRENT_SYNC.md`와 매니페스트로 확인 |
 | 기술 스택·웹 빌드 | In Progress | Unity 6.3 LTS·C#·URP 환경 구성 및 .NET 스모크 테스트 통과, Unity 라이선스와 WebGL 검증 필요 |
 | 공식 제품 버전 | UNRELEASED | 첫 공개 후보 권장 `0.1.0`, PM·사용자 결정 필요 |
 | 공개 플레이 URL | Not Started | D-5까지 확보 |
