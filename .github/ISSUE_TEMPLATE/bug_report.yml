@@ -6,8 +6,8 @@ body:
   - type: input
     id: build
     attributes:
-      label: 빌드/커밋과 URL
-      description: 커밋 SHA, 빌드 번호와 테스트한 URL을 적어주세요.
+      label: 버전·리비전과 URL
+      description: ProductVersion, 전체 GitCommit, SpecRevision, ArtifactSHA256과 테스트한 공개 URL을 적어주세요.
     validations:
       required: true
   - type: input
