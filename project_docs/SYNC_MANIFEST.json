@@ -1,13 +1,13 @@
 {
-    "schemaVersion":  1,
-    "syncId":  "2026-08-06-02",
-    "generatedAt":  "2026-08-06T16:10:18.1073852+09:00",
+    "schemaVersion":  2,
+    "syncId":  "2026-08-06-03",
+    "generatedAt":  "2026-08-06T16:21:46.4129246+09:00",
     "branch":  "dev",
-    "snapshotParentGitCommit":  "e71d483736f80369635730f877ad1665508391b3",
+    "snapshotParentGitCommit":  "3c6d3505d90d8027d9d3905f7eba3860401795db",
     "implementationBaseCommit":  "4f9fb12940bbc024c4db720092d441b291f78975",
     "driveCanonicalRoot":  "G:\\내 드라이브\\codex_game\\obsidian",
     "gitSnapshotRoot":  "project_docs",
-    "specRevision":  "0.03",
+    "specRevision":  "FEFFE457B12D1F26137991A4084700AB7F26D5D01628456E0AA2BE625A1CFF73",
     "entries":  [
                     {
                         "role":  "designer",
@@ -211,6 +211,51 @@
                         "snapshot":  "project_docs/coordination/30_Decisions/2026-08-05_C개발_G옵시디언_분리_운영.md",
                         "sha256":  "22020CDE2D06B886C559A24A1488D3682BA15F7CEB2135BFC6AAC38281AE6945",
                         "matchesSource":  true
+                    },
+                    {
+                        "role":  "designer",
+                        "source":  "G:\\내 드라이브\\codex_game\\obsidian\\core\\designer\\게임진행플로우_0.01.md",
+                        "snapshot":  "project_docs/designer/게임진행플로우_0.01.md",
+                        "sha256":  "2377B3B7842FE777D420B725777C6297C8C384682AC31241211A47A373CE47B2",
+                        "matchesSource":  true
+                    },
+                    {
+                        "role":  "designer",
+                        "source":  "G:\\내 드라이브\\codex_game\\obsidian\\core\\designer\\게임진행플로우_0.01.pdf",
+                        "snapshot":  "project_docs/designer/게임진행플로우_0.01.pdf",
+                        "sha256":  "FA23942FD0E29CD2AED5BFC038E5F2E81618DB2A828BFA5EA9CC0BC50A9F7453",
+                        "matchesSource":  true
+                    },
+                    {
+                        "role":  "designer",
+                        "source":  "G:\\내 드라이브\\codex_game\\obsidian\\core\\designer\\게임진행플로우_0.01.xmind",
+                        "snapshot":  "project_docs/designer/게임진행플로우_0.01.xmind",
+                        "sha256":  "AC04E3AD8C9716B7360E35966D60751E7B27656CD0F84F2310E540D1901B4D15",
+                        "matchesSource":  true
+                    },
+                    {
+                        "role":  "designer",
+                        "source":  "G:\\내 드라이브\\codex_game\\obsidian\\core\\designer\\리서치\\카드플립_학습정도\\merged.csv",
+                        "snapshot":  "project_docs/designer/리서치/카드플립_학습정도/merged.csv",
+                        "sha256":  "D19874918D5CAB3F809554362832E9926105E871454E9D2E769EF6E98C1C6B18",
+                        "matchesSource":  true
+                    },
+                    {
+                        "role":  "coordination",
+                        "source":  "G:\\내 드라이브\\codex_game\\obsidian\\core\\00_전체업무_동기화_현황.md",
+                        "snapshot":  "project_docs/CURRENT_SYNC.md",
+                        "sha256":  "FB89824A592C8C7463468041146697ED9371BB2DB14AE6350952741F6C45AA46",
+                        "matchesSource":  true
                     }
-                ]
+                ],
+    "productVersion":  "UNRELEASED",
+    "specVersion":  "0.03",
+    "commonRoleRevision":  "2026-08-06-03",
+    "roleRevisions":  {
+                          "designer":  "2026-08-06-03",
+                          "programer":  "2026-08-06-03",
+                          "QA":  "2026-08-06-03",
+                          "PM":  "2026-08-06-03",
+                          "coordination":  "2026-08-06-03"
+                      }
 }
