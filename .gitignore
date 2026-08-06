@@ -71,3 +71,6 @@ Desktop.ini
 /programer/**/*.md
 /programer/**/*.pdf
 /programer/**/*.xmind
+
+# Probability experiment output
+/programer/probability/output/
