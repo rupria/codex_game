@@ -1,10 +1,10 @@
 # 역할 통합 문서 동기화 현황
 
-- 동기화 ID: `2026-08-06-01`
+- 동기화 ID: `2026-08-06-02`
 - 기준 명세: `게임진행플로우_0.03`
 - 기준 브랜치: `dev`
 - 구현 기준 커밋: `4f9fb12940bbc024c4db720092d441b291f78975`
-- 문서 동기화 시작 기준: `8feb81b`
+- 문서 동기화 확인: 현재 체크아웃에서 `git log -1 -- project_docs/SYNC_MANIFEST.json`으로 조율 커밋 확인
 - Drive 기준 원본: `G:\내 드라이브\codex_game\obsidian`
 - Git 공유 위치: `project_docs`
 

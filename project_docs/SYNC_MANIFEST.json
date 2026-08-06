@@ -1,9 +1,9 @@
 {
     "schemaVersion":  1,
-    "syncId":  "2026-08-06-01",
-    "generatedAt":  "2026-08-06T15:59:29.2192905+09:00",
+    "syncId":  "2026-08-06-02",
+    "generatedAt":  "2026-08-06T16:10:18.1073852+09:00",
     "branch":  "dev",
-    "snapshotParentGitCommit":  "8feb81bb17edc3a6862de0400cada3768510cd5f",
+    "snapshotParentGitCommit":  "e71d483736f80369635730f877ad1665508391b3",
     "implementationBaseCommit":  "4f9fb12940bbc024c4db720092d441b291f78975",
     "driveCanonicalRoot":  "G:\\내 드라이브\\codex_game\\obsidian",
     "gitSnapshotRoot":  "project_docs",
@@ -76,7 +76,7 @@
                         "role":  "PM",
                         "source":  "G:\\내 드라이브\\codex_game\\obsidian\\core\\PM\\PM_MASTER.md",
                         "snapshot":  "project_docs/PM/PM_MASTER.md",
-                        "sha256":  "E30A42BC90384E9CD6AD3D8321A91BD83FDDEE00F78BC96B98AB9F6C21FDDF2B",
+                        "sha256":  "82398C56E73BE7E01467011546F2E320F3DABD4CEF1E8628CC592F9FCDDD29B0",
                         "matchesSource":  true
                     },
                     {
