@@ -1,7 +1,7 @@
 using System;
-using System.Collections.Generic;
 using CodexGame.Application.Playable;
 using CodexGame.Core.Cards;
+using CodexGame.Core.Rewards;
 using CodexGame.Presentation.Art;
 using UnityEngine;
 
@@ -15,345 +15,229 @@ namespace CodexGame.Presentation.Views
     [SerializeField]
     private PlayableCardArtLibrary _cardArt;
 
-    private PrototypeHalliSnapshot _snapshot;
-    private GUIStyle _titleStyle;
-    private GUIStyle _headingStyle;
-    private GUIStyle _bodyStyle;
-    private GUIStyle _cardStyle;
-    private GUIStyle _statusStyle;
+    private readonly HalliDevPanel _halliPanel = new HalliDevPanel();
+    private readonly PrivateSelectionDevPanel _selectionPanel = new PrivateSelectionDevPanel();
+    private readonly PokerDevPanel _pokerPanel = new PokerDevPanel();
+    private PlayableGameSnapshot _snapshot;
+    private PlayableDevStyles _styles;
+    private PlayableCardRenderer _cards;
+    private int _selectionFocus;
 
     public event Action StartRequested;
     public event Action AdvanceRequested;
     public event Action LeftBellRequested;
     public event Action RightBellRequested;
+    public event Action<CardId> PrivateCardToggleRequested;
+    public event Action PrivateCardsConfirmRequested;
+    public event Action<PredictionChoice> PredictionRequested;
     public event Action RestartRequested;
 
     public void Configure(Texture2D boardTexture, PlayableCardArtLibrary cardArt)
     {
       _boardTexture = boardTexture;
       _cardArt = cardArt;
+      _cards = null;
     }
 
-    public void Present(PrototypeHalliSnapshot snapshot)
+    public void Present(PlayableGameSnapshot snapshot)
     {
+      if (_snapshot == null || _snapshot.Phase != snapshot.Phase)
+      {
+        _selectionFocus = 0;
+      }
+
       _snapshot = snapshot;
     }
 
     private void Update()
     {
-      if (_snapshot == null)
-      {
-        return;
-      }
+      if (_snapshot == null) return;
 
-      if (_snapshot.Phase == PrototypeSessionPhase.Intro)
+      switch (_snapshot.Phase)
       {
-        if (Input.GetKeyDown(KeyCode.Return) || Input.GetKeyDown(KeyCode.Space))
-        {
-          StartRequested?.Invoke();
-        }
-
-        return;
-      }
-
-      if (_snapshot.Phase == PrototypeSessionPhase.Finished)
-      {
-        if (Input.GetKeyDown(KeyCode.R) || Input.GetKeyDown(KeyCode.Return))
-        {
-          RestartRequested?.Invoke();
-        }
-
-        return;
-      }
-
-      if (CanRing()
-        && Input.GetKeyDown(KeyCode.LeftArrow))
-      {
-        LeftBellRequested?.Invoke();
-      }
-      else if (CanRing()
-        && Input.GetKeyDown(KeyCode.RightArrow))
-      {
-        RightBellRequested?.Invoke();
-      }
-      else if (Input.GetKeyDown(KeyCode.UpArrow)
-        || Input.GetKeyDown(KeyCode.Space)
-        || (_snapshot.Phase == PrototypeSessionPhase.Review && Input.GetKeyDown(KeyCode.W)))
-      {
-        AdvanceRequested?.Invoke();
+        case PlayableGamePhase.Intro:
+          if (Pressed(KeyCode.Return, KeyCode.Space)) StartRequested?.Invoke();
+          break;
+        case PlayableGamePhase.Halli:
+          HandleHalliInput();
+          break;
+        case PlayableGamePhase.PrivateSelection:
+          HandleSelectionInput();
+          break;
+        case PlayableGamePhase.PokerPrediction:
+          if (Input.GetKeyDown(KeyCode.Alpha1)) PredictionRequested?.Invoke(PredictionChoice.PlayerWins);
+          else if (Input.GetKeyDown(KeyCode.Alpha2)) PredictionRequested?.Invoke(PredictionChoice.PlayerLoses);
+          break;
+        case PlayableGamePhase.PokerResult:
+          if (Pressed(KeyCode.Return, KeyCode.Space)) AdvanceRequested?.Invoke();
+          break;
+        case PlayableGamePhase.BattleFinished:
+          if (Pressed(KeyCode.R, KeyCode.Return)) RestartRequested?.Invoke();
+          break;
       }
     }
 
     private void OnGUI()
     {
-      if (_snapshot == null)
-      {
-        return;
-      }
-
-      EnsureStyles();
+      if (_snapshot == null) return;
+      EnsureRenderers();
       var scale = Mathf.Min(Screen.width / 960f, Screen.height / 600f);
       GUI.matrix = Matrix4x4.TRS(Vector3.zero, Quaternion.identity, new Vector3(scale, scale, 1f));
-
       if (_boardTexture != null)
       {
-        GUI.DrawTexture(
-          new Rect(0f, 0f, 960f, 540f),
-          _boardTexture,
-          ScaleMode.StretchToFill,
-          true);
+        GUI.DrawTexture(new Rect(0f, 0f, 960f, 540f), _boardTexture, ScaleMode.StretchToFill, true);
       }
 
-      GUILayout.BeginArea(new Rect(20f, 15f, 920f, 570f));
-      GUILayout.Label("CODEX HALLI - PLAYABLE DEV SLICE", _titleStyle);
-      GUILayout.Label("Goal: Halli targets by combat round are 3 / 2 / 1 wins. Same-suit skull 1+2 is valid; any skull 3 is a single-card exception.", _bodyStyle);
-      GUILayout.Label("Controls: UP/SPACE = flip, W/UP/SPACE = continue review, LEFT/RIGHT = ring that pile, R = restart.", _bodyStyle);
-      GUILayout.Space(8f);
-
-      if (_snapshot.Phase == PrototypeSessionPhase.Intro)
-      {
-        GUILayout.FlexibleSpace();
-        var artStatus = _boardTexture == null
-          ? "Board art is missing."
-          : _cardArt != null && _cardArt.IsComplete
-            ? "Prototype board art and all 156 card images loaded."
-            : "Prototype board art loaded. Missing cards use text fallback.";
-        GUILayout.Label(artStatus, _statusStyle);
-
-        if (GUILayout.Button("START  [ENTER / SPACE]", GUILayout.Height(64f)))
-        {
-          StartRequested?.Invoke();
-        }
-
-        GUILayout.FlexibleSpace();
-        GUILayout.EndArea();
-        return;
-      }
-
-      DrawScoreboard();
-      GUILayout.Space(6f);
+      GUILayout.BeginArea(new Rect(18f, 12f, 924f, 578f));
+      GUILayout.Label("CODEX GAME 0.06 - HALLI TO POKER DEV BUILD", _styles.Title);
       GUILayout.BeginHorizontal();
-      DrawPublicCard();
-      DrawPile("LEFT PILE", _snapshot.LeftPile);
-      DrawPile("RIGHT PILE", _snapshot.RightPile);
+      GUILayout.Label("COMBAT ROUND " + _snapshot.CombatRoundNumber, _styles.Heading);
+      GUILayout.Label("PLAYER HP " + _snapshot.Health.Player + "/3", _styles.Heading);
+      GUILayout.Label("AI HP " + _snapshot.Health.Ai + "/3", _styles.Heading);
       GUILayout.EndHorizontal();
-      GUILayout.Space(10f);
-      GUILayout.Label(_snapshot.StatusMessage, _statusStyle, GUILayout.Height(54f));
-      DrawAcquisitionReview();
-      DrawActions();
+      GUILayout.Space(4f);
+
+      switch (_snapshot.Phase)
+      {
+        case PlayableGamePhase.Intro:
+          DrawIntro();
+          break;
+        case PlayableGamePhase.Halli:
+          if (_snapshot.Halli != null)
+          {
+            _halliPanel.Draw(
+              _snapshot.Halli,
+              _styles,
+              _cards,
+              () => AdvanceRequested?.Invoke(),
+              () => LeftBellRequested?.Invoke(),
+              () => RightBellRequested?.Invoke());
+          }
+          break;
+        case PlayableGamePhase.PrivateSelection:
+          if (_snapshot.Selection != null)
+          {
+            _selectionPanel.Draw(
+              _snapshot.Selection,
+              _selectionFocus,
+              _styles,
+              _cards,
+              cardId => PrivateCardToggleRequested?.Invoke(cardId),
+              () => PrivateCardsConfirmRequested?.Invoke());
+          }
+          break;
+        case PlayableGamePhase.PokerPrediction:
+        case PlayableGamePhase.PokerResult:
+          if (_snapshot.Poker != null)
+          {
+            _pokerPanel.Draw(
+              _snapshot.Poker,
+              _styles,
+              _cards,
+              prediction => PredictionRequested?.Invoke(prediction),
+              () => AdvanceRequested?.Invoke());
+          }
+          break;
+        case PlayableGamePhase.BattleFinished:
+          DrawBattleFinished();
+          break;
+      }
+
       GUILayout.EndArea();
     }
 
-    private void DrawScoreboard()
+    private void DrawIntro()
     {
-      var timer = _snapshot.RemainingMicroseconds > 0
-        ? Math.Ceiling(_snapshot.RemainingMicroseconds / 1_000_000d).ToString("0") + "s"
-        : "--";
-
-      GUILayout.BeginHorizontal();
-      GUILayout.Label($"ROUND {_snapshot.CombatRoundNumber}", _headingStyle);
-      GUILayout.Label($"PLAYER {_snapshot.PlayerWins} / {_snapshot.WinTarget}", _headingStyle);
-      GUILayout.Label($"AI {_snapshot.AiWins} / {_snapshot.WinTarget}", _headingStyle);
-      GUILayout.Label($"FLIPS {_snapshot.FlipCount}/25", _headingStyle);
-      GUILayout.Label($"DECK {_snapshot.RemainingDeckCards}", _headingStyle);
-      GUILayout.Label($"TIMER {timer}", _headingStyle);
-      GUILayout.EndHorizontal();
+      GUILayout.FlexibleSpace();
+      GUILayout.Label(
+        "Goal: win Halli rounds, select 3 private cards, predict the poker result, then reveal. "
+        + "The poker loser takes 1 HP damage. First to 0 HP loses the battle.",
+        _styles.Status,
+        GUILayout.Height(72f));
+      GUILayout.Label(
+        "Halli: UP/SPACE flip, LEFT/RIGHT ring. Wrong bell loses only that Halli round. "
+        + "Poker: Q/E/W/ENTER select, then 1/2 predict.",
+        _styles.Body,
+        GUILayout.Height(54f));
+      var art = _cardArt != null && _cardArt.IsComplete && _cardArt.BackTexture != null
+        ? "156 card fronts and shared card back loaded."
+        : "Missing card art uses text fallback.";
+      GUILayout.Label(art, _styles.Body);
+      if (GUILayout.Button("START BATTLE  [ENTER / SPACE]", GUILayout.Height(62f)))
+      {
+        StartRequested?.Invoke();
+      }
+      GUILayout.FlexibleSpace();
     }
 
-    private void DrawAcquisitionReview()
+    private void DrawBattleFinished()
     {
-      if (_snapshot.LastAcquirer == PrototypeAcquirer.None
-        || _snapshot.LastAcquiredCards.Count == 0)
+      GUILayout.FlexibleSpace();
+      var playerWon = _snapshot.Health.Ai == 0;
+      GUILayout.Label(
+        playerWon ? "PLAYER WINS THE BATTLE" : "AI WINS THE BATTLE",
+        _styles.Status,
+        GUILayout.Height(90f));
+      if (GUILayout.Button("NEW BATTLE  [R / ENTER]", GUILayout.Height(62f)))
       {
+        RestartRequested?.Invoke();
+      }
+      GUILayout.FlexibleSpace();
+    }
+
+    private void HandleHalliInput()
+    {
+      var halli = _snapshot.Halli;
+      if (halli == null) return;
+      if (halli.Phase == PrototypeSessionPhase.Finished)
+      {
+        if (Pressed(KeyCode.Return, KeyCode.Space)) AdvanceRequested?.Invoke();
         return;
       }
 
-      var owner = _snapshot.LastAcquirer == PrototypeAcquirer.Player ? "PLAYER" : "AI";
-      var cards = string.Empty;
-
-      for (var index = 0; index < _snapshot.LastAcquiredCards.Count; index++)
+      var canRing = halli.Phase == PrototypeSessionPhase.ReadyToFlip
+        || halli.Phase == PrototypeSessionPhase.BellOpen;
+      if (canRing && Input.GetKeyDown(KeyCode.LeftArrow)) LeftBellRequested?.Invoke();
+      else if (canRing && Input.GetKeyDown(KeyCode.RightArrow)) RightBellRequested?.Invoke();
+      else if (Pressed(KeyCode.UpArrow, KeyCode.Space)
+        || (halli.Phase == PrototypeSessionPhase.Review && Input.GetKeyDown(KeyCode.W)))
       {
-        if (index > 0)
-        {
-          cards += " + ";
-        }
-
-        cards += FormatCardInline(_snapshot.LastAcquiredCards[index]);
-      }
-
-      GUILayout.Label($"LAST ACQUIRED — {owner}: {cards}", _bodyStyle, GUILayout.Height(30f));
-    }
-
-    private void DrawPublicCard()
-    {
-      GUILayout.BeginVertical(GUILayout.Width(210f));
-      GUILayout.Label("PUBLIC CARD", _headingStyle);
-
-      if (_snapshot.FirstPublicCard.HasValue)
-      {
-        DrawCard(_snapshot.FirstPublicCard.Value, 190f, 160f);
-      }
-
-      GUILayout.EndVertical();
-    }
-
-    private void DrawPile(string label, IReadOnlyList<Card> cards)
-    {
-      GUILayout.BeginVertical(GUILayout.Width(330f));
-      GUILayout.Label(label, _headingStyle);
-      GUILayout.BeginHorizontal();
-
-      for (var index = 0; index < 2; index++)
-      {
-        if (index < cards.Count)
-        {
-          DrawCard(cards[index], 150f, 160f);
-        }
-        else
-        {
-          GUILayout.Box("EMPTY", _cardStyle, GUILayout.Width(150f), GUILayout.Height(160f));
-        }
-      }
-
-      GUILayout.EndHorizontal();
-      GUILayout.EndVertical();
-    }
-
-    private void DrawCard(Card card, float width, float height)
-    {
-      var rect = GUILayoutUtility.GetRect(
-        width,
-        height,
-        GUILayout.Width(width),
-        GUILayout.Height(height));
-
-      GUI.Box(rect, GUIContent.none, _cardStyle);
-      if (_cardArt != null && _cardArt.TryGetTexture(card, out var texture))
-      {
-        var inset = new Rect(rect.x + 5f, rect.y + 5f, rect.width - 10f, rect.height - 10f);
-        GUI.DrawTexture(inset, texture, ScaleMode.ScaleToFit, true);
-        return;
-      }
-
-      GUI.Label(rect, FormatCard(card), _cardStyle);
-    }
-
-    private void DrawActions()
-    {
-      GUILayout.BeginHorizontal();
-
-      if (_snapshot.Phase == PrototypeSessionPhase.Finished)
-      {
-        if (GUILayout.Button("RESTART  [R / ENTER]", GUILayout.Height(54f)))
-        {
-          RestartRequested?.Invoke();
-        }
-      }
-      else
-      {
-        GUI.enabled = CanRing();
-
-        if (GUILayout.Button("LEFT BELL  [LEFT]", GUILayout.Height(54f)))
-        {
-          LeftBellRequested?.Invoke();
-        }
-
-        if (GUILayout.Button("RIGHT BELL  [RIGHT]", GUILayout.Height(54f)))
-        {
-          RightBellRequested?.Invoke();
-        }
-
-        GUI.enabled = true;
-        var advanceLabel = _snapshot.Phase == PrototypeSessionPhase.Review
-          ? "CONTINUE  [W / UP / SPACE]"
-          : "FLIP / SKIP BELL  [UP / SPACE]";
-
-        if (GUILayout.Button(advanceLabel, GUILayout.Height(54f)))
-        {
-          AdvanceRequested?.Invoke();
-        }
-      }
-
-      GUILayout.EndHorizontal();
-    }
-
-    private bool CanRing()
-    {
-      return _snapshot.Phase == PrototypeSessionPhase.ReadyToFlip
-        || _snapshot.Phase == PrototypeSessionPhase.BellOpen;
-    }
-
-    private void EnsureStyles()
-    {
-      if (_titleStyle != null)
-      {
-        return;
-      }
-
-      _titleStyle = new GUIStyle(GUI.skin.label)
-      {
-        fontSize = 26,
-        fontStyle = FontStyle.Bold,
-        alignment = TextAnchor.MiddleCenter
-      };
-      _headingStyle = new GUIStyle(GUI.skin.label)
-      {
-        fontSize = 17,
-        fontStyle = FontStyle.Bold,
-        alignment = TextAnchor.MiddleCenter
-      };
-      _bodyStyle = new GUIStyle(GUI.skin.label)
-      {
-        fontSize = 15,
-        alignment = TextAnchor.MiddleCenter,
-        wordWrap = true
-      };
-      _cardStyle = new GUIStyle(GUI.skin.box)
-      {
-        fontSize = 20,
-        fontStyle = FontStyle.Bold,
-        alignment = TextAnchor.MiddleCenter,
-        wordWrap = true
-      };
-      _statusStyle = new GUIStyle(GUI.skin.box)
-      {
-        fontSize = 17,
-        alignment = TextAnchor.MiddleCenter,
-        wordWrap = true
-      };
-    }
-
-    private static string FormatCard(Card card)
-    {
-      return $"{RankText(card.Rank)} {SuitText(card.Suit)}\nSKULL {card.SkullCount}";
-    }
-
-    private static string FormatCardInline(Card card)
-    {
-      return $"{RankText(card.Rank)} {SuitText(card.Suit)} / SKULL {card.SkullCount}";
-    }
-
-    private static string RankText(CardRank rank)
-    {
-      switch (rank)
-      {
-        case CardRank.Ace: return "A";
-        case CardRank.King: return "K";
-        case CardRank.Queen: return "Q";
-        case CardRank.Jack: return "J";
-        default: return ((int)rank).ToString();
+        AdvanceRequested?.Invoke();
       }
     }
 
-    private static string SuitText(CardSuit suit)
+    private void HandleSelectionInput()
     {
-      switch (suit)
+      var selection = _snapshot.Selection;
+      if (selection == null || selection.WinnerCandidates.Count == 0) return;
+      if (Input.GetKeyDown(KeyCode.Q))
       {
-        case CardSuit.Spades: return "SPADE";
-        case CardSuit.Diamonds: return "DIAMOND";
-        case CardSuit.Hearts: return "HEART";
-        default: return "CLUB";
+        _selectionFocus = (_selectionFocus - 1 + selection.WinnerCandidates.Count)
+          % selection.WinnerCandidates.Count;
       }
+      else if (Input.GetKeyDown(KeyCode.E))
+      {
+        _selectionFocus = (_selectionFocus + 1) % selection.WinnerCandidates.Count;
+      }
+      else if (Input.GetKeyDown(KeyCode.W))
+      {
+        PrivateCardToggleRequested?.Invoke(selection.WinnerCandidates[_selectionFocus].Id);
+      }
+      else if (Input.GetKeyDown(KeyCode.Return) && selection.CanConfirm)
+      {
+        PrivateCardsConfirmRequested?.Invoke();
+      }
+    }
+
+    private void EnsureRenderers()
+    {
+      if (_styles == null) _styles = new PlayableDevStyles();
+      if (_cards == null) _cards = new PlayableCardRenderer(_cardArt, _styles);
+    }
+
+    private static bool Pressed(KeyCode first, KeyCode second)
+    {
+      return Input.GetKeyDown(first) || Input.GetKeyDown(second);
     }
   }
 }
