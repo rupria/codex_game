@@ -1,9 +1,11 @@
 {
-  "name": "CodexGame.Presentation",
-  "rootNamespace": "CodexGame.Presentation",
+  "name": "CodexGame.Bootstrap",
+  "rootNamespace": "CodexGame.Bootstrap",
   "references": [
     "CodexGame.Core",
-    "CodexGame.Application"
+    "CodexGame.Application",
+    "CodexGame.Presentation",
+    "CodexGame.Infrastructure"
   ],
   "includePlatforms": [],
   "excludePlatforms": [],

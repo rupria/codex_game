@@ -1,14 +1,7 @@
 using System;
 
-namespace CodexGame.Core
+namespace CodexGame.Core.Halli
 {
-  public enum ReactionWinner
-  {
-    None,
-    Player,
-    Ai
-  }
-
   public static class ReactionResolver
   {
     public static ReactionWinner Resolve(double? playerSeconds, double? aiSeconds)

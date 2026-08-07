@@ -1,6 +1,6 @@
 {
-  "name": "CodexGame.Presentation",
-  "rootNamespace": "CodexGame.Presentation",
+  "name": "CodexGame.Infrastructure",
+  "rootNamespace": "CodexGame.Infrastructure",
   "references": [
     "CodexGame.Core",
     "CodexGame.Application"
