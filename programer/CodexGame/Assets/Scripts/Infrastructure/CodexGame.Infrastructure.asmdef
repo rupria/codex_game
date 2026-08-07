@@ -1,0 +1,17 @@
+{
+  "name": "CodexGame.Infrastructure",
+  "rootNamespace": "CodexGame.Infrastructure",
+  "references": [
+    "CodexGame.Core",
+    "CodexGame.Application"
+  ],
+  "includePlatforms": [],
+  "excludePlatforms": [],
+  "allowUnsafeCode": false,
+  "overrideReferences": false,
+  "precompiledReferences": [],
+  "autoReferenced": true,
+  "defineConstraints": [],
+  "versionDefines": [],
+  "noEngineReferences": false
+}

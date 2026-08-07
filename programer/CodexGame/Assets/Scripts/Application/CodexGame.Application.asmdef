@@ -1,0 +1,16 @@
+{
+  "name": "CodexGame.Application",
+  "rootNamespace": "CodexGame.Application",
+  "references": [
+    "CodexGame.Core"
+  ],
+  "includePlatforms": [],
+  "excludePlatforms": [],
+  "allowUnsafeCode": false,
+  "overrideReferences": false,
+  "precompiledReferences": [],
+  "autoReferenced": true,
+  "defineConstraints": [],
+  "versionDefines": [],
+  "noEngineReferences": true
+}

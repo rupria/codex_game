@@ -1,0 +1,19 @@
+{
+  "name": "CodexGame.Bootstrap",
+  "rootNamespace": "CodexGame.Bootstrap",
+  "references": [
+    "CodexGame.Core",
+    "CodexGame.Application",
+    "CodexGame.Presentation",
+    "CodexGame.Infrastructure"
+  ],
+  "includePlatforms": [],
+  "excludePlatforms": [],
+  "allowUnsafeCode": false,
+  "overrideReferences": false,
+  "precompiledReferences": [],
+  "autoReferenced": true,
+  "defineConstraints": [],
+  "versionDefines": [],
+  "noEngineReferences": false
+}

@@ -1,4 +1,4 @@
-namespace CodexGame.Core
+namespace CodexGame.Core.Shared
 {
   public static class GameRules
   {
