@@ -23,17 +23,25 @@ namespace CodexGame.Application.Playable
     private PileSide? _aiPile;
     private string _statusMessage = "Press START to play.";
     private long _combatRoundSeed;
+    private int _combatRoundNumber = 1;
     private int _playerWins;
     private int _aiWins;
     private int _flipCount;
     private HalliStageEndReason _endReason;
+    private PrototypeAcquirer _lastAcquirer;
+    private IReadOnlyList<Card> _lastAcquiredCards = EmptyCards;
 
     public PrototypeSessionPhase Phase { get; private set; } = PrototypeSessionPhase.Intro;
 
-    public void StartNew(GameTimestamp now, long combatRoundSeed)
+    public void StartNew(
+      GameTimestamp now,
+      long combatRoundSeed,
+      int combatRoundNumber = 1)
     {
+      HalliStageRules.GetWinTarget(combatRoundNumber);
       var cards = CardSetFactory.CreateStandard52(new PrototypeSkullPolicy());
       _combatRoundSeed = combatRoundSeed;
+      _combatRoundNumber = combatRoundNumber;
       _deck = Deck.CreateShuffled(
         cards,
         DeterministicRandomFactory.Create(combatRoundSeed, RandomChannel.CardOrder));
@@ -48,6 +56,7 @@ namespace CodexGame.Application.Playable
       _endReason = HalliStageEndReason.None;
       _aiBellAt = null;
       _aiPile = null;
+      ClearLastAcquisition();
 
       var firstPublic = _deck.Draw();
       _ledger.Move(firstPublic.Id, CardZone.Deck, CardZone.FirstPublic);
@@ -98,7 +107,7 @@ namespace CodexGame.Application.Playable
         case PrototypeSessionPhase.ReadyToFlip:
           if (now.Microseconds >= _readyDeadline.Microseconds)
           {
-            EnterReview(now, "30 second timeout. Both sides lose this Halli round.");
+            BeginReady(now, "30 second timeout. Both sides lose; the field stays.");
           }
           break;
         case PrototypeSessionPhase.BellOpen:
@@ -135,15 +144,20 @@ namespace CodexGame.Application.Playable
         Phase,
         _statusMessage,
         _combatRoundSeed,
+        _combatRoundNumber,
         _playerWins,
         _aiWins,
-        HalliStageRules.GetWinTarget(1),
+        _ledger == null ? 0 : _ledger.Count(CardZone.PlayerAcquired),
+        _ledger == null ? 0 : _ledger.Count(CardZone.AiAcquired),
+        HalliStageRules.GetWinTarget(_combatRoundNumber),
         _flipCount,
         _deck == null ? 0 : _deck.RemainingCount,
         remaining,
         _firstPublicCard,
         left,
         right,
+        _lastAcquirer,
+        _lastAcquiredCards,
         _endReason);
     }
 
@@ -158,6 +172,7 @@ namespace CodexGame.Application.Playable
       }
 
       CloseBellWindow();
+      ClearLastAcquisition();
       ExposeFromDeck(PileSide.Left);
       ExposeFromDeck(PileSide.Right);
       _flipCount++;
@@ -281,6 +296,7 @@ namespace CodexGame.Application.Playable
     {
       var source = side == PileSide.Left ? CardZone.LeftPile : CardZone.RightPile;
       var cards = _field.Clear(side);
+      var acquiredCards = new List<Card>();
 
       for (var index = 0; index < cards.Count; index++)
       {
@@ -292,7 +308,17 @@ namespace CodexGame.Application.Playable
           cards[index].Id,
           source,
           acquired ? destination : CardZone.UnacquiredPool);
+
+        if (acquired)
+        {
+          acquiredCards.Add(cards[index]);
+        }
       }
+
+      _lastAcquirer = destination == CardZone.PlayerAcquired
+        ? PrototypeAcquirer.Player
+        : PrototypeAcquirer.Ai;
+      _lastAcquiredCards = Array.AsReadOnly(acquiredCards.ToArray());
     }
 
     private void EnterReview(GameTimestamp now, string message)
@@ -319,6 +345,7 @@ namespace CodexGame.Application.Playable
 
     private void BeginReady(GameTimestamp now, string message)
     {
+      ClearLastAcquisition();
       Phase = PrototypeSessionPhase.ReadyToFlip;
       _readyDeadline = Add(now, GameRules.CardFlipTimeoutMicroseconds);
       _statusMessage = message;
@@ -342,12 +369,13 @@ namespace CodexGame.Application.Playable
         _aiWins,
         _flipCount,
         _deck.RemainingCount,
-        1);
+        _combatRoundNumber);
     }
 
     private void Finish(HalliStageEndReason endReason)
     {
       CloseBellWindow();
+      ClearLastAcquisition();
       Phase = PrototypeSessionPhase.Finished;
       _endReason = endReason;
 
@@ -370,6 +398,12 @@ namespace CodexGame.Application.Playable
       return resolution == AcquisitionKind.Both
         || resolution == AcquisitionKind.LeftOnly
         || resolution == AcquisitionKind.RightOnly;
+    }
+
+    private void ClearLastAcquisition()
+    {
+      _lastAcquirer = PrototypeAcquirer.None;
+      _lastAcquiredCards = EmptyCards;
     }
 
     private static GameTimestamp Add(GameTimestamp timestamp, long microseconds)

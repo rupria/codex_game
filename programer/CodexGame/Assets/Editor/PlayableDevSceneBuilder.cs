@@ -1,6 +1,7 @@
 using System;
 using System.IO;
 using CodexGame.Bootstrap;
+using CodexGame.Presentation.Views;
 using UnityEditor;
 using UnityEditor.Build.Reporting;
 using UnityEditor.SceneManagement;
@@ -12,6 +13,7 @@ namespace CodexGame.Editor
   public static class PlayableDevSceneBuilder
   {
     public const string ScenePath = "Assets/Scenes/PlayableDev.unity";
+    public const string BoardArtPath = "Assets/Art/Prototype/Board/board_layout_wip.png";
 
     [MenuItem("Codex Game/Playable Dev/Create Scene")]
     public static void CreateScene()
@@ -27,6 +29,15 @@ namespace CodexGame.Editor
       camera.transform.position = new Vector3(0f, 0f, -10f);
 
       var gameObject = new GameObject("CodexGame.PlayableDev");
+      var boardTexture = AssetDatabase.LoadAssetAtPath<Texture2D>(BoardArtPath);
+
+      if (boardTexture == null)
+      {
+        throw new FileNotFoundException("Playable board art was not found.", BoardArtPath);
+      }
+
+      var view = gameObject.AddComponent<PlayableDevView>();
+      view.Configure(boardTexture);
       gameObject.AddComponent<PlayableDevGameController>();
 
       if (!EditorSceneManager.SaveScene(scene, ScenePath))
