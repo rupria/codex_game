@@ -1,0 +1,1420 @@
+{
+  "specRevision": "gameplay_flow_0.06",
+  "cardWidth": 64,
+  "cardHeight": 90,
+  "informationLayout": {
+    "upperLeft": "poker_rank",
+    "upperRight": "large_suit",
+    "halliCenter": "matching_suit_skull_count_1_to_3",
+    "pokerCenter": "matching_suit_without_skull"
+  },
+  "cardBackAssetPath": "Assets/Art/Prototype/Cards_0_06/card_back.png",
+  "halliCards": [
+    {
+      "assetId": "card_halli_spades_a_skull_01",
+      "suit": "spades",
+      "rank": "A",
+      "skullCount": 1,
+      "assetPath": "Assets/Art/Prototype/Cards_0_06/halli_variants/card_halli_spades_a_skull_01.png"
+    },
+    {
+      "assetId": "card_halli_spades_a_skull_02",
+      "suit": "spades",
+      "rank": "A",
+      "skullCount": 2,
+      "assetPath": "Assets/Art/Prototype/Cards_0_06/halli_variants/card_halli_spades_a_skull_02.png"
+    },
+    {
+      "assetId": "card_halli_spades_a_skull_03",
+      "suit": "spades",
+      "rank": "A",
+      "skullCount": 3,
+      "assetPath": "Assets/Art/Prototype/Cards_0_06/halli_variants/card_halli_spades_a_skull_03.png"
+    },
+    {
+      "assetId": "card_halli_spades_k_skull_01",
+      "suit": "spades",
+      "rank": "K",
+      "skullCount": 1,
+      "assetPath": "Assets/Art/Prototype/Cards_0_06/halli_variants/card_halli_spades_k_skull_01.png"
+    },
+    {
+      "assetId": "card_halli_spades_k_skull_02",
+      "suit": "spades",
+      "rank": "K",
+      "skullCount": 2,
+      "assetPath": "Assets/Art/Prototype/Cards_0_06/halli_variants/card_halli_spades_k_skull_02.png"
+    },
+    {
+      "assetId": "card_halli_spades_k_skull_03",
+      "suit": "spades",
+      "rank": "K",
+      "skullCount": 3,
+      "assetPath": "Assets/Art/Prototype/Cards_0_06/halli_variants/card_halli_spades_k_skull_03.png"
+    },
+    {
+      "assetId": "card_halli_spades_q_skull_01",
+      "suit": "spades",
+      "rank": "Q",
+      "skullCount": 1,
+      "assetPath": "Assets/Art/Prototype/Cards_0_06/halli_variants/card_halli_spades_q_skull_01.png"
+    },
+    {
+      "assetId": "card_halli_spades_q_skull_02",
+      "suit": "spades",
+      "rank": "Q",
+      "skullCount": 2,
+      "assetPath": "Assets/Art/Prototype/Cards_0_06/halli_variants/card_halli_spades_q_skull_02.png"
+    },
+    {
+      "assetId": "card_halli_spades_q_skull_03",
+      "suit": "spades",
+      "rank": "Q",
+      "skullCount": 3,
+      "assetPath": "Assets/Art/Prototype/Cards_0_06/halli_variants/card_halli_spades_q_skull_03.png"
+    },
+    {
+      "assetId": "card_halli_spades_j_skull_01",
+      "suit": "spades",
+      "rank": "J",
+      "skullCount": 1,
+      "assetPath": "Assets/Art/Prototype/Cards_0_06/halli_variants/card_halli_spades_j_skull_01.png"
+    },
+    {
+      "assetId": "card_halli_spades_j_skull_02",
+      "suit": "spades",
+      "rank": "J",
+      "skullCount": 2,
+      "assetPath": "Assets/Art/Prototype/Cards_0_06/halli_variants/card_halli_spades_j_skull_02.png"
+    },
+    {
+      "assetId": "card_halli_spades_j_skull_03",
+      "suit": "spades",
+      "rank": "J",
+      "skullCount": 3,
+      "assetPath": "Assets/Art/Prototype/Cards_0_06/halli_variants/card_halli_spades_j_skull_03.png"
+    },
+    {
+      "assetId": "card_halli_spades_10_skull_01",
+      "suit": "spades",
+      "rank": "10",
+      "skullCount": 1,
+      "assetPath": "Assets/Art/Prototype/Cards_0_06/halli_variants/card_halli_spades_10_skull_01.png"
+    },
+    {
+      "assetId": "card_halli_spades_10_skull_02",
+      "suit": "spades",
+      "rank": "10",
+      "skullCount": 2,
+      "assetPath": "Assets/Art/Prototype/Cards_0_06/halli_variants/card_halli_spades_10_skull_02.png"
+    },
+    {
+      "assetId": "card_halli_spades_10_skull_03",
+      "suit": "spades",
+      "rank": "10",
+      "skullCount": 3,
+      "assetPath": "Assets/Art/Prototype/Cards_0_06/halli_variants/card_halli_spades_10_skull_03.png"
+    },
+    {
+      "assetId": "card_halli_spades_9_skull_01",
+      "suit": "spades",
+      "rank": "9",
+      "skullCount": 1,
+      "assetPath": "Assets/Art/Prototype/Cards_0_06/halli_variants/card_halli_spades_9_skull_01.png"
+    },
+    {
+      "assetId": "card_halli_spades_9_skull_02",
+      "suit": "spades",
+      "rank": "9",
+      "skullCount": 2,
+      "assetPath": "Assets/Art/Prototype/Cards_0_06/halli_variants/card_halli_spades_9_skull_02.png"
+    },
+    {
+      "assetId": "card_halli_spades_9_skull_03",
+      "suit": "spades",
+      "rank": "9",
+      "skullCount": 3,
+      "assetPath": "Assets/Art/Prototype/Cards_0_06/halli_variants/card_halli_spades_9_skull_03.png"
+    },
+    {
+      "assetId": "card_halli_spades_8_skull_01",
+      "suit": "spades",
+      "rank": "8",
+      "skullCount": 1,
+      "assetPath": "Assets/Art/Prototype/Cards_0_06/halli_variants/card_halli_spades_8_skull_01.png"
+    },
+    {
+      "assetId": "card_halli_spades_8_skull_02",
+      "suit": "spades",
+      "rank": "8",
+      "skullCount": 2,
+      "assetPath": "Assets/Art/Prototype/Cards_0_06/halli_variants/card_halli_spades_8_skull_02.png"
+    },
+    {
+      "assetId": "card_halli_spades_8_skull_03",
+      "suit": "spades",
+      "rank": "8",
+      "skullCount": 3,
+      "assetPath": "Assets/Art/Prototype/Cards_0_06/halli_variants/card_halli_spades_8_skull_03.png"
+    },
+    {
+      "assetId": "card_halli_spades_7_skull_01",
+      "suit": "spades",
+      "rank": "7",
+      "skullCount": 1,
+      "assetPath": "Assets/Art/Prototype/Cards_0_06/halli_variants/card_halli_spades_7_skull_01.png"
+    },
+    {
+      "assetId": "card_halli_spades_7_skull_02",
+      "suit": "spades",
+      "rank": "7",
+      "skullCount": 2,
+      "assetPath": "Assets/Art/Prototype/Cards_0_06/halli_variants/card_halli_spades_7_skull_02.png"
+    },
+    {
+      "assetId": "card_halli_spades_7_skull_03",
+      "suit": "spades",
+      "rank": "7",
+      "skullCount": 3,
+      "assetPath": "Assets/Art/Prototype/Cards_0_06/halli_variants/card_halli_spades_7_skull_03.png"
+    },
+    {
+      "assetId": "card_halli_spades_6_skull_01",
+      "suit": "spades",
+      "rank": "6",
+      "skullCount": 1,
+      "assetPath": "Assets/Art/Prototype/Cards_0_06/halli_variants/card_halli_spades_6_skull_01.png"
+    },
+    {
+      "assetId": "card_halli_spades_6_skull_02",
+      "suit": "spades",
+      "rank": "6",
+      "skullCount": 2,
+      "assetPath": "Assets/Art/Prototype/Cards_0_06/halli_variants/card_halli_spades_6_skull_02.png"
+    },
+    {
+      "assetId": "card_halli_spades_6_skull_03",
+      "suit": "spades",
+      "rank": "6",
+      "skullCount": 3,
+      "assetPath": "Assets/Art/Prototype/Cards_0_06/halli_variants/card_halli_spades_6_skull_03.png"
+    },
+    {
+      "assetId": "card_halli_spades_5_skull_01",
+      "suit": "spades",
+      "rank": "5",
+      "skullCount": 1,
+      "assetPath": "Assets/Art/Prototype/Cards_0_06/halli_variants/card_halli_spades_5_skull_01.png"
+    },
+    {
+      "assetId": "card_halli_spades_5_skull_02",
+      "suit": "spades",
+      "rank": "5",
+      "skullCount": 2,
+      "assetPath": "Assets/Art/Prototype/Cards_0_06/halli_variants/card_halli_spades_5_skull_02.png"
+    },
+    {
+      "assetId": "card_halli_spades_5_skull_03",
+      "suit": "spades",
+      "rank": "5",
+      "skullCount": 3,
+      "assetPath": "Assets/Art/Prototype/Cards_0_06/halli_variants/card_halli_spades_5_skull_03.png"
+    },
+    {
+      "assetId": "card_halli_spades_4_skull_01",
+      "suit": "spades",
+      "rank": "4",
+      "skullCount": 1,
+      "assetPath": "Assets/Art/Prototype/Cards_0_06/halli_variants/card_halli_spades_4_skull_01.png"
+    },
+    {
+      "assetId": "card_halli_spades_4_skull_02",
+      "suit": "spades",
+      "rank": "4",
+      "skullCount": 2,
+      "assetPath": "Assets/Art/Prototype/Cards_0_06/halli_variants/card_halli_spades_4_skull_02.png"
+    },
+    {
+      "assetId": "card_halli_spades_4_skull_03",
+      "suit": "spades",
+      "rank": "4",
+      "skullCount": 3,
+      "assetPath": "Assets/Art/Prototype/Cards_0_06/halli_variants/card_halli_spades_4_skull_03.png"
+    },
+    {
+      "assetId": "card_halli_spades_3_skull_01",
+      "suit": "spades",
+      "rank": "3",
+      "skullCount": 1,
+      "assetPath": "Assets/Art/Prototype/Cards_0_06/halli_variants/card_halli_spades_3_skull_01.png"
+    },
+    {
+      "assetId": "card_halli_spades_3_skull_02",
+      "suit": "spades",
+      "rank": "3",
+      "skullCount": 2,
+      "assetPath": "Assets/Art/Prototype/Cards_0_06/halli_variants/card_halli_spades_3_skull_02.png"
+    },
+    {
+      "assetId": "card_halli_spades_3_skull_03",
+      "suit": "spades",
+      "rank": "3",
+      "skullCount": 3,
+      "assetPath": "Assets/Art/Prototype/Cards_0_06/halli_variants/card_halli_spades_3_skull_03.png"
+    },
+    {
+      "assetId": "card_halli_spades_2_skull_01",
+      "suit": "spades",
+      "rank": "2",
+      "skullCount": 1,
+      "assetPath": "Assets/Art/Prototype/Cards_0_06/halli_variants/card_halli_spades_2_skull_01.png"
+    },
+    {
+      "assetId": "card_halli_spades_2_skull_02",
+      "suit": "spades",
+      "rank": "2",
+      "skullCount": 2,
+      "assetPath": "Assets/Art/Prototype/Cards_0_06/halli_variants/card_halli_spades_2_skull_02.png"
+    },
+    {
+      "assetId": "card_halli_spades_2_skull_03",
+      "suit": "spades",
+      "rank": "2",
+      "skullCount": 3,
+      "assetPath": "Assets/Art/Prototype/Cards_0_06/halli_variants/card_halli_spades_2_skull_03.png"
+    },
+    {
+      "assetId": "card_halli_diamonds_a_skull_01",
+      "suit": "diamonds",
+      "rank": "A",
+      "skullCount": 1,
+      "assetPath": "Assets/Art/Prototype/Cards_0_06/halli_variants/card_halli_diamonds_a_skull_01.png"
+    },
+    {
+      "assetId": "card_halli_diamonds_a_skull_02",
+      "suit": "diamonds",
+      "rank": "A",
+      "skullCount": 2,
+      "assetPath": "Assets/Art/Prototype/Cards_0_06/halli_variants/card_halli_diamonds_a_skull_02.png"
+    },
+    {
+      "assetId": "card_halli_diamonds_a_skull_03",
+      "suit": "diamonds",
+      "rank": "A",
+      "skullCount": 3,
+      "assetPath": "Assets/Art/Prototype/Cards_0_06/halli_variants/card_halli_diamonds_a_skull_03.png"
+    },
+    {
+      "assetId": "card_halli_diamonds_k_skull_01",
+      "suit": "diamonds",
+      "rank": "K",
+      "skullCount": 1,
+      "assetPath": "Assets/Art/Prototype/Cards_0_06/halli_variants/card_halli_diamonds_k_skull_01.png"
+    },
+    {
+      "assetId": "card_halli_diamonds_k_skull_02",
+      "suit": "diamonds",
+      "rank": "K",
+      "skullCount": 2,
+      "assetPath": "Assets/Art/Prototype/Cards_0_06/halli_variants/card_halli_diamonds_k_skull_02.png"
+    },
+    {
+      "assetId": "card_halli_diamonds_k_skull_03",
+      "suit": "diamonds",
+      "rank": "K",
+      "skullCount": 3,
+      "assetPath": "Assets/Art/Prototype/Cards_0_06/halli_variants/card_halli_diamonds_k_skull_03.png"
+    },
+    {
+      "assetId": "card_halli_diamonds_q_skull_01",
+      "suit": "diamonds",
+      "rank": "Q",
+      "skullCount": 1,
+      "assetPath": "Assets/Art/Prototype/Cards_0_06/halli_variants/card_halli_diamonds_q_skull_01.png"
+    },
+    {
+      "assetId": "card_halli_diamonds_q_skull_02",
+      "suit": "diamonds",
+      "rank": "Q",
+      "skullCount": 2,
+      "assetPath": "Assets/Art/Prototype/Cards_0_06/halli_variants/card_halli_diamonds_q_skull_02.png"
+    },
+    {
+      "assetId": "card_halli_diamonds_q_skull_03",
+      "suit": "diamonds",
+      "rank": "Q",
+      "skullCount": 3,
+      "assetPath": "Assets/Art/Prototype/Cards_0_06/halli_variants/card_halli_diamonds_q_skull_03.png"
+    },
+    {
+      "assetId": "card_halli_diamonds_j_skull_01",
+      "suit": "diamonds",
+      "rank": "J",
+      "skullCount": 1,
+      "assetPath": "Assets/Art/Prototype/Cards_0_06/halli_variants/card_halli_diamonds_j_skull_01.png"
+    },
+    {
+      "assetId": "card_halli_diamonds_j_skull_02",
+      "suit": "diamonds",
+      "rank": "J",
+      "skullCount": 2,
+      "assetPath": "Assets/Art/Prototype/Cards_0_06/halli_variants/card_halli_diamonds_j_skull_02.png"
+    },
+    {
+      "assetId": "card_halli_diamonds_j_skull_03",
+      "suit": "diamonds",
+      "rank": "J",
+      "skullCount": 3,
+      "assetPath": "Assets/Art/Prototype/Cards_0_06/halli_variants/card_halli_diamonds_j_skull_03.png"
+    },
+    {
+      "assetId": "card_halli_diamonds_10_skull_01",
+      "suit": "diamonds",
+      "rank": "10",
+      "skullCount": 1,
+      "assetPath": "Assets/Art/Prototype/Cards_0_06/halli_variants/card_halli_diamonds_10_skull_01.png"
+    },
+    {
+      "assetId": "card_halli_diamonds_10_skull_02",
+      "suit": "diamonds",
+      "rank": "10",
+      "skullCount": 2,
+      "assetPath": "Assets/Art/Prototype/Cards_0_06/halli_variants/card_halli_diamonds_10_skull_02.png"
+    },
+    {
+      "assetId": "card_halli_diamonds_10_skull_03",
+      "suit": "diamonds",
+      "rank": "10",
+      "skullCount": 3,
+      "assetPath": "Assets/Art/Prototype/Cards_0_06/halli_variants/card_halli_diamonds_10_skull_03.png"
+    },
+    {
+      "assetId": "card_halli_diamonds_9_skull_01",
+      "suit": "diamonds",
+      "rank": "9",
+      "skullCount": 1,
+      "assetPath": "Assets/Art/Prototype/Cards_0_06/halli_variants/card_halli_diamonds_9_skull_01.png"
+    },
+    {
+      "assetId": "card_halli_diamonds_9_skull_02",
+      "suit": "diamonds",
+      "rank": "9",
+      "skullCount": 2,
+      "assetPath": "Assets/Art/Prototype/Cards_0_06/halli_variants/card_halli_diamonds_9_skull_02.png"
+    },
+    {
+      "assetId": "card_halli_diamonds_9_skull_03",
+      "suit": "diamonds",
+      "rank": "9",
+      "skullCount": 3,
+      "assetPath": "Assets/Art/Prototype/Cards_0_06/halli_variants/card_halli_diamonds_9_skull_03.png"
+    },
+    {
+      "assetId": "card_halli_diamonds_8_skull_01",
+      "suit": "diamonds",
+      "rank": "8",
+      "skullCount": 1,
+      "assetPath": "Assets/Art/Prototype/Cards_0_06/halli_variants/card_halli_diamonds_8_skull_01.png"
+    },
+    {
+      "assetId": "card_halli_diamonds_8_skull_02",
+      "suit": "diamonds",
+      "rank": "8",
+      "skullCount": 2,
+      "assetPath": "Assets/Art/Prototype/Cards_0_06/halli_variants/card_halli_diamonds_8_skull_02.png"
+    },
+    {
+      "assetId": "card_halli_diamonds_8_skull_03",
+      "suit": "diamonds",
+      "rank": "8",
+      "skullCount": 3,
+      "assetPath": "Assets/Art/Prototype/Cards_0_06/halli_variants/card_halli_diamonds_8_skull_03.png"
+    },
+    {
+      "assetId": "card_halli_diamonds_7_skull_01",
+      "suit": "diamonds",
+      "rank": "7",
+      "skullCount": 1,
+      "assetPath": "Assets/Art/Prototype/Cards_0_06/halli_variants/card_halli_diamonds_7_skull_01.png"
+    },
+    {
+      "assetId": "card_halli_diamonds_7_skull_02",
+      "suit": "diamonds",
+      "rank": "7",
+      "skullCount": 2,
+      "assetPath": "Assets/Art/Prototype/Cards_0_06/halli_variants/card_halli_diamonds_7_skull_02.png"
+    },
+    {
+      "assetId": "card_halli_diamonds_7_skull_03",
+      "suit": "diamonds",
+      "rank": "7",
+      "skullCount": 3,
+      "assetPath": "Assets/Art/Prototype/Cards_0_06/halli_variants/card_halli_diamonds_7_skull_03.png"
+    },
+    {
+      "assetId": "card_halli_diamonds_6_skull_01",
+      "suit": "diamonds",
+      "rank": "6",
+      "skullCount": 1,
+      "assetPath": "Assets/Art/Prototype/Cards_0_06/halli_variants/card_halli_diamonds_6_skull_01.png"
+    },
+    {
+      "assetId": "card_halli_diamonds_6_skull_02",
+      "suit": "diamonds",
+      "rank": "6",
+      "skullCount": 2,
+      "assetPath": "Assets/Art/Prototype/Cards_0_06/halli_variants/card_halli_diamonds_6_skull_02.png"
+    },
+    {
+      "assetId": "card_halli_diamonds_6_skull_03",
+      "suit": "diamonds",
+      "rank": "6",
+      "skullCount": 3,
+      "assetPath": "Assets/Art/Prototype/Cards_0_06/halli_variants/card_halli_diamonds_6_skull_03.png"
+    },
+    {
+      "assetId": "card_halli_diamonds_5_skull_01",
+      "suit": "diamonds",
+      "rank": "5",
+      "skullCount": 1,
+      "assetPath": "Assets/Art/Prototype/Cards_0_06/halli_variants/card_halli_diamonds_5_skull_01.png"
+    },
+    {
+      "assetId": "card_halli_diamonds_5_skull_02",
+      "suit": "diamonds",
+      "rank": "5",
+      "skullCount": 2,
+      "assetPath": "Assets/Art/Prototype/Cards_0_06/halli_variants/card_halli_diamonds_5_skull_02.png"
+    },
+    {
+      "assetId": "card_halli_diamonds_5_skull_03",
+      "suit": "diamonds",
+      "rank": "5",
+      "skullCount": 3,
+      "assetPath": "Assets/Art/Prototype/Cards_0_06/halli_variants/card_halli_diamonds_5_skull_03.png"
+    },
+    {
+      "assetId": "card_halli_diamonds_4_skull_01",
+      "suit": "diamonds",
+      "rank": "4",
+      "skullCount": 1,
+      "assetPath": "Assets/Art/Prototype/Cards_0_06/halli_variants/card_halli_diamonds_4_skull_01.png"
+    },
+    {
+      "assetId": "card_halli_diamonds_4_skull_02",
+      "suit": "diamonds",
+      "rank": "4",
+      "skullCount": 2,
+      "assetPath": "Assets/Art/Prototype/Cards_0_06/halli_variants/card_halli_diamonds_4_skull_02.png"
+    },
+    {
+      "assetId": "card_halli_diamonds_4_skull_03",
+      "suit": "diamonds",
+      "rank": "4",
+      "skullCount": 3,
+      "assetPath": "Assets/Art/Prototype/Cards_0_06/halli_variants/card_halli_diamonds_4_skull_03.png"
+    },
+    {
+      "assetId": "card_halli_diamonds_3_skull_01",
+      "suit": "diamonds",
+      "rank": "3",
+      "skullCount": 1,
+      "assetPath": "Assets/Art/Prototype/Cards_0_06/halli_variants/card_halli_diamonds_3_skull_01.png"
+    },
+    {
+      "assetId": "card_halli_diamonds_3_skull_02",
+      "suit": "diamonds",
+      "rank": "3",
+      "skullCount": 2,
+      "assetPath": "Assets/Art/Prototype/Cards_0_06/halli_variants/card_halli_diamonds_3_skull_02.png"
+    },
+    {
+      "assetId": "card_halli_diamonds_3_skull_03",
+      "suit": "diamonds",
+      "rank": "3",
+      "skullCount": 3,
+      "assetPath": "Assets/Art/Prototype/Cards_0_06/halli_variants/card_halli_diamonds_3_skull_03.png"
+    },
+    {
+      "assetId": "card_halli_diamonds_2_skull_01",
+      "suit": "diamonds",
+      "rank": "2",
+      "skullCount": 1,
+      "assetPath": "Assets/Art/Prototype/Cards_0_06/halli_variants/card_halli_diamonds_2_skull_01.png"
+    },
+    {
+      "assetId": "card_halli_diamonds_2_skull_02",
+      "suit": "diamonds",
+      "rank": "2",
+      "skullCount": 2,
+      "assetPath": "Assets/Art/Prototype/Cards_0_06/halli_variants/card_halli_diamonds_2_skull_02.png"
+    },
+    {
+      "assetId": "card_halli_diamonds_2_skull_03",
+      "suit": "diamonds",
+      "rank": "2",
+      "skullCount": 3,
+      "assetPath": "Assets/Art/Prototype/Cards_0_06/halli_variants/card_halli_diamonds_2_skull_03.png"
+    },
+    {
+      "assetId": "card_halli_hearts_a_skull_01",
+      "suit": "hearts",
+      "rank": "A",
+      "skullCount": 1,
+      "assetPath": "Assets/Art/Prototype/Cards_0_06/halli_variants/card_halli_hearts_a_skull_01.png"
+    },
+    {
+      "assetId": "card_halli_hearts_a_skull_02",
+      "suit": "hearts",
+      "rank": "A",
+      "skullCount": 2,
+      "assetPath": "Assets/Art/Prototype/Cards_0_06/halli_variants/card_halli_hearts_a_skull_02.png"
+    },
+    {
+      "assetId": "card_halli_hearts_a_skull_03",
+      "suit": "hearts",
+      "rank": "A",
+      "skullCount": 3,
+      "assetPath": "Assets/Art/Prototype/Cards_0_06/halli_variants/card_halli_hearts_a_skull_03.png"
+    },
+    {
+      "assetId": "card_halli_hearts_k_skull_01",
+      "suit": "hearts",
+      "rank": "K",
+      "skullCount": 1,
+      "assetPath": "Assets/Art/Prototype/Cards_0_06/halli_variants/card_halli_hearts_k_skull_01.png"
+    },
+    {
+      "assetId": "card_halli_hearts_k_skull_02",
+      "suit": "hearts",
+      "rank": "K",
+      "skullCount": 2,
+      "assetPath": "Assets/Art/Prototype/Cards_0_06/halli_variants/card_halli_hearts_k_skull_02.png"
+    },
+    {
+      "assetId": "card_halli_hearts_k_skull_03",
+      "suit": "hearts",
+      "rank": "K",
+      "skullCount": 3,
+      "assetPath": "Assets/Art/Prototype/Cards_0_06/halli_variants/card_halli_hearts_k_skull_03.png"
+    },
+    {
+      "assetId": "card_halli_hearts_q_skull_01",
+      "suit": "hearts",
+      "rank": "Q",
+      "skullCount": 1,
+      "assetPath": "Assets/Art/Prototype/Cards_0_06/halli_variants/card_halli_hearts_q_skull_01.png"
+    },
+    {
+      "assetId": "card_halli_hearts_q_skull_02",
+      "suit": "hearts",
+      "rank": "Q",
+      "skullCount": 2,
+      "assetPath": "Assets/Art/Prototype/Cards_0_06/halli_variants/card_halli_hearts_q_skull_02.png"
+    },
+    {
+      "assetId": "card_halli_hearts_q_skull_03",
+      "suit": "hearts",
+      "rank": "Q",
+      "skullCount": 3,
+      "assetPath": "Assets/Art/Prototype/Cards_0_06/halli_variants/card_halli_hearts_q_skull_03.png"
+    },
+    {
+      "assetId": "card_halli_hearts_j_skull_01",
+      "suit": "hearts",
+      "rank": "J",
+      "skullCount": 1,
+      "assetPath": "Assets/Art/Prototype/Cards_0_06/halli_variants/card_halli_hearts_j_skull_01.png"
+    },
+    {
+      "assetId": "card_halli_hearts_j_skull_02",
+      "suit": "hearts",
+      "rank": "J",
+      "skullCount": 2,
+      "assetPath": "Assets/Art/Prototype/Cards_0_06/halli_variants/card_halli_hearts_j_skull_02.png"
+    },
+    {
+      "assetId": "card_halli_hearts_j_skull_03",
+      "suit": "hearts",
+      "rank": "J",
+      "skullCount": 3,
+      "assetPath": "Assets/Art/Prototype/Cards_0_06/halli_variants/card_halli_hearts_j_skull_03.png"
+    },
+    {
+      "assetId": "card_halli_hearts_10_skull_01",
+      "suit": "hearts",
+      "rank": "10",
+      "skullCount": 1,
+      "assetPath": "Assets/Art/Prototype/Cards_0_06/halli_variants/card_halli_hearts_10_skull_01.png"
+    },
+    {
+      "assetId": "card_halli_hearts_10_skull_02",
+      "suit": "hearts",
+      "rank": "10",
+      "skullCount": 2,
+      "assetPath": "Assets/Art/Prototype/Cards_0_06/halli_variants/card_halli_hearts_10_skull_02.png"
+    },
+    {
+      "assetId": "card_halli_hearts_10_skull_03",
+      "suit": "hearts",
+      "rank": "10",
+      "skullCount": 3,
+      "assetPath": "Assets/Art/Prototype/Cards_0_06/halli_variants/card_halli_hearts_10_skull_03.png"
+    },
+    {
+      "assetId": "card_halli_hearts_9_skull_01",
+      "suit": "hearts",
+      "rank": "9",
+      "skullCount": 1,
+      "assetPath": "Assets/Art/Prototype/Cards_0_06/halli_variants/card_halli_hearts_9_skull_01.png"
+    },
+    {
+      "assetId": "card_halli_hearts_9_skull_02",
+      "suit": "hearts",
+      "rank": "9",
+      "skullCount": 2,
+      "assetPath": "Assets/Art/Prototype/Cards_0_06/halli_variants/card_halli_hearts_9_skull_02.png"
+    },
+    {
+      "assetId": "card_halli_hearts_9_skull_03",
+      "suit": "hearts",
+      "rank": "9",
+      "skullCount": 3,
+      "assetPath": "Assets/Art/Prototype/Cards_0_06/halli_variants/card_halli_hearts_9_skull_03.png"
+    },
+    {
+      "assetId": "card_halli_hearts_8_skull_01",
+      "suit": "hearts",
+      "rank": "8",
+      "skullCount": 1,
+      "assetPath": "Assets/Art/Prototype/Cards_0_06/halli_variants/card_halli_hearts_8_skull_01.png"
+    },
+    {
+      "assetId": "card_halli_hearts_8_skull_02",
+      "suit": "hearts",
+      "rank": "8",
+      "skullCount": 2,
+      "assetPath": "Assets/Art/Prototype/Cards_0_06/halli_variants/card_halli_hearts_8_skull_02.png"
+    },
+    {
+      "assetId": "card_halli_hearts_8_skull_03",
+      "suit": "hearts",
+      "rank": "8",
+      "skullCount": 3,
+      "assetPath": "Assets/Art/Prototype/Cards_0_06/halli_variants/card_halli_hearts_8_skull_03.png"
+    },
+    {
+      "assetId": "card_halli_hearts_7_skull_01",
+      "suit": "hearts",
+      "rank": "7",
+      "skullCount": 1,
+      "assetPath": "Assets/Art/Prototype/Cards_0_06/halli_variants/card_halli_hearts_7_skull_01.png"
+    },
+    {
+      "assetId": "card_halli_hearts_7_skull_02",
+      "suit": "hearts",
+      "rank": "7",
+      "skullCount": 2,
+      "assetPath": "Assets/Art/Prototype/Cards_0_06/halli_variants/card_halli_hearts_7_skull_02.png"
+    },
+    {
+      "assetId": "card_halli_hearts_7_skull_03",
+      "suit": "hearts",
+      "rank": "7",
+      "skullCount": 3,
+      "assetPath": "Assets/Art/Prototype/Cards_0_06/halli_variants/card_halli_hearts_7_skull_03.png"
+    },
+    {
+      "assetId": "card_halli_hearts_6_skull_01",
+      "suit": "hearts",
+      "rank": "6",
+      "skullCount": 1,
+      "assetPath": "Assets/Art/Prototype/Cards_0_06/halli_variants/card_halli_hearts_6_skull_01.png"
+    },
+    {
+      "assetId": "card_halli_hearts_6_skull_02",
+      "suit": "hearts",
+      "rank": "6",
+      "skullCount": 2,
+      "assetPath": "Assets/Art/Prototype/Cards_0_06/halli_variants/card_halli_hearts_6_skull_02.png"
+    },
+    {
+      "assetId": "card_halli_hearts_6_skull_03",
+      "suit": "hearts",
+      "rank": "6",
+      "skullCount": 3,
+      "assetPath": "Assets/Art/Prototype/Cards_0_06/halli_variants/card_halli_hearts_6_skull_03.png"
+    },
+    {
+      "assetId": "card_halli_hearts_5_skull_01",
+      "suit": "hearts",
+      "rank": "5",
+      "skullCount": 1,
+      "assetPath": "Assets/Art/Prototype/Cards_0_06/halli_variants/card_halli_hearts_5_skull_01.png"
+    },
+    {
+      "assetId": "card_halli_hearts_5_skull_02",
+      "suit": "hearts",
+      "rank": "5",
+      "skullCount": 2,
+      "assetPath": "Assets/Art/Prototype/Cards_0_06/halli_variants/card_halli_hearts_5_skull_02.png"
+    },
+    {
+      "assetId": "card_halli_hearts_5_skull_03",
+      "suit": "hearts",
+      "rank": "5",
+      "skullCount": 3,
+      "assetPath": "Assets/Art/Prototype/Cards_0_06/halli_variants/card_halli_hearts_5_skull_03.png"
+    },
+    {
+      "assetId": "card_halli_hearts_4_skull_01",
+      "suit": "hearts",
+      "rank": "4",
+      "skullCount": 1,
+      "assetPath": "Assets/Art/Prototype/Cards_0_06/halli_variants/card_halli_hearts_4_skull_01.png"
+    },
+    {
+      "assetId": "card_halli_hearts_4_skull_02",
+      "suit": "hearts",
+      "rank": "4",
+      "skullCount": 2,
+      "assetPath": "Assets/Art/Prototype/Cards_0_06/halli_variants/card_halli_hearts_4_skull_02.png"
+    },
+    {
+      "assetId": "card_halli_hearts_4_skull_03",
+      "suit": "hearts",
+      "rank": "4",
+      "skullCount": 3,
+      "assetPath": "Assets/Art/Prototype/Cards_0_06/halli_variants/card_halli_hearts_4_skull_03.png"
+    },
+    {
+      "assetId": "card_halli_hearts_3_skull_01",
+      "suit": "hearts",
+      "rank": "3",
+      "skullCount": 1,
+      "assetPath": "Assets/Art/Prototype/Cards_0_06/halli_variants/card_halli_hearts_3_skull_01.png"
+    },
+    {
+      "assetId": "card_halli_hearts_3_skull_02",
+      "suit": "hearts",
+      "rank": "3",
+      "skullCount": 2,
+      "assetPath": "Assets/Art/Prototype/Cards_0_06/halli_variants/card_halli_hearts_3_skull_02.png"
+    },
+    {
+      "assetId": "card_halli_hearts_3_skull_03",
+      "suit": "hearts",
+      "rank": "3",
+      "skullCount": 3,
+      "assetPath": "Assets/Art/Prototype/Cards_0_06/halli_variants/card_halli_hearts_3_skull_03.png"
+    },
+    {
+      "assetId": "card_halli_hearts_2_skull_01",
+      "suit": "hearts",
+      "rank": "2",
+      "skullCount": 1,
+      "assetPath": "Assets/Art/Prototype/Cards_0_06/halli_variants/card_halli_hearts_2_skull_01.png"
+    },
+    {
+      "assetId": "card_halli_hearts_2_skull_02",
+      "suit": "hearts",
+      "rank": "2",
+      "skullCount": 2,
+      "assetPath": "Assets/Art/Prototype/Cards_0_06/halli_variants/card_halli_hearts_2_skull_02.png"
+    },
+    {
+      "assetId": "card_halli_hearts_2_skull_03",
+      "suit": "hearts",
+      "rank": "2",
+      "skullCount": 3,
+      "assetPath": "Assets/Art/Prototype/Cards_0_06/halli_variants/card_halli_hearts_2_skull_03.png"
+    },
+    {
+      "assetId": "card_halli_clubs_a_skull_01",
+      "suit": "clubs",
+      "rank": "A",
+      "skullCount": 1,
+      "assetPath": "Assets/Art/Prototype/Cards_0_06/halli_variants/card_halli_clubs_a_skull_01.png"
+    },
+    {
+      "assetId": "card_halli_clubs_a_skull_02",
+      "suit": "clubs",
+      "rank": "A",
+      "skullCount": 2,
+      "assetPath": "Assets/Art/Prototype/Cards_0_06/halli_variants/card_halli_clubs_a_skull_02.png"
+    },
+    {
+      "assetId": "card_halli_clubs_a_skull_03",
+      "suit": "clubs",
+      "rank": "A",
+      "skullCount": 3,
+      "assetPath": "Assets/Art/Prototype/Cards_0_06/halli_variants/card_halli_clubs_a_skull_03.png"
+    },
+    {
+      "assetId": "card_halli_clubs_k_skull_01",
+      "suit": "clubs",
+      "rank": "K",
+      "skullCount": 1,
+      "assetPath": "Assets/Art/Prototype/Cards_0_06/halli_variants/card_halli_clubs_k_skull_01.png"
+    },
+    {
+      "assetId": "card_halli_clubs_k_skull_02",
+      "suit": "clubs",
+      "rank": "K",
+      "skullCount": 2,
+      "assetPath": "Assets/Art/Prototype/Cards_0_06/halli_variants/card_halli_clubs_k_skull_02.png"
+    },
+    {
+      "assetId": "card_halli_clubs_k_skull_03",
+      "suit": "clubs",
+      "rank": "K",
+      "skullCount": 3,
+      "assetPath": "Assets/Art/Prototype/Cards_0_06/halli_variants/card_halli_clubs_k_skull_03.png"
+    },
+    {
+      "assetId": "card_halli_clubs_q_skull_01",
+      "suit": "clubs",
+      "rank": "Q",
+      "skullCount": 1,
+      "assetPath": "Assets/Art/Prototype/Cards_0_06/halli_variants/card_halli_clubs_q_skull_01.png"
+    },
+    {
+      "assetId": "card_halli_clubs_q_skull_02",
+      "suit": "clubs",
+      "rank": "Q",
+      "skullCount": 2,
+      "assetPath": "Assets/Art/Prototype/Cards_0_06/halli_variants/card_halli_clubs_q_skull_02.png"
+    },
+    {
+      "assetId": "card_halli_clubs_q_skull_03",
+      "suit": "clubs",
+      "rank": "Q",
+      "skullCount": 3,
+      "assetPath": "Assets/Art/Prototype/Cards_0_06/halli_variants/card_halli_clubs_q_skull_03.png"
+    },
+    {
+      "assetId": "card_halli_clubs_j_skull_01",
+      "suit": "clubs",
+      "rank": "J",
+      "skullCount": 1,
+      "assetPath": "Assets/Art/Prototype/Cards_0_06/halli_variants/card_halli_clubs_j_skull_01.png"
+    },
+    {
+      "assetId": "card_halli_clubs_j_skull_02",
+      "suit": "clubs",
+      "rank": "J",
+      "skullCount": 2,
+      "assetPath": "Assets/Art/Prototype/Cards_0_06/halli_variants/card_halli_clubs_j_skull_02.png"
+    },
+    {
+      "assetId": "card_halli_clubs_j_skull_03",
+      "suit": "clubs",
+      "rank": "J",
+      "skullCount": 3,
+      "assetPath": "Assets/Art/Prototype/Cards_0_06/halli_variants/card_halli_clubs_j_skull_03.png"
+    },
+    {
+      "assetId": "card_halli_clubs_10_skull_01",
+      "suit": "clubs",
+      "rank": "10",
+      "skullCount": 1,
+      "assetPath": "Assets/Art/Prototype/Cards_0_06/halli_variants/card_halli_clubs_10_skull_01.png"
+    },
+    {
+      "assetId": "card_halli_clubs_10_skull_02",
+      "suit": "clubs",
+      "rank": "10",
+      "skullCount": 2,
+      "assetPath": "Assets/Art/Prototype/Cards_0_06/halli_variants/card_halli_clubs_10_skull_02.png"
+    },
+    {
+      "assetId": "card_halli_clubs_10_skull_03",
+      "suit": "clubs",
+      "rank": "10",
+      "skullCount": 3,
+      "assetPath": "Assets/Art/Prototype/Cards_0_06/halli_variants/card_halli_clubs_10_skull_03.png"
+    },
+    {
+      "assetId": "card_halli_clubs_9_skull_01",
+      "suit": "clubs",
+      "rank": "9",
+      "skullCount": 1,
+      "assetPath": "Assets/Art/Prototype/Cards_0_06/halli_variants/card_halli_clubs_9_skull_01.png"
+    },
+    {
+      "assetId": "card_halli_clubs_9_skull_02",
+      "suit": "clubs",
+      "rank": "9",
+      "skullCount": 2,
+      "assetPath": "Assets/Art/Prototype/Cards_0_06/halli_variants/card_halli_clubs_9_skull_02.png"
+    },
+    {
+      "assetId": "card_halli_clubs_9_skull_03",
+      "suit": "clubs",
+      "rank": "9",
+      "skullCount": 3,
+      "assetPath": "Assets/Art/Prototype/Cards_0_06/halli_variants/card_halli_clubs_9_skull_03.png"
+    },
+    {
+      "assetId": "card_halli_clubs_8_skull_01",
+      "suit": "clubs",
+      "rank": "8",
+      "skullCount": 1,
+      "assetPath": "Assets/Art/Prototype/Cards_0_06/halli_variants/card_halli_clubs_8_skull_01.png"
+    },
+    {
+      "assetId": "card_halli_clubs_8_skull_02",
+      "suit": "clubs",
+      "rank": "8",
+      "skullCount": 2,
+      "assetPath": "Assets/Art/Prototype/Cards_0_06/halli_variants/card_halli_clubs_8_skull_02.png"
+    },
+    {
+      "assetId": "card_halli_clubs_8_skull_03",
+      "suit": "clubs",
+      "rank": "8",
+      "skullCount": 3,
+      "assetPath": "Assets/Art/Prototype/Cards_0_06/halli_variants/card_halli_clubs_8_skull_03.png"
+    },
+    {
+      "assetId": "card_halli_clubs_7_skull_01",
+      "suit": "clubs",
+      "rank": "7",
+      "skullCount": 1,
+      "assetPath": "Assets/Art/Prototype/Cards_0_06/halli_variants/card_halli_clubs_7_skull_01.png"
+    },
+    {
+      "assetId": "card_halli_clubs_7_skull_02",
+      "suit": "clubs",
+      "rank": "7",
+      "skullCount": 2,
+      "assetPath": "Assets/Art/Prototype/Cards_0_06/halli_variants/card_halli_clubs_7_skull_02.png"
+    },
+    {
+      "assetId": "card_halli_clubs_7_skull_03",
+      "suit": "clubs",
+      "rank": "7",
+      "skullCount": 3,
+      "assetPath": "Assets/Art/Prototype/Cards_0_06/halli_variants/card_halli_clubs_7_skull_03.png"
+    },
+    {
+      "assetId": "card_halli_clubs_6_skull_01",
+      "suit": "clubs",
+      "rank": "6",
+      "skullCount": 1,
+      "assetPath": "Assets/Art/Prototype/Cards_0_06/halli_variants/card_halli_clubs_6_skull_01.png"
+    },
+    {
+      "assetId": "card_halli_clubs_6_skull_02",
+      "suit": "clubs",
+      "rank": "6",
+      "skullCount": 2,
+      "assetPath": "Assets/Art/Prototype/Cards_0_06/halli_variants/card_halli_clubs_6_skull_02.png"
+    },
+    {
+      "assetId": "card_halli_clubs_6_skull_03",
+      "suit": "clubs",
+      "rank": "6",
+      "skullCount": 3,
+      "assetPath": "Assets/Art/Prototype/Cards_0_06/halli_variants/card_halli_clubs_6_skull_03.png"
+    },
+    {
+      "assetId": "card_halli_clubs_5_skull_01",
+      "suit": "clubs",
+      "rank": "5",
+      "skullCount": 1,
+      "assetPath": "Assets/Art/Prototype/Cards_0_06/halli_variants/card_halli_clubs_5_skull_01.png"
+    },
+    {
+      "assetId": "card_halli_clubs_5_skull_02",
+      "suit": "clubs",
+      "rank": "5",
+      "skullCount": 2,
+      "assetPath": "Assets/Art/Prototype/Cards_0_06/halli_variants/card_halli_clubs_5_skull_02.png"
+    },
+    {
+      "assetId": "card_halli_clubs_5_skull_03",
+      "suit": "clubs",
+      "rank": "5",
+      "skullCount": 3,
+      "assetPath": "Assets/Art/Prototype/Cards_0_06/halli_variants/card_halli_clubs_5_skull_03.png"
+    },
+    {
+      "assetId": "card_halli_clubs_4_skull_01",
+      "suit": "clubs",
+      "rank": "4",
+      "skullCount": 1,
+      "assetPath": "Assets/Art/Prototype/Cards_0_06/halli_variants/card_halli_clubs_4_skull_01.png"
+    },
+    {
+      "assetId": "card_halli_clubs_4_skull_02",
+      "suit": "clubs",
+      "rank": "4",
+      "skullCount": 2,
+      "assetPath": "Assets/Art/Prototype/Cards_0_06/halli_variants/card_halli_clubs_4_skull_02.png"
+    },
+    {
+      "assetId": "card_halli_clubs_4_skull_03",
+      "suit": "clubs",
+      "rank": "4",
+      "skullCount": 3,
+      "assetPath": "Assets/Art/Prototype/Cards_0_06/halli_variants/card_halli_clubs_4_skull_03.png"
+    },
+    {
+      "assetId": "card_halli_clubs_3_skull_01",
+      "suit": "clubs",
+      "rank": "3",
+      "skullCount": 1,
+      "assetPath": "Assets/Art/Prototype/Cards_0_06/halli_variants/card_halli_clubs_3_skull_01.png"
+    },
+    {
+      "assetId": "card_halli_clubs_3_skull_02",
+      "suit": "clubs",
+      "rank": "3",
+      "skullCount": 2,
+      "assetPath": "Assets/Art/Prototype/Cards_0_06/halli_variants/card_halli_clubs_3_skull_02.png"
+    },
+    {
+      "assetId": "card_halli_clubs_3_skull_03",
+      "suit": "clubs",
+      "rank": "3",
+      "skullCount": 3,
+      "assetPath": "Assets/Art/Prototype/Cards_0_06/halli_variants/card_halli_clubs_3_skull_03.png"
+    },
+    {
+      "assetId": "card_halli_clubs_2_skull_01",
+      "suit": "clubs",
+      "rank": "2",
+      "skullCount": 1,
+      "assetPath": "Assets/Art/Prototype/Cards_0_06/halli_variants/card_halli_clubs_2_skull_01.png"
+    },
+    {
+      "assetId": "card_halli_clubs_2_skull_02",
+      "suit": "clubs",
+      "rank": "2",
+      "skullCount": 2,
+      "assetPath": "Assets/Art/Prototype/Cards_0_06/halli_variants/card_halli_clubs_2_skull_02.png"
+    },
+    {
+      "assetId": "card_halli_clubs_2_skull_03",
+      "suit": "clubs",
+      "rank": "2",
+      "skullCount": 3,
+      "assetPath": "Assets/Art/Prototype/Cards_0_06/halli_variants/card_halli_clubs_2_skull_03.png"
+    }
+  ],
+  "pokerCards": [
+    {
+      "assetId": "card_poker_spades_a",
+      "suit": "spades",
+      "rank": "A",
+      "assetPath": "Assets/Art/Prototype/Cards_0_06/poker_variants/card_poker_spades_a.png"
+    },
+    {
+      "assetId": "card_poker_spades_k",
+      "suit": "spades",
+      "rank": "K",
+      "assetPath": "Assets/Art/Prototype/Cards_0_06/poker_variants/card_poker_spades_k.png"
+    },
+    {
+      "assetId": "card_poker_spades_q",
+      "suit": "spades",
+      "rank": "Q",
+      "assetPath": "Assets/Art/Prototype/Cards_0_06/poker_variants/card_poker_spades_q.png"
+    },
+    {
+      "assetId": "card_poker_spades_j",
+      "suit": "spades",
+      "rank": "J",
+      "assetPath": "Assets/Art/Prototype/Cards_0_06/poker_variants/card_poker_spades_j.png"
+    },
+    {
+      "assetId": "card_poker_spades_10",
+      "suit": "spades",
+      "rank": "10",
+      "assetPath": "Assets/Art/Prototype/Cards_0_06/poker_variants/card_poker_spades_10.png"
+    },
+    {
+      "assetId": "card_poker_spades_9",
+      "suit": "spades",
+      "rank": "9",
+      "assetPath": "Assets/Art/Prototype/Cards_0_06/poker_variants/card_poker_spades_9.png"
+    },
+    {
+      "assetId": "card_poker_spades_8",
+      "suit": "spades",
+      "rank": "8",
+      "assetPath": "Assets/Art/Prototype/Cards_0_06/poker_variants/card_poker_spades_8.png"
+    },
+    {
+      "assetId": "card_poker_spades_7",
+      "suit": "spades",
+      "rank": "7",
+      "assetPath": "Assets/Art/Prototype/Cards_0_06/poker_variants/card_poker_spades_7.png"
+    },
+    {
+      "assetId": "card_poker_spades_6",
+      "suit": "spades",
+      "rank": "6",
+      "assetPath": "Assets/Art/Prototype/Cards_0_06/poker_variants/card_poker_spades_6.png"
+    },
+    {
+      "assetId": "card_poker_spades_5",
+      "suit": "spades",
+      "rank": "5",
+      "assetPath": "Assets/Art/Prototype/Cards_0_06/poker_variants/card_poker_spades_5.png"
+    },
+    {
+      "assetId": "card_poker_spades_4",
+      "suit": "spades",
+      "rank": "4",
+      "assetPath": "Assets/Art/Prototype/Cards_0_06/poker_variants/card_poker_spades_4.png"
+    },
+    {
+      "assetId": "card_poker_spades_3",
+      "suit": "spades",
+      "rank": "3",
+      "assetPath": "Assets/Art/Prototype/Cards_0_06/poker_variants/card_poker_spades_3.png"
+    },
+    {
+      "assetId": "card_poker_spades_2",
+      "suit": "spades",
+      "rank": "2",
+      "assetPath": "Assets/Art/Prototype/Cards_0_06/poker_variants/card_poker_spades_2.png"
+    },
+    {
+      "assetId": "card_poker_diamonds_a",
+      "suit": "diamonds",
+      "rank": "A",
+      "assetPath": "Assets/Art/Prototype/Cards_0_06/poker_variants/card_poker_diamonds_a.png"
+    },
+    {
+      "assetId": "card_poker_diamonds_k",
+      "suit": "diamonds",
+      "rank": "K",
+      "assetPath": "Assets/Art/Prototype/Cards_0_06/poker_variants/card_poker_diamonds_k.png"
+    },
+    {
+      "assetId": "card_poker_diamonds_q",
+      "suit": "diamonds",
+      "rank": "Q",
+      "assetPath": "Assets/Art/Prototype/Cards_0_06/poker_variants/card_poker_diamonds_q.png"
+    },
+    {
+      "assetId": "card_poker_diamonds_j",
+      "suit": "diamonds",
+      "rank": "J",
+      "assetPath": "Assets/Art/Prototype/Cards_0_06/poker_variants/card_poker_diamonds_j.png"
+    },
+    {
+      "assetId": "card_poker_diamonds_10",
+      "suit": "diamonds",
+      "rank": "10",
+      "assetPath": "Assets/Art/Prototype/Cards_0_06/poker_variants/card_poker_diamonds_10.png"
+    },
+    {
+      "assetId": "card_poker_diamonds_9",
+      "suit": "diamonds",
+      "rank": "9",
+      "assetPath": "Assets/Art/Prototype/Cards_0_06/poker_variants/card_poker_diamonds_9.png"
+    },
+    {
+      "assetId": "card_poker_diamonds_8",
+      "suit": "diamonds",
+      "rank": "8",
+      "assetPath": "Assets/Art/Prototype/Cards_0_06/poker_variants/card_poker_diamonds_8.png"
+    },
+    {
+      "assetId": "card_poker_diamonds_7",
+      "suit": "diamonds",
+      "rank": "7",
+      "assetPath": "Assets/Art/Prototype/Cards_0_06/poker_variants/card_poker_diamonds_7.png"
+    },
+    {
+      "assetId": "card_poker_diamonds_6",
+      "suit": "diamonds",
+      "rank": "6",
+      "assetPath": "Assets/Art/Prototype/Cards_0_06/poker_variants/card_poker_diamonds_6.png"
+    },
+    {
+      "assetId": "card_poker_diamonds_5",
+      "suit": "diamonds",
+      "rank": "5",
+      "assetPath": "Assets/Art/Prototype/Cards_0_06/poker_variants/card_poker_diamonds_5.png"
+    },
+    {
+      "assetId": "card_poker_diamonds_4",
+      "suit": "diamonds",
+      "rank": "4",
+      "assetPath": "Assets/Art/Prototype/Cards_0_06/poker_variants/card_poker_diamonds_4.png"
+    },
+    {
+      "assetId": "card_poker_diamonds_3",
+      "suit": "diamonds",
+      "rank": "3",
+      "assetPath": "Assets/Art/Prototype/Cards_0_06/poker_variants/card_poker_diamonds_3.png"
+    },
+    {
+      "assetId": "card_poker_diamonds_2",
+      "suit": "diamonds",
+      "rank": "2",
+      "assetPath": "Assets/Art/Prototype/Cards_0_06/poker_variants/card_poker_diamonds_2.png"
+    },
+    {
+      "assetId": "card_poker_hearts_a",
+      "suit": "hearts",
+      "rank": "A",
+      "assetPath": "Assets/Art/Prototype/Cards_0_06/poker_variants/card_poker_hearts_a.png"
+    },
+    {
+      "assetId": "card_poker_hearts_k",
+      "suit": "hearts",
+      "rank": "K",
+      "assetPath": "Assets/Art/Prototype/Cards_0_06/poker_variants/card_poker_hearts_k.png"
+    },
+    {
+      "assetId": "card_poker_hearts_q",
+      "suit": "hearts",
+      "rank": "Q",
+      "assetPath": "Assets/Art/Prototype/Cards_0_06/poker_variants/card_poker_hearts_q.png"
+    },
+    {
+      "assetId": "card_poker_hearts_j",
+      "suit": "hearts",
+      "rank": "J",
+      "assetPath": "Assets/Art/Prototype/Cards_0_06/poker_variants/card_poker_hearts_j.png"
+    },
+    {
+      "assetId": "card_poker_hearts_10",
+      "suit": "hearts",
+      "rank": "10",
+      "assetPath": "Assets/Art/Prototype/Cards_0_06/poker_variants/card_poker_hearts_10.png"
+    },
+    {
+      "assetId": "card_poker_hearts_9",
+      "suit": "hearts",
+      "rank": "9",
+      "assetPath": "Assets/Art/Prototype/Cards_0_06/poker_variants/card_poker_hearts_9.png"
+    },
+    {
+      "assetId": "card_poker_hearts_8",
+      "suit": "hearts",
+      "rank": "8",
+      "assetPath": "Assets/Art/Prototype/Cards_0_06/poker_variants/card_poker_hearts_8.png"
+    },
+    {
+      "assetId": "card_poker_hearts_7",
+      "suit": "hearts",
+      "rank": "7",
+      "assetPath": "Assets/Art/Prototype/Cards_0_06/poker_variants/card_poker_hearts_7.png"
+    },
+    {
+      "assetId": "card_poker_hearts_6",
+      "suit": "hearts",
+      "rank": "6",
+      "assetPath": "Assets/Art/Prototype/Cards_0_06/poker_variants/card_poker_hearts_6.png"
+    },
+    {
+      "assetId": "card_poker_hearts_5",
+      "suit": "hearts",
+      "rank": "5",
+      "assetPath": "Assets/Art/Prototype/Cards_0_06/poker_variants/card_poker_hearts_5.png"
+    },
+    {
+      "assetId": "card_poker_hearts_4",
+      "suit": "hearts",
+      "rank": "4",
+      "assetPath": "Assets/Art/Prototype/Cards_0_06/poker_variants/card_poker_hearts_4.png"
+    },
+    {
+      "assetId": "card_poker_hearts_3",
+      "suit": "hearts",
+      "rank": "3",
+      "assetPath": "Assets/Art/Prototype/Cards_0_06/poker_variants/card_poker_hearts_3.png"
+    },
+    {
+      "assetId": "card_poker_hearts_2",
+      "suit": "hearts",
+      "rank": "2",
+      "assetPath": "Assets/Art/Prototype/Cards_0_06/poker_variants/card_poker_hearts_2.png"
+    },
+    {
+      "assetId": "card_poker_clubs_a",
+      "suit": "clubs",
+      "rank": "A",
+      "assetPath": "Assets/Art/Prototype/Cards_0_06/poker_variants/card_poker_clubs_a.png"
+    },
+    {
+      "assetId": "card_poker_clubs_k",
+      "suit": "clubs",
+      "rank": "K",
+      "assetPath": "Assets/Art/Prototype/Cards_0_06/poker_variants/card_poker_clubs_k.png"
+    },
+    {
+      "assetId": "card_poker_clubs_q",
+      "suit": "clubs",
+      "rank": "Q",
+      "assetPath": "Assets/Art/Prototype/Cards_0_06/poker_variants/card_poker_clubs_q.png"
+    },
+    {
+      "assetId": "card_poker_clubs_j",
+      "suit": "clubs",
+      "rank": "J",
+      "assetPath": "Assets/Art/Prototype/Cards_0_06/poker_variants/card_poker_clubs_j.png"
+    },
+    {
+      "assetId": "card_poker_clubs_10",
+      "suit": "clubs",
+      "rank": "10",
+      "assetPath": "Assets/Art/Prototype/Cards_0_06/poker_variants/card_poker_clubs_10.png"
+    },
+    {
+      "assetId": "card_poker_clubs_9",
+      "suit": "clubs",
+      "rank": "9",
+      "assetPath": "Assets/Art/Prototype/Cards_0_06/poker_variants/card_poker_clubs_9.png"
+    },
+    {
+      "assetId": "card_poker_clubs_8",
+      "suit": "clubs",
+      "rank": "8",
+      "assetPath": "Assets/Art/Prototype/Cards_0_06/poker_variants/card_poker_clubs_8.png"
+    },
+    {
+      "assetId": "card_poker_clubs_7",
+      "suit": "clubs",
+      "rank": "7",
+      "assetPath": "Assets/Art/Prototype/Cards_0_06/poker_variants/card_poker_clubs_7.png"
+    },
+    {
+      "assetId": "card_poker_clubs_6",
+      "suit": "clubs",
+      "rank": "6",
+      "assetPath": "Assets/Art/Prototype/Cards_0_06/poker_variants/card_poker_clubs_6.png"
+    },
+    {
+      "assetId": "card_poker_clubs_5",
+      "suit": "clubs",
+      "rank": "5",
+      "assetPath": "Assets/Art/Prototype/Cards_0_06/poker_variants/card_poker_clubs_5.png"
+    },
+    {
+      "assetId": "card_poker_clubs_4",
+      "suit": "clubs",
+      "rank": "4",
+      "assetPath": "Assets/Art/Prototype/Cards_0_06/poker_variants/card_poker_clubs_4.png"
+    },
+    {
+      "assetId": "card_poker_clubs_3",
+      "suit": "clubs",
+      "rank": "3",
+      "assetPath": "Assets/Art/Prototype/Cards_0_06/poker_variants/card_poker_clubs_3.png"
+    },
+    {
+      "assetId": "card_poker_clubs_2",
+      "suit": "clubs",
+      "rank": "2",
+      "assetPath": "Assets/Art/Prototype/Cards_0_06/poker_variants/card_poker_clubs_2.png"
+    }
+  ]
+}
