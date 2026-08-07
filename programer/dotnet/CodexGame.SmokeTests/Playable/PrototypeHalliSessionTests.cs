@@ -1,3 +1,5 @@
+using System;
+using CodexGame.Application.Distribution;
 using CodexGame.Application.Playable;
 using CodexGame.Core.Cards;
 using CodexGame.Core.Halli;
@@ -18,6 +20,9 @@ namespace CodexGame.SmokeTests.Playable
       tests.Check(start.FirstPublicCard.HasValue, "A new prototype session must open the first public card.");
       tests.Check(start.RemainingDeckCards == 51, "The first public card must leave 51 deck cards.");
       tests.Check(start.WinTarget == 3, "The first combat round must target three Halli wins.");
+      tests.CheckThrows<InvalidOperationException>(
+        () => session.BeginPrivateCardDistribution(zero),
+        "Private-card distribution must be unavailable before the Halli stage finishes.");
 
       var secondRound = new PrototypeHalliSession();
       secondRound.StartNew(zero, 11, 2);
@@ -55,6 +60,46 @@ namespace CodexGame.SmokeTests.Playable
       var completed = completionSession.GetSnapshot(new GameTimestamp(now));
       tests.Check(completed.Phase == PrototypeSessionPhase.Finished, "The playable Halli slice must reach a terminal state.");
       tests.Check(completed.FlipCount <= 25, "The playable Halli slice must never exceed 25 flips.");
+      CheckDistributionBridge(tests, completionSession, new GameTimestamp(now));
+    }
+
+    private static void CheckDistributionBridge(
+      TestHarness tests,
+      PrototypeHalliSession halliSession,
+      GameTimestamp now)
+    {
+      var selection = halliSession.BeginPrivateCardDistribution(now);
+      var snapshot = selection.GetSnapshot(now);
+
+      if (snapshot.Phase == PrivateCardSelectionPhase.AwaitingSelection)
+      {
+        for (var index = 0; index < snapshot.RequiredSelectionCount; index++)
+        {
+          tests.Check(
+            selection.Toggle(snapshot.WinnerCandidates[index].Id),
+            "The Halli winner's candidate cards must be selectable through the distribution bridge.");
+        }
+
+        tests.Check(selection.TryConfirm(), "A complete winner selection must confirm through the bridge.");
+        snapshot = selection.GetSnapshot(now);
+      }
+
+      tests.Check(
+        snapshot.Phase == PrivateCardSelectionPhase.Completed && snapshot.Result != null,
+        "A completed Halli stage must produce a private-card distribution result.");
+
+      if (snapshot.Result == null)
+      {
+        return;
+      }
+
+      var distributedCount = snapshot.Result.PlayerPrivateCards.Count
+        + snapshot.Result.AiPrivateCards.Count
+        + 1
+        + snapshot.Result.RemainingCandidates.Count;
+      tests.Check(
+        distributedCount == CardId.CardCount - 1,
+        "The Halli-to-distribution bridge must preserve all 51 cards except the first public card.");
     }
 
     private static void CheckAcquisitionReview(TestHarness tests, GameTimestamp zero)

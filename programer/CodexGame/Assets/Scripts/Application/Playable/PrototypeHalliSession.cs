@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using CodexGame.Application.Distribution;
 using CodexGame.Core.Cards;
 using CodexGame.Core.Halli;
 using CodexGame.Core.Shared;
@@ -159,6 +160,38 @@ namespace CodexGame.Application.Playable
         _lastAcquirer,
         _lastAcquiredCards,
         _endReason);
+    }
+
+    public PrivateCardSelectionSession BeginPrivateCardDistribution(GameTimestamp now)
+    {
+      if (Phase != PrototypeSessionPhase.Finished)
+      {
+        throw new InvalidOperationException(
+          "Private-card distribution can begin only after the Halli stage finishes.");
+      }
+
+      var winner = _endReason == HalliStageEndReason.PlayerTargetReached
+        ? HalliStageWinner.Player
+        : _endReason == HalliStageEndReason.AiTargetReached
+          ? HalliStageWinner.Ai
+          : HalliStageWinner.None;
+      var otherCandidates = new List<Card>();
+      otherCandidates.AddRange(_ledger.GetCards(CardZone.UnacquiredPool));
+      otherCandidates.AddRange(_ledger.GetCards(CardZone.LeftPile));
+      otherCandidates.AddRange(_ledger.GetCards(CardZone.RightPile));
+      otherCandidates.AddRange(_ledger.GetCards(CardZone.Deck));
+      otherCandidates.AddRange(_ledger.GetCards(CardZone.Reserved));
+
+      var selection = new PrivateCardSelectionSession();
+      selection.Begin(
+        _ledger.GetCards(CardZone.PlayerAcquired),
+        _ledger.GetCards(CardZone.AiAcquired),
+        Array.AsReadOnly(otherCandidates.ToArray()),
+        winner,
+        _combatRoundNumber,
+        _combatRoundSeed,
+        now);
+      return selection;
     }
 
     private void Flip(GameTimestamp now)
