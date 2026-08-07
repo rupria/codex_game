@@ -1,8 +1,10 @@
+using CodexGame.Core.Cards;
+
 namespace CodexGame.Core.Halli
 {
   public static class SkullAcquisitionResolver
   {
-    public static AcquisitionKind Resolve(HalliCard? leftCard, HalliCard? rightCard)
+    public static AcquisitionKind Resolve(Card? leftCard, Card? rightCard)
     {
       if (!leftCard.HasValue && !rightCard.HasValue)
       {
