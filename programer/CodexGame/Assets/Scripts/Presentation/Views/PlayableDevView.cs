@@ -19,6 +19,7 @@ namespace CodexGame.Presentation.Views
     private HalliUiArtSet _halliUiArtSet;
 
     private readonly HalliDevPanel _halliPanel = new HalliDevPanel();
+    private readonly HalliTableLightOverlay _tableLightOverlay = new HalliTableLightOverlay();
     private readonly PrivateSelectionDevPanel _selectionPanel = new PrivateSelectionDevPanel();
     private readonly PokerDevPanel _pokerPanel = new PokerDevPanel();
     private PlayableGameSnapshot _snapshot;
@@ -128,6 +129,7 @@ namespace CodexGame.Presentation.Views
           ScaleMode.StretchToFill,
           true);
       }
+      _tableLightOverlay.Draw(Time.unscaledTime, _snapshot.Phase == PlayableGamePhase.Intro ? 0.65f : 1f);
 
       if (_snapshot.Phase == PlayableGamePhase.Intro)
       {

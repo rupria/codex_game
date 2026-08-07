@@ -16,6 +16,7 @@ namespace CodexGame.Editor
     public const string ScenePath = "Assets/Scenes/PlayableDev.unity";
     public const string BoardArtPath = "Assets/Art/Prototype/Board/board_layout_wip.png";
     private const string UiArtRoot = "Assets/Art/Prototype/UI/";
+    private const string HalliUiArtRoot = UiArtRoot + "Halli_0_1_0/";
 
     [MenuItem("Codex Game/Playable Dev/Create Scene")]
     public static void CreateScene()
@@ -45,8 +46,16 @@ namespace CodexGame.Editor
         LoadTexture(UiArtRoot + "bell_hover.png"),
         LoadTexture(UiArtRoot + "bell_pressed.png"),
         LoadTexture(UiArtRoot + "bell_wrong.png"),
+        LoadTexture(HalliUiArtRoot + "bell_correct.png"),
+        LoadTexture(HalliUiArtRoot + "bell_disabled.png"),
         LoadTexture(UiArtRoot + "public_card_locked_slot.png"),
-        LoadTexture(UiArtRoot + "flip_timer.png"));
+        LoadTexture(UiArtRoot + "flip_timer.png"),
+        LoadTexture(HalliUiArtRoot + "flip_deck_idle.png"),
+        LoadTexture(HalliUiArtRoot + "flip_deck_hover.png"),
+        LoadTexture(HalliUiArtRoot + "flip_deck_pressed.png"),
+        LoadTexture(HalliUiArtRoot + "flip_deck_disabled.png"),
+        LoadTexture(HalliUiArtRoot + "player_acquired_tray.png"),
+        LoadTexture(HalliUiArtRoot + "ai_acquired_status_panel.png"));
       view.Configure(boardTexture, cardArtSet, halliUiArtSet);
       gameObject.AddComponent<PlayableDevGameController>();
 

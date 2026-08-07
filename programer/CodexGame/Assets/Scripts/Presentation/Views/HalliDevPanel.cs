@@ -45,8 +45,8 @@ namespace CodexGame.Presentation.Views
       DrawPublic(snapshot, styles, cards, uiArt);
       DrawPiles(snapshot, cards);
       DrawStatus(snapshot, styles);
-      DrawPlayerTray(snapshot, styles, cards);
-      DrawAiTray(snapshot, styles, cards);
+      DrawPlayerTray(snapshot, styles, cards, uiArt);
+      DrawAiTray(snapshot, styles, cards, uiArt);
       DrawAiStatus(snapshot, styles);
 
       if (snapshot.Phase == PrototypeSessionPhase.WrongBellRewardSelection)
@@ -203,9 +203,10 @@ namespace CodexGame.Presentation.Views
     private static void DrawPlayerTray(
       PrototypeHalliSnapshot snapshot,
       PlayableDevStyles styles,
-      PlayableCardRenderer cards)
+      PlayableCardRenderer cards,
+      HalliUiArtSet uiArt)
     {
-      GUI.Box(HalliBoardLayout.PlayerTray, GUIContent.none);
+      DrawPanelTexture(HalliBoardLayout.PlayerTray, uiArt?.PlayerAcquiredTray);
       GUI.Label(new Rect(44f, 396f, 268f, 22f), "PLAYER ACQUIRED  " + snapshot.PlayerAcquiredCount, styles.Small);
       var visible = Math.Min(3, snapshot.PlayerAcquiredCards.Count);
       var start = Math.Max(0, snapshot.PlayerAcquiredCards.Count - visible);
@@ -224,9 +225,10 @@ namespace CodexGame.Presentation.Views
     private static void DrawAiTray(
       PrototypeHalliSnapshot snapshot,
       PlayableDevStyles styles,
-      PlayableCardRenderer cards)
+      PlayableCardRenderer cards,
+      HalliUiArtSet uiArt)
     {
-      GUI.Box(HalliBoardLayout.AiTray, GUIContent.none);
+      DrawPanelTexture(HalliBoardLayout.AiTray, uiArt?.AiAcquiredStatusPanel);
       GUI.Label(new Rect(712f, 396f, 204f, 22f), "AI ACQUIRED  " + snapshot.AiAcquiredCount, styles.Small);
       if (snapshot.LastAcquirer == PrototypeAcquirer.Ai
         && snapshot.LastAcquiredCards.Count > 0
@@ -284,21 +286,50 @@ namespace CodexGame.Presentation.Views
         styles)) rightBell();
 
       var canFlip = phaseAllowsInput && snapshot.CanFlip;
-      var previousColor = GUI.color;
-      if (!canFlip) GUI.color = new Color(0.5f, 0.52f, 0.56f, 0.7f);
-      for (var index = 2; index >= 0; index--)
+      var flipHovered = HalliBoardLayout.FlipHit.Contains(Event.current.mousePosition);
+      var flipPressed = flipHovered && Input.GetMouseButton(0);
+      var flipTexture = SelectFlipDeckTexture(canFlip, flipHovered, flipPressed, uiArt);
+      if (flipTexture != null)
       {
-        cards.DrawBackAt(new Rect(
-          HalliBoardLayout.FlipDeck.x + index * 3f,
-          HalliBoardLayout.FlipDeck.y - index * 3f,
-          HalliBoardLayout.FlipDeck.width,
-          HalliBoardLayout.FlipDeck.height));
+        GUI.DrawTexture(HalliBoardLayout.FlipDeck, flipTexture, ScaleMode.ScaleToFit, true);
       }
-      GUI.color = previousColor;
+      else
+      {
+        var previousColor = GUI.color;
+        if (!canFlip) GUI.color = new Color(0.5f, 0.52f, 0.56f, 0.7f);
+        for (var index = 2; index >= 0; index--)
+        {
+          cards.DrawBackAt(new Rect(
+            HalliBoardLayout.FlipDeck.x + index * 3f,
+            HalliBoardLayout.FlipDeck.y - index * 3f,
+            HalliBoardLayout.FlipDeck.width,
+            HalliBoardLayout.FlipDeck.height));
+        }
+        GUI.color = previousColor;
+      }
       GUI.Label(new Rect(410f, 462f, 140f, 24f), canFlip ? "W  DISTRIBUTE 4" : "W  LOCKED", styles.Heading);
       GUI.enabled = canFlip;
       if (GUI.Button(HalliBoardLayout.FlipHit, GUIContent.none, GUIStyle.none)) advance();
       GUI.enabled = true;
+    }
+
+    private static Texture2D SelectFlipDeckTexture(
+      bool enabled,
+      bool hovered,
+      bool pressed,
+      HalliUiArtSet uiArt)
+    {
+      if (uiArt == null) return null;
+      if (!enabled) return uiArt.FlipDeckDisabled;
+      if (pressed) return uiArt.FlipDeckPressed;
+      if (hovered) return uiArt.FlipDeckHover;
+      return uiArt.FlipDeckIdle;
+    }
+
+    private static void DrawPanelTexture(Rect rect, Texture2D texture)
+    {
+      if (texture != null) GUI.DrawTexture(rect, texture, ScaleMode.StretchToFill, true);
+      else GUI.Box(rect, GUIContent.none);
     }
 
     private void DrawWrongBellRewardSelection(

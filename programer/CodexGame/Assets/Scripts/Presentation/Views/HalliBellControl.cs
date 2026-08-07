@@ -44,7 +44,8 @@ namespace CodexGame.Presentation.Views
     {
       if (art == null) return null;
       if (feedback == PrototypeBellFeedback.Wrong && art.BellWrong != null) return art.BellWrong;
-      if (feedback == PrototypeBellFeedback.Correct && art.BellPressed != null) return art.BellPressed;
+      if (feedback == PrototypeBellFeedback.Correct && art.BellCorrect != null) return art.BellCorrect;
+      if (!enabled && art.BellDisabled != null) return art.BellDisabled;
       if (pressed && art.BellPressed != null) return art.BellPressed;
       if (enabled && hovered && art.BellHover != null) return art.BellHover;
       return art.BellIdle;
