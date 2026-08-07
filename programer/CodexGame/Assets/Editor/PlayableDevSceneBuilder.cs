@@ -56,6 +56,30 @@ namespace CodexGame.Editor
     [MenuItem("Codex Game/Playable Dev/Build WebGL Development")]
     public static void BuildWebGlDevelopment()
     {
+      BuildWebGl(BuildOptions.Development);
+    }
+
+    [MenuItem("Codex Game/Playable Dev/Build WebGL Cloudflare Preview")]
+    public static void BuildWebGlCloudflarePreview()
+    {
+      var previousCompressionFormat = PlayerSettings.WebGL.compressionFormat;
+      var previousDecompressionFallback = PlayerSettings.WebGL.decompressionFallback;
+
+      try
+      {
+        PlayerSettings.WebGL.compressionFormat = WebGLCompressionFormat.Brotli;
+        PlayerSettings.WebGL.decompressionFallback = true;
+        BuildWebGl(BuildOptions.None);
+      }
+      finally
+      {
+        PlayerSettings.WebGL.compressionFormat = previousCompressionFormat;
+        PlayerSettings.WebGL.decompressionFallback = previousDecompressionFallback;
+      }
+    }
+
+    private static void BuildWebGl(BuildOptions buildOptions)
+    {
       CreateScene();
       var output = Environment.GetEnvironmentVariable("CODEX_GAME_WEBGL_OUTPUT");
 
@@ -70,7 +94,7 @@ namespace CodexGame.Editor
         scenes = new[] { ScenePath },
         locationPathName = output,
         target = BuildTarget.WebGL,
-        options = BuildOptions.Development
+        options = buildOptions
       });
 
       if (report.summary.result != BuildResult.Succeeded)
