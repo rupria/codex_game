@@ -110,13 +110,17 @@ namespace CodexGame.Application.Playable
         case PrototypeSessionPhase.ReadyToFlip:
           if (now.Microseconds >= _readyDeadline.Microseconds)
           {
-            BeginReady(now, "30 second timeout. Both sides lose; the field stays.");
+            ResolvePlayerFlipTimeout(now);
           }
           break;
         case PrototypeSessionPhase.BellOpen:
           if (_aiBellAt.HasValue && now.Microseconds >= _aiBellAt.Value.Microseconds)
           {
             ResolveAiBell(now);
+          }
+          else if (now.Microseconds >= _readyDeadline.Microseconds)
+          {
+            ResolvePlayerFlipTimeout(now);
           }
           break;
         case PrototypeSessionPhase.Review:
@@ -134,7 +138,8 @@ namespace CodexGame.Application.Playable
       var right = _field == null ? EmptyCards : _field.GetExposedCards(PileSide.Right);
       var remaining = 0L;
 
-      if (Phase == PrototypeSessionPhase.ReadyToFlip)
+      if (Phase == PrototypeSessionPhase.ReadyToFlip
+        || Phase == PrototypeSessionPhase.BellOpen)
       {
         remaining = Math.Max(0, _readyDeadline.Microseconds - now.Microseconds);
       }
@@ -211,6 +216,7 @@ namespace CodexGame.Application.Playable
       ExposeFromDeck(PileSide.Left);
       ExposeFromDeck(PileSide.Right);
       _flipCount++;
+      ResetFlipDeadline(now);
 
       var leftValid = IsAcquirable(Evaluate(PileSide.Left));
       var rightValid = IsAcquirable(Evaluate(PileSide.Right));
@@ -294,7 +300,8 @@ namespace CodexGame.Application.Playable
         return;
       }
 
-      EnterReview(now, "Wrong bell. Both sides lose this Halli round; both piles stay.");
+      _aiWins++;
+      EnterReview(now, "Wrong bell. Player loses this Halli round; AI gains one Halli win.");
     }
 
     private void ResolveAiBell(GameTimestamp now)
@@ -382,8 +389,31 @@ namespace CodexGame.Application.Playable
     {
       ClearLastAcquisition();
       Phase = PrototypeSessionPhase.ReadyToFlip;
-      _readyDeadline = Add(now, GameRules.CardFlipTimeoutMicroseconds);
+      ResetFlipDeadline(now);
       _statusMessage = message;
+    }
+
+    private void ResolvePlayerFlipTimeout(GameTimestamp now)
+    {
+      CloseBellWindow();
+      ClearLastAcquisition();
+      _aiWins++;
+      var endReason = ResolveEndReason();
+
+      if (endReason != HalliStageEndReason.None)
+      {
+        Finish(endReason);
+        return;
+      }
+
+      Phase = PrototypeSessionPhase.ReadyToFlip;
+      ResetFlipDeadline(now);
+      _statusMessage = "30 second flip timeout. Player loses; AI gains one Halli win. The field stays.";
+    }
+
+    private void ResetFlipDeadline(GameTimestamp now)
+    {
+      _readyDeadline = Add(now, GameRules.CardFlipTimeoutMicroseconds);
     }
 
     private void CloseBellWindow()

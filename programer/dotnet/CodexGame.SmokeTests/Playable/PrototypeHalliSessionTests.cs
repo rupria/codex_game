@@ -42,10 +42,21 @@ namespace CodexGame.SmokeTests.Playable
       timeoutSession.Tick(new GameTimestamp(GameRules.CardFlipTimeoutMicroseconds));
       var timeout = timeoutSession.GetSnapshot(new GameTimestamp(GameRules.CardFlipTimeoutMicroseconds));
       tests.Check(timeout.Phase == PrototypeSessionPhase.ReadyToFlip, "A 30-second flip timeout must immediately reopen flip input.");
-      tests.Check(timeout.PlayerWins == 0 && timeout.AiWins == 0, "A flip timeout must not grant a win.");
+      tests.Check(timeout.PlayerWins == 0 && timeout.AiWins == 1, "A player flip timeout must record the loss as one AI Halli win.");
       tests.Check(timeout.RemainingMicroseconds == GameRules.CardFlipTimeoutMicroseconds, "A flip timeout must restart the 30-second deadline.");
 
+      var decidingTimeout = new PrototypeHalliSession();
+      decidingTimeout.StartNew(zero, 8, 3);
+      decidingTimeout.Tick(new GameTimestamp(GameRules.CardFlipTimeoutMicroseconds));
+      var decided = decidingTimeout.GetSnapshot(new GameTimestamp(GameRules.CardFlipTimeoutMicroseconds));
+      tests.Check(
+        decided.Phase == PrototypeSessionPhase.Finished
+          && decided.AiWins == 1
+          && decided.EndReason == HalliStageEndReason.AiTargetReached,
+        "A timeout win that reaches the Halli target must finish the stage immediately.");
+
       CheckAcquisitionReview(tests, zero);
+      CheckFlipResetsTimerDuringBellOpportunity(tests, zero);
       CheckWrongBellWithoutValidPile(tests, zero);
       CheckWrongPileAwardsOpponent(tests, zero);
 
@@ -141,6 +152,52 @@ namespace CodexGame.SmokeTests.Playable
       tests.Check(false, "At least one deterministic seed must open a bell opportunity on the first flip.");
     }
 
+    private static void CheckFlipResetsTimerDuringBellOpportunity(
+      TestHarness tests,
+      GameTimestamp zero)
+    {
+      for (var seed = 1L; seed <= 1000L; seed++)
+      {
+        var session = new PrototypeHalliSession();
+        var flipTime = new GameTimestamp(5_000_000);
+        session.StartNew(zero, seed);
+        session.Advance(flipTime);
+        var bell = session.GetSnapshot(flipTime);
+
+        if (bell.Phase != PrototypeSessionPhase.BellOpen)
+        {
+          continue;
+        }
+
+        tests.Check(
+          bell.RemainingMicroseconds == GameRules.CardFlipTimeoutMicroseconds,
+          "Every completed flip must restart the 30-second next-flip timer even while a bell opportunity is open.");
+        var later = session.GetSnapshot(new GameTimestamp(5_000_000 + 1_000_000));
+        tests.Check(
+          later.RemainingMicroseconds == GameRules.CardFlipTimeoutMicroseconds - 1_000_000,
+          "The next-flip timer must continue counting down during an unlimited bell opportunity.");
+
+        var deadline = new GameTimestamp(5_000_000 + GameRules.CardFlipTimeoutMicroseconds);
+        session.Tick(deadline);
+        var timedOut = session.GetSnapshot(deadline);
+        if (timedOut.Phase != PrototypeSessionPhase.ReadyToFlip)
+        {
+          // This seed scheduled an AI bell before the deadline. Try an AI-miss seed.
+          continue;
+        }
+
+        tests.Check(
+          timedOut.AiWins == bell.AiWins + 1,
+          "A next-flip timeout during a bell opportunity must record one AI Halli win.");
+        tests.Check(
+          timedOut.RemainingMicroseconds == GameRules.CardFlipTimeoutMicroseconds,
+          "A bell-open timeout must reopen the next full 30-second flip window.");
+        return;
+      }
+
+      tests.Check(false, "At least one deterministic AI-miss seed must open a bell opportunity for timer validation.");
+    }
+
     private static void CheckWrongBellWithoutValidPile(TestHarness tests, GameTimestamp zero)
     {
       for (var seed = 1L; seed <= 1000L; seed++)
@@ -162,7 +219,7 @@ namespace CodexGame.SmokeTests.Playable
         var review = session.GetSnapshot(flipTime);
 
         tests.Check(review.Phase == PrototypeSessionPhase.Review, "A wrong bell without a valid pile must enter review.");
-        tests.Check(review.PlayerWins == 0 && review.AiWins == 0, "A wrong bell without a valid pile must grant no Halli win.");
+        tests.Check(review.PlayerWins == 0 && review.AiWins == 1, "A wrong bell player loss must record one AI Halli win.");
         tests.Check(review.LastAcquirer == PrototypeAcquirer.None, "A wrong bell without a valid pile must acquire no cards.");
         tests.Check(
           review.LeftPile.Count == ready.LeftPile.Count && review.RightPile.Count == ready.RightPile.Count,
