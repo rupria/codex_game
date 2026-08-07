@@ -12,6 +12,7 @@ namespace CodexGame.Presentation.Views
       int focusedIndex,
       PlayableDevStyles styles,
       PlayableCardRenderer cards,
+      Action<int> focus,
       Action<CardId> toggle,
       Action confirm)
     {
@@ -34,7 +35,11 @@ namespace CodexGame.Presentation.Views
           var selected = Contains(snapshot.SelectedCards, card.Id);
           GUILayout.BeginVertical(GUILayout.Width(105f));
           GUILayout.Label(index == focusedIndex ? "FOCUS" : " ", styles.Small);
-          cards.Draw(card, 96f, 130f, selected);
+          var cardRect = cards.Draw(card, 96f, 130f, selected);
+          if (cardRect.Contains(Event.current.mousePosition) && index != focusedIndex)
+          {
+            focus(index);
+          }
           if (GUILayout.Button(selected ? "REMOVE" : "SELECT", GUILayout.Width(96f), GUILayout.Height(24f)))
           {
             toggle(card.Id);

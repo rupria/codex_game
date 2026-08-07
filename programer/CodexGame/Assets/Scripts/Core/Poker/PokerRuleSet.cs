@@ -16,7 +16,6 @@ namespace CodexGame.Core.Poker
 
     public AceStraightMode AceStraightMode { get; }
 
-    // The 0.06 design leaves A-2-3-4-5 unresolved. The dev build uses high-A only.
-    public static PokerRuleSet Development { get; } = new PokerRuleSet(AceStraightMode.HighOnly);
+    public static PokerRuleSet Development { get; } = new PokerRuleSet(AceStraightMode.HighAndLow);
   }
 }

@@ -22,16 +22,37 @@ namespace CodexGame.Presentation.Views
       DrawAi(snapshot, styles, cards);
       GUILayout.EndHorizontal();
 
-      if (snapshot.Phase == PokerRoundPhase.AwaitingPrediction)
+      if (snapshot.Phase == PokerRoundPhase.ItemWindow)
       {
         GUILayout.Label(
-          "AI private cards are concealed. Predict the player result before reveal.",
+          "ITEM WINDOW: " + snapshot.AvailableItemCount
+          + " stored reward(s). Item effects are pending design; skip keeps them stored.",
+          styles.Status,
+          GUILayout.Height(48f));
+        if (GUILayout.Button("LOCK HAND / SKIP ITEM  [ENTER / SPACE]", GUILayout.Height(55f))) advance();
+        return;
+      }
+
+      if (snapshot.Phase == PokerRoundPhase.AwaitingPrediction)
+      {
+        var seconds = Math.Ceiling(snapshot.RemainingMicroseconds / 1_000_000d);
+        GUILayout.Label(
+          "HAND LOCKED. AI cards are concealed. Predict within " + seconds.ToString("0") + "s.",
           styles.Status,
           GUILayout.Height(48f));
         GUILayout.BeginHorizontal();
         if (GUILayout.Button("PLAYER WINS  [1]", GUILayout.Height(55f))) predict(PredictionChoice.PlayerWins);
         if (GUILayout.Button("PLAYER LOSES  [2]", GUILayout.Height(55f))) predict(PredictionChoice.PlayerLoses);
         GUILayout.EndHorizontal();
+        return;
+      }
+
+      if (snapshot.Phase == PokerRoundPhase.ResultPending)
+      {
+        GUILayout.Label(
+          "Calculating poker result... announcement within one second.",
+          styles.Status,
+          GUILayout.Height(48f));
         return;
       }
 
@@ -86,7 +107,9 @@ namespace CodexGame.Presentation.Views
       if (snapshot.Result == null) return;
       var comparison = snapshot.Result.Comparison;
       var winner = comparison.Winner == PokerWinner.Player ? "PLAYER" : "AI";
-      var prediction = snapshot.Result.Prediction.IsCorrect ? "CORRECT" : "WRONG";
+      var prediction = snapshot.Result.Prediction.Choice == PredictionChoice.Skipped
+        ? "SKIPPED / NO REWARD"
+        : snapshot.Result.Prediction.IsCorrect ? "CORRECT" : "WRONG";
       GUILayout.Label(
         "POKER WINNER: " + winner
         + "  |  PLAYER " + CategoryName(comparison.PlayerValue.Category)
@@ -109,6 +132,7 @@ namespace CodexGame.Presentation.Views
         case PokerHandCategory.FullHouse: return "FULL HOUSE";
         case PokerHandCategory.FourOfAKind: return "FOUR KIND";
         case PokerHandCategory.StraightFlush: return "STRAIGHT FLUSH";
+        case PokerHandCategory.RoyalStraightFlush: return "ROYAL STRAIGHT FLUSH";
         default: return "HIGH CARD";
       }
     }

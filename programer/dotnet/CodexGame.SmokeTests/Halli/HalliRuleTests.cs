@@ -44,8 +44,8 @@ namespace CodexGame.SmokeTests.Halli
         SkullAcquisitionResolver.Resolve(null, spades2) == AcquisitionKind.None,
         "A lone non-skull-3 card must not be acquired.");
       tests.Check(
-        SkullAcquisitionResolver.Resolve(diamonds3, clubs3) == AcquisitionKind.Unspecified,
-        "The unresolved skull 3 + 3 case must not be guessed.");
+        SkullAcquisitionResolver.Resolve(diamonds3, clubs3) == AcquisitionKind.RightOnly,
+        "Skull 3 + 3 must acquire only the newest exposed skull-3 card.");
     }
 
     private static Card Create(CardSuit suit, CardRank rank, int skullCount)

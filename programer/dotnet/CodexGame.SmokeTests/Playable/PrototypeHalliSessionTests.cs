@@ -11,363 +11,298 @@ namespace CodexGame.SmokeTests.Playable
   {
     public static void Run(TestHarness tests)
     {
-      var session = new PrototypeHalliSession();
+      CheckRoundTargetsAndSequentialReveal(tests);
+      CheckTurnOrder(tests);
+      CheckAiPolicy(tests);
+      CheckFlipTimeout(tests);
+      CheckWrongBellRewardSelection(tests);
+      CheckCorrectAcquisitionLock(tests);
+      CheckCompletionAndDistribution(tests);
+      CheckGlobalInactivity(tests);
+    }
+
+    private static void CheckRoundTargetsAndSequentialReveal(TestHarness tests)
+    {
       var zero = new GameTimestamp(0);
+      var session = new PrototypeHalliSession();
       session.StartNew(zero, 20260807);
       var start = session.GetSnapshot(zero);
-
-      tests.Check(start.Phase == PrototypeSessionPhase.ReadyToFlip, "A new prototype session must be ready to flip.");
-      tests.Check(start.FirstPublicCard.HasValue, "A new prototype session must open the first public card.");
-      tests.Check(start.RemainingDeckCards == 51, "The first public card must leave 51 deck cards.");
-      tests.Check(start.WinTarget == 3, "The first combat round must target three Halli wins.");
+      tests.Check(
+        start.Phase == PrototypeSessionPhase.ReadyToFlip
+          && start.LeadActor == HalliActor.Player
+          && start.CanFlip,
+        "A new Halli stage must wait for the player's lead flip.");
+      tests.Check(start.WinTarget == 3 && start.RemainingDeckCards == 51,
+        "Round one must target three wins after opening one public card.");
       tests.CheckThrows<InvalidOperationException>(
         () => session.BeginPrivateCardDistribution(zero),
-        "Private-card distribution must be unavailable before the Halli stage finishes.");
+        "Private distribution must remain unavailable before Halli finishes.");
 
-      var secondRound = new PrototypeHalliSession();
-      secondRound.StartNew(zero, 11, 2);
-      tests.Check(secondRound.GetSnapshot(zero).WinTarget == 2, "The second combat round must target two Halli wins.");
+      var laterRound = new PrototypeHalliSession();
+      laterRound.StartNew(zero, 11, 3);
+      tests.Check(laterRound.GetSnapshot(zero).WinTarget == 2,
+        "Round three and later must retain the 0.08 two-win target.");
 
-      var thirdRound = new PrototypeHalliSession();
-      thirdRound.StartNew(zero, 12, 3);
-      tests.Check(thirdRound.GetSnapshot(zero).WinTarget == 1, "The third combat round must target one Halli win.");
-
-      session.Advance(new GameTimestamp(1));
-      var afterFlip = session.GetSnapshot(new GameTimestamp(1));
-      tests.Check(afterFlip.FlipCount == 1, "One advance from ready must flip one card pair.");
-      tests.Check(afterFlip.LeftPile.Count == 1 && afterFlip.RightPile.Count == 1, "One flip must expose one card on each pile.");
-
-      var timeoutSession = new PrototypeHalliSession();
-      timeoutSession.StartNew(zero, 7);
-      timeoutSession.Tick(new GameTimestamp(GameRules.CardFlipTimeoutMicroseconds));
-      var timeout = timeoutSession.GetSnapshot(new GameTimestamp(GameRules.CardFlipTimeoutMicroseconds));
-      tests.Check(timeout.Phase == PrototypeSessionPhase.ReadyToFlip, "A 30-second flip timeout must immediately reopen flip input.");
-      tests.Check(timeout.PlayerWins == 0 && timeout.AiWins == 1, "A player flip timeout must record the loss as one AI Halli win.");
-      tests.Check(timeout.RemainingMicroseconds == GameRules.CardFlipTimeoutMicroseconds, "A flip timeout must restart the 30-second deadline.");
-
-      var decidingTimeout = new PrototypeHalliSession();
-      decidingTimeout.StartNew(zero, 8, 3);
-      decidingTimeout.Tick(new GameTimestamp(GameRules.CardFlipTimeoutMicroseconds));
-      var decided = decidingTimeout.GetSnapshot(new GameTimestamp(GameRules.CardFlipTimeoutMicroseconds));
+      var flipAt = new GameTimestamp(100);
+      session.Advance(flipAt);
+      var leadOnly = session.GetSnapshot(flipAt);
       tests.Check(
-        decided.Phase == PrototypeSessionPhase.Finished
-          && decided.AiWins == 1
-          && decided.EndReason == HalliStageEndReason.AiTargetReached,
-        "A timeout win that reaches the Halli target must finish the stage immediately.");
+        leadOnly.Phase == PrototypeSessionPhase.SequentialReveal
+          && leadOnly.FlipCount == 0
+          && leadOnly.LeftPile.Count + leadOnly.RightPile.Count == 1,
+        "A flip must expose only the lead card before the 0.3-0.5 second delay.");
+      tests.Check(
+        leadOnly.RemainingMicroseconds >= GameRules.SequentialRevealMinimumMicroseconds
+          && leadOnly.RemainingMicroseconds
+            <= GameRules.SequentialRevealMinimumMicroseconds + GameRules.SequentialRevealRangeMicroseconds,
+        "Sequential reveal delay must remain inside the seeded 0.3-0.5 second range.");
 
-      CheckAcquisitionReview(tests, zero);
-      CheckFlipResetsTimerDuringBellOpportunity(tests, zero);
-      CheckWrongBellWithoutValidPile(tests, zero);
-      CheckPlayerWrongBellAwardsUnacquiredCard(tests, zero);
-      CheckWrongBellRewardSelectionSession(tests, zero);
-      CheckWrongPileAwardsOpponent(tests, zero);
-      CheckScoreOnlyWinnerFallback(tests, zero);
-
-      var completionSession = new PrototypeHalliSession();
-      completionSession.StartNew(zero, 99);
-      var now = 1L;
-
-      for (var step = 0; step < 100 && completionSession.GetSnapshot(new GameTimestamp(now)).Phase != PrototypeSessionPhase.Finished; step++)
-      {
-        completionSession.Advance(new GameTimestamp(now));
-        now++;
-      }
-
-      var completed = completionSession.GetSnapshot(new GameTimestamp(now));
-      tests.Check(completed.Phase == PrototypeSessionPhase.Finished, "The playable Halli slice must reach a terminal state.");
-      tests.Check(completed.FlipCount <= 25, "The playable Halli slice must never exceed 25 flips.");
-      CheckDistributionBridge(tests, completionSession, new GameTimestamp(now));
+      var revealAt = new GameTimestamp(
+        flipAt.Microseconds
+          + GameRules.SequentialRevealMinimumMicroseconds
+          + GameRules.SequentialRevealRangeMicroseconds
+          + 1);
+      session.Tick(revealAt);
+      var pair = session.GetSnapshot(revealAt);
+      tests.Check(
+        pair.FlipCount == 1 && pair.LeftPile.Count == 1 && pair.RightPile.Count == 1,
+        "A completed sequential reveal must count one pair and expose one card per side.");
     }
 
-    private static void CheckDistributionBridge(
-      TestHarness tests,
-      PrototypeHalliSession halliSession,
-      GameTimestamp now)
+    private static void CheckTurnOrder(TestHarness tests)
     {
-      var selection = halliSession.BeginPrivateCardDistribution(now);
-      var snapshot = selection.GetSnapshot(now);
-
-      if (snapshot.Phase == PrivateCardSelectionPhase.AwaitingSelection)
-      {
-        for (var index = 0; index < snapshot.RequiredSelectionCount; index++)
-        {
-          tests.Check(
-            selection.Toggle(snapshot.WinnerCandidates[index].Id),
-            "The Halli winner's candidate cards must be selectable through the distribution bridge.");
-        }
-
-        tests.Check(selection.TryConfirm(), "A complete winner selection must confirm through the bridge.");
-        snapshot = selection.GetSnapshot(now);
-      }
-
+      var order = new HalliTurnOrder();
       tests.Check(
-        snapshot.Phase == PrivateCardSelectionPhase.Completed && snapshot.Result != null,
-        "A completed Halli stage must produce a private-card distribution result.");
-
-      if (snapshot.Result == null)
-      {
-        return;
-      }
-
-      var distributedCount = snapshot.Result.PlayerPrivateCards.Count
-        + snapshot.Result.AiPrivateCards.Count
-        + 1
-        + snapshot.Result.RemainingCandidates.Count;
+        order.LeadActor == HalliActor.Player
+          && order.TakeNextPile(HalliActor.Player) == PileSide.Left
+          && order.TakeNextPile(HalliActor.Ai) == PileSide.Right,
+        "The first pair must use player-left then AI-relative-left.");
+      order.SetLead(HalliActor.Ai);
       tests.Check(
-        distributedCount == CardId.CardCount - 1,
-        "The Halli-to-distribution bridge must preserve all 51 cards except the first public card.");
+        order.TakeNextPile(HalliActor.Ai) == PileSide.Left
+          && order.TakeNextPile(HalliActor.Player) == PileSide.Right,
+        "Changing the leader must preserve each actor's alternating side index.");
     }
 
-    private static void CheckScoreOnlyWinnerFallback(TestHarness tests, GameTimestamp zero)
+    private static void CheckAiPolicy(TestHarness tests)
     {
-      var first = CompleteScoreOnlyAiWin(zero, 5150);
-      var firstSelection = first.BeginPrivateCardDistribution(new GameTimestamp(2));
-      var firstSnapshot = firstSelection.GetSnapshot(new GameTimestamp(2));
-
+      var policy = new HalliAiBellPolicy();
+      var minimum = policy.CreateReactionDelay(new FixedRandom(0));
+      var maximum = policy.CreateReactionDelay(new FixedRandom(int.MaxValue));
       tests.Check(
-        firstSnapshot.Phase == PrivateCardSelectionPhase.Completed
-          && firstSnapshot.WinnerCandidates.Count == 1
-          && firstSnapshot.RequiredSelectionCount == 1
-          && firstSnapshot.SelectedCards.Count == 1
-          && firstSnapshot.Result != null
-          && firstSnapshot.Result.AiPrivateCards.Count == 3,
-        "A score-only Halli winner must receive one deterministic fallback candidate before random fill.");
+        minimum >= GameRules.AiMinimumReactionMicroseconds
+          && maximum <= GameRules.AiMaximumReactionMicroseconds,
+        "AI reaction delay must stay within the 0.08 one-to-three-second range.");
 
-      var second = CompleteScoreOnlyAiWin(zero, 5150);
-      var secondSnapshot = second.BeginPrivateCardDistribution(new GameTimestamp(2))
-        .GetSnapshot(new GameTimestamp(2));
+      var correct = policy.Decide(
+        true,
+        true,
+        GameRules.AiTypicalReactionMicroseconds,
+        side => side == PileSide.Left ? 10 : 1,
+        new FixedRandom(0),
+        new FixedRandom(0));
       tests.Check(
-        secondSnapshot.WinnerCandidates.Count == 1
-          && firstSnapshot.WinnerCandidates[0].Id == secondSnapshot.WinnerCandidates[0].Id,
-        "The same combat seed must reproduce the score-only winner fallback card.");
+        correct.Outcome == AiBellOutcome.Correct && correct.Pile == PileSide.Left,
+        "A correct AI roll must select the stronger valid pile under the 60% policy branch.");
+
+      var wrong = policy.Decide(
+        true,
+        false,
+        GameRules.AiTypicalReactionMicroseconds,
+        _ => 0,
+        new FixedRandom(65),
+        new FixedRandom(0));
+      tests.Check(
+        wrong.Outcome == AiBellOutcome.Wrong && wrong.Pile == PileSide.Right,
+        "An AI wrong roll must select the invalid pile when one exists.");
+
+      var convertedMiss = policy.Decide(
+        true,
+        true,
+        GameRules.AiTypicalReactionMicroseconds,
+        _ => 0,
+        new FixedRandom(65),
+        new FixedRandom(0));
+      tests.Check(convertedMiss.Outcome == AiBellOutcome.Miss && !convertedMiss.Pile.HasValue,
+        "An AI wrong roll must convert to miss when both piles are valid.");
     }
 
-    private static void CheckPlayerWrongBellAwardsUnacquiredCard(
-      TestHarness tests,
-      GameTimestamp zero)
+    private static void CheckFlipTimeout(TestHarness tests)
     {
-      for (var seed = 1L; seed <= 1000L; seed++)
-      {
-        var session = new PrototypeHalliSession();
-        session.StartNew(zero, seed);
-        session.Advance(new GameTimestamp(1));
-        session.Advance(new GameTimestamp(2));
-        session.Advance(new GameTimestamp(3));
-        var ready = session.GetSnapshot(new GameTimestamp(3));
-        if (ready.Phase != PrototypeSessionPhase.ReadyToFlip)
-        {
-          continue;
-        }
-
-        session.Ring(PileSide.Left, new GameTimestamp(4));
-        var review = session.GetSnapshot(new GameTimestamp(4));
-        tests.Check(
-          review.AiWins == ready.AiWins + 1
-            && review.AiAcquiredCount == ready.AiAcquiredCount + 1
-            && review.LastAcquirer == PrototypeAcquirer.Ai
-            && review.LastAcquiredCards.Count == 1,
-          "A player wrong bell must let AI take one available unacquired card.");
-        return;
-      }
-
-      tests.Check(false, "At least one deterministic seed must expose an unacquired wrong-bell reward.");
+      var session = new PrototypeHalliSession();
+      session.StartNew(new GameTimestamp(0), 7, 3);
+      var timeoutAt = new GameTimestamp(GameRules.CardFlipTimeoutMicroseconds);
+      session.Tick(timeoutAt);
+      var timeout = session.GetSnapshot(timeoutAt);
+      tests.Check(
+        timeout.AiWins == 1
+          && timeout.LeadActor == HalliActor.Ai
+          && timeout.Phase == PrototypeSessionPhase.Review,
+        "A 30-second player lead timeout must give AI one win, preserve the field, and make AI lead.");
+      session.Tick(new GameTimestamp(
+        timeoutAt.Microseconds + GameRules.WrongBellRewardResultLockMicroseconds));
+      var ready = session.GetSnapshot(new GameTimestamp(
+        timeoutAt.Microseconds + GameRules.WrongBellRewardResultLockMicroseconds));
+      tests.Check(
+        ready.Phase == PrototypeSessionPhase.ReadyToFlip && ready.LeadActor == HalliActor.Ai,
+        "An empty reward pool must still enforce the two-second result lock before AI auto lead.");
     }
 
-    private static void CheckWrongBellRewardSelectionSession(
-      TestHarness tests,
-      GameTimestamp zero)
+    private static void CheckWrongBellRewardSelection(TestHarness tests)
     {
       var cards = CardSetFactory.CreateStandard52(new PrototypeSkullPolicy());
       var candidates = Array.AsReadOnly(new[] { cards[0], cards[1], cards[2] });
-      var manual = new WrongBellRewardSelectionSession();
-      manual.Begin(
+      var session = new WrongBellRewardSelectionSession();
+      session.Begin(
         candidates,
         DeterministicRandomFactory.Create(21, RandomChannel.WrongBellReward),
-        zero);
+        new GameTimestamp(0));
       tests.Check(
-        manual.IsActive
-          && manual.GetRemainingMicroseconds(zero)
-            == GameRules.WrongBellRewardSelectionTimeoutMicroseconds,
-        "An AI wrong-bell reward must open a full 30-second player selection window.");
+        !session.CanSelect(new GameTimestamp(0))
+          && session.GetRemainingMicroseconds(new GameTimestamp(0))
+            == GameRules.WrongBellRewardInitialLockMicroseconds,
+        "Wrong-bell reward selection must begin with a two-second read-only lock.");
       tests.Check(
-        manual.TrySelect(candidates[1].Id)
-          && !manual.IsActive
-          && manual.SelectedCard.HasValue
-          && manual.SelectedCard.Value.Id == candidates[1].Id
-          && !manual.TimedOut,
-        "The player must be able to select one offered wrong-bell reward card.");
+        !session.TrySelect(candidates[1].Id, new GameTimestamp(1_999_999)),
+        "Reward cards must not confirm during the initial lock.");
+      var unlockedAt = new GameTimestamp(GameRules.WrongBellRewardInitialLockMicroseconds);
+      tests.Check(
+        session.TrySelect(candidates[1].Id, unlockedAt)
+          && session.SelectedCard.HasValue
+          && session.SelectedCard.Value.Id == candidates[1].Id,
+        "A player must be able to confirm one face-up reward after the initial lock.");
 
       var timeout = new WrongBellRewardSelectionSession();
       timeout.Begin(
         candidates,
         DeterministicRandomFactory.Create(22, RandomChannel.WrongBellReward),
-        zero);
+        new GameTimestamp(0));
+      var deadline = new GameTimestamp(
+        GameRules.WrongBellRewardInitialLockMicroseconds
+          + GameRules.WrongBellRewardSelectionTimeoutMicroseconds);
       tests.Check(
-        timeout.Tick(new GameTimestamp(GameRules.WrongBellRewardSelectionTimeoutMicroseconds))
-          && timeout.SelectedCard.HasValue
-          && timeout.TimedOut,
-        "The exact 30-second deadline must award one deterministic random reward card.");
+        timeout.Tick(deadline) && timeout.SelectedCard.HasValue && timeout.TimedOut,
+        "Thirty seconds after unlock must award one deterministic random reward card.");
+
+      var single = new WrongBellRewardSelectionSession();
+      single.Begin(
+        Array.AsReadOnly(new[] { cards[0] }),
+        new FixedRandom(0),
+        new GameTimestamp(0));
+      tests.Check(single.Tick(unlockedAt) && !single.TimedOut,
+        "A single reward candidate must auto-confirm when the initial lock ends.");
     }
 
-    private static PrototypeHalliSession CompleteScoreOnlyAiWin(
-      GameTimestamp zero,
-      long seed)
+    private static void CheckCorrectAcquisitionLock(TestHarness tests)
+    {
+      for (var seed = 1L; seed <= 2000L; seed++)
+      {
+        var session = new PrototypeHalliSession();
+        session.StartNew(new GameTimestamp(0), seed);
+        session.Advance(new GameTimestamp(1));
+        var visibleAt = new GameTimestamp(600_001);
+        session.Tick(visibleAt);
+        var field = session.GetSnapshot(visibleAt);
+        if (field.Phase != PrototypeSessionPhase.BellOpen) continue;
+
+        var pile = IsAcquirable(Evaluate(field.LeftPile)) ? PileSide.Left : PileSide.Right;
+        session.Ring(pile, visibleAt);
+        var review = session.GetSnapshot(visibleAt);
+        tests.Check(
+          review.Phase == PrototypeSessionPhase.Review
+            && review.PlayerWins == 1
+            && review.LeadActor == HalliActor.Player
+            && review.LastAcquiredCards.Count > 0,
+          "A correct player bell must acquire only the selected valid pile and set player lead.");
+        session.Tick(new GameTimestamp(
+          visibleAt.Microseconds + GameRules.NextFlipLockMicroseconds));
+        var ready = session.GetSnapshot(new GameTimestamp(
+          visibleAt.Microseconds + GameRules.NextFlipLockMicroseconds));
+        tests.Check(
+          ready.Phase == PrototypeSessionPhase.ReadyToFlip
+            && ready.LastAcquirer == PrototypeAcquirer.None,
+          "Correct acquisition must hide its review after the one-second next-flip lock.");
+        return;
+      }
+
+      tests.Check(false, "At least one deterministic seed must open a first-pair bell opportunity.");
+    }
+
+    private static void CheckCompletionAndDistribution(TestHarness tests)
     {
       var session = new PrototypeHalliSession();
-      session.StartNew(zero, seed, 3);
-      session.Ring(PileSide.Left, new GameTimestamp(1));
-      session.Advance(new GameTimestamp(2));
-      return session;
-    }
-
-    private static void CheckAcquisitionReview(TestHarness tests, GameTimestamp zero)
-    {
-      for (var seed = 1L; seed <= 1000L; seed++)
+      var now = 0L;
+      session.StartNew(new GameTimestamp(now), 99);
+      for (var step = 0; step < 500; step++)
       {
-        var session = new PrototypeHalliSession();
-        var flipTime = new GameTimestamp(1);
-        session.StartNew(zero, seed);
-        session.Advance(flipTime);
-        var bell = session.GetSnapshot(flipTime);
+        var snapshot = session.GetSnapshot(new GameTimestamp(now));
+        if (snapshot.Phase == PrototypeSessionPhase.Finished) break;
 
-        if (bell.Phase != PrototypeSessionPhase.BellOpen)
+        if (snapshot.Phase == PrototypeSessionPhase.ReadyToFlip)
         {
-          continue;
+          if (snapshot.LeadActor == HalliActor.Player) session.Advance(new GameTimestamp(now));
+          else session.Tick(new GameTimestamp(now));
         }
-
-        var selectedPile = IsAcquirable(Evaluate(bell.LeftPile))
-          ? PileSide.Left
-          : PileSide.Right;
-        session.Ring(selectedPile, flipTime);
-        var review = session.GetSnapshot(flipTime);
-
-        tests.Check(review.Phase == PrototypeSessionPhase.Review, "A correct bell must enter the 15-second review.");
-        tests.Check(review.LastAcquirer == PrototypeAcquirer.Player, "A player bell inside the tie threshold must win.");
-        tests.Check(review.LastAcquiredCards.Count > 0, "The review must expose the cards that were actually acquired.");
-        tests.Check(review.PlayerAcquiredCount == review.LastAcquiredCards.Count, "The player ledger count must include the reviewed cards.");
-
-        var reviewEnd = new GameTimestamp(1 + GameRules.ReviewGraceMicroseconds);
-        session.Tick(reviewEnd);
-        var ready = session.GetSnapshot(reviewEnd);
-        tests.Check(ready.Phase == PrototypeSessionPhase.ReadyToFlip, "The review must end after 15 seconds.");
-        tests.Check(ready.LastAcquirer == PrototypeAcquirer.None, "Reviewed AI or player cards must be hidden after the grace period.");
-        return;
+        else if (snapshot.Phase == PrototypeSessionPhase.SequentialReveal)
+        {
+          now += 600_001;
+          session.Tick(new GameTimestamp(now));
+        }
+        else if (snapshot.Phase == PrototypeSessionPhase.BellOpen)
+        {
+          var pile = IsAcquirable(Evaluate(snapshot.LeftPile)) ? PileSide.Left : PileSide.Right;
+          session.Ring(pile, new GameTimestamp(now));
+        }
+        else if (snapshot.Phase == PrototypeSessionPhase.WrongBellRewardSelection)
+        {
+          if (snapshot.WrongBellRewardSelectionEnabled)
+          {
+            session.SelectWrongBellReward(snapshot.WrongBellRewardCandidates[0].Id, new GameTimestamp(now));
+          }
+          else
+          {
+            now += GameRules.WrongBellRewardInitialLockMicroseconds;
+            session.Tick(new GameTimestamp(now));
+          }
+        }
+        else if (snapshot.Phase == PrototypeSessionPhase.Review)
+        {
+          now += GameRules.WrongBellRewardResultLockMicroseconds;
+          session.Tick(new GameTimestamp(now));
+        }
+        now++;
       }
 
-      tests.Check(false, "At least one deterministic seed must open a bell opportunity on the first flip.");
+      var completed = session.GetSnapshot(new GameTimestamp(now));
+      tests.Check(completed.Phase == PrototypeSessionPhase.Finished,
+        "The 0.08 Halli state machine must reach a terminal state.");
+      tests.Check(completed.FlipCount <= GameRules.HalliFlipLimit,
+        "The Halli state machine must never exceed 25 completed pairs.");
+      if (completed.Phase != PrototypeSessionPhase.Finished) return;
+
+      var selection = session.BeginPrivateCardDistribution(new GameTimestamp(now));
+      var distribution = selection.GetSnapshot(new GameTimestamp(now));
+      if (distribution.Phase == PrivateCardSelectionPhase.AwaitingSelection)
+      {
+        for (var index = 0; index < distribution.RequiredSelectionCount; index++)
+        {
+          selection.Toggle(distribution.WinnerCandidates[index].Id);
+        }
+        selection.TryConfirm();
+        distribution = selection.GetSnapshot(new GameTimestamp(now));
+      }
+      tests.Check(distribution.Phase == PrivateCardSelectionPhase.Completed && distribution.Result != null,
+        "A completed Halli stage must bridge to deterministic private-card distribution.");
     }
 
-    private static void CheckFlipResetsTimerDuringBellOpportunity(
-      TestHarness tests,
-      GameTimestamp zero)
+    private static void CheckGlobalInactivity(TestHarness tests)
     {
-      for (var seed = 1L; seed <= 1000L; seed++)
-      {
-        var session = new PrototypeHalliSession();
-        var flipTime = new GameTimestamp(5_000_000);
-        session.StartNew(zero, seed);
-        session.Advance(flipTime);
-        var bell = session.GetSnapshot(flipTime);
-
-        if (bell.Phase != PrototypeSessionPhase.BellOpen)
-        {
-          continue;
-        }
-
-        tests.Check(
-          bell.RemainingMicroseconds == GameRules.CardFlipTimeoutMicroseconds,
-          "Every completed flip must restart the 30-second next-flip timer even while a bell opportunity is open.");
-        var later = session.GetSnapshot(new GameTimestamp(5_000_000 + 1_000_000));
-        tests.Check(
-          later.RemainingMicroseconds == GameRules.CardFlipTimeoutMicroseconds - 1_000_000,
-          "The next-flip timer must continue counting down during an unlimited bell opportunity.");
-
-        var deadline = new GameTimestamp(5_000_000 + GameRules.CardFlipTimeoutMicroseconds);
-        session.Tick(deadline);
-        var timedOut = session.GetSnapshot(deadline);
-        if (timedOut.Phase != PrototypeSessionPhase.ReadyToFlip)
-        {
-          // This seed scheduled an AI bell before the deadline. Try an AI-miss seed.
-          continue;
-        }
-
-        tests.Check(
-          timedOut.AiWins == bell.AiWins + 1,
-          "A next-flip timeout during a bell opportunity must record one AI Halli win.");
-        tests.Check(
-          timedOut.RemainingMicroseconds == GameRules.CardFlipTimeoutMicroseconds,
-          "A bell-open timeout must reopen the next full 30-second flip window.");
-        return;
-      }
-
-      tests.Check(false, "At least one deterministic AI-miss seed must open a bell opportunity for timer validation.");
-    }
-
-    private static void CheckWrongBellWithoutValidPile(TestHarness tests, GameTimestamp zero)
-    {
-      for (var seed = 1L; seed <= 1000L; seed++)
-      {
-        var session = new PrototypeHalliSession();
-        var flipTime = new GameTimestamp(1);
-        session.StartNew(zero, seed);
-        session.Advance(flipTime);
-        var ready = session.GetSnapshot(flipTime);
-
-        if (ready.Phase != PrototypeSessionPhase.ReadyToFlip
-          || IsAcquirable(Evaluate(ready.LeftPile))
-          || IsAcquirable(Evaluate(ready.RightPile)))
-        {
-          continue;
-        }
-
-        session.Ring(PileSide.Left, flipTime);
-        var review = session.GetSnapshot(flipTime);
-
-        tests.Check(review.Phase == PrototypeSessionPhase.Review, "A wrong bell without a valid pile must enter review.");
-        tests.Check(review.PlayerWins == 0 && review.AiWins == 1, "A wrong bell player loss must record one AI Halli win.");
-        tests.Check(review.LastAcquirer == PrototypeAcquirer.None, "A wrong bell without a valid pile must acquire no cards.");
-        tests.Check(
-          review.LeftPile.Count == ready.LeftPile.Count && review.RightPile.Count == ready.RightPile.Count,
-          "A wrong bell without a valid pile must preserve both piles.");
-        return;
-      }
-
-      tests.Check(false, "At least one deterministic seed must expose no valid pile on the first flip.");
-    }
-
-    private static void CheckWrongPileAwardsOpponent(TestHarness tests, GameTimestamp zero)
-    {
-      for (var seed = 1L; seed <= 1000L; seed++)
-      {
-        var session = new PrototypeHalliSession();
-        var flipTime = new GameTimestamp(1);
-        session.StartNew(zero, seed);
-        session.Advance(flipTime);
-        var bell = session.GetSnapshot(flipTime);
-
-        if (bell.Phase != PrototypeSessionPhase.BellOpen)
-        {
-          continue;
-        }
-
-        var leftValid = IsAcquirable(Evaluate(bell.LeftPile));
-        var rightValid = IsAcquirable(Evaluate(bell.RightPile));
-        if (leftValid == rightValid)
-        {
-          continue;
-        }
-
-        session.Ring(leftValid ? PileSide.Right : PileSide.Left, flipTime);
-        var review = session.GetSnapshot(flipTime);
-
-        tests.Check(review.Phase == PrototypeSessionPhase.Review, "Choosing the wrong pile must enter review.");
-        tests.Check(review.AiWins == 1 && review.PlayerWins == 0, "Choosing the wrong pile must award the valid pile and win to AI.");
-        tests.Check(review.LastAcquirer == PrototypeAcquirer.Ai, "The opponent must acquire the valid pile after a wrong-pile bell.");
-        tests.Check(review.LastAcquiredCards.Count > 0, "A wrong-pile bell must expose the opponent's acquired cards during review.");
-        return;
-      }
-
-      tests.Check(false, "At least one deterministic seed must expose exactly one valid pile on the first flip.");
+      var game = new PlayableGameSession();
+      game.StartNewBattle(new GameTimestamp(0), 123);
+      game.Tick(new GameTimestamp(GameRules.GlobalInactivityTimeoutMicroseconds));
+      tests.Check(game.GetSnapshot(new GameTimestamp(GameRules.GlobalInactivityTimeoutMicroseconds)).Phase
+        == PlayableGamePhase.Intro,
+        "Three minutes without valid game input must abort the battle to the main screen.");
     }
 
     private static AcquisitionKind Evaluate(System.Collections.Generic.IReadOnlyList<Card> cards)
@@ -382,6 +317,17 @@ namespace CodexGame.SmokeTests.Playable
       return result == AcquisitionKind.Both
         || result == AcquisitionKind.LeftOnly
         || result == AcquisitionKind.RightOnly;
+    }
+
+    private sealed class FixedRandom : IRandomSource
+    {
+      private readonly int _value;
+      public FixedRandom(int value) { _value = value; }
+      public int NextInt(int exclusiveMax)
+      {
+        if (exclusiveMax <= 0) throw new ArgumentOutOfRangeException(nameof(exclusiveMax));
+        return (int)((uint)_value % (uint)exclusiveMax);
+      }
     }
   }
 }

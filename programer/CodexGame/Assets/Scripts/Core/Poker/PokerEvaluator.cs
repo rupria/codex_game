@@ -22,7 +22,10 @@ namespace CodexGame.Core.Poker
 
       if (flush && straightHigh > 0)
       {
-        category = PokerHandCategory.StraightFlush;
+        category = straightHigh == (int)CardRank.Ace
+          && byRank.ContainsKey((int)CardRank.Ten)
+          ? PokerHandCategory.RoyalStraightFlush
+          : PokerHandCategory.StraightFlush;
         rankVector = Vector(straightHigh);
       }
       else if (groups[0].Cards.Count == 4)

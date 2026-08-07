@@ -20,7 +20,7 @@ namespace CodexGame.Presentation.Views
       _styles = styles;
     }
 
-    public void Draw(Card card, float width, float height, bool selected = false)
+    public Rect Draw(Card card, float width, float height, bool selected = false)
     {
       var rect = GUILayoutUtility.GetRect(width, height, GUILayout.Width(width), GUILayout.Height(height));
       GUI.Box(rect, GUIContent.none, selected ? _styles.SelectedCard : _styles.Card);
@@ -37,6 +37,8 @@ namespace CodexGame.Presentation.Views
       {
         GUI.Label(new Rect(rect.x, rect.y, rect.width, 24f), "SELECTED", _styles.Small);
       }
+
+      return rect;
     }
 
     public void DrawBack(float width, float height)

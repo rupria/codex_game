@@ -17,7 +17,7 @@ namespace CodexGame.Core.Halli
         return 3;
       }
 
-      return combatRoundNumber == 2 ? 2 : 1;
+      return 2;
     }
 
     public static HalliStageEndReason ResolveEndReason(

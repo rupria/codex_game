@@ -28,7 +28,8 @@ namespace CodexGame.SmokeTests.Poker
         Case(PokerHandCategory.Flush, C(CardSuit.Hearts, CardRank.Ace), C(CardSuit.Hearts, CardRank.Jack), C(CardSuit.Hearts, CardRank.Nine), C(CardSuit.Hearts, CardRank.Five), C(CardSuit.Hearts, CardRank.Two)),
         Case(PokerHandCategory.FullHouse, C(CardSuit.Spades, CardRank.Ace), C(CardSuit.Hearts, CardRank.Ace), C(CardSuit.Diamonds, CardRank.Ace), C(CardSuit.Clubs, CardRank.Nine), C(CardSuit.Spades, CardRank.Nine)),
         Case(PokerHandCategory.FourOfAKind, C(CardSuit.Spades, CardRank.Ace), C(CardSuit.Hearts, CardRank.Ace), C(CardSuit.Diamonds, CardRank.Ace), C(CardSuit.Clubs, CardRank.Ace), C(CardSuit.Spades, CardRank.Nine)),
-        Case(PokerHandCategory.StraightFlush, C(CardSuit.Spades, CardRank.Ten), C(CardSuit.Spades, CardRank.Nine), C(CardSuit.Spades, CardRank.Eight), C(CardSuit.Spades, CardRank.Seven), C(CardSuit.Spades, CardRank.Six))
+        Case(PokerHandCategory.StraightFlush, C(CardSuit.Spades, CardRank.Ten), C(CardSuit.Spades, CardRank.Nine), C(CardSuit.Spades, CardRank.Eight), C(CardSuit.Spades, CardRank.Seven), C(CardSuit.Spades, CardRank.Six)),
+        Case(PokerHandCategory.RoyalStraightFlush, C(CardSuit.Spades, CardRank.Ace), C(CardSuit.Spades, CardRank.King), C(CardSuit.Spades, CardRank.Queen), C(CardSuit.Spades, CardRank.Jack), C(CardSuit.Spades, CardRank.Ten))
       };
 
       for (var index = 0; index < cases.Length; index++)
@@ -86,6 +87,9 @@ namespace CodexGame.SmokeTests.Poker
       tests.Check(
         PokerEvaluator.Evaluate(wheel, new PokerRuleSet(AceStraightMode.HighAndLow)).Category == PokerHandCategory.Straight,
         "The alternate policy must support A-2-3-4-5 without evaluator changes.");
+      tests.Check(
+        PokerEvaluator.Evaluate(wheel, PokerRuleSet.Development).Category == PokerHandCategory.Straight,
+        "The 0.08 development rules must enable A-2-3-4-5 as the lowest straight.");
     }
 
     private static void RejectsInvalidHands(TestHarness tests)

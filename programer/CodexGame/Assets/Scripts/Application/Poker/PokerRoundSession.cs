@@ -5,6 +5,7 @@ using CodexGame.Core.Cards;
 using CodexGame.Core.Distribution;
 using CodexGame.Core.Poker;
 using CodexGame.Core.Rewards;
+using CodexGame.Core.Shared;
 
 namespace CodexGame.Application.Poker
 {
@@ -18,19 +19,26 @@ namespace CodexGame.Application.Poker
     private BattleHealth _health = BattleHealth.Initial;
     private PokerRuleSet _ruleSet = PokerRuleSet.Development;
     private PokerRoundResult? _result;
+    private GameTimestamp _predictionDeadline;
+    private GameTimestamp _resultRevealAt;
+    private int _availableItemCount;
 
     public PokerRoundPhase Phase { get; private set; } = PokerRoundPhase.NotStarted;
+    public PokerRoundResult? Result => _result;
 
     public void Begin(
       Card firstPublicCard,
       PrivateCardDistributionResult distribution,
       BattleHealth health,
-      PokerRuleSet ruleSet)
+      PokerRuleSet ruleSet,
+      GameTimestamp now,
+      int availableItemCount)
     {
       if (distribution == null) throw new ArgumentNullException(nameof(distribution));
       if (ruleSet == null) throw new ArgumentNullException(nameof(ruleSet));
       if (!firstPublicCard.IsValid) throw new ArgumentException("The first public card is invalid.", nameof(firstPublicCard));
       if (health.IsBattleOver) throw new InvalidOperationException("A poker round cannot begin after battle end.");
+      if (availableItemCount < 0) throw new ArgumentOutOfRangeException(nameof(availableItemCount));
 
       _playerPrivateCards = Copy(distribution.PlayerPrivateCards);
       _aiPrivateCards = Copy(distribution.AiPrivateCards);
@@ -38,19 +46,115 @@ namespace CodexGame.Application.Poker
       _health = health;
       _ruleSet = ruleSet;
       _result = null;
+      _availableItemCount = availableItemCount;
 
       // Validate all seven identities before any concealed information is presented.
       PokerComparer.Compare(_playerPrivateCards, _aiPrivateCards, _publicCards, _ruleSet);
-      Phase = PokerRoundPhase.AwaitingPrediction;
+      if (_availableItemCount > 0)
+      {
+        Phase = PokerRoundPhase.ItemWindow;
+      }
+      else
+      {
+        BeginPrediction(now);
+      }
     }
 
+    public void Begin(
+      Card firstPublicCard,
+      PrivateCardDistributionResult distribution,
+      BattleHealth health,
+      PokerRuleSet ruleSet)
+    {
+      Begin(firstPublicCard, distribution, health, ruleSet, new GameTimestamp(0), 0);
+    }
+
+    public bool SkipItemWindow(GameTimestamp now)
+    {
+      if (Phase != PokerRoundPhase.ItemWindow) return false;
+      BeginPrediction(now);
+      return true;
+    }
+
+    public bool SubmitPrediction(PredictionChoice choice, GameTimestamp now)
+    {
+      if (Phase != PokerRoundPhase.AwaitingPrediction
+        || choice == PredictionChoice.Skipped)
+      {
+        return false;
+      }
+
+      BeginResult(choice, now);
+      return true;
+    }
+
+    public bool Tick(GameTimestamp now)
+    {
+      if (Phase == PokerRoundPhase.AwaitingPrediction
+        && now.Microseconds >= _predictionDeadline.Microseconds)
+      {
+        BeginResult(PredictionChoice.Skipped, _predictionDeadline);
+      }
+
+      if (Phase == PokerRoundPhase.ResultPending
+        && now.Microseconds >= _resultRevealAt.Microseconds)
+      {
+        Phase = PokerRoundPhase.Resolved;
+        return true;
+      }
+
+      return false;
+    }
+
+    // Compatibility entry point for non-runtime callers. Runtime flow uses SubmitPrediction + Tick.
     public PokerRoundResult Resolve(PredictionChoice choice)
     {
-      if (Phase != PokerRoundPhase.AwaitingPrediction)
+      if (!SubmitPrediction(choice, new GameTimestamp(0)))
       {
         throw new InvalidOperationException("A prediction can resolve only once during the poker round.");
       }
+      Tick(new GameTimestamp(GameRules.PokerResultAnnouncementMicroseconds));
+      return _result!;
+    }
 
+    public PokerRoundSnapshot GetSnapshot(GameTimestamp now)
+    {
+      var visibleAiCards = Phase == PokerRoundPhase.Resolved
+        ? _aiPrivateCards
+        : EmptyCards;
+      var health = Phase == PokerRoundPhase.Resolved && _result != null
+        ? _result.Damage.After
+        : _health;
+      var remaining = Phase == PokerRoundPhase.AwaitingPrediction
+        ? Math.Max(0, _predictionDeadline.Microseconds - now.Microseconds)
+        : Phase == PokerRoundPhase.ResultPending
+          ? Math.Max(0, _resultRevealAt.Microseconds - now.Microseconds)
+          : 0;
+      return new PokerRoundSnapshot(
+        Phase,
+        _playerPrivateCards,
+        visibleAiCards,
+        _publicCards,
+        health,
+        remaining,
+        _availableItemCount,
+        Phase != PokerRoundPhase.ItemWindow && Phase != PokerRoundPhase.NotStarted,
+        Phase == PokerRoundPhase.Resolved ? _result : null);
+    }
+
+    public PokerRoundSnapshot GetSnapshot()
+    {
+      return GetSnapshot(new GameTimestamp(0));
+    }
+
+    private void BeginPrediction(GameTimestamp now)
+    {
+      Phase = PokerRoundPhase.AwaitingPrediction;
+      _predictionDeadline = Add(now, GameRules.PredictionTimeoutMicroseconds);
+    }
+
+    private void BeginResult(PredictionChoice choice, GameTimestamp now)
+    {
       var comparison = PokerComparer.Compare(
         _playerPrivateCards,
         _aiPrivateCards,
@@ -59,23 +163,8 @@ namespace CodexGame.Application.Poker
       var damage = DamageResolver.ApplyPokerLoss(_health, comparison.Winner);
       var prediction = PredictionResolver.Resolve(choice, comparison.Winner);
       _result = new PokerRoundResult(comparison, damage, prediction);
-      _health = damage.After;
-      Phase = PokerRoundPhase.Resolved;
-      return _result;
-    }
-
-    public PokerRoundSnapshot GetSnapshot()
-    {
-      var visibleAiCards = Phase == PokerRoundPhase.Resolved
-        ? _aiPrivateCards
-        : EmptyCards;
-      return new PokerRoundSnapshot(
-        Phase,
-        _playerPrivateCards,
-        visibleAiCards,
-        _publicCards,
-        _health,
-        _result);
+      _resultRevealAt = Add(now, GameRules.PokerResultAnnouncementMicroseconds);
+      Phase = PokerRoundPhase.ResultPending;
     }
 
     private static IReadOnlyList<Card> Copy(IReadOnlyList<Card> cards)
@@ -83,6 +172,15 @@ namespace CodexGame.Application.Poker
       var copy = new Card[cards.Count];
       for (var index = 0; index < cards.Count; index++) copy[index] = cards[index];
       return Array.AsReadOnly(copy);
+    }
+
+    private static GameTimestamp Add(GameTimestamp timestamp, long microseconds)
+    {
+      if (microseconds < 0 || timestamp.Microseconds > long.MaxValue - microseconds)
+      {
+        throw new ArgumentOutOfRangeException(nameof(microseconds));
+      }
+      return new GameTimestamp(timestamp.Microseconds + microseconds);
     }
   }
 }

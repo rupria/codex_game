@@ -19,6 +19,11 @@ namespace CodexGame.Core.Rewards
         throw new ArgumentOutOfRangeException(nameof(actualWinner));
       }
 
+      if (choice == PredictionChoice.Skipped)
+      {
+        return new PredictionResult(choice, actualWinner, false);
+      }
+
       var expectedWinner = choice == PredictionChoice.PlayerWins
         ? PokerWinner.Player
         : PokerWinner.Ai;

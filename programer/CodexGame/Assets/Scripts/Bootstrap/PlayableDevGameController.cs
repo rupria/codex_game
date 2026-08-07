@@ -29,7 +29,7 @@ namespace CodexGame.Bootstrap
       _view.PrivateCardToggleRequested += TogglePrivateCard;
       _view.PrivateCardsConfirmRequested += ConfirmPrivateCards;
       _view.PredictionRequested += Predict;
-      _view.RestartRequested += StartNew;
+      _view.MainRequested += ReturnToMain;
     }
 
     private void Start()
@@ -54,7 +54,7 @@ namespace CodexGame.Bootstrap
       _view.PrivateCardToggleRequested -= TogglePrivateCard;
       _view.PrivateCardsConfirmRequested -= ConfirmPrivateCards;
       _view.PredictionRequested -= Predict;
-      _view.RestartRequested -= StartNew;
+      _view.MainRequested -= ReturnToMain;
     }
 
     private void StartNew()
@@ -101,7 +101,13 @@ namespace CodexGame.Bootstrap
 
     private void Predict(PredictionChoice choice)
     {
-      _session.Predict(choice);
+      _session.Predict(choice, Now());
+      Present();
+    }
+
+    private void ReturnToMain()
+    {
+      _session.ReturnToMain();
       Present();
     }
 

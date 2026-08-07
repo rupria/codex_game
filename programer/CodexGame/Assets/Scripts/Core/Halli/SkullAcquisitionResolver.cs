@@ -30,7 +30,8 @@ namespace CodexGame.Core.Halli
 
       if (left.SkullCount == 3 && right.SkullCount == 3)
       {
-        return AcquisitionKind.Unspecified;
+        // Pile order is oldest to newest, so the newest skull-3 is on the right.
+        return AcquisitionKind.RightOnly;
       }
 
       if (left.SkullCount == 3)
