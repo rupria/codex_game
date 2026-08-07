@@ -1,6 +1,6 @@
 {
   "specRevision": "gameplay_flow_0.06",
-  "pokerVisualRevision": "standard_pips_skull_faces_v2",
+  "pokerVisualRevision": "standard_pips_skull_court_busts_v3",
   "cardWidth": 64,
   "cardHeight": 90,
   "informationLayout": {
@@ -8,7 +8,8 @@
     "upperRight": "large_suit",
     "halliCenter": "matching_suit_skull_count_1_to_3",
     "pokerNumberCenter": "standard_repeated_suit_pips_2_to_10",
-    "pokerFaceCenter": "skull_design_A_J_Q_K"
+    "pokerAceCenter": "skull_suit_emblem_A",
+    "pokerCourtCenter": "high_detail_skull_bust_J_Q_K"
   },
   "cardBackAssetPath": "Assets/Art/Prototype/Cards_0_06/card_back.png",
   "halliCards": [

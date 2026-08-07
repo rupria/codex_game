@@ -28,6 +28,13 @@ GitHub Issue #10과 아트_변경요청_카드정보가독성_0.06.md를 기준�
 - 3장 손패: card_poker_hand_3_preview_0_06.png
 - card_poker_direction_legacy_no_skull_0_06.png는 변경 전 기록이며 현재 구현 기준으로 사용하지 않는다.
 
+[J/Q/K 선명도 개선 v3]
+- A와 숫자 카드 2~10은 v2 디자인을 유지한다.
+- J/Q/K 12장은 작은 전신 대신 큰 해골 상반신 초상을 사용해 64x90 실사용 크기에서 얼굴, 관, 소품을 식별할 수 있게 했다.
+- 개발 연결 규격은 기존과 같은 64x90 RGBA PNG이며 파일명과 pokerCards 경로도 유지한다.
+- 생성 원본: card_poker_court_busts_source_imagegen_0_06.png
+- 투명 배경 가공본: card_poker_court_busts_transparent_0_06.png
+
 [담당 범위와 단계별 사용 구분]
 - 아트 작업 완료: 할리갈리 카드와 포커 카드는 서로 다른 폴더와 카탈로그 배열로 분리되어 있다.
 - 할리갈리 단계: halliCards 및 halli_variants 경로를 사용한다.
