@@ -1,5 +1,6 @@
 using CodexGame.SmokeTests;
 using CodexGame.SmokeTests.Cards;
+using CodexGame.SmokeTests.Distribution;
 using CodexGame.SmokeTests.Halli;
 using CodexGame.SmokeTests.Playable;
 
@@ -11,5 +12,6 @@ BellTimingTests.Run(tests);
 HalliRuleTests.Run(tests);
 HalliStageTests.Run(tests);
 PrototypeHalliSessionTests.Run(tests);
+PrivateCardDistributionTests.Run(tests);
 
 return tests.Complete();
