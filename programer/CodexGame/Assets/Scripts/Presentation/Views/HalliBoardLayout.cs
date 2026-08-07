@@ -19,8 +19,8 @@ namespace CodexGame.Presentation.Views
     public static readonly Rect RightBellVisual = new Rect(506f, 286f, 64f, 64f);
     public static readonly Rect LeftBellHit = new Rect(378f, 274f, 88f, 88f);
     public static readonly Rect RightBellHit = new Rect(494f, 274f, 88f, 88f);
-    public static readonly Rect FlipDeck = new Rect(448f, 366f, 64f, 90f);
-    public static readonly Rect FlipHit = new Rect(420f, 358f, 120f, 108f);
+    public static readonly Rect FlipDeck = new Rect(440f, 354f, 80f, 100f);
+    public static readonly Rect FlipHit = new Rect(414f, 346f, 132f, 118f);
 
     public static readonly Rect PlayerTray = new Rect(34f, 390f, 288f, 130f);
     public static readonly Rect AiTray = new Rect(702f, 390f, 224f, 130f);
