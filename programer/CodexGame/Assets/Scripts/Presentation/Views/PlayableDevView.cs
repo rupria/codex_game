@@ -8,6 +8,9 @@ namespace CodexGame.Presentation.Views
 {
   public sealed class PlayableDevView : MonoBehaviour
   {
+    [SerializeField]
+    private Texture2D _boardTexture;
+
     private PrototypeHalliSnapshot _snapshot;
     private GUIStyle _titleStyle;
     private GUIStyle _headingStyle;
@@ -20,6 +23,11 @@ namespace CodexGame.Presentation.Views
     public event Action LeftBellRequested;
     public event Action RightBellRequested;
     public event Action RestartRequested;
+
+    public void Configure(Texture2D boardTexture)
+    {
+      _boardTexture = boardTexture;
+    }
 
     public void Present(PrototypeHalliSnapshot snapshot)
     {
@@ -53,15 +61,19 @@ namespace CodexGame.Presentation.Views
         return;
       }
 
-      if (Input.GetKeyDown(KeyCode.LeftArrow))
+      if (_snapshot.Phase == PrototypeSessionPhase.BellOpen
+        && Input.GetKeyDown(KeyCode.LeftArrow))
       {
         LeftBellRequested?.Invoke();
       }
-      else if (Input.GetKeyDown(KeyCode.RightArrow))
+      else if (_snapshot.Phase == PrototypeSessionPhase.BellOpen
+        && Input.GetKeyDown(KeyCode.RightArrow))
       {
         RightBellRequested?.Invoke();
       }
-      else if (Input.GetKeyDown(KeyCode.UpArrow) || Input.GetKeyDown(KeyCode.Space))
+      else if (Input.GetKeyDown(KeyCode.UpArrow)
+        || Input.GetKeyDown(KeyCode.Space)
+        || (_snapshot.Phase == PrototypeSessionPhase.Review && Input.GetKeyDown(KeyCode.W)))
       {
         AdvanceRequested?.Invoke();
       }
@@ -78,16 +90,28 @@ namespace CodexGame.Presentation.Views
       var scale = Mathf.Min(Screen.width / 960f, Screen.height / 600f);
       GUI.matrix = Matrix4x4.TRS(Vector3.zero, Quaternion.identity, new Vector3(scale, scale, 1f));
 
+      if (_boardTexture != null)
+      {
+        GUI.DrawTexture(
+          new Rect(0f, 0f, 960f, 540f),
+          _boardTexture,
+          ScaleMode.StretchToFill,
+          true);
+      }
+
       GUILayout.BeginArea(new Rect(20f, 15f, 920f, 570f));
       GUILayout.Label("CODEX HALLI - PLAYABLE DEV SLICE", _titleStyle);
-      GUILayout.Label("Goal: reach 3 Halli wins. Same-suit skull 1+2 is valid; any skull 3 is a single-card exception.", _bodyStyle);
-      GUILayout.Label("Controls: UP/SPACE = flip or continue, LEFT/RIGHT = ring that pile, R = restart.", _bodyStyle);
+      GUILayout.Label("Goal: Halli targets by combat round are 3 / 2 / 1 wins. Same-suit skull 1+2 is valid; any skull 3 is a single-card exception.", _bodyStyle);
+      GUILayout.Label("Controls: UP/SPACE = flip, W/UP/SPACE = continue review, LEFT/RIGHT = ring that pile, R = restart.", _bodyStyle);
       GUILayout.Space(8f);
 
       if (_snapshot.Phase == PrototypeSessionPhase.Intro)
       {
         GUILayout.FlexibleSpace();
-        GUILayout.Label("No art assets are bound in this build. Cards use code placeholders.", _statusStyle);
+        var artStatus = _boardTexture == null
+          ? "Board art is missing. Cards use code placeholders."
+          : "Prototype board art loaded. Cards use code placeholders.";
+        GUILayout.Label(artStatus, _statusStyle);
 
         if (GUILayout.Button("START  [ENTER / SPACE]", GUILayout.Height(64f)))
         {
@@ -108,6 +132,7 @@ namespace CodexGame.Presentation.Views
       GUILayout.EndHorizontal();
       GUILayout.Space(10f);
       GUILayout.Label(_snapshot.StatusMessage, _statusStyle, GUILayout.Height(54f));
+      DrawAcquisitionReview();
       DrawActions();
       GUILayout.EndArea();
     }
@@ -119,12 +144,37 @@ namespace CodexGame.Presentation.Views
         : "--";
 
       GUILayout.BeginHorizontal();
+      GUILayout.Label($"ROUND {_snapshot.CombatRoundNumber}", _headingStyle);
       GUILayout.Label($"PLAYER {_snapshot.PlayerWins} / {_snapshot.WinTarget}", _headingStyle);
       GUILayout.Label($"AI {_snapshot.AiWins} / {_snapshot.WinTarget}", _headingStyle);
       GUILayout.Label($"FLIPS {_snapshot.FlipCount}/25", _headingStyle);
       GUILayout.Label($"DECK {_snapshot.RemainingDeckCards}", _headingStyle);
       GUILayout.Label($"TIMER {timer}", _headingStyle);
       GUILayout.EndHorizontal();
+    }
+
+    private void DrawAcquisitionReview()
+    {
+      if (_snapshot.LastAcquirer == PrototypeAcquirer.None
+        || _snapshot.LastAcquiredCards.Count == 0)
+      {
+        return;
+      }
+
+      var owner = _snapshot.LastAcquirer == PrototypeAcquirer.Player ? "PLAYER" : "AI";
+      var cards = string.Empty;
+
+      for (var index = 0; index < _snapshot.LastAcquiredCards.Count; index++)
+      {
+        if (index > 0)
+        {
+          cards += " + ";
+        }
+
+        cards += FormatCardInline(_snapshot.LastAcquiredCards[index]);
+      }
+
+      GUILayout.Label($"LAST ACQUIRED — {owner}: {cards}", _bodyStyle, GUILayout.Height(30f));
     }
 
     private void DrawPublicCard()
@@ -183,7 +233,7 @@ namespace CodexGame.Presentation.Views
 
         GUI.enabled = true;
         var advanceLabel = _snapshot.Phase == PrototypeSessionPhase.Review
-          ? "CONTINUE  [UP / SPACE]"
+          ? "CONTINUE  [W / UP / SPACE]"
           : "FLIP / SKIP BELL  [UP / SPACE]";
 
         if (GUILayout.Button(advanceLabel, GUILayout.Height(54f)))
@@ -238,6 +288,11 @@ namespace CodexGame.Presentation.Views
     private static string FormatCard(Card card)
     {
       return $"{RankText(card.Rank)} {SuitText(card.Suit)}\nSKULL {card.SkullCount}";
+    }
+
+    private static string FormatCardInline(Card card)
+    {
+      return $"{RankText(card.Rank)} {SuitText(card.Suit)} / SKULL {card.SkullCount}";
     }
 
     private static string RankText(CardRank rank)
