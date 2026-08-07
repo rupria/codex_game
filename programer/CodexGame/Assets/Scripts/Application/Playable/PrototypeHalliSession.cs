@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using CodexGame.Application.Distribution;
+using CodexGame.Core.Ai;
 using CodexGame.Core.Cards;
 using CodexGame.Core.Halli;
 using CodexGame.Core.Shared;
@@ -17,6 +18,10 @@ namespace CodexGame.Application.Playable
     private IRandomSource _aiReactionRandom = null!;
     private IRandomSource _aiChoiceRandom = null!;
     private BellWindowTracker _bellWindows = null!;
+    private readonly AiPrivateCardSelectionPolicy _aiRewardSelectionPolicy =
+      new AiPrivateCardSelectionPolicy();
+    private WrongBellRewardSelectionSession _wrongBellRewardSelection =
+      new WrongBellRewardSelectionSession();
     private Card? _firstPublicCard;
     private GameTimestamp _readyDeadline;
     private GameTimestamp _reviewDeadline;
@@ -51,6 +56,7 @@ namespace CodexGame.Application.Playable
       _aiReactionRandom = DeterministicRandomFactory.Create(combatRoundSeed, RandomChannel.AiReaction);
       _aiChoiceRandom = DeterministicRandomFactory.Create(combatRoundSeed, RandomChannel.AiChoice);
       _bellWindows = new BellWindowTracker();
+      _wrongBellRewardSelection = new WrongBellRewardSelectionSession();
       _playerWins = 0;
       _aiWins = 0;
       _flipCount = 0;
@@ -103,6 +109,18 @@ namespace CodexGame.Application.Playable
       ResolvePlayerBell(selectedPile, now);
     }
 
+    public bool SelectWrongBellReward(CardId cardId, GameTimestamp now)
+    {
+      if (Phase != PrototypeSessionPhase.WrongBellRewardSelection
+        || !_wrongBellRewardSelection.TrySelect(cardId))
+      {
+        return false;
+      }
+
+      CompleteWrongBellRewardSelection(now);
+      return true;
+    }
+
     public void Tick(GameTimestamp now)
     {
       switch (Phase)
@@ -121,6 +139,12 @@ namespace CodexGame.Application.Playable
           else if (now.Microseconds >= _readyDeadline.Microseconds)
           {
             ResolvePlayerFlipTimeout(now);
+          }
+          break;
+        case PrototypeSessionPhase.WrongBellRewardSelection:
+          if (_wrongBellRewardSelection.Tick(now))
+          {
+            CompleteWrongBellRewardSelection(now);
           }
           break;
         case PrototypeSessionPhase.Review:
@@ -147,6 +171,10 @@ namespace CodexGame.Application.Playable
       {
         remaining = Math.Max(0, _reviewDeadline.Microseconds - now.Microseconds);
       }
+      else if (Phase == PrototypeSessionPhase.WrongBellRewardSelection)
+      {
+        remaining = _wrongBellRewardSelection.GetRemainingMicroseconds(now);
+      }
 
       return new PrototypeHalliSnapshot(
         Phase,
@@ -166,6 +194,9 @@ namespace CodexGame.Application.Playable
         right,
         _lastAcquirer,
         _lastAcquiredCards,
+        Phase == PrototypeSessionPhase.WrongBellRewardSelection
+          ? _wrongBellRewardSelection.Candidates
+          : EmptyCards,
         _endReason);
     }
 
@@ -182,23 +213,61 @@ namespace CodexGame.Application.Playable
         : _endReason == HalliStageEndReason.AiTargetReached
           ? HalliStageWinner.Ai
           : HalliStageWinner.None;
+      var playerCandidates = new List<Card>(_ledger.GetCards(CardZone.PlayerAcquired));
+      var aiCandidates = new List<Card>(_ledger.GetCards(CardZone.AiAcquired));
       var otherCandidates = new List<Card>();
       otherCandidates.AddRange(_ledger.GetCards(CardZone.UnacquiredPool));
       otherCandidates.AddRange(_ledger.GetCards(CardZone.LeftPile));
       otherCandidates.AddRange(_ledger.GetCards(CardZone.RightPile));
       otherCandidates.AddRange(_ledger.GetCards(CardZone.Deck));
       otherCandidates.AddRange(_ledger.GetCards(CardZone.Reserved));
+      AssignScoreOnlyWinnerFallback(
+        winner,
+        playerCandidates,
+        aiCandidates,
+        otherCandidates);
 
       var selection = new PrivateCardSelectionSession();
       selection.Begin(
-        _ledger.GetCards(CardZone.PlayerAcquired),
-        _ledger.GetCards(CardZone.AiAcquired),
+        Array.AsReadOnly(playerCandidates.ToArray()),
+        Array.AsReadOnly(aiCandidates.ToArray()),
         Array.AsReadOnly(otherCandidates.ToArray()),
         winner,
         _combatRoundNumber,
         _combatRoundSeed,
         now);
       return selection;
+    }
+
+    private void AssignScoreOnlyWinnerFallback(
+      HalliStageWinner winner,
+      List<Card> playerCandidates,
+      List<Card> aiCandidates,
+      List<Card> otherCandidates)
+    {
+      var winnerCandidates = winner == HalliStageWinner.Player
+        ? playerCandidates
+        : winner == HalliStageWinner.Ai
+          ? aiCandidates
+          : null;
+
+      if (winnerCandidates == null || winnerCandidates.Count > 0)
+      {
+        return;
+      }
+
+      if (otherCandidates.Count == 0)
+      {
+        throw new InvalidOperationException(
+          "A score-only Halli winner needs one fallback card candidate.");
+      }
+
+      var random = DeterministicRandomFactory.Create(
+        _combatRoundSeed,
+        RandomChannel.ScoreOnlyWinFallback);
+      var fallbackIndex = random.NextInt(otherCandidates.Count);
+      winnerCandidates.Add(otherCandidates[fallbackIndex]);
+      otherCandidates.RemoveAt(fallbackIndex);
     }
 
     private void Flip(GameTimestamp now)
@@ -301,7 +370,12 @@ namespace CodexGame.Application.Playable
       }
 
       _aiWins++;
-      EnterReview(now, "Wrong bell. Player loses this Halli round; AI gains one Halli win.");
+      var rewarded = TryAwardAiWrongBellReward();
+      EnterReview(
+        now,
+        rewarded
+          ? "Wrong bell. AI gains one Halli win and selects one unacquired card."
+          : "Wrong bell. AI gains one Halli win; no unacquired reward card is available.");
     }
 
     private void ResolveAiBell(GameTimestamp now)
@@ -322,8 +396,80 @@ namespace CodexGame.Application.Playable
       }
       else
       {
-        EnterReview(now, "AI bell became invalid. No cards acquired.");
+        _playerWins++;
+        BeginWrongBellRewardSelection(now);
       }
+    }
+
+    private bool TryAwardAiWrongBellReward()
+    {
+      var candidates = _ledger.GetCards(CardZone.UnacquiredPool);
+      if (candidates.Count == 0)
+      {
+        return false;
+      }
+
+      var selected = _aiRewardSelectionPolicy.Select(candidates, 1, _aiChoiceRandom)[0];
+      for (var index = 0; index < candidates.Count; index++)
+      {
+        if (candidates[index].Id != selected)
+        {
+          continue;
+        }
+
+        _ledger.Move(selected, CardZone.UnacquiredPool, CardZone.AiAcquired);
+        SetLastAcquisition(PrototypeAcquirer.Ai, candidates[index]);
+        return true;
+      }
+
+      throw new InvalidOperationException("AI wrong-bell reward selection returned an unknown card.");
+    }
+
+    private void BeginWrongBellRewardSelection(GameTimestamp now)
+    {
+      var candidates = _ledger.GetCards(CardZone.UnacquiredPool);
+      if (candidates.Count == 0)
+      {
+        EnterReview(
+          now,
+          "AI chose incorrectly. Player gains one Halli win; no unacquired reward card is available.");
+        return;
+      }
+
+      CloseBellWindow();
+      ClearLastAcquisition();
+      _wrongBellRewardSelection.Begin(
+        candidates,
+        DeterministicRandomFactory.Create(
+          _combatRoundSeed,
+          RandomChannel.WrongBellReward),
+        now);
+      Phase = PrototypeSessionPhase.WrongBellRewardSelection;
+      _statusMessage =
+        "AI chose incorrectly. Select one unacquired card within 30 seconds (Q/E, W/ENTER).";
+    }
+
+    private void CompleteWrongBellRewardSelection(GameTimestamp now)
+    {
+      if (!_wrongBellRewardSelection.SelectedCard.HasValue)
+      {
+        throw new InvalidOperationException("Wrong-bell reward selection has no selected card.");
+      }
+
+      var selected = _wrongBellRewardSelection.SelectedCard.Value;
+      _ledger.Move(selected.Id, CardZone.UnacquiredPool, CardZone.PlayerAcquired);
+      SetLastAcquisition(PrototypeAcquirer.Player, selected);
+      EnterReview(
+        now,
+        _wrongBellRewardSelection.TimedOut
+          ? "AI chose incorrectly. Selection timed out; player receives one random unacquired card."
+          : "AI chose incorrectly. Player receives the selected unacquired card.");
+    }
+
+    private void SetLastAcquisition(PrototypeAcquirer acquirer, Card card)
+    {
+      _lastAcquirer = acquirer;
+      _lastAcquiredCards = Array.AsReadOnly(new[] { card });
     }
 
     private AcquisitionKind Evaluate(PileSide side)

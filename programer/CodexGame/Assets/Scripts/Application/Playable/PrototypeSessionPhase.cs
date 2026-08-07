@@ -5,6 +5,7 @@ namespace CodexGame.Application.Playable
     Intro,
     ReadyToFlip,
     BellOpen,
+    WrongBellRewardSelection,
     Review,
     Finished
   }

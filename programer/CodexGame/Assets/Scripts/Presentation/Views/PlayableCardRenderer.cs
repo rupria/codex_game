@@ -7,11 +7,16 @@ namespace CodexGame.Presentation.Views
   internal sealed class PlayableCardRenderer
   {
     private readonly PlayableCardArtLibrary _art;
+    private readonly Texture2D _backTexture;
     private readonly PlayableDevStyles _styles;
 
-    public PlayableCardRenderer(PlayableCardArtLibrary art, PlayableDevStyles styles)
+    public PlayableCardRenderer(
+      PlayableCardArtLibrary art,
+      Texture2D backTexture,
+      PlayableDevStyles styles)
     {
       _art = art;
+      _backTexture = backTexture;
       _styles = styles;
     }
 
@@ -38,9 +43,9 @@ namespace CodexGame.Presentation.Views
     {
       var rect = GUILayoutUtility.GetRect(width, height, GUILayout.Width(width), GUILayout.Height(height));
       GUI.Box(rect, GUIContent.none, _styles.Card);
-      if (_art != null && _art.BackTexture != null)
+      if (_backTexture != null)
       {
-        GUI.DrawTexture(Inset(rect), _art.BackTexture, ScaleMode.ScaleToFit, true);
+        GUI.DrawTexture(Inset(rect), _backTexture, ScaleMode.ScaleToFit, true);
       }
       else
       {

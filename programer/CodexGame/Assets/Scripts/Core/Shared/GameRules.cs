@@ -11,6 +11,7 @@ namespace CodexGame.Core.Shared
     public const long SimultaneousBellThresholdMicroseconds = 33_300;
     public const long CardFlipTimeoutMicroseconds = 30_000_000;
     public const long ReviewGraceMicroseconds = 15_000_000;
+    public const long WrongBellRewardSelectionTimeoutMicroseconds = 30_000_000;
     public const long PrivateSelectionTimeoutMicroseconds = 60_000_000;
     public const long AiMaximumReactionMicroseconds = 1_500_000;
 

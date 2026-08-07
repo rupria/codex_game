@@ -13,30 +13,33 @@ namespace CodexGame.Presentation.Views
     private Texture2D _boardTexture;
 
     [SerializeField]
-    private PlayableCardArtLibrary _cardArt;
+    private PlayableCardArtSet _cardArtSet;
 
     private readonly HalliDevPanel _halliPanel = new HalliDevPanel();
     private readonly PrivateSelectionDevPanel _selectionPanel = new PrivateSelectionDevPanel();
     private readonly PokerDevPanel _pokerPanel = new PokerDevPanel();
     private PlayableGameSnapshot _snapshot;
     private PlayableDevStyles _styles;
-    private PlayableCardRenderer _cards;
+    private PlayableCardRenderer _halliCards;
+    private PlayableCardRenderer _pokerCards;
     private int _selectionFocus;
 
     public event Action StartRequested;
     public event Action AdvanceRequested;
     public event Action LeftBellRequested;
     public event Action RightBellRequested;
+    public event Action<CardId> WrongBellRewardRequested;
     public event Action<CardId> PrivateCardToggleRequested;
     public event Action PrivateCardsConfirmRequested;
     public event Action<PredictionChoice> PredictionRequested;
     public event Action RestartRequested;
 
-    public void Configure(Texture2D boardTexture, PlayableCardArtLibrary cardArt)
+    public void Configure(Texture2D boardTexture, PlayableCardArtSet cardArtSet)
     {
       _boardTexture = boardTexture;
-      _cardArt = cardArt;
-      _cards = null;
+      _cardArtSet = cardArtSet;
+      _halliCards = null;
+      _pokerCards = null;
     }
 
     public void Present(PlayableGameSnapshot snapshot)
@@ -108,10 +111,12 @@ namespace CodexGame.Presentation.Views
             _halliPanel.Draw(
               _snapshot.Halli,
               _styles,
-              _cards,
+              _halliCards,
+              _selectionFocus,
               () => AdvanceRequested?.Invoke(),
               () => LeftBellRequested?.Invoke(),
-              () => RightBellRequested?.Invoke());
+              () => RightBellRequested?.Invoke(),
+              cardId => WrongBellRewardRequested?.Invoke(cardId));
           }
           break;
         case PlayableGamePhase.PrivateSelection:
@@ -121,7 +126,7 @@ namespace CodexGame.Presentation.Views
               _snapshot.Selection,
               _selectionFocus,
               _styles,
-              _cards,
+              _pokerCards,
               cardId => PrivateCardToggleRequested?.Invoke(cardId),
               () => PrivateCardsConfirmRequested?.Invoke());
           }
@@ -133,7 +138,7 @@ namespace CodexGame.Presentation.Views
             _pokerPanel.Draw(
               _snapshot.Poker,
               _styles,
-              _cards,
+              _pokerCards,
               prediction => PredictionRequested?.Invoke(prediction),
               () => AdvanceRequested?.Invoke());
           }
@@ -156,11 +161,11 @@ namespace CodexGame.Presentation.Views
         GUILayout.Height(72f));
       GUILayout.Label(
         "Halli: UP/SPACE flip, LEFT/RIGHT ring. Wrong bell loses only that Halli round. "
-        + "Poker: Q/E/W/ENTER select, then 1/2 predict.",
+        + "Wrong-AI reward: Q/E choose, W/ENTER take. Poker: Q/E/W/ENTER select, then 1/2 predict.",
         _styles.Body,
         GUILayout.Height(54f));
-      var art = _cardArt != null && _cardArt.IsComplete && _cardArt.BackTexture != null
-        ? "156 card fronts and shared card back loaded."
+      var art = _cardArtSet != null && _cardArtSet.IsComplete
+        ? "Halli 156 + poker 52 card fronts and shared back loaded."
         : "Missing card art uses text fallback.";
       GUILayout.Label(art, _styles.Body);
       if (GUILayout.Button("START BATTLE  [ENTER / SPACE]", GUILayout.Height(62f)))
@@ -189,6 +194,26 @@ namespace CodexGame.Presentation.Views
     {
       var halli = _snapshot.Halli;
       if (halli == null) return;
+      if (halli.Phase == PrototypeSessionPhase.WrongBellRewardSelection)
+      {
+        var count = halli.WrongBellRewardCandidates.Count;
+        if (count == 0) return;
+        if (Input.GetKeyDown(KeyCode.Q))
+        {
+          _selectionFocus = (_selectionFocus - 1 + count) % count;
+        }
+        else if (Input.GetKeyDown(KeyCode.E))
+        {
+          _selectionFocus = (_selectionFocus + 1) % count;
+        }
+        else if (Pressed(KeyCode.W, KeyCode.Return))
+        {
+          WrongBellRewardRequested?.Invoke(
+            halli.WrongBellRewardCandidates[_selectionFocus].Id);
+        }
+        return;
+      }
+
       if (halli.Phase == PrototypeSessionPhase.Finished)
       {
         if (Pressed(KeyCode.Return, KeyCode.Space)) AdvanceRequested?.Invoke();
@@ -232,7 +257,20 @@ namespace CodexGame.Presentation.Views
     private void EnsureRenderers()
     {
       if (_styles == null) _styles = new PlayableDevStyles();
-      if (_cards == null) _cards = new PlayableCardRenderer(_cardArt, _styles);
+      if (_halliCards == null)
+      {
+        _halliCards = new PlayableCardRenderer(
+          _cardArtSet?.Halli,
+          _cardArtSet?.BackTexture,
+          _styles);
+      }
+      if (_pokerCards == null)
+      {
+        _pokerCards = new PlayableCardRenderer(
+          _cardArtSet?.Poker,
+          _cardArtSet?.BackTexture,
+          _styles);
+      }
     }
 
     private static bool Pressed(KeyCode first, KeyCode second)

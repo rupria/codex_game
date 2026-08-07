@@ -25,6 +25,7 @@ namespace CodexGame.Bootstrap
       _view.AdvanceRequested += Advance;
       _view.LeftBellRequested += RingLeft;
       _view.RightBellRequested += RingRight;
+      _view.WrongBellRewardRequested += SelectWrongBellReward;
       _view.PrivateCardToggleRequested += TogglePrivateCard;
       _view.PrivateCardsConfirmRequested += ConfirmPrivateCards;
       _view.PredictionRequested += Predict;
@@ -49,6 +50,7 @@ namespace CodexGame.Bootstrap
       _view.AdvanceRequested -= Advance;
       _view.LeftBellRequested -= RingLeft;
       _view.RightBellRequested -= RingRight;
+      _view.WrongBellRewardRequested -= SelectWrongBellReward;
       _view.PrivateCardToggleRequested -= TogglePrivateCard;
       _view.PrivateCardsConfirmRequested -= ConfirmPrivateCards;
       _view.PredictionRequested -= Predict;
@@ -82,6 +84,12 @@ namespace CodexGame.Bootstrap
     private void TogglePrivateCard(CardId cardId)
     {
       _session.TogglePrivateCard(cardId, Now());
+      Present();
+    }
+
+    private void SelectWrongBellReward(CardId cardId)
+    {
+      _session.SelectWrongBellReward(cardId, Now());
       Present();
     }
 

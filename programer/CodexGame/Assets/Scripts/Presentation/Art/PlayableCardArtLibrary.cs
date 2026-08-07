@@ -18,17 +18,22 @@ namespace CodexGame.Presentation.Art
     private int _skullCount;
 
     [SerializeField]
+    private bool _matchSkullCount;
+
+    [SerializeField]
     private Texture2D _texture;
 
     public PlayableCardArtEntry(
       CardSuit suit,
       CardRank rank,
       int skullCount,
+      bool matchSkullCount,
       Texture2D texture)
     {
       _suit = suit;
       _rank = rank;
       _skullCount = skullCount;
+      _matchSkullCount = matchSkullCount;
       _texture = texture;
     }
 
@@ -36,7 +41,7 @@ namespace CodexGame.Presentation.Art
     {
       return _suit == card.Suit
         && _rank == card.Rank
-        && _skullCount == card.SkullCount;
+        && (!_matchSkullCount || _skullCount == card.SkullCount);
     }
 
     public Texture2D Texture => _texture;
@@ -45,37 +50,36 @@ namespace CodexGame.Presentation.Art
   [Serializable]
   public sealed class PlayableCardArtLibrary
   {
-    public const int ExpectedTextureCount = 156;
+    public const int HalliExpectedTextureCount = 156;
+    public const int PokerExpectedTextureCount = 52;
 
     [SerializeField]
     private List<PlayableCardArtEntry> _entries = new List<PlayableCardArtEntry>();
 
     [SerializeField]
-    private Texture2D _backTexture;
-
-    public PlayableCardArtLibrary(IReadOnlyList<PlayableCardArtEntry> entries)
-      : this(entries, null)
-    {
-    }
+    private int _expectedTextureCount;
 
     public PlayableCardArtLibrary(
       IReadOnlyList<PlayableCardArtEntry> entries,
-      Texture2D backTexture)
+      int expectedTextureCount)
     {
       if (entries == null)
       {
         throw new ArgumentNullException(nameof(entries));
       }
 
+      if (expectedTextureCount <= 0)
+      {
+        throw new ArgumentOutOfRangeException(nameof(expectedTextureCount));
+      }
+
       _entries = new List<PlayableCardArtEntry>(entries);
-      _backTexture = backTexture;
+      _expectedTextureCount = expectedTextureCount;
     }
 
     public int Count => _entries?.Count ?? 0;
 
-    public bool IsComplete => Count == ExpectedTextureCount;
-
-    public Texture2D BackTexture => _backTexture;
+    public bool IsComplete => Count == _expectedTextureCount;
 
     public bool TryGetTexture(Card card, out Texture2D texture)
     {
@@ -95,5 +99,40 @@ namespace CodexGame.Presentation.Art
       texture = null;
       return false;
     }
+  }
+
+  [Serializable]
+  public sealed class PlayableCardArtSet
+  {
+    [SerializeField]
+    private PlayableCardArtLibrary _halli;
+
+    [SerializeField]
+    private PlayableCardArtLibrary _poker;
+
+    [SerializeField]
+    private Texture2D _backTexture;
+
+    public PlayableCardArtSet(
+      PlayableCardArtLibrary halli,
+      PlayableCardArtLibrary poker,
+      Texture2D backTexture)
+    {
+      _halli = halli ?? throw new ArgumentNullException(nameof(halli));
+      _poker = poker ?? throw new ArgumentNullException(nameof(poker));
+      _backTexture = backTexture ?? throw new ArgumentNullException(nameof(backTexture));
+    }
+
+    public PlayableCardArtLibrary Halli => _halli;
+
+    public PlayableCardArtLibrary Poker => _poker;
+
+    public Texture2D BackTexture => _backTexture;
+
+    public bool IsComplete => _halli != null
+      && _halli.IsComplete
+      && _poker != null
+      && _poker.IsComplete
+      && _backTexture != null;
   }
 }

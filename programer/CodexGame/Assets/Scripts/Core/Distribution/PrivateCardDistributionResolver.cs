@@ -44,7 +44,9 @@ namespace CodexGame.Core.Distribution
       var loserCards = winner == HalliStageWinner.Player
         ? aiAcquiredCards
         : playerAcquiredCards;
-      var directSelectionCount = PrivateCardDistributionRules.GetDirectSelectionCount(combatRoundNumber);
+      var directSelectionCount = PrivateCardDistributionRules.GetAvailableDirectSelectionCount(
+        combatRoundNumber,
+        winnerCards.Count);
       var normalizedSelection = NormalizeSelection(winnerCards, selectedWinnerCards);
 
       if (selectionMode == PrivateCardSelectionMode.Confirmed

@@ -16,21 +16,21 @@ namespace CodexGame.Core.Distribution
       return GameRules.RequiredPrivateCards - GetDirectSelectionCount(combatRoundNumber);
     }
 
-    public static bool RequiresSelectionUi(int combatRoundNumber, int winnerCandidateCount)
+    public static int GetAvailableDirectSelectionCount(
+      int combatRoundNumber,
+      int winnerCandidateCount)
     {
       if (winnerCandidateCount < 0)
       {
         throw new ArgumentOutOfRangeException(nameof(winnerCandidateCount));
       }
 
-      var required = GetDirectSelectionCount(combatRoundNumber);
+      return Math.Min(GetDirectSelectionCount(combatRoundNumber), winnerCandidateCount);
+    }
 
-      if (winnerCandidateCount < required)
-      {
-        throw new ArgumentException(
-          "The Halli winner must have enough acquired cards for the round's direct selection.",
-          nameof(winnerCandidateCount));
-      }
+    public static bool RequiresSelectionUi(int combatRoundNumber, int winnerCandidateCount)
+    {
+      var required = GetAvailableDirectSelectionCount(combatRoundNumber, winnerCandidateCount);
 
       return winnerCandidateCount > required;
     }

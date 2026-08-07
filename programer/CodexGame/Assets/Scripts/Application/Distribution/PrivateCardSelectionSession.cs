@@ -46,7 +46,6 @@ namespace CodexGame.Application.Distribution
         throw new ArgumentOutOfRangeException(nameof(winner));
       }
 
-      _requiredSelectionCount = PrivateCardDistributionRules.GetDirectSelectionCount(combatRoundNumber);
       _playerAcquiredCards = Copy(playerAcquiredCards);
       _aiAcquiredCards = Copy(aiAcquiredCards);
       _otherCandidates = Copy(otherCandidates);
@@ -57,6 +56,11 @@ namespace CodexGame.Application.Distribution
         : winner == HalliStageWinner.Ai
           ? _aiAcquiredCards
           : EmptyCards;
+      _requiredSelectionCount = winner == HalliStageWinner.None
+        ? 0
+        : PrivateCardDistributionRules.GetAvailableDirectSelectionCount(
+          combatRoundNumber,
+          _winnerCandidates.Count);
       _selectedIds.Clear();
       _result = null;
       _random = DeterministicRandomFactory.Create(combatRoundSeed, RandomChannel.CardDistribution);
