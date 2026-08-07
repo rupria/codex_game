@@ -85,13 +85,15 @@ namespace CodexGame.Application.Playable
 
     public void Ring(PileSide selectedPile, GameTimestamp now)
     {
-      if (Phase != PrototypeSessionPhase.BellOpen)
+      if (Phase != PrototypeSessionPhase.ReadyToFlip
+        && Phase != PrototypeSessionPhase.BellOpen)
       {
-        _statusMessage = "No bell opportunity is open.";
+        _statusMessage = "Bell input is unavailable during this phase.";
         return;
       }
 
-      if (_aiBellAt.HasValue
+      if (Phase == PrototypeSessionPhase.BellOpen
+        && _aiBellAt.HasValue
         && ReactionResolver.Resolve(now, _aiBellAt.Value) == ReactionWinner.Ai)
       {
         ResolveAiBell(now);
@@ -292,7 +294,7 @@ namespace CodexGame.Application.Playable
         return;
       }
 
-      EnterReview(now, "Wrong bell. No cards acquired and both piles stay.");
+      EnterReview(now, "Wrong bell. Both sides lose this Halli round; both piles stay.");
     }
 
     private void ResolveAiBell(GameTimestamp now)

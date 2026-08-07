@@ -66,12 +66,12 @@ namespace CodexGame.Presentation.Views
         return;
       }
 
-      if (_snapshot.Phase == PrototypeSessionPhase.BellOpen
+      if (CanRing()
         && Input.GetKeyDown(KeyCode.LeftArrow))
       {
         LeftBellRequested?.Invoke();
       }
-      else if (_snapshot.Phase == PrototypeSessionPhase.BellOpen
+      else if (CanRing()
         && Input.GetKeyDown(KeyCode.RightArrow))
       {
         RightBellRequested?.Invoke();
@@ -251,7 +251,7 @@ namespace CodexGame.Presentation.Views
       }
       else
       {
-        GUI.enabled = _snapshot.Phase == PrototypeSessionPhase.BellOpen;
+        GUI.enabled = CanRing();
 
         if (GUILayout.Button("LEFT BELL  [LEFT]", GUILayout.Height(54f)))
         {
@@ -275,6 +275,12 @@ namespace CodexGame.Presentation.Views
       }
 
       GUILayout.EndHorizontal();
+    }
+
+    private bool CanRing()
+    {
+      return _snapshot.Phase == PrototypeSessionPhase.ReadyToFlip
+        || _snapshot.Phase == PrototypeSessionPhase.BellOpen;
     }
 
     private void EnsureStyles()
