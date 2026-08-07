@@ -28,15 +28,15 @@ namespace CodexGame.Application.Playable
       new WrongBellRewardSelectionSession();
     private Card? _firstPublicCard;
     private GameTimestamp _readyDeadline;
-    private GameTimestamp _followerRevealAt;
+    private GameTimestamp _nextRevealEventAt;
+    private GameTimestamp _currentRevealStartedAt;
+    private GameTimestamp _currentRevealCompleteAt;
     private GameTimestamp _nextFlipAvailableAt;
     private GameTimestamp _reviewDeadline;
-    private GameTimestamp _flipStartedAt;
     private GameTimestamp? _aiBellAt;
-    private GameTimestamp? _queuedPlayerBellAt;
     private PileSide? _aiPile;
-    private PileSide? _queuedPlayerPile;
-    private PileSide _pendingFollowerPile;
+    private HalliRevealStep? _currentRevealStep;
+    private Card? _currentRevealCard;
     private AiBellOutcome _aiOutcome;
     private HalliActor _wrongBellRewardWinner = HalliActor.Player;
     private string _statusMessage = "Press START to play.";
@@ -48,13 +48,17 @@ namespace CodexGame.Application.Playable
     private HalliStageEndReason _endReason;
     private PrototypeAcquirer _lastAcquirer;
     private IReadOnlyList<Card> _lastAcquiredCards = EmptyCards;
+    private PileSide? _lastAcquiredPile;
+    private PileSide? _lastBellPile;
+    private PrototypeBellFeedback _bellFeedback;
 
     public PrototypeSessionPhase Phase { get; private set; } = PrototypeSessionPhase.Intro;
 
     public void StartNew(
       GameTimestamp now,
       long combatRoundSeed,
-      int combatRoundNumber = 1)
+      int combatRoundNumber = 1,
+      bool waitForOpeningPresentation = false)
     {
       HalliStageRules.GetWinTarget(combatRoundNumber);
       var cards = CardSetFactory.CreateStandard52(new PrototypeSkullPolicy());
@@ -83,7 +87,22 @@ namespace CodexGame.Application.Playable
       var firstPublic = _deck.Draw();
       _ledger.Move(firstPublic.Id, CardZone.Deck, CardZone.FirstPublic);
       _firstPublicCard = firstPublic;
-      BeginReady(now, "First public card opened. Player leads the first flip.");
+      if (waitForOpeningPresentation)
+      {
+        Phase = PrototypeSessionPhase.Opening;
+        _statusMessage = "Dealer is opening the first public card.";
+      }
+      else
+      {
+        BeginReady(now, "First public card opened. Player starts the first distribution.");
+      }
+    }
+
+    public bool CompleteOpening(GameTimestamp now)
+    {
+      if (Phase != PrototypeSessionPhase.Opening) return false;
+      BeginReady(now, "First public card opened. Player starts the first distribution.");
+      return true;
     }
 
     public void Advance(GameTimestamp now)
@@ -105,17 +124,6 @@ namespace CodexGame.Application.Playable
 
     public void Ring(PileSide selectedPile, GameTimestamp now)
     {
-      if (Phase == PrototypeSessionPhase.SequentialReveal)
-      {
-        if (!_queuedPlayerPile.HasValue)
-        {
-          _queuedPlayerPile = selectedPile;
-          _queuedPlayerBellAt = now;
-          _statusMessage = "Bell queued until both sequential cards are visible.";
-        }
-        return;
-      }
-
       if (Phase != PrototypeSessionPhase.BellOpen)
       {
         _statusMessage = "Bell input is unavailable during this phase.";
@@ -153,10 +161,7 @@ namespace CodexGame.Application.Playable
           }
           break;
         case PrototypeSessionPhase.SequentialReveal:
-          if (now.Microseconds >= _followerRevealAt.Microseconds)
-          {
-            CompleteSequentialReveal(now);
-          }
+          TickSequentialReveal(now);
           break;
         case PrototypeSessionPhase.BellOpen:
           TickBellWindow(now);
@@ -177,14 +182,20 @@ namespace CodexGame.Application.Playable
     {
       var left = _field == null ? EmptyCards : _field.GetExposedCards(PileSide.Left);
       var right = _field == null ? EmptyCards : _field.GetExposedCards(PileSide.Right);
+      var playerAcquired = _ledger == null
+        ? EmptyCards
+        : _ledger.GetCards(CardZone.PlayerAcquired);
+      var aiAcquired = _ledger == null
+        ? EmptyCards
+        : _ledger.GetCards(CardZone.AiAcquired);
       var remaining = GetRemainingMicroseconds(now);
       var canFlip = (Phase == PrototypeSessionPhase.ReadyToFlip
           || Phase == PrototypeSessionPhase.BellOpen)
         && _turnOrder.LeadActor == HalliActor.Player
         && (Phase != PrototypeSessionPhase.BellOpen
           || now.Microseconds >= _nextFlipAvailableAt.Microseconds);
-      var canRing = Phase == PrototypeSessionPhase.SequentialReveal
-        || Phase == PrototypeSessionPhase.BellOpen;
+      var canRing = Phase == PrototypeSessionPhase.BellOpen;
+      var revealProgress = GetRevealProgress(now);
 
       return new PrototypeHalliSnapshot(
         Phase,
@@ -193,8 +204,10 @@ namespace CodexGame.Application.Playable
         _combatRoundNumber,
         _playerWins,
         _aiWins,
-        _ledger == null ? 0 : _ledger.Count(CardZone.PlayerAcquired),
-        _ledger == null ? 0 : _ledger.Count(CardZone.AiAcquired),
+        playerAcquired.Count,
+        aiAcquired.Count,
+        playerAcquired,
+        aiAcquired,
         HalliStageRules.GetWinTarget(_combatRoundNumber),
         _flipCount,
         _deck == null ? 0 : _deck.RemainingCount,
@@ -205,11 +218,20 @@ namespace CodexGame.Application.Playable
         Phase == PrototypeSessionPhase.WrongBellRewardSelection
           && _wrongBellRewardWinner == HalliActor.Player
           && _wrongBellRewardSelection.CanSelect(now),
+        _currentRevealStep?.Number ?? 0,
+        _currentRevealStep?.Actor,
+        _currentRevealStep?.RelativeSide,
+        _currentRevealStep?.PhysicalPile,
+        _currentRevealCard,
+        revealProgress,
         _firstPublicCard,
         left,
         right,
         _lastAcquirer,
         _lastAcquiredCards,
+        _lastAcquiredPile,
+        _lastBellPile,
+        _bellFeedback,
         Phase == PrototypeSessionPhase.WrongBellRewardSelection
           ? _wrongBellRewardSelection.Candidates
           : EmptyCards,
@@ -262,51 +284,74 @@ namespace CodexGame.Application.Playable
 
       CloseBellWindow();
       ClearLastAcquisition();
-      _flipStartedAt = now;
-      var lead = _turnOrder.LeadActor;
-      var follower = _turnOrder.GetFollower();
-      var leadPile = _turnOrder.TakeNextPile(lead);
-      _pendingFollowerPile = _turnOrder.TakeNextPile(follower);
-      ExposeFromDeck(leadPile);
-      var delay = GameRules.SequentialRevealMinimumMicroseconds
-        + _revealRandom.NextInt((int)GameRules.SequentialRevealRangeMicroseconds + 1);
-      _followerRevealAt = Add(now, delay);
       Phase = PrototypeSessionPhase.SequentialReveal;
-      _statusMessage = lead == HalliActor.Player
-        ? "Player lead card opened. AI card follows in 0.3-0.5 seconds."
-        : "AI lead card opened. Player card follows in 0.3-0.5 seconds.";
+      RevealStep(0, now);
+    }
+
+    private void TickSequentialReveal(GameTimestamp now)
+    {
+      while (Phase == PrototypeSessionPhase.SequentialReveal
+        && now.Microseconds >= _nextRevealEventAt.Microseconds)
+      {
+        if (!_currentRevealStep.HasValue)
+        {
+          throw new InvalidOperationException("Sequential reveal has no current step.");
+        }
+
+        var eventAt = _nextRevealEventAt;
+        if (_currentRevealStep.Value.Number < HalliRevealSequence.Count)
+        {
+          RevealStep(_currentRevealStep.Value.Number, eventAt);
+        }
+        else
+        {
+          CompleteSequentialReveal(eventAt);
+        }
+      }
+    }
+
+    private void RevealStep(int zeroBasedIndex, GameTimestamp startedAt)
+    {
+      var step = HalliRevealSequence.GetStep(zeroBasedIndex);
+      _currentRevealStep = step;
+      _currentRevealCard = ExposeFromDeck(step.PhysicalPile);
+      _currentRevealStartedAt = startedAt;
+      var motionDuration = GameRules.CardRevealMotionMinimumMicroseconds
+        + _revealRandom.NextInt((int)GameRules.CardRevealMotionRangeMicroseconds + 1);
+      _currentRevealCompleteAt = Add(startedAt, motionDuration);
+      if (step.Number < HalliRevealSequence.Count)
+      {
+        var gap = GameRules.CardRevealGapMinimumMicroseconds
+          + _revealRandom.NextInt((int)GameRules.CardRevealGapRangeMicroseconds + 1);
+        _nextRevealEventAt = Add(_currentRevealCompleteAt, gap);
+      }
+      else
+      {
+        _nextRevealEventAt = _currentRevealCompleteAt;
+      }
+
+      _statusMessage = "Distributing card " + step.Number + "/4: "
+        + (step.Actor == HalliActor.Player ? "PLAYER " : "AI ")
+        + (step.RelativeSide == HalliRelativeSide.Left ? "LEFT" : "RIGHT") + ".";
     }
 
     private void CompleteSequentialReveal(GameTimestamp now)
     {
-      ExposeFromDeck(_pendingFollowerPile);
       _flipCount++;
+      ClearRevealState();
       var leftValid = IsAcquirable(Evaluate(PileSide.Left));
       var rightValid = IsAcquirable(Evaluate(PileSide.Right));
 
       if (!leftValid && !rightValid)
       {
-        if (_queuedPlayerPile.HasValue && _queuedPlayerBellAt.HasValue)
-        {
-          ResolveWrongBell(HalliActor.Player, now, "Player rang before a valid field existed.");
-          return;
-        }
-
         var endReason = ResolveEndReason();
         if (endReason != HalliStageEndReason.None) Finish(endReason);
-        else BeginReady(now, "No valid bell. The current leader continues.");
+        else BeginReady(now, "No valid bell. The current starter continues.");
         return;
       }
 
       OpenBellWindow(leftValid, rightValid, now);
-      if (_queuedPlayerPile.HasValue && _queuedPlayerBellAt.HasValue)
-      {
-        ResolvePlayerBell(_queuedPlayerPile.Value, _queuedPlayerBellAt.Value, now);
-      }
-      else
-      {
-        TickBellWindow(now);
-      }
+      TickBellWindow(now);
     }
 
     private void OpenBellWindow(bool leftValid, bool rightValid, GameTimestamp now)
@@ -323,7 +368,7 @@ namespace CodexGame.Application.Playable
       _aiPile = decision.Pile;
       _aiBellAt = decision.Outcome == AiBellOutcome.Miss
         ? (GameTimestamp?)null
-        : Add(_flipStartedAt, decision.ReactionDelayMicroseconds);
+        : Add(now, decision.ReactionDelayMicroseconds);
       _nextFlipAvailableAt = Add(now, GameRules.NextFlipLockMicroseconds);
       _readyDeadline = Add(_nextFlipAvailableAt, GameRules.CardFlipTimeoutMicroseconds);
       Phase = PrototypeSessionPhase.BellOpen;
@@ -377,7 +422,11 @@ namespace CodexGame.Application.Playable
       }
       else
       {
-        ResolveWrongBell(HalliActor.Player, resolutionTime, "Player selected an invalid pile.");
+        ResolveWrongBell(
+          HalliActor.Player,
+          resolutionTime,
+          "Player selected an invalid pile.",
+          selectedPile);
       }
     }
 
@@ -401,7 +450,8 @@ namespace CodexGame.Application.Playable
         ResolveWrongBell(
           HalliActor.Player,
           now,
-          "Both simultaneous bell inputs were wrong; player input resolves first.");
+          "Both simultaneous bell inputs were wrong; player input resolves first.",
+          playerPile);
       }
     }
 
@@ -416,12 +466,14 @@ namespace CodexGame.Application.Playable
       }
       else
       {
-        ResolveWrongBell(HalliActor.Ai, now, "AI selected an invalid pile.");
+        ResolveWrongBell(HalliActor.Ai, now, "AI selected an invalid pile.", _aiPile);
       }
     }
 
     private void ResolveCorrectBell(HalliActor actor, PileSide pile, GameTimestamp now)
     {
+      _lastBellPile = pile;
+      _bellFeedback = PrototypeBellFeedback.Correct;
       var resolution = Evaluate(pile);
       Acquire(
         pile,
@@ -438,13 +490,21 @@ namespace CodexGame.Application.Playable
           : "AI rang correctly, gains one Halli win, and leads next.");
     }
 
-    private void ResolveWrongBell(HalliActor loser, GameTimestamp now, string reason)
+    private void ResolveWrongBell(
+      HalliActor loser,
+      GameTimestamp now,
+      string reason,
+      PileSide? selectedPile = null)
     {
       var winner = loser == HalliActor.Player ? HalliActor.Ai : HalliActor.Player;
       if (winner == HalliActor.Player) _playerWins++;
       else _aiWins++;
       _turnOrder.SetLead(winner);
       BeginWrongBellRewardSelection(now, winner, reason);
+      _lastBellPile = selectedPile;
+      _bellFeedback = selectedPile.HasValue
+        ? PrototypeBellFeedback.Wrong
+        : PrototypeBellFeedback.None;
     }
 
     private void BeginWrongBellRewardSelection(
@@ -550,7 +610,7 @@ namespace CodexGame.Application.Playable
       otherCandidates.RemoveAt(fallbackIndex);
     }
 
-    private void ExposeFromDeck(PileSide side)
+    private Card ExposeFromDeck(PileSide side)
     {
       var destination = side == PileSide.Left ? CardZone.LeftPile : CardZone.RightPile;
       var card = _deck.Draw();
@@ -560,6 +620,7 @@ namespace CodexGame.Application.Playable
       {
         _ledger.Move(displaced.Value.Id, destination, CardZone.UnacquiredPool);
       }
+      return card;
     }
 
     private AcquisitionKind Evaluate(PileSide side)
@@ -609,12 +670,14 @@ namespace CodexGame.Application.Playable
         ? PrototypeAcquirer.Player
         : PrototypeAcquirer.Ai;
       _lastAcquiredCards = Array.AsReadOnly(acquiredCards.ToArray());
+      _lastAcquiredPile = side;
     }
 
     private void SetLastAcquisition(PrototypeAcquirer acquirer, Card card)
     {
       _lastAcquirer = acquirer;
       _lastAcquiredCards = Array.AsReadOnly(new[] { card });
+      _lastAcquiredPile = null;
     }
 
     private void EnterReview(GameTimestamp now, long durationMicroseconds, string message)
@@ -679,7 +742,7 @@ namespace CodexGame.Application.Playable
     {
       if (Phase == PrototypeSessionPhase.SequentialReveal)
       {
-        return Math.Max(0, _followerRevealAt.Microseconds - now.Microseconds);
+        return Math.Max(0, _nextRevealEventAt.Microseconds - now.Microseconds);
       }
 
       if (Phase == PrototypeSessionPhase.ReadyToFlip
@@ -713,14 +776,34 @@ namespace CodexGame.Application.Playable
       _aiBellAt = null;
       _aiPile = null;
       _aiOutcome = AiBellOutcome.Miss;
-      _queuedPlayerBellAt = null;
-      _queuedPlayerPile = null;
     }
 
     private void ClearLastAcquisition()
     {
       _lastAcquirer = PrototypeAcquirer.None;
       _lastAcquiredCards = EmptyCards;
+      _lastAcquiredPile = null;
+      _lastBellPile = null;
+      _bellFeedback = PrototypeBellFeedback.None;
+    }
+
+    private void ClearRevealState()
+    {
+      _currentRevealStep = null;
+      _currentRevealCard = null;
+    }
+
+    private float GetRevealProgress(GameTimestamp now)
+    {
+      if (Phase != PrototypeSessionPhase.SequentialReveal || !_currentRevealStep.HasValue)
+      {
+        return 0f;
+      }
+
+      var duration = _currentRevealCompleteAt.Microseconds - _currentRevealStartedAt.Microseconds;
+      if (duration <= 0 || now.Microseconds >= _currentRevealCompleteAt.Microseconds) return 1f;
+      if (now.Microseconds <= _currentRevealStartedAt.Microseconds) return 0f;
+      return (float)(now.Microseconds - _currentRevealStartedAt.Microseconds) / duration;
     }
 
     private static bool IsAcquirable(AcquisitionKind resolution)

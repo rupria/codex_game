@@ -17,11 +17,11 @@ namespace CodexGame.SmokeTests.Halli
         HalliStageRules.ResolveEndReason(0, 3, 2, 40, 1) == HalliStageEndReason.AiTargetReached,
         "The AI target must end the Halli stage.");
       tests.Check(
-        HalliStageRules.ResolveEndReason(0, 0, 25, 1, 1) == HalliStageEndReason.FlipLimitReached,
-        "Twenty-five flips must end the Halli stage.");
+        HalliStageRules.ResolveEndReason(0, 0, 12, 40, 1) == HalliStageEndReason.FlipLimitReached,
+        "Twelve four-card distributions must end the Halli stage.");
       tests.Check(
-        HalliStageRules.ResolveEndReason(0, 0, 10, 1, 1) == HalliStageEndReason.InsufficientCards,
-        "Fewer than two deck cards must end the Halli stage.");
+        HalliStageRules.ResolveEndReason(0, 0, 10, 3, 1) == HalliStageEndReason.InsufficientCards,
+        "Fewer than four deck cards must end the Halli stage.");
       tests.CheckThrows<ArgumentOutOfRangeException>(
         () => HalliStageRules.GetWinTarget(0),
         "Combat round numbers below one must be rejected.");

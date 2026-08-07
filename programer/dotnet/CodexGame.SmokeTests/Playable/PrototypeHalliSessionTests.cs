@@ -45,43 +45,74 @@ namespace CodexGame.SmokeTests.Playable
 
       var flipAt = new GameTimestamp(100);
       session.Advance(flipAt);
-      var leadOnly = session.GetSnapshot(flipAt);
+      var reveal = session.GetSnapshot(flipAt);
       tests.Check(
-        leadOnly.Phase == PrototypeSessionPhase.SequentialReveal
-          && leadOnly.FlipCount == 0
-          && leadOnly.LeftPile.Count + leadOnly.RightPile.Count == 1,
-        "A flip must expose only the lead card before the 0.3-0.5 second delay.");
+        reveal.Phase == PrototypeSessionPhase.SequentialReveal
+          && reveal.FlipCount == 0
+          && reveal.RevealStepNumber == 1
+          && reveal.RevealingActor == HalliActor.Player
+          && reveal.RevealingRelativeSide == HalliRelativeSide.Left
+          && reveal.RevealingPile == PileSide.Left
+          && reveal.LeftPile.Count + reveal.RightPile.Count == 1,
+        "A distribution must begin with the player's relative-left card.");
       tests.Check(
-        leadOnly.RemainingMicroseconds >= GameRules.SequentialRevealMinimumMicroseconds
-          && leadOnly.RemainingMicroseconds
-            <= GameRules.SequentialRevealMinimumMicroseconds + GameRules.SequentialRevealRangeMicroseconds,
-        "Sequential reveal delay must remain inside the seeded 0.3-0.5 second range.");
+        !reveal.CanRing && !reveal.CanFlip,
+        "Q/W/E gameplay input must remain locked during the four-card reveal.");
+      session.Ring(PileSide.Left, flipAt);
+      tests.Check(session.GetSnapshot(flipAt).PlayerWins == 0,
+        "A bell input during sequential reveal must be ignored instead of queued.");
 
-      var revealAt = new GameTimestamp(
-        flipAt.Microseconds
-          + GameRules.SequentialRevealMinimumMicroseconds
-          + GameRules.SequentialRevealRangeMicroseconds
-          + 1);
-      session.Tick(revealAt);
-      var pair = session.GetSnapshot(revealAt);
+      var expectedActors = new[] { HalliActor.Player, HalliActor.Ai, HalliActor.Player, HalliActor.Ai };
+      var expectedSides = new[]
+      {
+        HalliRelativeSide.Left,
+        HalliRelativeSide.Left,
+        HalliRelativeSide.Right,
+        HalliRelativeSide.Right
+      };
+      var expectedPiles = new[] { PileSide.Left, PileSide.Right, PileSide.Right, PileSide.Left };
+      var revealTime = flipAt.Microseconds;
+      for (var step = 1; step < 4; step++)
+      {
+        reveal = session.GetSnapshot(new GameTimestamp(revealTime));
+        revealTime += reveal.RemainingMicroseconds;
+        session.Tick(new GameTimestamp(revealTime));
+        reveal = session.GetSnapshot(new GameTimestamp(revealTime));
+        tests.Check(
+          reveal.RevealStepNumber == step + 1
+            && reveal.RevealingActor == expectedActors[step]
+            && reveal.RevealingRelativeSide == expectedSides[step]
+            && reveal.RevealingPile == expectedPiles[step],
+          "The four-card reveal order must remain player-left, AI-left, player-right, AI-right.");
+      }
+
+      revealTime += reveal.RemainingMicroseconds;
+      session.Tick(new GameTimestamp(revealTime));
+      var batch = session.GetSnapshot(new GameTimestamp(revealTime));
       tests.Check(
-        pair.FlipCount == 1 && pair.LeftPile.Count == 1 && pair.RightPile.Count == 1,
-        "A completed sequential reveal must count one pair and expose one card per side.");
+        batch.FlipCount == 1
+          && batch.LeftPile.Count == 2
+          && batch.RightPile.Count == 2
+          && batch.RemainingDeckCards == 47,
+        "One completed distribution must consume four cards and leave two cards per physical pile.");
     }
 
     private static void CheckTurnOrder(TestHarness tests)
     {
       var order = new HalliTurnOrder();
       tests.Check(
-        order.LeadActor == HalliActor.Player
-          && order.TakeNextPile(HalliActor.Player) == PileSide.Left
-          && order.TakeNextPile(HalliActor.Ai) == PileSide.Right,
-        "The first pair must use player-left then AI-relative-left.");
+        order.LeadActor == HalliActor.Player,
+        "The player must start the first four-card distribution.");
       order.SetLead(HalliActor.Ai);
       tests.Check(
-        order.TakeNextPile(HalliActor.Ai) == PileSide.Left
-          && order.TakeNextPile(HalliActor.Player) == PileSide.Right,
-        "Changing the leader must preserve each actor's alternating side index.");
+        order.LeadActor == HalliActor.Ai && order.GetFollower() == HalliActor.Player,
+        "The Halli winner changes only who starts the next fixed reveal sequence.");
+      tests.Check(
+        HalliRevealSequence.GetStep(0).PhysicalPile == PileSide.Left
+          && HalliRevealSequence.GetStep(1).PhysicalPile == PileSide.Right
+          && HalliRevealSequence.GetStep(2).PhysicalPile == PileSide.Right
+          && HalliRevealSequence.GetStep(3).PhysicalPile == PileSide.Left,
+        "AI-relative sides must map to the opposite physical screen coordinates.");
     }
 
     private static void CheckAiPolicy(TestHarness tests)
@@ -200,7 +231,7 @@ namespace CodexGame.SmokeTests.Playable
         var session = new PrototypeHalliSession();
         session.StartNew(new GameTimestamp(0), seed);
         session.Advance(new GameTimestamp(1));
-        var visibleAt = new GameTimestamp(600_001);
+        var visibleAt = new GameTimestamp(1_300_001);
         session.Tick(visibleAt);
         var field = session.GetSnapshot(visibleAt);
         if (field.Phase != PrototypeSessionPhase.BellOpen) continue;
@@ -245,7 +276,7 @@ namespace CodexGame.SmokeTests.Playable
         }
         else if (snapshot.Phase == PrototypeSessionPhase.SequentialReveal)
         {
-          now += 600_001;
+          now += 1_300_001;
           session.Tick(new GameTimestamp(now));
         }
         else if (snapshot.Phase == PrototypeSessionPhase.BellOpen)
@@ -277,7 +308,7 @@ namespace CodexGame.SmokeTests.Playable
       tests.Check(completed.Phase == PrototypeSessionPhase.Finished,
         "The 0.08 Halli state machine must reach a terminal state.");
       tests.Check(completed.FlipCount <= GameRules.HalliFlipLimit,
-        "The Halli state machine must never exceed 25 completed pairs.");
+        "The Halli state machine must never exceed 12 completed four-card distributions.");
       if (completed.Phase != PrototypeSessionPhase.Finished) return;
 
       var selection = session.BeginPrivateCardDistribution(new GameTimestamp(now));
@@ -299,8 +330,17 @@ namespace CodexGame.SmokeTests.Playable
     {
       var game = new PlayableGameSession();
       game.StartNewBattle(new GameTimestamp(0), 123);
-      game.Tick(new GameTimestamp(GameRules.GlobalInactivityTimeoutMicroseconds));
-      tests.Check(game.GetSnapshot(new GameTimestamp(GameRules.GlobalInactivityTimeoutMicroseconds)).Phase
+      tests.Check(game.GetSnapshot(new GameTimestamp(0)).Phase == PlayableGamePhase.HalliOpening,
+        "Starting a battle must enter a timer-free first-public-card presentation.");
+      var readyAt = new GameTimestamp(GameRules.HalliOpeningPresentationMicroseconds);
+      game.Tick(readyAt);
+      tests.Check(game.GetSnapshot(readyAt).Phase == PlayableGamePhase.Halli,
+        "The Halli input phase must start only after the opening presentation completes.");
+      var timeoutAt = new GameTimestamp(
+        GameRules.HalliOpeningPresentationMicroseconds
+          + GameRules.GlobalInactivityTimeoutMicroseconds);
+      game.Tick(timeoutAt);
+      tests.Check(game.GetSnapshot(timeoutAt).Phase
         == PlayableGamePhase.Intro,
         "Three minutes without valid game input must abort the battle to the main screen.");
     }
