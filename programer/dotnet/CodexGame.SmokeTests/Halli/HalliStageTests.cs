@@ -9,7 +9,7 @@ namespace CodexGame.SmokeTests.Halli
     {
       tests.Check(HalliStageRules.GetWinTarget(1) == 3, "Combat round 1 must require three Halli wins.");
       tests.Check(HalliStageRules.GetWinTarget(2) == 2, "Combat round 2 must require two Halli wins.");
-      tests.Check(HalliStageRules.GetWinTarget(3) == 1, "Combat round 3+ must require one Halli win.");
+      tests.Check(HalliStageRules.GetWinTarget(3) == 2, "Combat round 3+ must require two Halli wins.");
       tests.Check(
         HalliStageRules.ResolveEndReason(3, 0, 2, 40, 1) == HalliStageEndReason.PlayerTargetReached,
         "The player target must end the Halli stage.");

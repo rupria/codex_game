@@ -32,7 +32,7 @@ namespace CodexGame.Presentation.Views
     public event Action<CardId> PrivateCardToggleRequested;
     public event Action PrivateCardsConfirmRequested;
     public event Action<PredictionChoice> PredictionRequested;
-    public event Action RestartRequested;
+    public event Action MainRequested;
 
     public void Configure(Texture2D boardTexture, PlayableCardArtSet cardArtSet)
     {
@@ -67,15 +67,25 @@ namespace CodexGame.Presentation.Views
         case PlayableGamePhase.PrivateSelection:
           HandleSelectionInput();
           break;
+        case PlayableGamePhase.PokerItemWindow:
+          if (Pressed(KeyCode.Return, KeyCode.Space)) AdvanceRequested?.Invoke();
+          break;
         case PlayableGamePhase.PokerPrediction:
-          if (Input.GetKeyDown(KeyCode.Alpha1)) PredictionRequested?.Invoke(PredictionChoice.PlayerWins);
-          else if (Input.GetKeyDown(KeyCode.Alpha2)) PredictionRequested?.Invoke(PredictionChoice.PlayerLoses);
+          if (_snapshot.Poker != null
+            && _snapshot.Poker.Phase == Application.Poker.PokerRoundPhase.AwaitingPrediction)
+          {
+            if (Input.GetKeyDown(KeyCode.Alpha1)) PredictionRequested?.Invoke(PredictionChoice.PlayerWins);
+            else if (Input.GetKeyDown(KeyCode.Alpha2)) PredictionRequested?.Invoke(PredictionChoice.PlayerLoses);
+          }
           break;
         case PlayableGamePhase.PokerResult:
           if (Pressed(KeyCode.Return, KeyCode.Space)) AdvanceRequested?.Invoke();
           break;
         case PlayableGamePhase.BattleFinished:
-          if (Pressed(KeyCode.R, KeyCode.Return)) RestartRequested?.Invoke();
+          if (Pressed(KeyCode.R, KeyCode.Return)) MainRequested?.Invoke();
+          break;
+        case PlayableGamePhase.StageWon:
+          if (Pressed(KeyCode.Return, KeyCode.Space)) AdvanceRequested?.Invoke();
           break;
       }
     }
@@ -92,12 +102,17 @@ namespace CodexGame.Presentation.Views
       }
 
       GUILayout.BeginArea(new Rect(18f, 12f, 924f, 578f));
-      GUILayout.Label("CODEX GAME 0.06 - HALLI TO POKER DEV BUILD", _styles.Title);
+      GUILayout.Label("CODEX GAME 0.08 - HALLI TO POKER DEV BUILD", _styles.Title);
       GUILayout.BeginHorizontal();
+      GUILayout.Label("STAGE " + _snapshot.StageNumber, _styles.Heading);
       GUILayout.Label("COMBAT ROUND " + _snapshot.CombatRoundNumber, _styles.Heading);
       GUILayout.Label("PLAYER HP " + _snapshot.Health.Player + "/3", _styles.Heading);
       GUILayout.Label("AI HP " + _snapshot.Health.Ai + "/3", _styles.Heading);
       GUILayout.EndHorizontal();
+      GUILayout.Label(
+        "REWARDS  ITEM " + _snapshot.ItemRewardCount
+        + " / COIN BONUS EVENTS " + _snapshot.CoinIncreaseEventCount,
+        _styles.Small);
       GUILayout.Space(4f);
 
       switch (_snapshot.Phase)
@@ -125,12 +140,14 @@ namespace CodexGame.Presentation.Views
             _selectionPanel.Draw(
               _snapshot.Selection,
               _selectionFocus,
-              _styles,
-              _pokerCards,
-              cardId => PrivateCardToggleRequested?.Invoke(cardId),
+                _styles,
+                _pokerCards,
+                index => _selectionFocus = index,
+                cardId => PrivateCardToggleRequested?.Invoke(cardId),
               () => PrivateCardsConfirmRequested?.Invoke());
           }
           break;
+        case PlayableGamePhase.PokerItemWindow:
         case PlayableGamePhase.PokerPrediction:
         case PlayableGamePhase.PokerResult:
           if (_snapshot.Poker != null)
@@ -145,6 +162,9 @@ namespace CodexGame.Presentation.Views
           break;
         case PlayableGamePhase.BattleFinished:
           DrawBattleFinished();
+          break;
+        case PlayableGamePhase.StageWon:
+          DrawStageWon();
           break;
       }
 
@@ -178,14 +198,30 @@ namespace CodexGame.Presentation.Views
     private void DrawBattleFinished()
     {
       GUILayout.FlexibleSpace();
-      var playerWon = _snapshot.Health.Ai == 0;
       GUILayout.Label(
-        playerWon ? "PLAYER WINS THE BATTLE" : "AI WINS THE BATTLE",
+        "PLAYER DEFEATED - RETURN TO MAIN",
         _styles.Status,
         GUILayout.Height(90f));
-      if (GUILayout.Button("NEW BATTLE  [R / ENTER]", GUILayout.Height(62f)))
+      if (GUILayout.Button("RETURN TO MAIN  [R / ENTER]", GUILayout.Height(62f)))
       {
-        RestartRequested?.Invoke();
+        MainRequested?.Invoke();
+      }
+      GUILayout.FlexibleSpace();
+    }
+
+    private void DrawStageWon()
+    {
+      GUILayout.FlexibleSpace();
+      GUILayout.Label(
+        "STAGE CLEAR - BASE COINS " + _snapshot.LastStageBaseCoinReward,
+        _styles.Status,
+        GUILayout.Height(80f));
+      GUILayout.Label(
+        "Coin bonus event values and item effects remain pending in the 0.08 design.",
+        _styles.Body);
+      if (GUILayout.Button("NEXT STAGE  [ENTER / SPACE]", GUILayout.Height(62f)))
+      {
+        AdvanceRequested?.Invoke();
       }
       GUILayout.FlexibleSpace();
     }
@@ -206,7 +242,8 @@ namespace CodexGame.Presentation.Views
         {
           _selectionFocus = (_selectionFocus + 1) % count;
         }
-        else if (Pressed(KeyCode.W, KeyCode.Return))
+        else if (halli.WrongBellRewardSelectionEnabled
+          && Pressed(KeyCode.W, KeyCode.Return))
         {
           WrongBellRewardRequested?.Invoke(
             halli.WrongBellRewardCandidates[_selectionFocus].Id);
@@ -220,12 +257,9 @@ namespace CodexGame.Presentation.Views
         return;
       }
 
-      var canRing = halli.Phase == PrototypeSessionPhase.ReadyToFlip
-        || halli.Phase == PrototypeSessionPhase.BellOpen;
-      if (canRing && Input.GetKeyDown(KeyCode.LeftArrow)) LeftBellRequested?.Invoke();
-      else if (canRing && Input.GetKeyDown(KeyCode.RightArrow)) RightBellRequested?.Invoke();
-      else if (Pressed(KeyCode.UpArrow, KeyCode.Space)
-        || (halli.Phase == PrototypeSessionPhase.Review && Input.GetKeyDown(KeyCode.W)))
+      if (halli.CanRing && Input.GetKeyDown(KeyCode.LeftArrow)) LeftBellRequested?.Invoke();
+      else if (halli.CanRing && Input.GetKeyDown(KeyCode.RightArrow)) RightBellRequested?.Invoke();
+      else if (halli.CanFlip && Pressed(KeyCode.UpArrow, KeyCode.Space))
       {
         AdvanceRequested?.Invoke();
       }

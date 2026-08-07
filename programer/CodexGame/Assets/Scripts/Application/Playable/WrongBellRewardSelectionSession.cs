@@ -12,6 +12,7 @@ namespace CodexGame.Application.Playable
 
     private IReadOnlyList<Card> _candidates = EmptyCards;
     private IRandomSource? _random;
+    private GameTimestamp _selectionAvailableAt;
     private GameTimestamp _deadline;
 
     public bool IsActive { get; private set; }
@@ -52,15 +53,23 @@ namespace CodexGame.Application.Playable
 
       _candidates = Array.AsReadOnly(copy);
       _random = random;
-      _deadline = Add(now, GameRules.WrongBellRewardSelectionTimeoutMicroseconds);
+      _selectionAvailableAt = Add(now, GameRules.WrongBellRewardInitialLockMicroseconds);
+      _deadline = Add(
+        _selectionAvailableAt,
+        GameRules.WrongBellRewardSelectionTimeoutMicroseconds);
       SelectedCard = null;
       TimedOut = false;
       IsActive = true;
     }
 
-    public bool TrySelect(CardId cardId)
+    public bool CanSelect(GameTimestamp now)
     {
-      if (!IsActive)
+      return IsActive && now.Microseconds >= _selectionAvailableAt.Microseconds;
+    }
+
+    public bool TrySelect(CardId cardId, GameTimestamp now)
+    {
+      if (!CanSelect(now))
       {
         return false;
       }
@@ -79,7 +88,18 @@ namespace CodexGame.Application.Playable
 
     public bool Tick(GameTimestamp now)
     {
-      if (!IsActive || now.Microseconds < _deadline.Microseconds)
+      if (!CanSelect(now))
+      {
+        return false;
+      }
+
+      if (_candidates.Count == 1)
+      {
+        Complete(_candidates[0], false);
+        return true;
+      }
+
+      if (now.Microseconds < _deadline.Microseconds)
       {
         return false;
       }
@@ -95,9 +115,10 @@ namespace CodexGame.Application.Playable
 
     public long GetRemainingMicroseconds(GameTimestamp now)
     {
-      return IsActive
-        ? Math.Max(0, _deadline.Microseconds - now.Microseconds)
-        : 0;
+      if (!IsActive) return 0;
+
+      var activeDeadline = CanSelect(now) ? _deadline : _selectionAvailableAt;
+      return Math.Max(0, activeDeadline.Microseconds - now.Microseconds);
     }
 
     private void Complete(Card selected, bool timedOut)

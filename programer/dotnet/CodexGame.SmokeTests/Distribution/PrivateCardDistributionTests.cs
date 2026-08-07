@@ -33,9 +33,9 @@ namespace CodexGame.SmokeTests.Distribution
           && PrivateCardDistributionRules.GetWinnerRandomFillCount(2) == 1,
         "Combat round 2 distribution must use direct 2 and random fill 1.");
       tests.Check(
-        PrivateCardDistributionRules.GetDirectSelectionCount(3) == 1
-          && PrivateCardDistributionRules.GetWinnerRandomFillCount(3) == 2,
-        "Combat round 3+ distribution must use direct 1 and random fill 2.");
+        PrivateCardDistributionRules.GetDirectSelectionCount(3) == 2
+          && PrivateCardDistributionRules.GetWinnerRandomFillCount(3) == 1,
+        "Combat round 3+ distribution must use direct 2 and random fill 1.");
       tests.Check(
         !PrivateCardDistributionRules.RequiresSelectionUi(2, 2)
           && PrivateCardDistributionRules.RequiresSelectionUi(2, 3),
@@ -96,7 +96,7 @@ namespace CodexGame.SmokeTests.Distribution
           && roundTwo.PlayerPrivateCards.Count == 3,
         "Round 2 must retain two direct selections and randomly fill the winner to three.");
 
-      var roundThreeSelected = Array.AsReadOnly(new[] { ai[2].Id });
+      var roundThreeSelected = Array.AsReadOnly(new[] { ai[1].Id, ai[2].Id });
       var roundThree = PrivateCardDistributionResolver.Resolve(
         player,
         ai,
@@ -108,8 +108,10 @@ namespace CodexGame.SmokeTests.Distribution
         new ZeroRandom());
 
       tests.Check(
-        Contains(roundThree.AiPrivateCards, ai[2].Id) && roundThree.AiPrivateCards.Count == 3,
-        "Round 3+ must retain one direct selection and randomly fill the winner to three.");
+        Contains(roundThree.AiPrivateCards, ai[1].Id)
+          && Contains(roundThree.AiPrivateCards, ai[2].Id)
+          && roundThree.AiPrivateCards.Count == 3,
+        "Round 3+ must retain two direct selections and randomly fill the winner to three.");
       CheckUniqueAndConserved(tests, roundThree, player.Count + ai.Count + other.Count);
     }
 
@@ -144,7 +146,7 @@ namespace CodexGame.SmokeTests.Distribution
       var player = Slice(cards, 0, 3);
       var ai = Slice(cards, 3, 3);
       var other = Slice(cards, 6, 20);
-      var selected = Array.AsReadOnly(new[] { player[1].Id });
+      var selected = Array.AsReadOnly(new[] { player[1].Id, player[2].Id });
       var first = PrivateCardDistributionResolver.Resolve(
         player,
         ai,

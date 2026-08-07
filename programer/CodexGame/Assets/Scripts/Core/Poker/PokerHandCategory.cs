@@ -10,6 +10,7 @@ namespace CodexGame.Core.Poker
     Flush = 5,
     FullHouse = 6,
     FourOfAKind = 7,
-    StraightFlush = 8
+    StraightFlush = 8,
+    RoyalStraightFlush = 9
   }
 }

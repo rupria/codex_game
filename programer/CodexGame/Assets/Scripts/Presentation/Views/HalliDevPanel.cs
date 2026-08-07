@@ -8,6 +8,8 @@ namespace CodexGame.Presentation.Views
 {
   internal sealed class HalliDevPanel
   {
+    private Vector2 _rewardScroll;
+
     public void Draw(
       PrototypeHalliSnapshot snapshot,
       PlayableDevStyles styles,
@@ -39,31 +41,34 @@ namespace CodexGame.Presentation.Views
       DrawActions(snapshot, advance, leftBell, rightBell);
     }
 
-    private static void DrawWrongBellRewardSelection(
+    private void DrawWrongBellRewardSelection(
       PrototypeHalliSnapshot snapshot,
       int focusedIndex,
       PlayableDevStyles styles,
       PlayableCardRenderer cards,
       Action<CardId> select)
     {
-      const int visibleCount = 7;
       var candidates = snapshot.WrongBellRewardCandidates;
-      var start = Math.Max(0, Math.Min(
-        focusedIndex - (visibleCount / 2),
-        candidates.Count - visibleCount));
-      var end = Math.Min(candidates.Count, start + visibleCount);
 
       GUILayout.Label(
         "REWARD CARD " + (focusedIndex + 1) + "/" + candidates.Count
-        + "  |  Q/E MOVE, W/ENTER SELECT",
+        + (snapshot.WrongBellRewardSelectionEnabled
+          ? "  |  Q/E MOVE, W/ENTER SELECT"
+          : "  |  REVIEW LOCK"),
         styles.Heading);
+      _rewardScroll = GUILayout.BeginScrollView(
+        _rewardScroll,
+        true,
+        false,
+        GUILayout.Height(190f));
       GUILayout.BeginHorizontal();
-      for (var index = start; index < end; index++)
+      for (var index = 0; index < candidates.Count; index++)
       {
         var card = candidates[index];
         GUILayout.BeginVertical(GUILayout.Width(112f));
         GUILayout.Label(index == focusedIndex ? "FOCUS" : " ", styles.Small);
         cards.Draw(card, 100f, 130f);
+        GUI.enabled = snapshot.WrongBellRewardSelectionEnabled;
         if (GUILayout.Button(
           index == focusedIndex ? "SELECT [W]" : "SELECT",
           GUILayout.Width(100f),
@@ -71,9 +76,11 @@ namespace CodexGame.Presentation.Views
         {
           select(card.Id);
         }
+        GUI.enabled = true;
         GUILayout.EndVertical();
       }
       GUILayout.EndHorizontal();
+      GUILayout.EndScrollView();
     }
 
     private static void DrawScoreboard(PrototypeHalliSnapshot snapshot, PlayableDevStyles styles)
@@ -82,6 +89,9 @@ namespace CodexGame.Presentation.Views
         ? Math.Ceiling(snapshot.RemainingMicroseconds / 1_000_000d).ToString("0") + "s"
         : "--";
       GUILayout.BeginHorizontal();
+      GUILayout.Label(
+        "LEAD " + (snapshot.LeadActor == Core.Halli.HalliActor.Player ? "PLAYER" : "AI"),
+        styles.Heading);
       GUILayout.Label("HALLI " + snapshot.PlayerWins + "/" + snapshot.WinTarget, styles.Heading);
       GUILayout.Label("AI " + snapshot.AiWins + "/" + snapshot.WinTarget, styles.Heading);
       GUILayout.Label("FLIPS " + snapshot.FlipCount + "/25", styles.Heading);
@@ -144,16 +154,17 @@ namespace CodexGame.Presentation.Views
       }
       else
       {
-        var canRing = snapshot.Phase == PrototypeSessionPhase.ReadyToFlip
-          || snapshot.Phase == PrototypeSessionPhase.BellOpen;
-        GUI.enabled = canRing;
+        GUI.enabled = snapshot.CanRing;
         if (GUILayout.Button("LEFT BELL  [LEFT]", GUILayout.Height(50f))) leftBell();
+        GUI.enabled = true;
+        GUI.enabled = snapshot.CanFlip;
+        var label = snapshot.LeadActor == Core.Halli.HalliActor.Player
+          ? "FLIP  [UP / SPACE]"
+          : "AI LEADS";
+        if (GUILayout.Button(label, GUILayout.Height(50f))) advance();
+        GUI.enabled = snapshot.CanRing;
         if (GUILayout.Button("RIGHT BELL  [RIGHT]", GUILayout.Height(50f))) rightBell();
         GUI.enabled = true;
-        var label = snapshot.Phase == PrototypeSessionPhase.Review
-          ? "CONTINUE  [W / UP / SPACE]"
-          : "FLIP / SKIP  [UP / SPACE]";
-        if (GUILayout.Button(label, GUILayout.Height(50f))) advance();
       }
       GUILayout.EndHorizontal();
     }

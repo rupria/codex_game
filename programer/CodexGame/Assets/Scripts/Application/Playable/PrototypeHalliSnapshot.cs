@@ -20,6 +20,10 @@ namespace CodexGame.Application.Playable
       int flipCount,
       int remainingDeckCards,
       long remainingMicroseconds,
+      HalliActor leadActor,
+      bool canFlip,
+      bool canRing,
+      bool wrongBellRewardSelectionEnabled,
       Card? firstPublicCard,
       IReadOnlyList<Card> leftPile,
       IReadOnlyList<Card> rightPile,
@@ -40,6 +44,10 @@ namespace CodexGame.Application.Playable
       FlipCount = flipCount;
       RemainingDeckCards = remainingDeckCards;
       RemainingMicroseconds = remainingMicroseconds;
+      LeadActor = leadActor;
+      CanFlip = canFlip;
+      CanRing = canRing;
+      WrongBellRewardSelectionEnabled = wrongBellRewardSelectionEnabled;
       FirstPublicCard = firstPublicCard;
       LeftPile = Copy(leftPile);
       RightPile = Copy(rightPile);
@@ -61,6 +69,10 @@ namespace CodexGame.Application.Playable
     public int FlipCount { get; }
     public int RemainingDeckCards { get; }
     public long RemainingMicroseconds { get; }
+    public HalliActor LeadActor { get; }
+    public bool CanFlip { get; }
+    public bool CanRing { get; }
+    public bool WrongBellRewardSelectionEnabled { get; }
     public Card? FirstPublicCard { get; }
     public IReadOnlyList<Card> LeftPile { get; }
     public IReadOnlyList<Card> RightPile { get; }
