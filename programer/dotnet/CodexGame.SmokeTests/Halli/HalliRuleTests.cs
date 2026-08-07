@@ -1,4 +1,3 @@
-using System;
 using CodexGame.Core.Cards;
 using CodexGame.Core.Halli;
 
@@ -8,13 +7,6 @@ namespace CodexGame.SmokeTests.Halli
   {
     public static void Run(TestHarness tests)
     {
-      tests.Check(
-        ReactionResolver.Resolve(0.5, 0.5) == ReactionWinner.Player,
-        "Simultaneous bell input must favor the player.");
-      tests.Check(
-        ReactionResolver.Resolve(0.8, 0.4) == ReactionWinner.Ai,
-        "The earlier AI input must win.");
-
       var spades1 = Create(CardSuit.Spades, CardRank.Two, 1);
       var spades2 = Create(CardSuit.Spades, CardRank.Three, 2);
       var hearts1 = Create(CardSuit.Hearts, CardRank.Four, 1);

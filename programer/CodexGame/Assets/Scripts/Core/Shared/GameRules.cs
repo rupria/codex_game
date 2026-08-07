@@ -8,9 +8,11 @@ namespace CodexGame.Core.Shared
     public const int RequiredPrivateCards = 3;
     public const int ExposedCardsPerPile = 2;
 
-    public const double CardFlipTimeoutSeconds = 30.0;
-    public const double ReviewGraceSeconds = 15.0;
-    public const double PrivateSelectionTimeoutSeconds = 60.0;
+    public const long SimultaneousBellThresholdMicroseconds = 33_300;
+    public const long CardFlipTimeoutMicroseconds = 30_000_000;
+    public const long ReviewGraceMicroseconds = 15_000_000;
+    public const long PrivateSelectionTimeoutMicroseconds = 60_000_000;
+    public const long AiMaximumReactionMicroseconds = 1_500_000;
 
     public const double AiValidBellMissProbability = 0.30;
   }
