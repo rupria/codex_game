@@ -307,7 +307,7 @@ namespace CodexGame.Presentation.Views
         }
         GUI.color = previousColor;
       }
-      GUI.Label(new Rect(410f, 462f, 140f, 24f), canFlip ? "W  DISTRIBUTE 4" : "W  LOCKED", styles.Heading);
+      GUI.Label(new Rect(410f, 462f, 140f, 24f), canFlip ? "W  FLIP 1" : "W  LOCKED", styles.Heading);
       GUI.enabled = canFlip;
       if (GUI.Button(HalliBoardLayout.FlipHit, GUIContent.none, GUIStyle.none)) advance();
       GUI.enabled = true;

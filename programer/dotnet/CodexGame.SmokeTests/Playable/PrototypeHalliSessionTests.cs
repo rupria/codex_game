@@ -57,38 +57,64 @@ namespace CodexGame.SmokeTests.Playable
         "A distribution must begin with the player's relative-left card.");
       tests.Check(
         !reveal.CanRing && !reveal.CanFlip,
-        "Q/W/E gameplay input must remain locked during the four-card reveal.");
+        "Q/W/E gameplay input must remain locked during one-card motion and the AI follow-up.");
       session.Ring(PileSide.Left, flipAt);
       tests.Check(session.GetSnapshot(flipAt).PlayerWins == 0,
         "A bell input during sequential reveal must be ignored instead of queued.");
 
-      var expectedActors = new[] { HalliActor.Player, HalliActor.Ai, HalliActor.Player, HalliActor.Ai };
-      var expectedSides = new[]
-      {
-        HalliRelativeSide.Left,
-        HalliRelativeSide.Left,
-        HalliRelativeSide.Right,
-        HalliRelativeSide.Right
-      };
-      var expectedPiles = new[] { PileSide.Left, PileSide.Right, PileSide.Left, PileSide.Right };
-      var revealTime = flipAt.Microseconds;
-      for (var step = 1; step < 4; step++)
-      {
-        reveal = session.GetSnapshot(new GameTimestamp(revealTime));
-        revealTime += reveal.RemainingMicroseconds;
-        session.Tick(new GameTimestamp(revealTime));
-        reveal = session.GetSnapshot(new GameTimestamp(revealTime));
-        tests.Check(
-          reveal.RevealStepNumber == step + 1
-            && reveal.RevealingActor == expectedActors[step]
-            && reveal.RevealingRelativeSide == expectedSides[step]
-            && reveal.RevealingPile == expectedPiles[step],
-          "The four-card reveal order must remain player-left, AI-left, player-right, AI-right.");
-      }
+      var firstAiAt = new GameTimestamp(flipAt.Microseconds + reveal.RemainingMicroseconds);
+      session.Tick(firstAiAt);
+      var firstAi = session.GetSnapshot(firstAiAt);
+      tests.Check(
+        firstAi.RevealStepNumber == 2
+          && firstAi.RevealingActor == HalliActor.Ai
+          && firstAi.RevealingRelativeSide == HalliRelativeSide.Left
+          && firstAi.RevealingPile == PileSide.Right
+          && firstAi.LeftPile.Count + firstAi.RightPile.Count == 2,
+        "The AI must automatically reveal exactly one relative-left card after the player.");
 
-      revealTime += reveal.RemainingMicroseconds;
-      session.Tick(new GameTimestamp(revealTime));
-      var batch = session.GetSnapshot(new GameTimestamp(revealTime));
+      var waitAt = new GameTimestamp(firstAiAt.Microseconds + firstAi.RemainingMicroseconds);
+      session.Tick(waitAt);
+      var waiting = session.GetSnapshot(waitAt);
+      tests.Check(
+        waiting.Phase == PrototypeSessionPhase.ReadyToFlip
+          && waiting.CanFlip
+          && waiting.FlipCount == 0
+          && waiting.LeftPile.Count == 1
+          && waiting.RightPile.Count == 1
+          && waiting.RemainingDeckCards == 49,
+        "After the first player-AI pair, the sequence must stop and wait for another player input.");
+      session.Tick(new GameTimestamp(waitAt.Microseconds + 1));
+      tests.Check(
+        session.GetSnapshot(new GameTimestamp(waitAt.Microseconds + 1)).RemainingDeckCards == 49,
+        "Waiting without a second player input must not reveal another card.");
+
+      var secondFlipAt = new GameTimestamp(waitAt.Microseconds + 100);
+      session.Advance(secondFlipAt);
+      var secondPlayer = session.GetSnapshot(secondFlipAt);
+      tests.Check(
+        secondPlayer.RevealStepNumber == 3
+          && secondPlayer.RevealingActor == HalliActor.Player
+          && secondPlayer.RevealingRelativeSide == HalliRelativeSide.Right
+          && secondPlayer.RevealingPile == PileSide.Left
+          && secondPlayer.LeftPile.Count + secondPlayer.RightPile.Count == 3,
+        "The second player input must reveal only the player's relative-right card first.");
+
+      var secondAiAt = new GameTimestamp(
+        secondFlipAt.Microseconds + secondPlayer.RemainingMicroseconds);
+      session.Tick(secondAiAt);
+      var secondAi = session.GetSnapshot(secondAiAt);
+      tests.Check(
+        secondAi.RevealStepNumber == 4
+          && secondAi.RevealingActor == HalliActor.Ai
+          && secondAi.RevealingRelativeSide == HalliRelativeSide.Right
+          && secondAi.RevealingPile == PileSide.Right,
+        "The AI must automatically reveal its relative-right card after the second player input.");
+
+      var completeAt = new GameTimestamp(
+        secondAiAt.Microseconds + secondAi.RemainingMicroseconds);
+      session.Tick(completeAt);
+      var batch = session.GetSnapshot(completeAt);
       tests.Check(
         batch.FlipCount == 1
           && batch.LeftPile.Count == 2
@@ -231,7 +257,14 @@ namespace CodexGame.SmokeTests.Playable
         var session = new PrototypeHalliSession();
         session.StartNew(new GameTimestamp(0), seed);
         session.Advance(new GameTimestamp(1));
-        var visibleAt = new GameTimestamp(1_300_001);
+        var pairFinishedAt = new GameTimestamp(700_001);
+        session.Tick(pairFinishedAt);
+        if (session.GetSnapshot(pairFinishedAt).Phase != PrototypeSessionPhase.ReadyToFlip)
+        {
+          continue;
+        }
+        session.Advance(new GameTimestamp(700_002));
+        var visibleAt = new GameTimestamp(1_400_002);
         session.Tick(visibleAt);
         var field = session.GetSnapshot(visibleAt);
         if (field.Phase != PrototypeSessionPhase.BellOpen) continue;

@@ -45,6 +45,7 @@ namespace CodexGame.Application.Playable
     private int _playerWins;
     private int _aiWins;
     private int _flipCount;
+    private int _nextRevealStepIndex;
     private HalliStageEndReason _endReason;
     private PrototypeAcquirer _lastAcquirer;
     private IReadOnlyList<Card> _lastAcquiredCards = EmptyCards;
@@ -80,6 +81,7 @@ namespace CodexGame.Application.Playable
       _playerWins = 0;
       _aiWins = 0;
       _flipCount = 0;
+      _nextRevealStepIndex = 0;
       _endReason = HalliStageEndReason.None;
       CloseBellWindow();
       ClearLastAcquisition();
@@ -275,17 +277,20 @@ namespace CodexGame.Application.Playable
 
     private void StartFlip(GameTimestamp now)
     {
-      var endReason = ResolveEndReason();
-      if (endReason != HalliStageEndReason.None)
+      if (_nextRevealStepIndex == 0)
       {
-        Finish(endReason);
-        return;
+        var endReason = ResolveEndReason();
+        if (endReason != HalliStageEndReason.None)
+        {
+          Finish(endReason);
+          return;
+        }
       }
 
       CloseBellWindow();
       ClearLastAcquisition();
       Phase = PrototypeSessionPhase.SequentialReveal;
-      RevealStep(0, now);
+      RevealStep(_nextRevealStepIndex, now);
     }
 
     private void TickSequentialReveal(GameTimestamp now)
@@ -299,9 +304,15 @@ namespace CodexGame.Application.Playable
         }
 
         var eventAt = _nextRevealEventAt;
-        if (_currentRevealStep.Value.Number < HalliRevealSequence.Count)
+        var step = _currentRevealStep.Value;
+        if (step.Actor == HalliActor.Player
+          && step.Number < HalliRevealSequence.Count)
         {
-          RevealStep(_currentRevealStep.Value.Number, eventAt);
+          RevealStep(step.Number, eventAt);
+        }
+        else if (step.Number < HalliRevealSequence.Count)
+        {
+          WaitForNextPlayerFlip(eventAt);
         }
         else
         {
@@ -335,9 +346,23 @@ namespace CodexGame.Application.Playable
         + (step.RelativeSide == HalliRelativeSide.Left ? "LEFT" : "RIGHT") + ".";
     }
 
+    private void WaitForNextPlayerFlip(GameTimestamp now)
+    {
+      if (!_currentRevealStep.HasValue
+        || _currentRevealStep.Value.Actor != HalliActor.Ai)
+      {
+        throw new InvalidOperationException("Only a completed AI reveal can pause for player input.");
+      }
+
+      _nextRevealStepIndex = _currentRevealStep.Value.Number;
+      ClearRevealState();
+      BeginReady(now, "AI card opened. Flip the next player card.");
+    }
+
     private void CompleteSequentialReveal(GameTimestamp now)
     {
       _flipCount++;
+      _nextRevealStepIndex = 0;
       ClearRevealState();
       var leftValid = IsAcquirable(Evaluate(PileSide.Left));
       var rightValid = IsAcquirable(Evaluate(PileSide.Right));
@@ -707,6 +732,8 @@ namespace CodexGame.Application.Playable
 
     private void ResolvePlayerFlipTimeout(GameTimestamp now)
     {
+      _nextRevealStepIndex = 0;
+      ClearRevealState();
       _aiWins++;
       _turnOrder.SetLead(HalliActor.Ai);
       BeginWrongBellRewardSelection(

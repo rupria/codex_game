@@ -232,7 +232,7 @@ namespace CodexGame.Presentation.Views
     {
       GUI.Box(new Rect(86f, 54f, 788f, 432f), GUIContent.none);
       GUI.Label(new Rect(120f, 72f, 720f, 44f), "HOW TO PLAY", _styles.Title);
-      DrawGuideStep(new Rect(126f, 136f, 210f, 230f), "1", "W", "DISTRIBUTE FOUR CARDS\nONE BY ONE");
+      DrawGuideStep(new Rect(126f, 136f, 210f, 230f), "1", "W", "FLIP ONE CARD\nAI FOLLOWS");
       DrawGuideStep(
         new Rect(375f, 136f, 210f, 230f),
         "2",
