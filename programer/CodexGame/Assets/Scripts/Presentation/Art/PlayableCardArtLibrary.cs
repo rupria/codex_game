@@ -50,7 +50,17 @@ namespace CodexGame.Presentation.Art
     [SerializeField]
     private List<PlayableCardArtEntry> _entries = new List<PlayableCardArtEntry>();
 
+    [SerializeField]
+    private Texture2D _backTexture;
+
     public PlayableCardArtLibrary(IReadOnlyList<PlayableCardArtEntry> entries)
+      : this(entries, null)
+    {
+    }
+
+    public PlayableCardArtLibrary(
+      IReadOnlyList<PlayableCardArtEntry> entries,
+      Texture2D backTexture)
     {
       if (entries == null)
       {
@@ -58,11 +68,14 @@ namespace CodexGame.Presentation.Art
       }
 
       _entries = new List<PlayableCardArtEntry>(entries);
+      _backTexture = backTexture;
     }
 
     public int Count => _entries?.Count ?? 0;
 
     public bool IsComplete => Count == ExpectedTextureCount;
+
+    public Texture2D BackTexture => _backTexture;
 
     public bool TryGetTexture(Card card, out Texture2D texture)
     {

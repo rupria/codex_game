@@ -10,6 +10,7 @@ namespace CodexGame.Editor
   internal static class PlayableCardArtLoader
   {
     private const string CardVariantRoot = "Assets/Art/Prototype/Cards/deck_variants/";
+    private const string CardBackPath = "Assets/Art/Prototype/Cards/components/card_back.png";
 
     private static readonly CardSuit[] Suits =
     {
@@ -58,7 +59,13 @@ namespace CodexGame.Editor
         }
       }
 
-      return new PlayableCardArtLibrary(entries);
+      var backTexture = AssetDatabase.LoadAssetAtPath<Texture2D>(CardBackPath);
+      if (backTexture == null)
+      {
+        throw new InvalidOperationException("Playable card back is missing: " + CardBackPath);
+      }
+
+      return new PlayableCardArtLibrary(entries, backTexture);
     }
 
     private static string BuildAssetPath(CardSuit suit, CardRank rank, int skullCount)
