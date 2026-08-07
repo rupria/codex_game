@@ -46,6 +46,8 @@ namespace CodexGame.SmokeTests.Playable
       tests.Check(timeout.RemainingMicroseconds == GameRules.CardFlipTimeoutMicroseconds, "A flip timeout must restart the 30-second deadline.");
 
       CheckAcquisitionReview(tests, zero);
+      CheckWrongBellWithoutValidPile(tests, zero);
+      CheckWrongPileAwardsOpponent(tests, zero);
 
       var completionSession = new PrototypeHalliSession();
       completionSession.StartNew(zero, 99);
@@ -137,6 +139,73 @@ namespace CodexGame.SmokeTests.Playable
       }
 
       tests.Check(false, "At least one deterministic seed must open a bell opportunity on the first flip.");
+    }
+
+    private static void CheckWrongBellWithoutValidPile(TestHarness tests, GameTimestamp zero)
+    {
+      for (var seed = 1L; seed <= 1000L; seed++)
+      {
+        var session = new PrototypeHalliSession();
+        var flipTime = new GameTimestamp(1);
+        session.StartNew(zero, seed);
+        session.Advance(flipTime);
+        var ready = session.GetSnapshot(flipTime);
+
+        if (ready.Phase != PrototypeSessionPhase.ReadyToFlip
+          || IsAcquirable(Evaluate(ready.LeftPile))
+          || IsAcquirable(Evaluate(ready.RightPile)))
+        {
+          continue;
+        }
+
+        session.Ring(PileSide.Left, flipTime);
+        var review = session.GetSnapshot(flipTime);
+
+        tests.Check(review.Phase == PrototypeSessionPhase.Review, "A wrong bell without a valid pile must enter review.");
+        tests.Check(review.PlayerWins == 0 && review.AiWins == 0, "A wrong bell without a valid pile must grant no Halli win.");
+        tests.Check(review.LastAcquirer == PrototypeAcquirer.None, "A wrong bell without a valid pile must acquire no cards.");
+        tests.Check(
+          review.LeftPile.Count == ready.LeftPile.Count && review.RightPile.Count == ready.RightPile.Count,
+          "A wrong bell without a valid pile must preserve both piles.");
+        return;
+      }
+
+      tests.Check(false, "At least one deterministic seed must expose no valid pile on the first flip.");
+    }
+
+    private static void CheckWrongPileAwardsOpponent(TestHarness tests, GameTimestamp zero)
+    {
+      for (var seed = 1L; seed <= 1000L; seed++)
+      {
+        var session = new PrototypeHalliSession();
+        var flipTime = new GameTimestamp(1);
+        session.StartNew(zero, seed);
+        session.Advance(flipTime);
+        var bell = session.GetSnapshot(flipTime);
+
+        if (bell.Phase != PrototypeSessionPhase.BellOpen)
+        {
+          continue;
+        }
+
+        var leftValid = IsAcquirable(Evaluate(bell.LeftPile));
+        var rightValid = IsAcquirable(Evaluate(bell.RightPile));
+        if (leftValid == rightValid)
+        {
+          continue;
+        }
+
+        session.Ring(leftValid ? PileSide.Right : PileSide.Left, flipTime);
+        var review = session.GetSnapshot(flipTime);
+
+        tests.Check(review.Phase == PrototypeSessionPhase.Review, "Choosing the wrong pile must enter review.");
+        tests.Check(review.AiWins == 1 && review.PlayerWins == 0, "Choosing the wrong pile must award the valid pile and win to AI.");
+        tests.Check(review.LastAcquirer == PrototypeAcquirer.Ai, "The opponent must acquire the valid pile after a wrong-pile bell.");
+        tests.Check(review.LastAcquiredCards.Count > 0, "A wrong-pile bell must expose the opponent's acquired cards during review.");
+        return;
+      }
+
+      tests.Check(false, "At least one deterministic seed must expose exactly one valid pile on the first flip.");
     }
 
     private static AcquisitionKind Evaluate(System.Collections.Generic.IReadOnlyList<Card> cards)
