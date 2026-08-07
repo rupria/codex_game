@@ -1,12 +1,14 @@
 {
   "specRevision": "gameplay_flow_0.06",
+  "pokerVisualRevision": "standard_pips_skull_faces_v2",
   "cardWidth": 64,
   "cardHeight": 90,
   "informationLayout": {
     "upperLeft": "poker_rank",
     "upperRight": "large_suit",
     "halliCenter": "matching_suit_skull_count_1_to_3",
-    "pokerCenter": "matching_suit_without_skull"
+    "pokerNumberCenter": "standard_repeated_suit_pips_2_to_10",
+    "pokerFaceCenter": "skull_design_A_J_Q_K"
   },
   "cardBackAssetPath": "Assets/Art/Prototype/Cards_0_06/card_back.png",
   "halliCards": [
