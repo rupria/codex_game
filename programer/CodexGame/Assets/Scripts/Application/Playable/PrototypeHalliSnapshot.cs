@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using CodexGame.Core.Cards;
 using CodexGame.Core.Halli;
+using CodexGame.Core.Shared;
 
 namespace CodexGame.Application.Playable
 {
@@ -16,6 +17,8 @@ namespace CodexGame.Application.Playable
       int aiWins,
       int playerAcquiredCount,
       int aiAcquiredCount,
+      IReadOnlyList<Card> playerAcquiredCards,
+      IReadOnlyList<Card> aiAcquiredCards,
       int winTarget,
       int flipCount,
       int remainingDeckCards,
@@ -24,11 +27,20 @@ namespace CodexGame.Application.Playable
       bool canFlip,
       bool canRing,
       bool wrongBellRewardSelectionEnabled,
+      int revealStepNumber,
+      HalliActor? revealingActor,
+      HalliRelativeSide? revealingRelativeSide,
+      PileSide? revealingPile,
+      Card? revealingCard,
+      float revealProgress,
       Card? firstPublicCard,
       IReadOnlyList<Card> leftPile,
       IReadOnlyList<Card> rightPile,
       PrototypeAcquirer lastAcquirer,
       IReadOnlyList<Card> lastAcquiredCards,
+      PileSide? lastAcquiredPile,
+      PileSide? lastBellPile,
+      PrototypeBellFeedback bellFeedback,
       IReadOnlyList<Card> wrongBellRewardCandidates,
       HalliStageEndReason endReason)
     {
@@ -40,6 +52,8 @@ namespace CodexGame.Application.Playable
       AiWins = aiWins;
       PlayerAcquiredCount = playerAcquiredCount;
       AiAcquiredCount = aiAcquiredCount;
+      PlayerAcquiredCards = Copy(playerAcquiredCards);
+      AiAcquiredCards = Copy(aiAcquiredCards);
       WinTarget = winTarget;
       FlipCount = flipCount;
       RemainingDeckCards = remainingDeckCards;
@@ -48,11 +62,20 @@ namespace CodexGame.Application.Playable
       CanFlip = canFlip;
       CanRing = canRing;
       WrongBellRewardSelectionEnabled = wrongBellRewardSelectionEnabled;
+      RevealStepNumber = revealStepNumber;
+      RevealingActor = revealingActor;
+      RevealingRelativeSide = revealingRelativeSide;
+      RevealingPile = revealingPile;
+      RevealingCard = revealingCard;
+      RevealProgress = revealProgress;
       FirstPublicCard = firstPublicCard;
       LeftPile = Copy(leftPile);
       RightPile = Copy(rightPile);
       LastAcquirer = lastAcquirer;
       LastAcquiredCards = Copy(lastAcquiredCards);
+      LastAcquiredPile = lastAcquiredPile;
+      LastBellPile = lastBellPile;
+      BellFeedback = bellFeedback;
       WrongBellRewardCandidates = Copy(wrongBellRewardCandidates);
       EndReason = endReason;
     }
@@ -65,6 +88,8 @@ namespace CodexGame.Application.Playable
     public int AiWins { get; }
     public int PlayerAcquiredCount { get; }
     public int AiAcquiredCount { get; }
+    public IReadOnlyList<Card> PlayerAcquiredCards { get; }
+    public IReadOnlyList<Card> AiAcquiredCards { get; }
     public int WinTarget { get; }
     public int FlipCount { get; }
     public int RemainingDeckCards { get; }
@@ -73,11 +98,20 @@ namespace CodexGame.Application.Playable
     public bool CanFlip { get; }
     public bool CanRing { get; }
     public bool WrongBellRewardSelectionEnabled { get; }
+    public int RevealStepNumber { get; }
+    public HalliActor? RevealingActor { get; }
+    public HalliRelativeSide? RevealingRelativeSide { get; }
+    public PileSide? RevealingPile { get; }
+    public Card? RevealingCard { get; }
+    public float RevealProgress { get; }
     public Card? FirstPublicCard { get; }
     public IReadOnlyList<Card> LeftPile { get; }
     public IReadOnlyList<Card> RightPile { get; }
     public PrototypeAcquirer LastAcquirer { get; }
     public IReadOnlyList<Card> LastAcquiredCards { get; }
+    public PileSide? LastAcquiredPile { get; }
+    public PileSide? LastBellPile { get; }
+    public PrototypeBellFeedback BellFeedback { get; }
     public IReadOnlyList<Card> WrongBellRewardCandidates { get; }
     public HalliStageEndReason EndReason { get; }
 

@@ -15,6 +15,7 @@ namespace CodexGame.Editor
   {
     public const string ScenePath = "Assets/Scenes/PlayableDev.unity";
     public const string BoardArtPath = "Assets/Art/Prototype/Board/board_layout_wip.png";
+    private const string UiArtRoot = "Assets/Art/Prototype/UI/";
 
     [MenuItem("Codex Game/Playable Dev/Create Scene")]
     public static void CreateScene()
@@ -39,7 +40,14 @@ namespace CodexGame.Editor
 
       var view = gameObject.AddComponent<PlayableDevView>();
       PlayableCardArtSet cardArtSet = PlayableCardArtLoader.Load();
-      view.Configure(boardTexture, cardArtSet);
+      var halliUiArtSet = new HalliUiArtSet(
+        LoadTexture(UiArtRoot + "bell_idle.png"),
+        LoadTexture(UiArtRoot + "bell_hover.png"),
+        LoadTexture(UiArtRoot + "bell_pressed.png"),
+        LoadTexture(UiArtRoot + "bell_wrong.png"),
+        LoadTexture(UiArtRoot + "public_card_locked_slot.png"),
+        LoadTexture(UiArtRoot + "flip_timer.png"));
+      view.Configure(boardTexture, cardArtSet, halliUiArtSet);
       gameObject.AddComponent<PlayableDevGameController>();
 
       if (!EditorSceneManager.SaveScene(scene, ScenePath))
@@ -112,6 +120,16 @@ namespace CodexGame.Editor
       {
         AssetDatabase.CreateFolder("Assets", "Scenes");
       }
+    }
+
+    private static Texture2D LoadTexture(string path)
+    {
+      var texture = AssetDatabase.LoadAssetAtPath<Texture2D>(path);
+      if (texture == null)
+      {
+        throw new FileNotFoundException("Playable UI art was not found.", path);
+      }
+      return texture;
     }
   }
 }

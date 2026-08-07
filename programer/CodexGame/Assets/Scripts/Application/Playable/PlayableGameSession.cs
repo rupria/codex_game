@@ -18,6 +18,7 @@ namespace CodexGame.Application.Playable
     private PrototypeHalliSession _halli = new PrototypeHalliSession();
     private PrivateCardSelectionSession? _selection;
     private PokerRoundSession? _poker;
+    private readonly PlayableTransitionTimeline _transition = new PlayableTransitionTimeline();
     private PredictionRewardLedger _rewards = new PredictionRewardLedger();
     private IRandomSource? _rewardRandom;
     private BattleHealth _health = BattleHealth.Initial;
@@ -65,11 +66,15 @@ namespace CodexGame.Application.Playable
         var halliSnapshot = _halli.GetSnapshot(now);
         if (halliSnapshot.Phase == PrototypeSessionPhase.Finished)
         {
-          BeginPrivateSelection(now, halliSnapshot);
+          BeginHalliTransition(now);
         }
         else
         {
           _halli.Advance(now);
+          if (_halli.GetSnapshot(now).Phase == PrototypeSessionPhase.Finished)
+          {
+            BeginHalliTransition(now);
+          }
         }
         return;
       }
@@ -183,9 +188,32 @@ namespace CodexGame.Application.Playable
         return;
       }
 
-      if (Phase == PlayableGamePhase.Halli)
+      if (Phase == PlayableGamePhase.HalliOpening)
+      {
+        if (_transition.IsComplete(now))
+        {
+          _transition.Clear();
+          _halli.CompleteOpening(now);
+          Phase = PlayableGamePhase.Halli;
+          RecordInput(now);
+        }
+      }
+      else if (Phase == PlayableGamePhase.Halli)
       {
         _halli.Tick(now);
+        if (_halli.GetSnapshot(now).Phase == PrototypeSessionPhase.Finished)
+        {
+          BeginHalliTransition(now);
+        }
+      }
+      else if (Phase == PlayableGamePhase.HalliTransition)
+      {
+        if (_transition.IsComplete(now))
+        {
+          var halliSnapshot = _halli.GetSnapshot(now);
+          _transition.Clear();
+          BeginPrivateSelection(now, halliSnapshot);
+        }
       }
       else if (Phase == PlayableGamePhase.PrivateSelection && _selection != null)
       {
@@ -218,7 +246,12 @@ namespace CodexGame.Application.Playable
         _lastStageBaseCoinReward,
         _lastPredictionReward,
         inactivityRemaining,
-        Phase == PlayableGamePhase.Halli ? _halli.GetSnapshot(now) : null,
+        _transition.GetSnapshot(now),
+        Phase == PlayableGamePhase.HalliOpening
+          || Phase == PlayableGamePhase.Halli
+          || Phase == PlayableGamePhase.HalliTransition
+            ? _halli.GetSnapshot(now)
+            : null,
         Phase == PlayableGamePhase.PrivateSelection && _selection != null
           ? _selection.GetSnapshot(now)
           : null,
@@ -237,8 +270,22 @@ namespace CodexGame.Application.Playable
       _selection = null;
       _poker = null;
       _firstPublicCard = null;
-      _halli.StartNew(now, combatRoundSeed, _combatRoundNumber);
-      Phase = PlayableGamePhase.Halli;
+      _halli.StartNew(now, combatRoundSeed, _combatRoundNumber, true);
+      _transition.Begin(
+        PlayableTransitionKind.HalliOpening,
+        now,
+        GameRules.HalliOpeningPresentationMicroseconds);
+      Phase = PlayableGamePhase.HalliOpening;
+    }
+
+    private void BeginHalliTransition(GameTimestamp now)
+    {
+      if (Phase != PlayableGamePhase.Halli) return;
+      _transition.Begin(
+        PlayableTransitionKind.HalliToPoker,
+        now,
+        GameRules.HalliClosingPresentationMicroseconds);
+      Phase = PlayableGamePhase.HalliTransition;
     }
 
     private void BeginPrivateSelection(
@@ -333,6 +380,7 @@ namespace CodexGame.Application.Playable
       _selection = null;
       _poker = null;
       _firstPublicCard = null;
+      _transition.Clear();
       _rewards = new PredictionRewardLedger();
       _stageNumber = 1;
       _combatRoundNumber = 1;

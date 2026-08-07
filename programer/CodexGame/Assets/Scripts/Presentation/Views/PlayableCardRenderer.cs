@@ -23,6 +23,12 @@ namespace CodexGame.Presentation.Views
     public Rect Draw(Card card, float width, float height, bool selected = false)
     {
       var rect = GUILayoutUtility.GetRect(width, height, GUILayout.Width(width), GUILayout.Height(height));
+      DrawAt(rect, card, selected);
+      return rect;
+    }
+
+    public void DrawAt(Rect rect, Card card, bool selected = false)
+    {
       GUI.Box(rect, GUIContent.none, selected ? _styles.SelectedCard : _styles.Card);
       if (_art != null && _art.TryGetTexture(card, out var texture))
       {
@@ -38,12 +44,16 @@ namespace CodexGame.Presentation.Views
         GUI.Label(new Rect(rect.x, rect.y, rect.width, 24f), "SELECTED", _styles.Small);
       }
 
-      return rect;
     }
 
     public void DrawBack(float width, float height)
     {
       var rect = GUILayoutUtility.GetRect(width, height, GUILayout.Width(width), GUILayout.Height(height));
+      DrawBackAt(rect);
+    }
+
+    public void DrawBackAt(Rect rect)
+    {
       GUI.Box(rect, GUIContent.none, _styles.Card);
       if (_backTexture != null)
       {
