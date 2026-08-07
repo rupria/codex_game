@@ -12,9 +12,11 @@ namespace CodexGame.Presentation.Views
       PrototypeHalliSnapshot snapshot,
       PlayableDevStyles styles,
       PlayableCardRenderer cards,
+      int rewardFocus,
       Action advance,
       Action leftBell,
-      Action rightBell)
+      Action rightBell,
+      Action<CardId> selectWrongBellReward)
     {
       DrawScoreboard(snapshot, styles);
       GUILayout.BeginHorizontal();
@@ -23,8 +25,55 @@ namespace CodexGame.Presentation.Views
       DrawPile("RIGHT PILE", snapshot.RightPile, styles, cards);
       GUILayout.EndHorizontal();
       GUILayout.Label(snapshot.StatusMessage, styles.Status, GUILayout.Height(45f));
+      if (snapshot.Phase == PrototypeSessionPhase.WrongBellRewardSelection)
+      {
+        DrawWrongBellRewardSelection(
+          snapshot,
+          rewardFocus,
+          styles,
+          cards,
+          selectWrongBellReward);
+        return;
+      }
       DrawAcquisition(snapshot, styles);
       DrawActions(snapshot, advance, leftBell, rightBell);
+    }
+
+    private static void DrawWrongBellRewardSelection(
+      PrototypeHalliSnapshot snapshot,
+      int focusedIndex,
+      PlayableDevStyles styles,
+      PlayableCardRenderer cards,
+      Action<CardId> select)
+    {
+      const int visibleCount = 7;
+      var candidates = snapshot.WrongBellRewardCandidates;
+      var start = Math.Max(0, Math.Min(
+        focusedIndex - (visibleCount / 2),
+        candidates.Count - visibleCount));
+      var end = Math.Min(candidates.Count, start + visibleCount);
+
+      GUILayout.Label(
+        "REWARD CARD " + (focusedIndex + 1) + "/" + candidates.Count
+        + "  |  Q/E MOVE, W/ENTER SELECT",
+        styles.Heading);
+      GUILayout.BeginHorizontal();
+      for (var index = start; index < end; index++)
+      {
+        var card = candidates[index];
+        GUILayout.BeginVertical(GUILayout.Width(112f));
+        GUILayout.Label(index == focusedIndex ? "FOCUS" : " ", styles.Small);
+        cards.Draw(card, 100f, 130f);
+        if (GUILayout.Button(
+          index == focusedIndex ? "SELECT [W]" : "SELECT",
+          GUILayout.Width(100f),
+          GUILayout.Height(24f)))
+        {
+          select(card.Id);
+        }
+        GUILayout.EndVertical();
+      }
+      GUILayout.EndHorizontal();
     }
 
     private static void DrawScoreboard(PrototypeHalliSnapshot snapshot, PlayableDevStyles styles)

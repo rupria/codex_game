@@ -38,8 +38,8 @@ namespace CodexGame.Editor
       }
 
       var view = gameObject.AddComponent<PlayableDevView>();
-      PlayableCardArtLibrary cardArt = PlayableCardArtLoader.Load();
-      view.Configure(boardTexture, cardArt);
+      PlayableCardArtSet cardArtSet = PlayableCardArtLoader.Load();
+      view.Configure(boardTexture, cardArtSet);
       gameObject.AddComponent<PlayableDevGameController>();
 
       if (!EditorSceneManager.SaveScene(scene, ScenePath))

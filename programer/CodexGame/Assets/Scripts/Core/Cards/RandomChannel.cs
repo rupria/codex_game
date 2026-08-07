@@ -6,6 +6,8 @@ namespace CodexGame.Core.Cards
     CardDistribution = 2,
     AiReaction = 3,
     AiChoice = 4,
-    Reward = 5
+    Reward = 5,
+    ScoreOnlyWinFallback = 6,
+    WrongBellReward = 7
   }
 }

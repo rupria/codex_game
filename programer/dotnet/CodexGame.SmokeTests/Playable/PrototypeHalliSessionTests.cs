@@ -58,7 +58,10 @@ namespace CodexGame.SmokeTests.Playable
       CheckAcquisitionReview(tests, zero);
       CheckFlipResetsTimerDuringBellOpportunity(tests, zero);
       CheckWrongBellWithoutValidPile(tests, zero);
+      CheckPlayerWrongBellAwardsUnacquiredCard(tests, zero);
+      CheckWrongBellRewardSelectionSession(tests, zero);
       CheckWrongPileAwardsOpponent(tests, zero);
+      CheckScoreOnlyWinnerFallback(tests, zero);
 
       var completionSession = new PrototypeHalliSession();
       completionSession.StartNew(zero, 99);
@@ -113,6 +116,108 @@ namespace CodexGame.SmokeTests.Playable
       tests.Check(
         distributedCount == CardId.CardCount - 1,
         "The Halli-to-distribution bridge must preserve all 51 cards except the first public card.");
+    }
+
+    private static void CheckScoreOnlyWinnerFallback(TestHarness tests, GameTimestamp zero)
+    {
+      var first = CompleteScoreOnlyAiWin(zero, 5150);
+      var firstSelection = first.BeginPrivateCardDistribution(new GameTimestamp(2));
+      var firstSnapshot = firstSelection.GetSnapshot(new GameTimestamp(2));
+
+      tests.Check(
+        firstSnapshot.Phase == PrivateCardSelectionPhase.Completed
+          && firstSnapshot.WinnerCandidates.Count == 1
+          && firstSnapshot.RequiredSelectionCount == 1
+          && firstSnapshot.SelectedCards.Count == 1
+          && firstSnapshot.Result != null
+          && firstSnapshot.Result.AiPrivateCards.Count == 3,
+        "A score-only Halli winner must receive one deterministic fallback candidate before random fill.");
+
+      var second = CompleteScoreOnlyAiWin(zero, 5150);
+      var secondSnapshot = second.BeginPrivateCardDistribution(new GameTimestamp(2))
+        .GetSnapshot(new GameTimestamp(2));
+      tests.Check(
+        secondSnapshot.WinnerCandidates.Count == 1
+          && firstSnapshot.WinnerCandidates[0].Id == secondSnapshot.WinnerCandidates[0].Id,
+        "The same combat seed must reproduce the score-only winner fallback card.");
+    }
+
+    private static void CheckPlayerWrongBellAwardsUnacquiredCard(
+      TestHarness tests,
+      GameTimestamp zero)
+    {
+      for (var seed = 1L; seed <= 1000L; seed++)
+      {
+        var session = new PrototypeHalliSession();
+        session.StartNew(zero, seed);
+        session.Advance(new GameTimestamp(1));
+        session.Advance(new GameTimestamp(2));
+        session.Advance(new GameTimestamp(3));
+        var ready = session.GetSnapshot(new GameTimestamp(3));
+        if (ready.Phase != PrototypeSessionPhase.ReadyToFlip)
+        {
+          continue;
+        }
+
+        session.Ring(PileSide.Left, new GameTimestamp(4));
+        var review = session.GetSnapshot(new GameTimestamp(4));
+        tests.Check(
+          review.AiWins == ready.AiWins + 1
+            && review.AiAcquiredCount == ready.AiAcquiredCount + 1
+            && review.LastAcquirer == PrototypeAcquirer.Ai
+            && review.LastAcquiredCards.Count == 1,
+          "A player wrong bell must let AI take one available unacquired card.");
+        return;
+      }
+
+      tests.Check(false, "At least one deterministic seed must expose an unacquired wrong-bell reward.");
+    }
+
+    private static void CheckWrongBellRewardSelectionSession(
+      TestHarness tests,
+      GameTimestamp zero)
+    {
+      var cards = CardSetFactory.CreateStandard52(new PrototypeSkullPolicy());
+      var candidates = Array.AsReadOnly(new[] { cards[0], cards[1], cards[2] });
+      var manual = new WrongBellRewardSelectionSession();
+      manual.Begin(
+        candidates,
+        DeterministicRandomFactory.Create(21, RandomChannel.WrongBellReward),
+        zero);
+      tests.Check(
+        manual.IsActive
+          && manual.GetRemainingMicroseconds(zero)
+            == GameRules.WrongBellRewardSelectionTimeoutMicroseconds,
+        "An AI wrong-bell reward must open a full 30-second player selection window.");
+      tests.Check(
+        manual.TrySelect(candidates[1].Id)
+          && !manual.IsActive
+          && manual.SelectedCard.HasValue
+          && manual.SelectedCard.Value.Id == candidates[1].Id
+          && !manual.TimedOut,
+        "The player must be able to select one offered wrong-bell reward card.");
+
+      var timeout = new WrongBellRewardSelectionSession();
+      timeout.Begin(
+        candidates,
+        DeterministicRandomFactory.Create(22, RandomChannel.WrongBellReward),
+        zero);
+      tests.Check(
+        timeout.Tick(new GameTimestamp(GameRules.WrongBellRewardSelectionTimeoutMicroseconds))
+          && timeout.SelectedCard.HasValue
+          && timeout.TimedOut,
+        "The exact 30-second deadline must award one deterministic random reward card.");
+    }
+
+    private static PrototypeHalliSession CompleteScoreOnlyAiWin(
+      GameTimestamp zero,
+      long seed)
+    {
+      var session = new PrototypeHalliSession();
+      session.StartNew(zero, seed, 3);
+      session.Ring(PileSide.Left, new GameTimestamp(1));
+      session.Advance(new GameTimestamp(2));
+      return session;
     }
 
     private static void CheckAcquisitionReview(TestHarness tests, GameTimestamp zero)

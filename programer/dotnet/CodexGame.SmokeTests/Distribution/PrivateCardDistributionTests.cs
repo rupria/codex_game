@@ -40,6 +40,10 @@ namespace CodexGame.SmokeTests.Distribution
         !PrivateCardDistributionRules.RequiresSelectionUi(2, 2)
           && PrivateCardDistributionRules.RequiresSelectionUi(2, 3),
         "Selection UI must be skipped for an exact candidate count and opened only when candidates exceed it.");
+      tests.Check(
+        PrivateCardDistributionRules.GetAvailableDirectSelectionCount(1, 0) == 0
+          && !PrivateCardDistributionRules.RequiresSelectionUi(1, 0),
+        "A Halli winner with no acquired cards must skip selection and use random fill.");
     }
 
     private static void CheckWinnerDistribution(TestHarness tests)
@@ -206,6 +210,23 @@ namespace CodexGame.SmokeTests.Distribution
       tests.Check(
         exactSnapshot.Phase == PrivateCardSelectionPhase.Completed && exactSnapshot.Result != null,
         "A winner candidate count equal to the direct count must skip UI and auto-complete.");
+
+      var noAcquisitionWinner = new PrivateCardSelectionSession();
+      noAcquisitionWinner.Begin(
+        Slice(cards, 0, 0),
+        Slice(cards, 0, 0),
+        Slice(cards, 0, 20),
+        HalliStageWinner.Ai,
+        1,
+        13,
+        new GameTimestamp(0));
+      var noAcquisitionSnapshot = noAcquisitionWinner.GetSnapshot(new GameTimestamp(0));
+      tests.Check(
+        noAcquisitionSnapshot.Phase == PrivateCardSelectionPhase.Completed
+          && noAcquisitionSnapshot.RequiredSelectionCount == 0
+          && noAcquisitionSnapshot.Result != null
+          && noAcquisitionSnapshot.Result.AiPrivateCards.Count == 3,
+        "A Halli winner recorded without card acquisition must receive three random private cards.");
 
       var interactive = new PrivateCardSelectionSession();
       var player = Slice(cards, 0, 4);

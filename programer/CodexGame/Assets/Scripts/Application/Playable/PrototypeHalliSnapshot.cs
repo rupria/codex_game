@@ -25,6 +25,7 @@ namespace CodexGame.Application.Playable
       IReadOnlyList<Card> rightPile,
       PrototypeAcquirer lastAcquirer,
       IReadOnlyList<Card> lastAcquiredCards,
+      IReadOnlyList<Card> wrongBellRewardCandidates,
       HalliStageEndReason endReason)
     {
       Phase = phase;
@@ -44,6 +45,7 @@ namespace CodexGame.Application.Playable
       RightPile = Copy(rightPile);
       LastAcquirer = lastAcquirer;
       LastAcquiredCards = Copy(lastAcquiredCards);
+      WrongBellRewardCandidates = Copy(wrongBellRewardCandidates);
       EndReason = endReason;
     }
 
@@ -64,6 +66,7 @@ namespace CodexGame.Application.Playable
     public IReadOnlyList<Card> RightPile { get; }
     public PrototypeAcquirer LastAcquirer { get; }
     public IReadOnlyList<Card> LastAcquiredCards { get; }
+    public IReadOnlyList<Card> WrongBellRewardCandidates { get; }
     public HalliStageEndReason EndReason { get; }
 
     private static IReadOnlyList<Card> Copy(IReadOnlyList<Card> source)

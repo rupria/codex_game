@@ -95,6 +95,12 @@ namespace CodexGame.Application.Playable
       return snapshot.Winner == HalliStageWinner.Player && _selection.Toggle(cardId);
     }
 
+    public bool SelectWrongBellReward(CardId cardId, GameTimestamp now)
+    {
+      return Phase == PlayableGamePhase.Halli
+        && _halli.SelectWrongBellReward(cardId, now);
+    }
+
     public bool ConfirmPrivateCards(GameTimestamp now)
     {
       if (Phase != PlayableGamePhase.PrivateSelection
