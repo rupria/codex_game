@@ -1,19 +1,19 @@
 {
     "schemaVersion":  2,
-    "syncId":  "2026-08-06-04",
-    "generatedAt":  "2026-08-06T20:32:51.8629701+09:00",
+    "syncId":  "2026-08-07-01",
+    "generatedAt":  "2026-08-07T09:12:08.1398027+09:00",
     "branch":  "dev",
-    "snapshotParentGitCommit":  "0e0787db2c23ecd2c12c546d27123c428120a4d0",
+    "snapshotParentGitCommit":  "c3bd533a95078a265ee118698b972a31c2f6541d",
     "implementationBaseCommit":  "4f9fb12940bbc024c4db720092d441b291f78975",
     "driveCanonicalRoot":  "G:\\내 드라이브\\codex_game\\obsidian",
     "gitSnapshotRoot":  "project_docs",
-    "specRevision":  "B05C044E148100BB46FBC4084503FAD0180E9159FF747277D2DC197D3B6C2994",
+    "specRevision":  "1E83F6E0C53F71322B41B2568D48568D1201721BBE2A7F0ECF04D54F62BC30C2",
     "entries":  [
                     {
                         "role":  "designer",
                         "source":  "G:\\내 드라이브\\codex_game\\obsidian\\core\\designer\\00_기획_현재기준.md",
                         "snapshot":  "project_docs/designer/00_기획_현재기준.md",
-                        "sha256":  "D18EF27C430072CBDB49AA472EF7F73814ADC8A7DB6675C02384761AA0FCDFEE",
+                        "sha256":  "5DD37FE989937BFC6591EDC1B54946D0C1F328F455635F3BD174E1989B4C05C4",
                         "matchesSource":  true
                     },
                     {
@@ -244,7 +244,7 @@
                         "role":  "coordination",
                         "source":  "G:\\내 드라이브\\codex_game\\obsidian\\core\\00_전체업무_동기화_현황.md",
                         "snapshot":  "project_docs/CURRENT_SYNC.md",
-                        "sha256":  "9507F0310B660E94C3D734841468699FAA197D3132B0CCDEA371D01826DD1119",
+                        "sha256":  "034BA1ADBB2979A967F67B26B29ACD9ACF2A14610C1BF47B1D08FA1BCF0A4EC9",
                         "matchesSource":  true
                     },
                     {
@@ -288,13 +288,20 @@
                         "snapshot":  "project_docs/designer/게임진행플로우_0.05.md",
                         "sha256":  "B05C044E148100BB46FBC4084503FAD0180E9159FF747277D2DC197D3B6C2994",
                         "matchesSource":  true
+                    },
+                    {
+                        "role":  "designer",
+                        "source":  "G:\\내 드라이브\\codex_game\\obsidian\\core\\designer\\게임진행플로우_0.06.md",
+                        "snapshot":  "project_docs/designer/게임진행플로우_0.06.md",
+                        "sha256":  "1E83F6E0C53F71322B41B2568D48568D1201721BBE2A7F0ECF04D54F62BC30C2",
+                        "matchesSource":  true
                     }
                 ],
     "productVersion":  "UNRELEASED",
-    "specVersion":  "0.05",
-    "commonRoleRevision":  "2026-08-06-04",
+    "specVersion":  "0.06",
+    "commonRoleRevision":  "2026-08-07-01",
     "roleRevisions":  {
-                          "designer":  "2026-08-06-04",
+                          "designer":  "2026-08-07-01",
                           "programer":  "2026-08-06-03",
                           "QA":  "2026-08-06-03",
                           "PM":  "2026-08-06-03",
