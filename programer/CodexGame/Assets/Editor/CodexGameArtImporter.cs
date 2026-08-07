@@ -92,7 +92,7 @@ namespace CodexGame.Editor
 
         private static AsepriteSheet ReadAsepriteSheet(string normalizedAssetPath)
         {
-            string projectRoot = Directory.GetParent(Application.dataPath).FullName;
+            string projectRoot = Directory.GetParent(UnityEngine.Application.dataPath).FullName;
             string texturePath = Path.Combine(projectRoot, normalizedAssetPath.Replace('/', Path.DirectorySeparatorChar));
             string jsonPath = Path.ChangeExtension(texturePath, ".json");
             if (!File.Exists(jsonPath))

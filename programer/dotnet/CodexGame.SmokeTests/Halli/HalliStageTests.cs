@@ -1,0 +1,30 @@
+using System;
+using CodexGame.Core.Halli;
+
+namespace CodexGame.SmokeTests.Halli
+{
+  internal static class HalliStageTests
+  {
+    public static void Run(TestHarness tests)
+    {
+      tests.Check(HalliStageRules.GetWinTarget(1) == 3, "Combat round 1 must require three Halli wins.");
+      tests.Check(HalliStageRules.GetWinTarget(2) == 2, "Combat round 2 must require two Halli wins.");
+      tests.Check(HalliStageRules.GetWinTarget(3) == 1, "Combat round 3+ must require one Halli win.");
+      tests.Check(
+        HalliStageRules.ResolveEndReason(3, 0, 2, 40, 1) == HalliStageEndReason.PlayerTargetReached,
+        "The player target must end the Halli stage.");
+      tests.Check(
+        HalliStageRules.ResolveEndReason(0, 3, 2, 40, 1) == HalliStageEndReason.AiTargetReached,
+        "The AI target must end the Halli stage.");
+      tests.Check(
+        HalliStageRules.ResolveEndReason(0, 0, 25, 1, 1) == HalliStageEndReason.FlipLimitReached,
+        "Twenty-five flips must end the Halli stage.");
+      tests.Check(
+        HalliStageRules.ResolveEndReason(0, 0, 10, 1, 1) == HalliStageEndReason.InsufficientCards,
+        "Fewer than two deck cards must end the Halli stage.");
+      tests.CheckThrows<ArgumentOutOfRangeException>(
+        () => HalliStageRules.GetWinTarget(0),
+        "Combat round numbers below one must be rejected.");
+    }
+  }
+}
