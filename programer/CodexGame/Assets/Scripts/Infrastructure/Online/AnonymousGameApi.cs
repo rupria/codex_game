@@ -133,9 +133,9 @@ namespace CodexGame.Infrastructure.Online
       string relativePath =
         string.Concat(apiBasePath.TrimEnd('/'), "/", route.TrimStart('/'));
 
-      if (!string.IsNullOrEmpty(Application.absoluteURL))
+      if (!string.IsNullOrEmpty(UnityEngine.Application.absoluteURL))
       {
-        return new Uri(new Uri(Application.absoluteURL), relativePath).ToString();
+        return new Uri(new Uri(UnityEngine.Application.absoluteURL), relativePath).ToString();
       }
 
       return string.Concat(

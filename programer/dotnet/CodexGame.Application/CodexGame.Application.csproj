@@ -1,0 +1,19 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>netstandard2.1</TargetFramework>
+    <LangVersion>9.0</LangVersion>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>disable</ImplicitUsings>
+    <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile
+      Include="..\..\CodexGame\Assets\Scripts\Application\**\*.cs"
+      LinkBase="Application" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\CodexGame.Core\CodexGame.Core.csproj" />
+  </ItemGroup>
+</Project>
