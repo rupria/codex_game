@@ -10,8 +10,8 @@ namespace CodexGame.Core.Halli
     {
       new HalliRevealStep(1, HalliActor.Player, HalliRelativeSide.Left, PileSide.Left),
       new HalliRevealStep(2, HalliActor.Ai, HalliRelativeSide.Left, PileSide.Right),
-      new HalliRevealStep(3, HalliActor.Player, HalliRelativeSide.Right, PileSide.Right),
-      new HalliRevealStep(4, HalliActor.Ai, HalliRelativeSide.Right, PileSide.Left)
+      new HalliRevealStep(3, HalliActor.Player, HalliRelativeSide.Right, PileSide.Left),
+      new HalliRevealStep(4, HalliActor.Ai, HalliRelativeSide.Right, PileSide.Right)
     });
 
     public static int Count => Steps.Count;

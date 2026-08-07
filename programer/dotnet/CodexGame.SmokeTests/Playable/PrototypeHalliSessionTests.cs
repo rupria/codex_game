@@ -70,7 +70,7 @@ namespace CodexGame.SmokeTests.Playable
         HalliRelativeSide.Right,
         HalliRelativeSide.Right
       };
-      var expectedPiles = new[] { PileSide.Left, PileSide.Right, PileSide.Right, PileSide.Left };
+      var expectedPiles = new[] { PileSide.Left, PileSide.Right, PileSide.Left, PileSide.Right };
       var revealTime = flipAt.Microseconds;
       for (var step = 1; step < 4; step++)
       {
@@ -110,9 +110,9 @@ namespace CodexGame.SmokeTests.Playable
       tests.Check(
         HalliRevealSequence.GetStep(0).PhysicalPile == PileSide.Left
           && HalliRevealSequence.GetStep(1).PhysicalPile == PileSide.Right
-          && HalliRevealSequence.GetStep(2).PhysicalPile == PileSide.Right
-          && HalliRevealSequence.GetStep(3).PhysicalPile == PileSide.Left,
-        "AI-relative sides must map to the opposite physical screen coordinates.");
+          && HalliRevealSequence.GetStep(2).PhysicalPile == PileSide.Left
+          && HalliRevealSequence.GetStep(3).PhysicalPile == PileSide.Right,
+        "Player cards must remain in the left field and AI cards in the right field.");
     }
 
     private static void CheckAiPolicy(TestHarness tests)
