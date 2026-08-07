@@ -1,40 +1,48 @@
-using System;
+using CodexGame.Core.Shared;
 
 namespace CodexGame.Core.Halli
 {
   public static class ReactionResolver
   {
-    public static ReactionWinner Resolve(double? playerSeconds, double? aiSeconds)
+    public static ReactionWinner Resolve(GameTimestamp? player, GameTimestamp? ai)
     {
-      ValidateTimestamp(playerSeconds, nameof(playerSeconds));
-      ValidateTimestamp(aiSeconds, nameof(aiSeconds));
+      return Resolve(
+        player,
+        ai,
+        new DurationUs(GameRules.SimultaneousBellThresholdMicroseconds));
+    }
 
-      if (!playerSeconds.HasValue && !aiSeconds.HasValue)
+    public static ReactionWinner Resolve(
+      GameTimestamp? player,
+      GameTimestamp? ai,
+      DurationUs simultaneousThreshold)
+    {
+      if (!player.HasValue && !ai.HasValue)
       {
         return ReactionWinner.None;
       }
 
-      if (!playerSeconds.HasValue)
+      if (!player.HasValue)
       {
         return ReactionWinner.Ai;
       }
 
-      if (!aiSeconds.HasValue)
+      if (!ai.HasValue)
       {
         return ReactionWinner.Player;
       }
 
-      return playerSeconds.Value <= aiSeconds.Value
+      var difference = player.Value.Microseconds - ai.Value.Microseconds;
+      var threshold = simultaneousThreshold.Microseconds;
+
+      if (difference >= -threshold && difference <= threshold)
+      {
+        return ReactionWinner.Player;
+      }
+
+      return difference < 0
         ? ReactionWinner.Player
         : ReactionWinner.Ai;
-    }
-
-    private static void ValidateTimestamp(double? seconds, string parameterName)
-    {
-      if (seconds.HasValue && (double.IsNaN(seconds.Value) || seconds.Value < 0.0))
-      {
-        throw new ArgumentOutOfRangeException(parameterName);
-      }
     }
   }
 }
