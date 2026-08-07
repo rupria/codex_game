@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using CodexGame.Application.Playable;
 using CodexGame.Core.Cards;
+using CodexGame.Presentation.Art;
 using UnityEngine;
 
 namespace CodexGame.Presentation.Views
@@ -10,6 +11,9 @@ namespace CodexGame.Presentation.Views
   {
     [SerializeField]
     private Texture2D _boardTexture;
+
+    [SerializeField]
+    private PlayableCardArtLibrary _cardArt;
 
     private PrototypeHalliSnapshot _snapshot;
     private GUIStyle _titleStyle;
@@ -24,9 +28,10 @@ namespace CodexGame.Presentation.Views
     public event Action RightBellRequested;
     public event Action RestartRequested;
 
-    public void Configure(Texture2D boardTexture)
+    public void Configure(Texture2D boardTexture, PlayableCardArtLibrary cardArt)
     {
       _boardTexture = boardTexture;
+      _cardArt = cardArt;
     }
 
     public void Present(PrototypeHalliSnapshot snapshot)
@@ -109,8 +114,10 @@ namespace CodexGame.Presentation.Views
       {
         GUILayout.FlexibleSpace();
         var artStatus = _boardTexture == null
-          ? "Board art is missing. Cards use code placeholders."
-          : "Prototype board art loaded. Cards use code placeholders.";
+          ? "Board art is missing."
+          : _cardArt != null && _cardArt.IsComplete
+            ? "Prototype board art and all 156 card images loaded."
+            : "Prototype board art loaded. Missing cards use text fallback.";
         GUILayout.Label(artStatus, _statusStyle);
 
         if (GUILayout.Button("START  [ENTER / SPACE]", GUILayout.Height(64f)))
@@ -184,7 +191,7 @@ namespace CodexGame.Presentation.Views
 
       if (_snapshot.FirstPublicCard.HasValue)
       {
-        GUILayout.Box(FormatCard(_snapshot.FirstPublicCard.Value), _cardStyle, GUILayout.Height(160f));
+        DrawCard(_snapshot.FirstPublicCard.Value, 190f, 160f);
       }
 
       GUILayout.EndVertical();
@@ -198,12 +205,37 @@ namespace CodexGame.Presentation.Views
 
       for (var index = 0; index < 2; index++)
       {
-        var text = index < cards.Count ? FormatCard(cards[index]) : "EMPTY";
-        GUILayout.Box(text, _cardStyle, GUILayout.Width(150f), GUILayout.Height(160f));
+        if (index < cards.Count)
+        {
+          DrawCard(cards[index], 150f, 160f);
+        }
+        else
+        {
+          GUILayout.Box("EMPTY", _cardStyle, GUILayout.Width(150f), GUILayout.Height(160f));
+        }
       }
 
       GUILayout.EndHorizontal();
       GUILayout.EndVertical();
+    }
+
+    private void DrawCard(Card card, float width, float height)
+    {
+      var rect = GUILayoutUtility.GetRect(
+        width,
+        height,
+        GUILayout.Width(width),
+        GUILayout.Height(height));
+
+      GUI.Box(rect, GUIContent.none, _cardStyle);
+      if (_cardArt != null && _cardArt.TryGetTexture(card, out var texture))
+      {
+        var inset = new Rect(rect.x + 5f, rect.y + 5f, rect.width - 10f, rect.height - 10f);
+        GUI.DrawTexture(inset, texture, ScaleMode.ScaleToFit, true);
+        return;
+      }
+
+      GUI.Label(rect, FormatCard(card), _cardStyle);
     }
 
     private void DrawActions()

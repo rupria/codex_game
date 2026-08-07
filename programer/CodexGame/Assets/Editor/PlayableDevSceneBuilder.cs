@@ -1,6 +1,7 @@
 using System;
 using System.IO;
 using CodexGame.Bootstrap;
+using CodexGame.Presentation.Art;
 using CodexGame.Presentation.Views;
 using UnityEditor;
 using UnityEditor.Build.Reporting;
@@ -37,7 +38,8 @@ namespace CodexGame.Editor
       }
 
       var view = gameObject.AddComponent<PlayableDevView>();
-      view.Configure(boardTexture);
+      PlayableCardArtLibrary cardArt = PlayableCardArtLoader.Load();
+      view.Configure(boardTexture, cardArt);
       gameObject.AddComponent<PlayableDevGameController>();
 
       if (!EditorSceneManager.SaveScene(scene, ScenePath))
