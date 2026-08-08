@@ -44,6 +44,7 @@ namespace CodexGame.Presentation.Views
 
       DrawScoreboard(snapshot, playerHealth, aiHealth, styles);
       DrawPublic(snapshot, styles, cards, uiArt);
+      DrawAiDeck(cards);
       DrawPiles(snapshot, cards);
       DrawStatus(snapshot, styles);
       DrawPlayerTray(snapshot, styles, cards, uiArt);
@@ -120,7 +121,7 @@ namespace CodexGame.Presentation.Views
           new LocalizationArgument("target", snapshot.WinTarget)),
         styles.Heading);
       GUI.Label(
-        new Rect(350f, 16f, 260f, 28f),
+        new Rect(350f, 12f, 260f, 24f),
         L(
           "UI_HALLI_DISTRIBUTION_DECK",
           new LocalizationArgument("count", snapshot.FlipCount),
@@ -139,7 +140,21 @@ namespace CodexGame.Presentation.Views
         cards.DrawAt(HalliBoardLayout.PublicCard, snapshot.FirstPublicCard.Value);
       }
       DrawLockedPublicSlot(styles, uiArt);
-      GUI.Label(new Rect(388f, 120f, 176f, 22f), L("UI_HALLI_COMMUNITY"), styles.Small);
+      GUI.Label(new Rect(260f, 104f, 80f, 22f), L("UI_HALLI_COMMUNITY"), styles.Small);
+    }
+
+    private static void DrawAiDeck(PlayableCardRenderer cards)
+    {
+      for (var index = 2; index >= 0; index--)
+      {
+        cards.DrawBackAt(
+          new Rect(
+            HalliBoardLayout.AiDeck.x - index * 3f,
+            HalliBoardLayout.AiDeck.y + index * 3f,
+            HalliBoardLayout.AiDeck.width,
+            HalliBoardLayout.AiDeck.height),
+          180f);
+      }
     }
 
     private void DrawLockedPublicSlot(PlayableDevStyles styles, HalliUiArtSet uiArt)
@@ -351,16 +366,15 @@ namespace CodexGame.Presentation.Views
       var target = HalliBoardLayout.RevealTarget(
         snapshot.RevealingPile.Value == PileSide.Left,
         Math.Min(GameRules.ExposedCardsPerPile - 1, pile.Count));
-      var progress = Smooth(snapshot.RevealProgress);
-      var rect = LerpRect(HalliBoardLayout.FlipDeck, target, progress);
-      var flipScale = Mathf.Max(0.08f, Mathf.Abs(progress * 2f - 1f));
-      rect = new Rect(
-        rect.center.x - rect.width * flipScale * 0.5f,
-        rect.y,
-        rect.width * flipScale,
-        rect.height);
-      if (progress < 0.5f) cards.DrawBackAt(rect);
-      else cards.DrawAt(rect, snapshot.RevealingCard.Value);
+      CardFlipMotion.Draw(
+        cards,
+        snapshot.RevealingCard.Value,
+        snapshot.RevealingActor == HalliActor.Ai
+          ? HalliBoardLayout.AiDeck
+          : HalliBoardLayout.PlayerDeck,
+        target,
+        snapshot.RevealProgress,
+        snapshot.RevealingActor == HalliActor.Ai);
     }
 
     private static void DrawAcquisitionMotion(PrototypeHalliSnapshot snapshot, PlayableCardRenderer cards)
