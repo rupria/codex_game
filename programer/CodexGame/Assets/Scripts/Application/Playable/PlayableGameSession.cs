@@ -112,14 +112,20 @@ namespace CodexGame.Application.Playable
 
       if (Phase == PlayableGamePhase.BarShop)
       {
-        if (!_nextStageGate.TryRequest(nextCombatRoundSeed)) return;
+        if (!_nextStageGate.TryRequest(nextCombatRoundSeed, now)) return;
         RecordInput(now);
         _transition.Begin(
           PlayableTransitionKind.NextStage,
           now,
-          GameRules.NextStageTransitionPlaceholderMicroseconds);
+          GameRules.NextStageTransitionFixedPreloadMicroseconds);
         Phase = PlayableGamePhase.NextStageTransition;
       }
+    }
+
+    public bool MarkNextStageLoadComplete(GameTimestamp now)
+    {
+      return Phase == PlayableGamePhase.NextStageTransition
+        && _nextStageGate.MarkLoadComplete(now);
     }
 
     public bool RerollBarShop(GameTimestamp now)
@@ -229,7 +235,7 @@ namespace CodexGame.Application.Playable
         CompletePokerRound();
       }
       else if (Phase == PlayableGamePhase.NextStageTransition
-        && _transition.IsComplete(now))
+        && _nextStageGate.IsComplete(now))
       {
         CompleteNextStageTransition(now);
       }
@@ -252,6 +258,9 @@ namespace CodexGame.Application.Playable
         _lastStageReward,
         inactivityRemaining,
         _transition.GetSnapshot(now),
+        Phase == PlayableGamePhase.NextStageTransition
+          ? _nextStageGate.GetSnapshot(now)
+          : null,
         Phase == PlayableGamePhase.HalliOpening
           || Phase == PlayableGamePhase.Halli
           || Phase == PlayableGamePhase.HalliTransition
@@ -365,7 +374,7 @@ namespace CodexGame.Application.Playable
 
     private void CompleteNextStageTransition(GameTimestamp now)
     {
-      if (!_nextStageGate.TryConsume(out var nextStageSeed)) return;
+      if (!_nextStageGate.TryConsume(now, out var nextStageSeed)) return;
       _transition.Clear();
       _barShop.Close();
       _stageNumber++;

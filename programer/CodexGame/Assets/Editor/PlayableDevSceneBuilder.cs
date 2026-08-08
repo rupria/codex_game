@@ -21,6 +21,7 @@ namespace CodexGame.Editor
     private const string HalliUi021ArtRoot = UiArtRoot + "Halli_0_2_1/";
     private const string PokerUiArtRoot = UiArtRoot + "Poker_0_2_2/";
     private const string BarShopUiArtRoot = UiArtRoot + "BarShop_0_3_0/";
+    private const string StageTransitionUiArtRoot = UiArtRoot + "StageTransition_0_3_1/";
     private const string IntroArtPath = HalliUiArtRoot + "start_screen_background.png";
     private const string BackdropShaderPath = "Assets/Shaders/RuntimeBackdropLit.shader";
 
@@ -121,6 +122,31 @@ namespace CodexGame.Editor
             "bar_shop.item.dummy_06",
             LoadTexture(BarShopUiArtRoot + "bar_shop_dummy_item_06_64_0_3_0.png"))
         });
+      var stageTransitionUiArtSet = new StageTransitionUiArtSet(
+        LoadTexture(StageTransitionUiArtRoot
+          + "stage_exit_background_closed_unlit_960x540_0_3_1.png"),
+        LoadTexture(StageTransitionUiArtRoot
+          + "stage_exit_background_open_unlit_960x540_0_3_1.png"),
+        LoadNumberedTextures(
+          StageTransitionUiArtRoot,
+          "stage_exit_door_left_{0:00}_128x210_0_3_1.png",
+          4),
+        LoadNumberedTextures(
+          StageTransitionUiArtRoot,
+          "stage_exit_door_right_{0:00}_128x210_0_3_1.png",
+          4),
+        LoadNumberedTextures(
+          StageTransitionUiArtRoot,
+          "stage_exit_walk_dust_{0:00}_96x64_0_3_1.png",
+          4),
+        LoadTexture(StageTransitionUiArtRoot
+          + "stage_exit_walk_vignette_960x540_0_3_1.png"),
+        LoadTexture(StageTransitionUiArtRoot
+          + "stage_transition_fade_black_16_0_3_1.png"),
+        LoadNumberedTextures(
+          StageTransitionUiArtRoot,
+          "stage_transition_loading_{0:00}_64_0_3_1.png",
+          8));
       view.Configure(
         boardTexture,
         cardArtSet,
@@ -131,7 +157,8 @@ namespace CodexGame.Editor
         pokerUiArtSet,
         useSceneBackdrop: true,
         useIntroArtLayout: true,
-        barShopUiArtSet: barShopUiArtSet);
+        barShopUiArtSet: barShopUiArtSet,
+        stageTransitionUiArtSet: stageTransitionUiArtSet);
       var presentationRig = gameObject.AddComponent<TableScenePresentationRig>();
       var backdropShader = AssetDatabase.LoadAssetAtPath<Shader>(BackdropShaderPath);
       if (backdropShader == null)
@@ -221,6 +248,19 @@ namespace CodexGame.Editor
         throw new FileNotFoundException("Playable UI art was not found.", path);
       }
       return texture;
+    }
+
+    private static Texture2D[] LoadNumberedTextures(
+      string root,
+      string filePattern,
+      int count)
+    {
+      var textures = new Texture2D[count];
+      for (var index = 0; index < count; index++)
+      {
+        textures[index] = LoadTexture(root + string.Format(filePattern, index + 1));
+      }
+      return textures;
     }
   }
 }

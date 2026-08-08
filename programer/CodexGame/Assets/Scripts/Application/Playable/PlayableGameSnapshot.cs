@@ -17,6 +17,7 @@ namespace CodexGame.Application.Playable
       int lastStageReward,
       long inactivityRemainingMicroseconds,
       PlayableTransitionSnapshot transition,
+      NextStageTransitionSnapshot? nextStageTransition,
       PrototypeHalliSnapshot? halli,
       PrivateCardSelectionSnapshot? selection,
       PokerRoundSnapshot? poker,
@@ -30,6 +31,7 @@ namespace CodexGame.Application.Playable
       LastStageReward = lastStageReward;
       InactivityRemainingMicroseconds = inactivityRemainingMicroseconds;
       Transition = transition;
+      NextStageTransition = nextStageTransition;
       Halli = halli;
       Selection = selection;
       Poker = poker;
@@ -44,6 +46,7 @@ namespace CodexGame.Application.Playable
     public int LastStageReward { get; }
     public long InactivityRemainingMicroseconds { get; }
     public PlayableTransitionSnapshot Transition { get; }
+    public NextStageTransitionSnapshot? NextStageTransition { get; }
     public PrototypeHalliSnapshot? Halli { get; }
     public PrivateCardSelectionSnapshot? Selection { get; }
     public PokerRoundSnapshot? Poker { get; }

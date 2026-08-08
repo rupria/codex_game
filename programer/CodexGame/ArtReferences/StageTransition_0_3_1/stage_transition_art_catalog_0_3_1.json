@@ -1,0 +1,82 @@
+{
+  "artSetId": "stage_transition_0_3_1",
+  "inherits": "bar_shop_0_3_0",
+  "referenceIssue": 26,
+  "canvas": {
+    "width": 960,
+    "height": 540,
+    "referenceAspect": "16:9",
+    "pixelsPerUnitRecommendation": 1
+  },
+  "stringsBakedIntoImages": false,
+  "backgrounds": {
+    "exitClosedUnlit": "stage_exit_background_closed_unlit_960x540_0_3_1.png",
+    "exitOpenUnlit": "stage_exit_background_open_unlit_960x540_0_3_1.png"
+  },
+  "swingDoors": {
+    "left": [
+      "stage_exit_door_left_01_128x210_0_3_1.png",
+      "stage_exit_door_left_02_128x210_0_3_1.png",
+      "stage_exit_door_left_03_128x210_0_3_1.png",
+      "stage_exit_door_left_04_128x210_0_3_1.png"
+    ],
+    "right": [
+      "stage_exit_door_right_01_128x210_0_3_1.png",
+      "stage_exit_door_right_02_128x210_0_3_1.png",
+      "stage_exit_door_right_03_128x210_0_3_1.png",
+      "stage_exit_door_right_04_128x210_0_3_1.png"
+    ],
+    "leftPivotNormalized": [0.0, 0.5],
+    "rightPivotNormalized": [1.0, 0.5],
+    "referencePlacement": {
+      "leftTopLeft": [368, 105],
+      "rightTopLeft": [464, 105]
+    },
+    "frameSeconds": [0.0, 0.09, 0.09, 0.1]
+  },
+  "walkFx": {
+    "dustFrames": [
+      "stage_exit_walk_dust_01_96x64_0_3_1.png",
+      "stage_exit_walk_dust_02_96x64_0_3_1.png",
+      "stage_exit_walk_dust_03_96x64_0_3_1.png",
+      "stage_exit_walk_dust_04_96x64_0_3_1.png"
+    ],
+    "referencePlacement": [432, 446],
+    "vignette": "stage_exit_walk_vignette_960x540_0_3_1.png",
+    "fadeTile": "stage_transition_fade_black_16_0_3_1.png"
+  },
+  "loading": {
+    "frames": [
+      "stage_transition_loading_01_64_0_3_1.png",
+      "stage_transition_loading_02_64_0_3_1.png",
+      "stage_transition_loading_03_64_0_3_1.png",
+      "stage_transition_loading_04_64_0_3_1.png",
+      "stage_transition_loading_05_64_0_3_1.png",
+      "stage_transition_loading_06_64_0_3_1.png",
+      "stage_transition_loading_07_64_0_3_1.png",
+      "stage_transition_loading_08_64_0_3_1.png"
+    ],
+    "frameSeconds": 0.09,
+    "loop": true,
+    "anchorNormalized": [0.5, 0.5]
+  },
+  "sequence": [
+    {"id": "shop_ui_clear", "durationSeconds": 0.22, "inputLocked": true},
+    {"id": "camera_turn_to_exit", "durationSeconds": 0.32, "inputLocked": true},
+    {"id": "walk_to_door", "durationSeconds": 0.65, "inputLocked": true},
+    {"id": "push_swing_doors", "durationSeconds": 0.18, "inputLocked": true},
+    {"id": "cross_threshold", "durationSeconds": 0.28, "inputLocked": true},
+    {"id": "fade_out_and_begin_load", "durationSeconds": 0.25, "inputLocked": true},
+    {"id": "loading_loop", "durationSeconds": null, "inputLocked": true},
+    {"id": "next_stage_fade_in", "durationSeconds": 0.35, "inputLocked": true}
+  ],
+  "fixedPreloadSeconds": 1.9,
+  "minimumBlackHoldSeconds": 0.15,
+  "runtimeNotes": {
+    "storyboardIsReferenceOnly": true,
+    "useUnityCameraForTurnWalkAndThreshold": true,
+    "useUnitySpotLightInsteadOfBakedLight": true,
+    "unlockInputAfterFadeInComplete": true,
+    "completeTransitionOnlyOnce": true
+  }
+}
