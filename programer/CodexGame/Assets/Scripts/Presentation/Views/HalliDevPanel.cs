@@ -234,20 +234,14 @@ namespace CodexGame.Presentation.Views
         new Rect(712f, 396f, 204f, 22f),
         L("UI_HALLI_AI_ACQUIRED", new LocalizationArgument("count", snapshot.AiAcquiredCount)),
         styles.Small);
-      if (snapshot.LastAcquirer == PrototypeAcquirer.Ai
-        && snapshot.LastAcquiredCards.Count > 0
-        && snapshot.Phase == PrototypeSessionPhase.Review)
+      var movingCount = snapshot.LastAcquirer == PrototypeAcquirer.Ai
+        && AcquisitionProgress(snapshot) < 1f
+        ? snapshot.LastAcquiredCards.Count
+        : 0;
+      var visible = Math.Min(3, Math.Max(0, snapshot.AiAcquiredCount - movingCount));
+      for (var index = 0; index < visible; index++)
       {
-        for (var index = 0; index < Math.Min(2, snapshot.LastAcquiredCards.Count); index++)
-        {
-          cards.DrawAt(
-            new Rect(748f + index * 58f, 424f, 56f, 78f),
-            snapshot.LastAcquiredCards[index]);
-        }
-      }
-      else if (snapshot.AiAcquiredCount > 0)
-      {
-        cards.DrawBackAt(new Rect(782f, 424f, 56f, 78f));
+        cards.DrawBackAt(new Rect(748f + index * 30f, 424f, 56f, 78f));
       }
     }
 
@@ -381,7 +375,9 @@ namespace CodexGame.Presentation.Views
       for (var index = 0; index < snapshot.LastAcquiredCards.Count; index++)
       {
         var target = new Rect(destination.x + index * 58f, destination.y, destination.width, destination.height);
-        cards.DrawAt(LerpRect(source, target, Smooth(progress)), snapshot.LastAcquiredCards[index]);
+        var movingRect = LerpRect(source, target, Smooth(progress));
+        if (snapshot.LastAcquirer == PrototypeAcquirer.Ai) cards.DrawBackAt(movingRect);
+        else cards.DrawAt(movingRect, snapshot.LastAcquiredCards[index]);
       }
     }
 
