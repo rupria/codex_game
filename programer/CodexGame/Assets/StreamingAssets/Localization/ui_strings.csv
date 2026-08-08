@@ -3,29 +3,29 @@ UI_GAME_TITLE,CODEX GAME,CODEX GAME
 UI_GAME_SUBTITLE,할리갈리 × 포커,HALLI × POKER
 UI_MAIN_START,시작,START
 UI_MAIN_GUIDE,가이드,GUIDE
-UI_GUIDE_TITLE,게임 방법,HOW TO PLAY
-UI_GUIDE_FLIP_KEY,W,W
-UI_GUIDE_FLIP_DESC,"카드를 1장 펼칩니다
-이후 AI가 진행합니다","FLIP ONE CARD
-AI FOLLOWS"
-UI_GUIDE_BELL_KEY,Q / E,Q / E
-UI_GUIDE_BELL_DESC,"같은 문양의 해골 합이 3이면
+UI_GUIDE_TITLE,게임 가이드,GAME GUIDE
+UI_GUIDE_FLIP_KEY,W / 클릭,W / CLICK
+UI_GUIDE_FLIP_DESC,"카드 더미를 눌러
+카드를 1장 펼칩니다","PRESS THE DECK
+TO REVEAL ONE CARD"
+UI_GUIDE_BELL_KEY,Q / E / 클릭,Q / E / CLICK
+UI_GUIDE_BELL_DESC,"같은 문양의 해골 합이 정확히 3이면
 해당 방향의 벨을 누릅니다","RING THE MATCHING SIDE
-WHEN SAME-SUIT SKULLS TOTAL 3"
-UI_GUIDE_PREDICT_KEY,1 / 2,1 / 2
-UI_GUIDE_PREDICT_DESC,"포커 패를 완성하고
-승패를 예측합니다","BUILD A POKER HAND
-AND PREDICT THE RESULT"
+WHEN SAME-SUIT SKULLS TOTAL EXACTLY 3"
+UI_GUIDE_PREDICT_KEY,1 / 2 / 클릭,1 / 2 / CLICK
+UI_GUIDE_PREDICT_DESC,"개인 3장 + 커뮤니티 2장으로
+포커 승자를 예측합니다","USE 3 PRIVATE + 2 COMMUNITY CARDS
+AND PREDICT THE WINNER"
 UI_COMMON_CLOSE_ESC,닫기  [ESC],CLOSE  [ESC]
 UI_HUD_STAGE,스테이지 {stage},STAGE {stage}
 UI_HUD_COMBAT_ROUND,전투 라운드 {round},COMBAT ROUND {round}
 UI_HUD_PLAYER_HP,플레이어 HP {current}/3,PLAYER HP {current}/3
 UI_HUD_AI_HP,AI HP {current}/3,AI HP {current}/3
-UI_HUD_REWARDS,코인 {coins},COINS {coins}
+UI_HUD_REWARDS,총알 {bullets},BULLETS {bullets}
 UI_BATTLE_DEFEATED,플레이어 패배 - 메인으로 돌아갑니다,PLAYER DEFEATED - RETURN TO MAIN
 UI_RETURN_MAIN,메인으로  [R / ENTER],RETURN TO MAIN  [R / ENTER]
-UI_STAGE_CLEAR,스테이지 클리어 · 코인 {coins},STAGE CLEAR · COINS {coins}
-UI_STAGE_PENDING_REWARD,코인 {coins},COINS {coins}
+UI_STAGE_CLEAR,스테이지 클리어 · 총알 +{reward},STAGE CLEAR · BULLETS +{reward}
+UI_STAGE_PENDING_REWARD,총알 {bullets},BULLETS {bullets}
 UI_NEXT_STAGE,다음 스테이지  [ENTER / SPACE],NEXT STAGE  [ENTER / SPACE]
 UI_HALLI_DEALER_FIRST,딜러가 첫 커뮤니티 카드를 공개합니다,DEALER OPENS THE FIRST COMMUNITY CARD
 UI_HALLI_TABLE_READY,할리갈리 테이블 준비 완료,HALLI TABLE READY
@@ -114,7 +114,7 @@ STATUS_HALLI_AI_REWARD_AUTO,AI 보상을 표시하고 2초 확인 잠금 뒤 자
 STATUS_HALLI_REWARD_TIMEOUT,보상 선택 시간이 끝나 시드 기반 무작위 카드 1장을 지급했습니다.,Reward selection timed out; one deterministic random card was awarded.
 STATUS_HALLI_REWARD_AWARDED,오조작 보상 카드를 지급했습니다. 승자가 다음 진행을 시작합니다.,Wrong-bell reward card awarded. Winner leads next.
 STATUS_HALLI_RESULT_LOCK_END,결과 확인이 끝났습니다. 할리갈리 승자가 다음 진행을 시작합니다.,Result lock ended. The Halli winner leads next.
-STATUS_HALLI_FLIP_TIMEOUT,플레이어가 30초 벨 입력 제한 시간을 초과했습니다.,Player exceeded the 30-second bell input limit.
+STATUS_HALLI_FLIP_TIMEOUT,플레이어가 30초 펼치기 제한 시간을 초과했습니다.,Player exceeded the 30-second flip limit.
 STATUS_HALLI_PLAYER_STAGE_WIN,플레이어가 할리갈리 단계에서 승리했습니다. 개인 카드 단계로 진행합니다.,PLAYER WINS the Halli stage. Continue to private cards.
 STATUS_HALLI_AI_STAGE_WIN,AI가 할리갈리 단계에서 승리했습니다. 개인 카드 단계로 진행합니다.,AI WINS the Halli stage. Continue to private cards.
 STATUS_HALLI_NO_TARGET_WINNER,목표 승자 없이 할리갈리 단계가 끝났습니다. 개인 카드 단계로 진행합니다.,Halli stage ended without a target winner. Continue to private cards.
@@ -159,12 +159,30 @@ UI_GUIDE_PAGE_RESULT_BODY,"1: 플레이어 승리 예측 / 2: AI 승리 예측
 제한 시간은 2분이며 예측은 실제 승패를 바꾸지 않습니다.
 같은 족보는 랭크 비교 후 문양 순서로 결정합니다.
 ♠ 스페이드 > ♦ 다이아몬드 > ♥ 하트 > ♣ 클로버
-포커 패자는 HP 1 감소, 스테이지 승리 시 코인을 정산합니다.","1: predict Player / 2: predict AI
+포커 패자는 HP 1 감소합니다.
+AI HP가 0이 되면 잔여 플레이어 HP 1당 총알 1개를 받습니다.","1: predict Player / 2: predict AI
 You have 2 minutes; prediction does not change the poker result.
 Equal hands compare ranks, then suit order.
 ♠ Spades > ♦ Diamonds > ♥ Hearts > ♣ Clubs
-The poker loser loses 1 HP; coins are counted on stage victory."
+The poker loser loses 1 HP.
+When AI HP reaches 0, gain 1 bullet per remaining Player HP."
 UI_GUIDE_PREV,이전,PREVIOUS
 UI_GUIDE_NEXT,다음,NEXT
 UI_GUIDE_PAGE_INDICATOR,{page} / {total},{page} / {total}
 UI_GUIDE_MODAL_HINT,가이드가 열려 있는 동안 게임 입력은 멈춥니다.,Game input is paused while the guide is open.
+UI_STAGE_REWARD_TITLE,보상 정산,REWARD SETTLEMENT
+UI_STAGE_REWARD_FORMULA,잔여 HP {hp} × 1 = 총알 +{reward},REMAINING HP {hp} × 1 = BULLETS +{reward}
+UI_BULLET_BALANCE,총알 {bullets},BULLETS {bullets}
+UI_BAR_TITLE,바,BAR
+UI_BAR_HEAL,체력 회복,RESTORE HP
+UI_BAR_ITEMS,아이템,ITEMS
+UI_BAR_CONTINUE,다음 가게로,LEAVE FOR NEXT TAVERN
+UI_BAR_PRICE,총알 {price},{price} BULLETS
+UI_BAR_NOT_ENOUGH,총알이 부족합니다,NOT ENOUGH BULLETS
+UI_TRANSITION_LEAVING,가게를 나서 다음 가게로 이동합니다,LEAVING FOR THE NEXT TAVERN
+UI_TRANSITION_ENTERING,새로운 가게에 도착했습니다,YOU ARRIVED AT A NEW TAVERN
+UI_TRANSITION_OPPONENT,다음 상대: {opponent},NEXT OPPONENT: {opponent}
+UI_TRANSITION_SIT_START,중앙 테이블에 앉습니다,TAKE A SEAT AT THE CENTER TABLE
+UI_BAR_HP_STATUS,HP {current}/{max},HP {current}/{max}
+UI_TRANSITION_APPROACHING_TAVERN,가게로 걸어갑니다,WALKING TO THE TAVERN
+UI_TRANSITION_OPEN_SALOON_DOOR,살룬 문을 열고 들어갑니다,PUSHING THROUGH THE SALOON DOORS

@@ -19,12 +19,13 @@ namespace CodexGame.Application.Playable
     private PrivateCardSelectionSession? _selection;
     private PokerRoundSession? _poker;
     private readonly PlayableTransitionTimeline _transition = new PlayableTransitionTimeline();
-    private CoinLedger _coins = new CoinLedger();
+    private BulletLedger _bullets = new BulletLedger();
     private BattleHealth _health = BattleHealth.Initial;
     private Card? _firstPublicCard;
     private GameTimestamp _lastUserInputAt;
     private int _stageNumber = 1;
     private int _combatRoundNumber = 1;
+    private int _lastStageReward;
 
     public PlayableGameSession()
       : this(new AiPrivateCardSelectionPolicy(), PokerRuleSet.Development)
@@ -46,7 +47,8 @@ namespace CodexGame.Application.Playable
       _stageNumber = 1;
       _combatRoundNumber = 1;
       _health = BattleHealth.Initial;
-      _coins = new CoinLedger();
+      _bullets = new BulletLedger();
+      _lastStageReward = 0;
       RecordInput(now);
       StartCombatRound(now, combatRoundSeed);
     }
@@ -79,7 +81,6 @@ namespace CodexGame.Application.Playable
         {
           if (_health.Ai == 0)
           {
-            _coins.AwardStageCoins(_health.Player);
             Phase = PlayableGamePhase.StageWon;
           }
           else
@@ -97,9 +98,17 @@ namespace CodexGame.Application.Playable
       if (Phase == PlayableGamePhase.StageWon)
       {
         RecordInput(now);
+        Phase = PlayableGamePhase.Bar;
+        return;
+      }
+
+      if (Phase == PlayableGamePhase.Bar)
+      {
+        RecordInput(now);
         _stageNumber++;
         _combatRoundNumber = 1;
-        _health = BattleHealth.Initial;
+        _health = new BattleHealth(_health.Player, GameRules.StartingHealth);
+        _lastStageReward = 0;
         StartCombatRound(now, nextCombatRoundSeed);
       }
     }
@@ -218,7 +227,8 @@ namespace CodexGame.Application.Playable
         _stageNumber,
         _combatRoundNumber,
         _health,
-        _coins.Balance,
+        _bullets.Balance,
+        _lastStageReward,
         inactivityRemaining,
         _transition.GetSnapshot(now),
         Phase == PlayableGamePhase.HalliOpening
@@ -325,10 +335,9 @@ namespace CodexGame.Application.Playable
       }
 
       _health = _poker.Result.Damage.After;
-      if (_poker.Result.Prediction.IsCorrect)
-      {
-        _coins.AwardPredictionCoin();
-      }
+      _lastStageReward = _health.Ai == 0
+        ? _bullets.SettleStageVictory(_stageNumber, _health.Player)
+        : 0;
       Phase = PlayableGamePhase.PokerResult;
     }
 
@@ -345,7 +354,8 @@ namespace CodexGame.Application.Playable
       _poker = null;
       _firstPublicCard = null;
       _transition.Clear();
-      _coins = new CoinLedger();
+      _bullets = new BulletLedger();
+      _lastStageReward = 0;
       _stageNumber = 1;
       _combatRoundNumber = 1;
       Phase = PlayableGamePhase.Intro;

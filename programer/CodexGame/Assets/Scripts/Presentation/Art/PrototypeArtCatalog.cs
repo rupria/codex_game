@@ -52,7 +52,7 @@ namespace CodexGame.Presentation.Art
         PredictionLose,
         ResultWin,
         ResultLose,
-        Coin,
+        Bullet,
         ItemSlot
     }
 

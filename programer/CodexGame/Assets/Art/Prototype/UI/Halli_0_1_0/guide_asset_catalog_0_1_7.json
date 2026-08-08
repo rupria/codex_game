@@ -1,0 +1,55 @@
+{
+  "version": "0.1.7",
+  "referenceResolution": {
+    "width": 960,
+    "height": 540
+  },
+  "legacyBackgroundKeptUntilIntegration": "guide_overlay_background.png",
+  "modalBackground": {
+    "path": "guide_modal_background.png",
+    "size": [960, 540],
+    "opaque": true,
+    "suggestedRect": [0, 0, 960, 540]
+  },
+  "pageArt": [
+    "guide_page_flow_art.png",
+    "guide_page_halli_art.png",
+    "guide_page_cards_art.png",
+    "guide_page_result_art.png"
+  ],
+  "pageArtSize": [320, 280],
+  "pageArtSuggestedPosition": [37, 126],
+  "textLayout": {
+    "titleRect": [336, 48, 267, 50],
+    "bodyRect": [390, 145, 475, 260],
+    "modalHintPosition": [48, 437]
+  },
+  "navigation": {
+    "buttonSize": [128, 42],
+    "previousPosition": [270, 471],
+    "indicatorPosition": [430, 475],
+    "nextPosition": [542, 471],
+    "closePosition": [788, 471],
+    "indicatorSize": [100, 34],
+    "buttonStates": [
+      "guide_nav_button_idle.png",
+      "guide_nav_button_hover.png",
+      "guide_nav_button_disabled.png"
+    ],
+    "indicatorPlate": "guide_page_indicator_plate.png"
+  },
+  "localizationKeys": [
+    "UI_GUIDE_PAGE_FLOW_TITLE",
+    "UI_GUIDE_PAGE_FLOW_BODY",
+    "UI_GUIDE_PAGE_HALLI_TITLE",
+    "UI_GUIDE_PAGE_HALLI_BODY",
+    "UI_GUIDE_PAGE_CARDS_TITLE",
+    "UI_GUIDE_PAGE_CARDS_BODY",
+    "UI_GUIDE_PAGE_RESULT_TITLE",
+    "UI_GUIDE_PAGE_RESULT_BODY",
+    "UI_GUIDE_PREV",
+    "UI_GUIDE_NEXT",
+    "UI_GUIDE_PAGE_INDICATOR",
+    "UI_GUIDE_MODAL_HINT"
+  ]
+}

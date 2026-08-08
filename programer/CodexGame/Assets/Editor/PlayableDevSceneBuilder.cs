@@ -14,7 +14,8 @@ namespace CodexGame.Editor
   public static class PlayableDevSceneBuilder
   {
     public const string ScenePath = "Assets/Scenes/PlayableDev.unity";
-    public const string BoardArtPath = "Assets/Art/Prototype/Board/board_layout_wip.png";
+    public const string BoardArtPath =
+      "Assets/Art/Prototype/Board/halli_western_saloon_background.png";
     private const string UiArtRoot = "Assets/Art/Prototype/UI/";
     private const string HalliUiArtRoot = UiArtRoot + "Halli_0_1_0/";
 
@@ -56,7 +57,17 @@ namespace CodexGame.Editor
         LoadTexture(HalliUiArtRoot + "flip_deck_disabled.png"),
         LoadTexture(HalliUiArtRoot + "player_acquired_tray.png"),
         LoadTexture(HalliUiArtRoot + "ai_acquired_status_panel.png"));
-      view.Configure(boardTexture, cardArtSet, halliUiArtSet);
+      var guideUiArtSet = new GuideUiArtSet(
+        LoadTexture(HalliUiArtRoot + "guide_modal_background.png"),
+        LoadTexture(HalliUiArtRoot + "guide_page_flow_art.png"),
+        LoadTexture(HalliUiArtRoot + "guide_page_halli_art.png"),
+        LoadTexture(HalliUiArtRoot + "guide_page_cards_art.png"),
+        LoadTexture(HalliUiArtRoot + "guide_page_result_art.png"),
+        LoadTexture(HalliUiArtRoot + "guide_nav_button_idle.png"),
+        LoadTexture(HalliUiArtRoot + "guide_nav_button_hover.png"),
+        LoadTexture(HalliUiArtRoot + "guide_nav_button_disabled.png"),
+        LoadTexture(HalliUiArtRoot + "guide_page_indicator_plate.png"));
+      view.Configure(boardTexture, cardArtSet, halliUiArtSet, guideUiArtSet);
       gameObject.AddComponent<PlayableDevGameController>();
 
       if (!EditorSceneManager.SaveScene(scene, ScenePath))
