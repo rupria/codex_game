@@ -100,15 +100,13 @@ namespace CodexGame.Application.Playable
 
     public void Advance(GameTimestamp now)
     {
-      if (Phase == PrototypeSessionPhase.ReadyToFlip
-        && _turnOrder.LeadActor == HalliActor.Player)
+      if (Phase == PrototypeSessionPhase.ReadyToFlip)
       {
         StartFlip(now);
         return;
       }
 
-      if (Phase == PrototypeSessionPhase.BellOpen
-        && _turnOrder.LeadActor == HalliActor.Player)
+      if (Phase == PrototypeSessionPhase.BellOpen)
       {
         StartFlip(now);
       }
@@ -130,11 +128,7 @@ namespace CodexGame.Application.Playable
       switch (Phase)
       {
         case PrototypeSessionPhase.ReadyToFlip:
-          if (TryResolveScheduledBellOrTimeout(now)) break;
-          if (_turnOrder.LeadActor == HalliActor.Ai)
-          {
-            StartFlip(now);
-          }
+          TryResolveScheduledBellOrTimeout(now);
           break;
         case PrototypeSessionPhase.SequentialReveal:
           TickSequentialReveal(now);
@@ -163,8 +157,7 @@ namespace CodexGame.Application.Playable
         : _ledger.GetCards(CardZone.AiAcquired);
       var remaining = GetRemainingMicroseconds(now);
       var canFlip = (Phase == PrototypeSessionPhase.ReadyToFlip
-          || Phase == PrototypeSessionPhase.BellOpen)
-        && _turnOrder.LeadActor == HalliActor.Player;
+          || Phase == PrototypeSessionPhase.BellOpen);
       var canRing = CanAcceptBell();
       var revealProgress = GetRevealProgress(now);
 
@@ -440,12 +433,7 @@ namespace CodexGame.Application.Playable
 
     private void TickBellWindow(GameTimestamp now)
     {
-      if (TryResolveScheduledBellOrTimeout(now)) return;
-
-      if (_turnOrder.LeadActor == HalliActor.Ai)
-      {
-        StartFlip(now);
-      }
+      TryResolveScheduledBellOrTimeout(now);
     }
 
     private bool TryResolveScheduledBellOrTimeout(GameTimestamp now)

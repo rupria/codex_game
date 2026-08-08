@@ -14,6 +14,7 @@ namespace CodexGame.SmokeTests.Playable
       CheckBellDuringRevealStopsDistribution(tests);
       CheckResultLockAndBellTimeout(tests);
       CheckWrongBellHasNoRewardSelection(tests);
+      CheckWrongBellWaitsForManualFlipAfterLock(tests);
       CheckWrongBellPreservesEarlierAcquiredCards(tests);
       CheckGlobalInactivity(tests);
     }
@@ -135,6 +136,40 @@ namespace CodexGame.SmokeTests.Playable
         snapshot.Phase == PrototypeSessionPhase.Review
           && snapshot.AiWins == 1,
         "Wrong input must be a loss only; the obsolete reward-card selection must not open.");
+    }
+
+    private static void CheckWrongBellWaitsForManualFlipAfterLock(TestHarness tests)
+    {
+      var session = new PrototypeHalliSession();
+      session.StartNew(new GameTimestamp(0), 20);
+      session.Ring(PileSide.Left, new GameTimestamp(1));
+
+      var unlockedAt = new GameTimestamp(1 + GameRules.HalliResultLockMicroseconds);
+      session.Tick(unlockedAt);
+      var unlocked = session.GetSnapshot(unlockedAt);
+      var initialDeckCount = unlocked.RemainingDeckCards;
+      tests.Check(
+        unlocked.Phase == PrototypeSessionPhase.ReadyToFlip
+          && unlocked.AiWins == 1
+          && unlocked.CanFlip
+          && unlocked.FlipCount == 0,
+        "After a wrong bell, the two-second lock must end in a manual W/click wait state.");
+
+      var idleAt = new GameTimestamp(unlockedAt.Microseconds + 1_000_000);
+      session.Tick(idleAt);
+      var idle = session.GetSnapshot(idleAt);
+      tests.Check(
+        idle.Phase == PrototypeSessionPhase.ReadyToFlip
+          && idle.FlipCount == 0
+          && idle.RemainingDeckCards == initialDeckCount,
+        "No cards may be revealed after a wrong bell until the player supplies a new flip input.");
+
+      session.Advance(new GameTimestamp(idleAt.Microseconds + 1));
+      var resumed = session.GetSnapshot(new GameTimestamp(idleAt.Microseconds + 1));
+      tests.Check(
+        resumed.Phase == PrototypeSessionPhase.SequentialReveal
+          && resumed.FlipCount == 1,
+        "One new W/click input must resume exactly one controlled reveal sequence.");
     }
 
     private static void CheckWrongBellPreservesEarlierAcquiredCards(TestHarness tests)
