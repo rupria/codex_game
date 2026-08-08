@@ -118,3 +118,53 @@ STATUS_HALLI_FLIP_TIMEOUT,플레이어가 30초 벨 입력 제한 시간을 초�
 STATUS_HALLI_PLAYER_STAGE_WIN,플레이어가 할리갈리 단계에서 승리했습니다. 개인 카드 단계로 진행합니다.,PLAYER WINS the Halli stage. Continue to private cards.
 STATUS_HALLI_AI_STAGE_WIN,AI가 할리갈리 단계에서 승리했습니다. 개인 카드 단계로 진행합니다.,AI WINS the Halli stage. Continue to private cards.
 STATUS_HALLI_NO_TARGET_WINNER,목표 승자 없이 할리갈리 단계가 끝났습니다. 개인 카드 단계로 진행합니다.,Halli stage ended without a target winner. Continue to private cards.
+UI_GUIDE_PAGE_FLOW_TITLE,목표와 게임 흐름,GOAL & GAME FLOW
+UI_GUIDE_PAGE_FLOW_BODY,"1. 첫 커뮤니티 카드 공개
+2. 할리갈리에서 카드를 획득
+3. 개인 카드 3장 + 커뮤니티 카드 2장으로 포커
+4. 포커 패자는 HP 1 감소
+AI HP를 0으로 만들면 승리합니다.","1. Reveal the first community card
+2. Win cards in Halli
+3. Play poker with 3 private + 2 community cards
+4. The poker loser loses 1 HP
+Reduce AI HP to 0 to win."
+UI_GUIDE_PAGE_HALLI_TITLE,할리갈리 판정,HALLI RULES
+UI_GUIDE_PAGE_HALLI_BODY,"W 또는 카드 더미 클릭: 카드 1장 펼치기
+Q/E 또는 벨 클릭: 왼쪽/오른쪽 판정
+같은 문양의 해골 합이 정확히 3이면 정답입니다.
+가능한 조합: 1+2 또는 해골 3 한 장
+승패 후 2초 잠금이 끝나면 30초 안에 판단하세요.
+오답·시간 초과는 상대 승리 1회입니다.
+목표 승수를 먼저 채우거나 최대 12회·덱 소진 시 종료합니다.","W or click the deck: reveal one card
+Q/E or click a bell: judge left/right
+The same-suit skull total must equal exactly 3.
+Valid sets: 1+2 or one skull-3 card
+After the 2-second lock, decide within 30 seconds.
+A wrong answer or timeout gives the opponent one win.
+The stage ends at the win target, round 12, or deck exhaustion."
+UI_GUIDE_PAGE_CARDS_TITLE,카드 획득과 포커,CARDS & POKER
+UI_GUIDE_PAGE_CARDS_BODY,"1+2 정답: 두 카드 모두 획득
+해골 3 정답: 해당 해골 3 카드 한 장 획득
+획득 카드는 현재 전투의 포커까지 유지됩니다.
+할리갈리 종료 후 포커에 사용할 개인 카드 3장을 확정합니다.
+부족한 카드는 미획득 카드에서 무작위로 보충됩니다.
+포커는 개인 3장과 커뮤니티 2장, 정확히 5장을 모두 사용합니다.","Correct 1+2: gain both cards
+Correct skull 3: gain that skull-3 card only
+Gained cards stay until poker in the current battle.
+After Halli, finalize 3 private cards for poker.
+Missing cards are filled randomly from unclaimed cards.
+Poker uses exactly all 3 private + 2 community cards."
+UI_GUIDE_PAGE_RESULT_TITLE,예측과 승리,PREDICTION & VICTORY
+UI_GUIDE_PAGE_RESULT_BODY,"1: 플레이어 승리 예측 / 2: AI 승리 예측
+제한 시간은 2분이며 예측은 실제 승패를 바꾸지 않습니다.
+같은 족보는 랭크 비교 후 문양 순서로 결정합니다.
+♠ 스페이드 > ♦ 다이아몬드 > ♥ 하트 > ♣ 클로버
+포커 패자는 HP 1 감소, 스테이지 승리 시 코인을 정산합니다.","1: predict Player / 2: predict AI
+You have 2 minutes; prediction does not change the poker result.
+Equal hands compare ranks, then suit order.
+♠ Spades > ♦ Diamonds > ♥ Hearts > ♣ Clubs
+The poker loser loses 1 HP; coins are counted on stage victory."
+UI_GUIDE_PREV,이전,PREVIOUS
+UI_GUIDE_NEXT,다음,NEXT
+UI_GUIDE_PAGE_INDICATOR,{page} / {total},{page} / {total}
+UI_GUIDE_MODAL_HINT,가이드가 열려 있는 동안 게임 입력은 멈춥니다.,Game input is paused while the guide is open.

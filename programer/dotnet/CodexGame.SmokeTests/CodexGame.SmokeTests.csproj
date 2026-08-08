@@ -16,6 +16,9 @@
     <Compile
       Include="..\..\CodexGame\Assets\Scripts\Presentation\Localization\LocalizationCatalog.cs"
       Link="Localization\LocalizationCatalog.cs" />
+    <Compile
+      Include="..\..\CodexGame\Assets\Scripts\Presentation\Views\GuideModalState.cs"
+      Link="Presentation\GuideModalState.cs" />
     <None
       Include="..\..\CodexGame\Assets\StreamingAssets\Localization\ui_strings.csv"
       Link="Localization\ui_strings.csv"
