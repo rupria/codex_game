@@ -126,3 +126,25 @@
 - 프롬프트 요약: 매우 어두운 심야 웨스턴 살롱, 중앙의 빈 타원형 녹색 펠트 테이블, 단일 호박색 조명을 테이블에만 제한,
   주변 바와 장식은 거의 검은 실루엣, 카드·벨·HUD를 모두 제외한 독립 배경
 - 참조 이미지의 픽셀을 직접 포함하지 않고 분위기와 소재만 참고해 새로 생성했다.
+
+## 0.1.3 실제 포커 카드 적용 시안과 웨스턴 카드 뒷면 후보
+
+- 실제 적용 카드 확인 시안: `halli_poker_wide_actual_cards_mock_960x540_0_1_3.png`
+- 카드 뒷면 검토용 원본 크기: `card_back_western_concept_64x90_0_1_3.png`
+- 카드 뒷면 확대 미리보기: `card_back_western_concept_preview_512x720_0_1_3.png`
+- 생성 원본: `sources/card_back_western_balanced_chromakey_source_0_1_3.png`
+- 투명화 작업 원본: `sources/card_back_western_balanced_transparent_source_0_1_3.png`
+
+### 적용 상태
+
+1. 포커 와이드 시안의 앞면 카드는 `Assets/Art/Prototype/Cards_0_06/poker_variants/`에 있는 실제 런타임 PNG를 합성했다.
+2. 시안에 사용한 카드는 `card_poker_clubs_10`, `card_poker_hearts_8`, `card_poker_diamonds_k`, `card_poker_clubs_7`, `card_poker_hearts_q`다.
+3. 숫자 카드는 일반 포커 핍, K·Q는 해골 로열 일러스트가 들어간 현재 적용 디자인을 그대로 보여준다.
+4. 기존 `halli_poker_wide_mock_960x540_0_1_1.png`의 생성형 카드 그림은 구도 참고용이며, 카드 외형 검수에는 이번 실제 카드 적용 시안을 기준으로 사용한다.
+5. 웨스턴 카드 뒷면은 승인 전 후보 시안이다. 런타임 `Assets/Art/Prototype/Cards_0_06/card_back.png`는 아직 교체하지 않았다.
+
+### 카드 뒷면 생성 기록
+
+- 제작 방식: OpenAI 내장 ImageGen 신규 생성 모드 후 크로마 제거와 최근접 축소
+- 프롬프트 요약: 기존 뒷면의 세로 대칭 구조와 해골 벨 중심 문양을 유지하고, 짙은 갈색 가죽·어두운 포레스트 그린·앤티크 황동 팔레트와 희미한 보안관 별을 사용한 웨스턴 살롱 카드 뒷면. 글자·숫자·슈트 문양 없이 평면 마젠타 배경에 분리 생성
+- 실사용 후보 규격: 64×90 RGBA, 투명 모서리, Point 필터 권장
