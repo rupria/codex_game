@@ -56,8 +56,13 @@ namespace CodexGame.Presentation.Views
       DrawBackAt(rect);
     }
 
-    public void DrawBackAt(Rect rect)
+    public void DrawBackAt(Rect rect, float rotationDegrees = 0f)
     {
+      var previousMatrix = GUI.matrix;
+      if (Mathf.Abs(rotationDegrees) > 0.01f)
+      {
+        GUIUtility.RotateAroundPivot(rotationDegrees, rect.center);
+      }
       GUI.Box(rect, GUIContent.none, _styles.Card);
       if (_backTexture != null)
       {
@@ -67,6 +72,7 @@ namespace CodexGame.Presentation.Views
       {
         GUI.Label(rect, L("UI_COMMON_HIDDEN"), _styles.Card);
       }
+      GUI.matrix = previousMatrix;
     }
 
     public string FormatInline(Card card)
