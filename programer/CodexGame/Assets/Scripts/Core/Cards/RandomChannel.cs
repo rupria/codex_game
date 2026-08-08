@@ -7,6 +7,7 @@ namespace CodexGame.Core.Cards
     AiReaction = 3,
     AiChoice = 4,
     Reward = 5,
+    BarShop = 6,
     RevealTiming = 8
   }
 }

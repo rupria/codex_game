@@ -4,6 +4,7 @@ namespace CodexGame.Application.Playable
   {
     None = 0,
     HalliOpening = 1,
-    HalliToPoker = 2
+    HalliToPoker = 2,
+    NextStage = 3
   }
 }
