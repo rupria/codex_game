@@ -11,6 +11,7 @@ namespace CodexGame.Application.Playable
     PokerPrediction = 6,
     PokerResult = 7,
     StageWon = 8,
-    BattleFinished = 9
+    BattleFinished = 9,
+    Bar = 10
   }
 }

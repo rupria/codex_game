@@ -244,7 +244,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bdb4d81e9bb4ec94681bf2457196d90b, type: 3}
   m_Name:
   m_EditorClassIdentifier: CodexGame.Presentation::CodexGame.Presentation.Views.PlayableDevView
-  _boardTexture: {fileID: 2800000, guid: 7d8e2fc8564741bbaab7c31bda00fbaf, type: 3}
+  _boardTexture: {fileID: 2800000, guid: 129ba7287afc183049621fb542347b34, type: 3}
   _cardArtSet:
     _halli:
       _entries:
@@ -1308,6 +1308,16 @@ MonoBehaviour:
     _flipDeckDisabled: {fileID: 2800000, guid: 2d492b3818d8b4b324fc77f8d4e7efa2, type: 3}
     _playerAcquiredTray: {fileID: 2800000, guid: 9fd29dd390fd29735b91916ab58c0db0, type: 3}
     _aiAcquiredStatusPanel: {fileID: 2800000, guid: 0a7083aafd8272ecfc1e260259d0ffd4, type: 3}
+  _guideUiArtSet:
+    _modalBackground: {fileID: 2800000, guid: a1dd36a3860feff372a4fee980af0e30, type: 3}
+    _flowPage: {fileID: 2800000, guid: 67c3f94b97e10cda3a68af17fc8ed386, type: 3}
+    _halliPage: {fileID: 2800000, guid: 12c2660b974cb6ffa31d6cb123865dac, type: 3}
+    _cardsPage: {fileID: 2800000, guid: bf2ab90e80b2153da9a332bf025f949e, type: 3}
+    _resultPage: {fileID: 2800000, guid: 29b5746388f705e2b692c3dced0a78f8, type: 3}
+    _navIdle: {fileID: 2800000, guid: b6078ba3ac469bf091ac8c5ba762cbd4, type: 3}
+    _navHover: {fileID: 2800000, guid: e8cd52738cdd0b74445f8a0e0b35ae0d, type: 3}
+    _navDisabled: {fileID: 2800000, guid: 19fda25af443b2fb0607898ce8dac0e4, type: 3}
+    _pageIndicatorPlate: {fileID: 2800000, guid: 8f6aff2d0203f6d0a759794a9fc979d9, type: 3}
 --- !u!4 &601916596
 Transform:
   m_ObjectHideFlags: 0

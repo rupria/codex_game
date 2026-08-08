@@ -11,7 +11,7 @@ namespace CodexGame.Presentation.Localization
   {
     public const string DefaultLanguage = "ko";
     public const string FallbackLanguage = "en";
-    public const int RequiredKeyCount = 121;
+    public const int RequiredKeyCount = 137;
 
     private static readonly string[] RequiredGuideKeys =
     {
@@ -27,6 +27,21 @@ namespace CodexGame.Presentation.Localization
       "UI_GUIDE_NEXT",
       "UI_GUIDE_PAGE_INDICATOR",
       "UI_GUIDE_MODAL_HINT"
+    };
+
+    private static readonly string[] RequiredStageFlowKeys =
+    {
+      "UI_STAGE_REWARD_TITLE",
+      "UI_STAGE_REWARD_FORMULA",
+      "UI_BULLET_BALANCE",
+      "UI_BAR_TITLE",
+      "UI_BAR_CONTINUE",
+      "UI_TRANSITION_LEAVING",
+      "UI_TRANSITION_ENTERING",
+      "UI_TRANSITION_OPPONENT",
+      "UI_TRANSITION_SIT_START",
+      "UI_TRANSITION_APPROACHING_TAVERN",
+      "UI_TRANSITION_OPEN_SALOON_DOOR"
     };
 
     private static readonly Regex PlaceholderPattern =
@@ -89,6 +104,14 @@ namespace CodexGame.Presentation.Localization
         if (!entries.ContainsKey(RequiredGuideKeys[index]))
         {
           throw new FormatException("Missing required guide localization key: " + RequiredGuideKeys[index]);
+        }
+      }
+      for (var index = 0; index < RequiredStageFlowKeys.Length; index++)
+      {
+        if (!entries.ContainsKey(RequiredStageFlowKeys[index]))
+        {
+          throw new FormatException(
+            "Missing required stage-flow localization key: " + RequiredStageFlowKeys[index]);
         }
       }
       return new LocalizationCatalog(entries, warning ?? (_ => { }));

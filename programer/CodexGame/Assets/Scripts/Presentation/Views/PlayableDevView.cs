@@ -19,6 +19,9 @@ namespace CodexGame.Presentation.Views
     [SerializeField]
     private HalliUiArtSet _halliUiArtSet;
 
+    [SerializeField]
+    private GuideUiArtSet _guideUiArtSet;
+
     private readonly HalliDevPanel _halliPanel = new HalliDevPanel();
     private readonly GuideModalPanel _guidePanel = new GuideModalPanel();
     private readonly GuideModalState _guide = new GuideModalState();
@@ -55,7 +58,7 @@ namespace CodexGame.Presentation.Views
 
     public void Configure(Texture2D boardTexture, PlayableCardArtSet cardArtSet)
     {
-      Configure(boardTexture, cardArtSet, null);
+      Configure(boardTexture, cardArtSet, null, null);
     }
 
     public void Configure(
@@ -63,9 +66,19 @@ namespace CodexGame.Presentation.Views
       PlayableCardArtSet cardArtSet,
       HalliUiArtSet halliUiArtSet)
     {
+      Configure(boardTexture, cardArtSet, halliUiArtSet, null);
+    }
+
+    public void Configure(
+      Texture2D boardTexture,
+      PlayableCardArtSet cardArtSet,
+      HalliUiArtSet halliUiArtSet,
+      GuideUiArtSet guideUiArtSet)
+    {
       _boardTexture = boardTexture;
       _cardArtSet = cardArtSet;
       _halliUiArtSet = halliUiArtSet;
+      _guideUiArtSet = guideUiArtSet;
       _halliCards = null;
       _pokerCards = null;
     }
@@ -123,6 +136,7 @@ namespace CodexGame.Presentation.Views
           if (Pressed(KeyCode.R, KeyCode.Return)) MainRequested?.Invoke();
           break;
         case PlayableGamePhase.StageWon:
+        case PlayableGamePhase.Bar:
           if (Pressed(KeyCode.Return, KeyCode.Space)) AdvanceRequested?.Invoke();
           break;
       }
@@ -149,6 +163,7 @@ namespace CodexGame.Presentation.Views
         _guidePanel.Draw(
           _guide,
           _styles,
+          _guideUiArtSet,
           _localization,
           _guide.MovePrevious,
           _guide.MoveNext,
@@ -194,7 +209,7 @@ namespace CodexGame.Presentation.Views
       GUILayout.Label(
         L(
           "UI_HUD_REWARDS",
-          new LocalizationArgument("coins", _snapshot.CoinCount)),
+          new LocalizationArgument("bullets", _snapshot.BulletCount)),
         _styles.Small);
       GUILayout.Space(4f);
 
@@ -232,6 +247,9 @@ namespace CodexGame.Presentation.Views
           break;
         case PlayableGamePhase.StageWon:
           DrawStageWon();
+          break;
+        case PlayableGamePhase.Bar:
+          DrawBar();
           break;
       }
 
@@ -282,10 +300,39 @@ namespace CodexGame.Presentation.Views
     {
       GUILayout.FlexibleSpace();
       GUILayout.Label(
-        L("UI_STAGE_CLEAR", new LocalizationArgument("coins", _snapshot.CoinCount)),
+        L("UI_STAGE_CLEAR", new LocalizationArgument("reward", _snapshot.LastStageReward)),
         _styles.Status,
         GUILayout.Height(80f));
-      if (GUILayout.Button(L("UI_NEXT_STAGE"), GUILayout.Height(62f)))
+      GUILayout.Label(
+        L(
+          "UI_STAGE_REWARD_FORMULA",
+          new LocalizationArgument("hp", _snapshot.Health.Player),
+          new LocalizationArgument("reward", _snapshot.LastStageReward)),
+        _styles.Heading);
+      GUILayout.Label(
+        L("UI_BULLET_BALANCE", new LocalizationArgument("bullets", _snapshot.BulletCount)),
+        _styles.Heading);
+      if (GUILayout.Button(L("UI_COMMON_CONTINUE"), GUILayout.Height(62f)))
+      {
+        AdvanceRequested?.Invoke();
+      }
+      GUILayout.FlexibleSpace();
+    }
+
+    private void DrawBar()
+    {
+      GUILayout.FlexibleSpace();
+      GUILayout.Label(L("UI_BAR_TITLE"), _styles.Status, GUILayout.Height(70f));
+      GUILayout.Label(
+        L("UI_BULLET_BALANCE", new LocalizationArgument("bullets", _snapshot.BulletCount)),
+        _styles.Heading);
+      GUILayout.Label(
+        L(
+          "UI_BAR_HP_STATUS",
+          new LocalizationArgument("current", _snapshot.Health.Player),
+          new LocalizationArgument("max", 3)),
+        _styles.Heading);
+      if (GUILayout.Button(L("UI_BAR_CONTINUE"), GUILayout.Height(62f)))
       {
         AdvanceRequested?.Invoke();
       }

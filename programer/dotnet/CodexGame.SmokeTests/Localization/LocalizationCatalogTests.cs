@@ -15,7 +15,7 @@ namespace CodexGame.SmokeTests.Localization
       var catalog = LocalizationCatalog.Parse(File.ReadAllText(csvPath), warnings.Add);
       tests.Check(
         catalog.Count == LocalizationCatalog.RequiredKeyCount,
-        "The runtime localization catalog must validate all 121 keys.");
+        "The runtime localization catalog must validate all 137 keys.");
       tests.Check(
         catalog.Get("UI_MAIN_START", "ko") == "시작"
           && catalog.Get("UI_MAIN_START", "en") == "START",
@@ -30,12 +30,17 @@ namespace CodexGame.SmokeTests.Localization
         catalog.Get(
           "UI_HUD_REWARDS",
           "ko",
-          new LocalizationArgument("coins", 4)) == "코인 4"
+          new LocalizationArgument("bullets", 4)) == "총알 4"
           && catalog.Get(
             "UI_STAGE_CLEAR",
             "en",
-            new LocalizationArgument("coins", 4)) == "STAGE CLEAR · COINS 4",
-        "Public reward strings must expose only the current coin count.");
+            new LocalizationArgument("reward", 3)) == "STAGE CLEAR · BULLETS +3",
+        "Public reward strings must use bullets and the settled stage reward.");
+      tests.Check(
+        catalog.Get("UI_BAR_TITLE", "ko") == "바"
+          && catalog.Get("UI_TRANSITION_OPEN_SALOON_DOOR", "en")
+            == "PUSHING THROUGH THE SALOON DOORS",
+        "Bar and tavern-transition strings must load from the 137-key catalog.");
       tests.Check(
         catalog.Get("UI_GUIDE_PAGE_FLOW_TITLE", "ko") == "목표와 게임 흐름"
           && catalog.Get("UI_GUIDE_PAGE_RESULT_TITLE", "en") == "PREDICTION & VICTORY"

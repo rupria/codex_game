@@ -17,7 +17,7 @@ namespace CodexGame.SmokeTests.Poker
       CheckPredictionAndAnnouncement(tests);
       CheckPredictionTimeout(tests);
       CheckPublicBuildSkipsItemWindow(tests);
-      CheckCoinLedger(tests);
+      CheckBulletLedger(tests);
     }
 
     private static void CheckPredictionAndAnnouncement(TestHarness tests)
@@ -98,14 +98,18 @@ namespace CodexGame.SmokeTests.Poker
         "The current public build must enter prediction directly without an item window.");
     }
 
-    private static void CheckCoinLedger(TestHarness tests)
+    private static void CheckBulletLedger(TestHarness tests)
     {
-      var ledger = new CoinLedger();
-      ledger.AwardPredictionCoin();
-      ledger.AwardStageCoins(3);
+      var ledger = new BulletLedger();
       tests.Check(
-        ledger.Balance == 4,
-        "The public reward model must count only prediction and stage coins.");
+        ledger.SettleStageVictory(1, 3) == 3 && ledger.Balance == 3,
+        "A stage victory must award one bullet per remaining player HP.");
+      tests.Check(
+        ledger.SettleStageVictory(1, 3) == 0 && ledger.Balance == 3,
+        "The same stage reward must not be settled twice.");
+      tests.Check(
+        ledger.SettleStageVictory(2, 1) == 1 && ledger.Balance == 4,
+        "A later stage must settle independently without prediction rewards.");
     }
 
     private static PrivateCardDistributionResult Distribution()
