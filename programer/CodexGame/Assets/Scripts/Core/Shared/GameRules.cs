@@ -11,20 +11,16 @@ namespace CodexGame.Core.Shared
     public const int ExposedCardsPerPile = 2;
 
     public const long SimultaneousBellThresholdMicroseconds = 33_300;
-    public const long CardFlipTimeoutMicroseconds = 30_000_000;
+    public const long BellInputTimeoutMicroseconds = 30_000_000;
     public const long CardRevealMotionMinimumMicroseconds = 180_000;
     public const long CardRevealMotionRangeMicroseconds = 40_000;
     public const long CardRevealGapMinimumMicroseconds = 60_000;
     public const long CardRevealGapRangeMicroseconds = 40_000;
     public const long HalliOpeningPresentationMicroseconds = 1_200_000;
     public const long HalliClosingPresentationMicroseconds = 700_000;
-    public const long NextFlipLockMicroseconds = 1_000_000;
-    public const long ReviewGraceMicroseconds = NextFlipLockMicroseconds;
-    public const long WrongBellRewardInitialLockMicroseconds = 2_000_000;
-    public const long WrongBellRewardSelectionTimeoutMicroseconds = 30_000_000;
-    public const long WrongBellRewardResultLockMicroseconds = 2_000_000;
+    public const long HalliResultLockMicroseconds = 2_000_000;
     public const long PrivateSelectionTimeoutMicroseconds = 60_000_000;
-    public const long PredictionTimeoutMicroseconds = 60_000_000;
+    public const long PredictionTimeoutMicroseconds = 120_000_000;
     public const long PokerResultAnnouncementMicroseconds = 1_000_000;
     public const long GlobalInactivityTimeoutMicroseconds = 180_000_000;
     public const long AiMinimumReactionMicroseconds = 1_000_000;

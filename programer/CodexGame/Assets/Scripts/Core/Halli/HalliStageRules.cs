@@ -51,7 +51,7 @@ namespace CodexGame.Core.Halli
         return HalliStageEndReason.FlipLimitReached;
       }
 
-      return remainingDeckCards < GameRules.CardsPerHalliDistribution
+      return remainingDeckCards == 0
         ? HalliStageEndReason.InsufficientCards
         : HalliStageEndReason.None;
     }

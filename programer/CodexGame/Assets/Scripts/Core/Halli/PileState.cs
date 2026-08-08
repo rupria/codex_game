@@ -38,5 +38,13 @@ namespace CodexGame.Core.Halli
       _cards.Clear();
       return Array.AsReadOnly(removed);
     }
+
+    public void MoveTopToBottom()
+    {
+      if (_cards.Count < 2) return;
+      var top = _cards[_cards.Count - 1];
+      _cards.RemoveAt(_cards.Count - 1);
+      _cards.Insert(0, top);
+    }
   }
 }

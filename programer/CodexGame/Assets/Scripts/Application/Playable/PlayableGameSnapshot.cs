@@ -12,10 +12,7 @@ namespace CodexGame.Application.Playable
       int stageNumber,
       int combatRoundNumber,
       BattleHealth health,
-      int itemRewardCount,
-      int coinIncreaseEventCount,
-      int lastStageBaseCoinReward,
-      PredictionRewardKind lastPredictionReward,
+      int coinCount,
       long inactivityRemainingMicroseconds,
       PlayableTransitionSnapshot transition,
       PrototypeHalliSnapshot? halli,
@@ -26,10 +23,7 @@ namespace CodexGame.Application.Playable
       StageNumber = stageNumber;
       CombatRoundNumber = combatRoundNumber;
       Health = health;
-      ItemRewardCount = itemRewardCount;
-      CoinIncreaseEventCount = coinIncreaseEventCount;
-      LastStageBaseCoinReward = lastStageBaseCoinReward;
-      LastPredictionReward = lastPredictionReward;
+      CoinCount = coinCount;
       InactivityRemainingMicroseconds = inactivityRemainingMicroseconds;
       Transition = transition;
       Halli = halli;
@@ -41,10 +35,7 @@ namespace CodexGame.Application.Playable
     public int StageNumber { get; }
     public int CombatRoundNumber { get; }
     public BattleHealth Health { get; }
-    public int ItemRewardCount { get; }
-    public int CoinIncreaseEventCount { get; }
-    public int LastStageBaseCoinReward { get; }
-    public PredictionRewardKind LastPredictionReward { get; }
+    public int CoinCount { get; }
     public long InactivityRemainingMicroseconds { get; }
     public PlayableTransitionSnapshot Transition { get; }
     public PrototypeHalliSnapshot? Halli { get; }

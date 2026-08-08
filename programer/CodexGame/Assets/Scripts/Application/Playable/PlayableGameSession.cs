@@ -19,16 +19,12 @@ namespace CodexGame.Application.Playable
     private PrivateCardSelectionSession? _selection;
     private PokerRoundSession? _poker;
     private readonly PlayableTransitionTimeline _transition = new PlayableTransitionTimeline();
-    private PredictionRewardLedger _rewards = new PredictionRewardLedger();
-    private IRandomSource? _rewardRandom;
+    private CoinLedger _coins = new CoinLedger();
     private BattleHealth _health = BattleHealth.Initial;
     private Card? _firstPublicCard;
     private GameTimestamp _lastUserInputAt;
-    private long _combatRoundSeed;
     private int _stageNumber = 1;
     private int _combatRoundNumber = 1;
-    private int _lastStageBaseCoinReward;
-    private PredictionRewardKind _lastPredictionReward;
 
     public PlayableGameSession()
       : this(new AiPrivateCardSelectionPolicy(), PokerRuleSet.Development)
@@ -50,10 +46,7 @@ namespace CodexGame.Application.Playable
       _stageNumber = 1;
       _combatRoundNumber = 1;
       _health = BattleHealth.Initial;
-      _rewards = new PredictionRewardLedger();
-      _rewardRandom = DeterministicRandomFactory.Create(combatRoundSeed, RandomChannel.Reward);
-      _lastStageBaseCoinReward = 0;
-      _lastPredictionReward = PredictionRewardKind.None;
+      _coins = new CoinLedger();
       RecordInput(now);
       StartCombatRound(now, combatRoundSeed);
     }
@@ -79,13 +72,6 @@ namespace CodexGame.Application.Playable
         return;
       }
 
-      if (Phase == PlayableGamePhase.PokerItemWindow && _poker != null)
-      {
-        RecordInput(now);
-        if (_poker.SkipItemWindow(now)) Phase = PlayableGamePhase.PokerPrediction;
-        return;
-      }
-
       if (Phase == PlayableGamePhase.PokerResult)
       {
         RecordInput(now);
@@ -93,7 +79,7 @@ namespace CodexGame.Application.Playable
         {
           if (_health.Ai == 0)
           {
-            _lastStageBaseCoinReward = _health.Player;
+            _coins.AwardStageCoins(_health.Player);
             Phase = PlayableGamePhase.StageWon;
           }
           else
@@ -134,14 +120,6 @@ namespace CodexGame.Application.Playable
       var changed = _selection.Toggle(cardId);
       if (changed) RecordInput(now);
       return changed;
-    }
-
-    public bool SelectWrongBellReward(CardId cardId, GameTimestamp now)
-    {
-      if (Phase != PlayableGamePhase.Halli) return false;
-      var selected = _halli.SelectWrongBellReward(cardId, now);
-      if (selected) RecordInput(now);
-      return selected;
     }
 
     public bool ConfirmPrivateCards(GameTimestamp now)
@@ -219,8 +197,7 @@ namespace CodexGame.Application.Playable
       {
         if (_selection.Tick(now)) BeginPokerIfReady(now);
       }
-      else if ((Phase == PlayableGamePhase.PokerItemWindow
-          || Phase == PlayableGamePhase.PokerPrediction)
+      else if (Phase == PlayableGamePhase.PokerPrediction
         && _poker != null
         && _poker.Tick(now))
       {
@@ -241,10 +218,7 @@ namespace CodexGame.Application.Playable
         _stageNumber,
         _combatRoundNumber,
         _health,
-        _rewards.ItemRewardCount,
-        _rewards.CoinIncreaseEventCount,
-        _lastStageBaseCoinReward,
-        _lastPredictionReward,
+        _coins.Balance,
         inactivityRemaining,
         _transition.GetSnapshot(now),
         Phase == PlayableGamePhase.HalliOpening
@@ -255,8 +229,7 @@ namespace CodexGame.Application.Playable
         Phase == PlayableGamePhase.PrivateSelection && _selection != null
           ? _selection.GetSnapshot(now)
           : null,
-        (Phase == PlayableGamePhase.PokerItemWindow
-          || Phase == PlayableGamePhase.PokerPrediction
+        (Phase == PlayableGamePhase.PokerPrediction
           || Phase == PlayableGamePhase.PokerResult)
           && _poker != null
             ? _poker.GetSnapshot(now)
@@ -265,7 +238,6 @@ namespace CodexGame.Application.Playable
 
     private void StartCombatRound(GameTimestamp now, long combatRoundSeed)
     {
-      _combatRoundSeed = combatRoundSeed;
       _halli = new PrototypeHalliSession();
       _selection = null;
       _poker = null;
@@ -341,11 +313,8 @@ namespace CodexGame.Application.Playable
         snapshot.Result,
         _health,
         _pokerRuleSet,
-        now,
-        _rewards.ItemRewardCount);
-      Phase = _poker.Phase == PokerRoundPhase.ItemWindow
-        ? PlayableGamePhase.PokerItemWindow
-        : PlayableGamePhase.PokerPrediction;
+        now);
+      Phase = PlayableGamePhase.PokerPrediction;
     }
 
     private void CompletePokerRound()
@@ -356,14 +325,9 @@ namespace CodexGame.Application.Playable
       }
 
       _health = _poker.Result.Damage.After;
-      _lastPredictionReward = PredictionRewardKind.None;
       if (_poker.Result.Prediction.IsCorrect)
       {
-        if (_rewardRandom == null)
-        {
-          _rewardRandom = DeterministicRandomFactory.Create(_combatRoundSeed, RandomChannel.Reward);
-        }
-        _lastPredictionReward = _rewards.Award(_rewardRandom);
+        _coins.AwardPredictionCoin();
       }
       Phase = PlayableGamePhase.PokerResult;
     }
@@ -381,11 +345,9 @@ namespace CodexGame.Application.Playable
       _poker = null;
       _firstPublicCard = null;
       _transition.Clear();
-      _rewards = new PredictionRewardLedger();
+      _coins = new CoinLedger();
       _stageNumber = 1;
       _combatRoundNumber = 1;
-      _lastStageBaseCoinReward = 0;
-      _lastPredictionReward = PredictionRewardKind.None;
       Phase = PlayableGamePhase.Intro;
     }
 
@@ -393,7 +355,6 @@ namespace CodexGame.Application.Playable
     {
       return phase == PlayableGamePhase.Halli
         || phase == PlayableGamePhase.PrivateSelection
-        || phase == PlayableGamePhase.PokerItemWindow
         || phase == PlayableGamePhase.PokerPrediction
         || phase == PlayableGamePhase.PokerResult;
     }

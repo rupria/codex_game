@@ -8,7 +8,8 @@ namespace CodexGame.Core.Distribution
   {
     public static int GetDirectSelectionCount(int combatRoundNumber)
     {
-      return HalliStageRules.GetWinTarget(combatRoundNumber);
+      HalliStageRules.GetWinTarget(combatRoundNumber);
+      return GameRules.RequiredPrivateCards;
     }
 
     public static int GetWinnerRandomFillCount(int combatRoundNumber)
@@ -25,14 +26,15 @@ namespace CodexGame.Core.Distribution
         throw new ArgumentOutOfRangeException(nameof(winnerCandidateCount));
       }
 
-      return Math.Min(GetDirectSelectionCount(combatRoundNumber), winnerCandidateCount);
+      return winnerCandidateCount > GameRules.RequiredPrivateCards
+        ? GameRules.RequiredPrivateCards
+        : winnerCandidateCount;
     }
 
     public static bool RequiresSelectionUi(int combatRoundNumber, int winnerCandidateCount)
     {
-      var required = GetAvailableDirectSelectionCount(combatRoundNumber, winnerCandidateCount);
-
-      return winnerCandidateCount > required;
+      GetDirectSelectionCount(combatRoundNumber);
+      return winnerCandidateCount > GameRules.RequiredPrivateCards;
     }
   }
 }
