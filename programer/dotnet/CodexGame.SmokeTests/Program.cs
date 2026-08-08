@@ -5,6 +5,7 @@ using CodexGame.SmokeTests.Halli;
 using CodexGame.SmokeTests.Playable;
 using CodexGame.SmokeTests.Poker;
 using CodexGame.SmokeTests.Battle;
+using CodexGame.SmokeTests.Localization;
 
 var tests = new TestHarness();
 
@@ -18,5 +19,6 @@ PrivateCardDistributionTests.Run(tests);
 PokerEvaluatorTests.Run(tests);
 PokerRoundSessionTests.Run(tests);
 BattleRuleTests.Run(tests);
+LocalizationCatalogTests.Run(tests);
 
 return tests.Complete();

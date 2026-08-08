@@ -12,6 +12,7 @@ namespace CodexGame.Presentation.Views
       Rect visualRect,
       Rect hitRect,
       string key,
+      string fallbackLabel,
       bool enabled,
       PrototypeHalliSnapshot snapshot,
       HalliUiArtSet art,
@@ -25,7 +26,7 @@ namespace CodexGame.Presentation.Views
       if (!enabled) GUI.color = new Color(0.45f, 0.48f, 0.52f, 0.65f);
       else if (feedback == PrototypeBellFeedback.Correct) GUI.color = new Color(0.55f, 1f, 0.72f, 1f);
       if (texture != null) GUI.DrawTexture(visualRect, texture, ScaleMode.ScaleToFit, true);
-      else GUI.Box(visualRect, "BELL", styles.Card);
+      else GUI.Box(visualRect, fallbackLabel, styles.Card);
       GUI.color = previousColor;
 
       GUI.Label(new Rect(visualRect.x - 18f, visualRect.y + 58f, visualRect.width + 36f, 24f), key, styles.Heading);

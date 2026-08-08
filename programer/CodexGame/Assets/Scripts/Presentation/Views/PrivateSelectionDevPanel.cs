@@ -1,6 +1,7 @@
 using System;
 using CodexGame.Application.Distribution;
 using CodexGame.Core.Cards;
+using CodexGame.Presentation.Localization;
 using UnityEngine;
 
 namespace CodexGame.Presentation.Views
@@ -12,16 +13,18 @@ namespace CodexGame.Presentation.Views
       int focusedIndex,
       PlayableDevStyles styles,
       PlayableCardRenderer cards,
+      LocalizationRuntime localization,
       Action<int> focus,
       Action<CardId> toggle,
       Action confirm)
     {
       var seconds = Math.Ceiling(snapshot.RemainingMicroseconds / 1_000_000d);
-      GUILayout.Label("PRIVATE CARD SELECTION", styles.Heading);
+      GUILayout.Label(localization.Get("UI_PRIVATE_SELECTION_TITLE"), styles.Heading);
       GUILayout.Label(
-        "Select exactly " + snapshot.RequiredSelectionCount
-        + " cards. Q/E moves focus, W toggles, ENTER confirms. "
-        + seconds.ToString("0") + "s",
+        localization.Get(
+          "UI_PRIVATE_SELECTION_GUIDE",
+          new LocalizationArgument("required", snapshot.RequiredSelectionCount),
+          new LocalizationArgument("seconds", seconds.ToString("0"))),
         styles.Body);
 
       for (var row = 0; row * 8 < snapshot.WinnerCandidates.Count; row++)
@@ -34,13 +37,16 @@ namespace CodexGame.Presentation.Views
           var card = snapshot.WinnerCandidates[index];
           var selected = Contains(snapshot.SelectedCards, card.Id);
           GUILayout.BeginVertical(GUILayout.Width(105f));
-          GUILayout.Label(index == focusedIndex ? "FOCUS" : " ", styles.Small);
+          GUILayout.Label(index == focusedIndex ? localization.Get("UI_COMMON_FOCUS") : " ", styles.Small);
           var cardRect = cards.Draw(card, 96f, 130f, selected);
           if (cardRect.Contains(Event.current.mousePosition) && index != focusedIndex)
           {
             focus(index);
           }
-          if (GUILayout.Button(selected ? "REMOVE" : "SELECT", GUILayout.Width(96f), GUILayout.Height(24f)))
+          if (GUILayout.Button(
+            localization.Get(selected ? "UI_COMMON_REMOVE" : "UI_COMMON_SELECT"),
+            GUILayout.Width(96f),
+            GUILayout.Height(24f)))
           {
             toggle(card.Id);
           }
@@ -51,7 +57,10 @@ namespace CodexGame.Presentation.Views
 
       GUI.enabled = snapshot.CanConfirm;
       if (GUILayout.Button(
-        "CONFIRM " + snapshot.SelectedCards.Count + "/" + snapshot.RequiredSelectionCount + "  [ENTER]",
+        localization.Get(
+          "UI_PRIVATE_CONFIRM",
+          new LocalizationArgument("selected", snapshot.SelectedCards.Count),
+          new LocalizationArgument("required", snapshot.RequiredSelectionCount)),
         GUILayout.Height(52f)))
       {
         confirm();

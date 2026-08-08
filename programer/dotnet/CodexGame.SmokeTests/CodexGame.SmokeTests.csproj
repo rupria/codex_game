@@ -11,4 +11,14 @@
     <ProjectReference Include="..\CodexGame.Core\CodexGame.Core.csproj" />
     <ProjectReference Include="..\CodexGame.Application\CodexGame.Application.csproj" />
   </ItemGroup>
+
+  <ItemGroup>
+    <Compile
+      Include="..\..\CodexGame\Assets\Scripts\Presentation\Localization\LocalizationCatalog.cs"
+      Link="Localization\LocalizationCatalog.cs" />
+    <None
+      Include="..\..\CodexGame\Assets\StreamingAssets\Localization\ui_strings.csv"
+      Link="Localization\ui_strings.csv"
+      CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
 </Project>

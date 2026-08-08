@@ -1,5 +1,6 @@
 using CodexGame.Core.Cards;
 using CodexGame.Presentation.Art;
+using CodexGame.Presentation.Localization;
 using UnityEngine;
 
 namespace CodexGame.Presentation.Views
@@ -9,15 +10,18 @@ namespace CodexGame.Presentation.Views
     private readonly PlayableCardArtLibrary _art;
     private readonly Texture2D _backTexture;
     private readonly PlayableDevStyles _styles;
+    private readonly LocalizationRuntime _localization;
 
     public PlayableCardRenderer(
       PlayableCardArtLibrary art,
       Texture2D backTexture,
-      PlayableDevStyles styles)
+      PlayableDevStyles styles,
+      LocalizationRuntime localization)
     {
       _art = art;
       _backTexture = backTexture;
       _styles = styles;
+      _localization = localization;
     }
 
     public Rect Draw(Card card, float width, float height, bool selected = false)
@@ -41,7 +45,7 @@ namespace CodexGame.Presentation.Views
 
       if (selected)
       {
-        GUI.Label(new Rect(rect.x, rect.y, rect.width, 24f), "SELECTED", _styles.Small);
+        GUI.Label(new Rect(rect.x, rect.y, rect.width, 24f), L("UI_COMMON_SELECTED"), _styles.Small);
       }
 
     }
@@ -61,13 +65,14 @@ namespace CodexGame.Presentation.Views
       }
       else
       {
-        GUI.Label(rect, "HIDDEN", _styles.Card);
+        GUI.Label(rect, L("UI_COMMON_HIDDEN"), _styles.Card);
       }
     }
 
-    public static string FormatInline(Card card)
+    public string FormatInline(Card card)
     {
-      return RankText(card.Rank) + " " + SuitText(card.Suit) + " / SKULL " + card.SkullCount;
+      return RankText(card.Rank) + " " + SuitText(card.Suit) + " / "
+        + L("UI_CARD_SKULL_COUNT", new LocalizationArgument("count", card.SkullCount));
     }
 
     private static Rect Inset(Rect rect)
@@ -75,9 +80,10 @@ namespace CodexGame.Presentation.Views
       return new Rect(rect.x + 4f, rect.y + 4f, rect.width - 8f, rect.height - 8f);
     }
 
-    private static string Format(Card card)
+    private string Format(Card card)
     {
-      return RankText(card.Rank) + " " + SuitText(card.Suit) + "\nSKULL " + card.SkullCount;
+      return RankText(card.Rank) + " " + SuitText(card.Suit) + "\n"
+        + L("UI_CARD_SKULL_COUNT", new LocalizationArgument("count", card.SkullCount));
     }
 
     private static string RankText(CardRank rank)
@@ -92,15 +98,20 @@ namespace CodexGame.Presentation.Views
       }
     }
 
-    private static string SuitText(CardSuit suit)
+    private string SuitText(CardSuit suit)
     {
       switch (suit)
       {
-        case CardSuit.Spades: return "SPADE";
-        case CardSuit.Diamonds: return "DIAMOND";
-        case CardSuit.Hearts: return "HEART";
-        default: return "CLUB";
+        case CardSuit.Spades: return L("UI_SUIT_SPADE");
+        case CardSuit.Diamonds: return L("UI_SUIT_DIAMOND");
+        case CardSuit.Hearts: return L("UI_SUIT_HEART");
+        default: return L("UI_SUIT_CLUB");
       }
+    }
+
+    private string L(string key, params LocalizationArgument[] arguments)
+    {
+      return _localization.Get(key, arguments);
     }
   }
 }

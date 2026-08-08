@@ -1,0 +1,62 @@
+using System;
+using System.Collections.Generic;
+using System.IO;
+using CodexGame.Application.Playable;
+using CodexGame.Presentation.Localization;
+
+namespace CodexGame.SmokeTests.Localization
+{
+  internal static class LocalizationCatalogTests
+  {
+    public static void Run(TestHarness tests)
+    {
+      var csvPath = Path.Combine(AppContext.BaseDirectory, "Localization", "ui_strings.csv");
+      var warnings = new List<string>();
+      var catalog = LocalizationCatalog.Parse(File.ReadAllText(csvPath), warnings.Add);
+      tests.Check(
+        catalog.Count == LocalizationCatalog.RequiredInitialKeyCount,
+        "The runtime localization catalog must validate all 109 initial keys.");
+      tests.Check(
+        catalog.Get("UI_MAIN_START", "ko") == "시작"
+          && catalog.Get("UI_MAIN_START", "en") == "START",
+        "The same Key must switch immediately between Korean and English values.");
+      tests.Check(
+        catalog.Get(
+          "UI_HUD_STAGE",
+          "ko",
+          new LocalizationArgument("stage", 3)) == "스테이지 3",
+        "Named localization placeholders must resolve without changing language-specific order.");
+      tests.Check(
+        catalog.Get(
+          "UI_HUD_REWARDS",
+          "ko",
+          new LocalizationArgument("coins", 4)) == "코인 4"
+          && catalog.Get(
+            "UI_STAGE_CLEAR",
+            "en",
+            new LocalizationArgument("coins", 4)) == "STAGE CLEAR · COINS 4",
+        "Public reward strings must expose only the current coin count.");
+
+      var status = new LocalizedStatus(
+        "STATUS_HALLI_DISTRIBUTING",
+        new LocalizedStatusArgument("step", "2"),
+        new LocalizedStatusArgument("actor", "UI_ACTOR_AI", true),
+        new LocalizedStatusArgument("side", "UI_SIDE_LEFT", true));
+      tests.Check(
+        catalog.Get(status, "ko") == "카드 2/4 배분 중: AI 왼쪽.",
+        "Application status arguments that are Keys must localize before sentence formatting.");
+
+      var firstMissing = catalog.Get("UI_NOT_REGISTERED", "ko");
+      var secondMissing = catalog.Get("UI_NOT_REGISTERED", "en");
+      tests.Check(
+        firstMissing == "[MISSING:UI_NOT_REGISTERED]"
+          && secondMissing == firstMissing
+          && warnings.Count == 1,
+        "Missing Keys must fall back to a visible marker and warn only once.");
+
+      tests.CheckThrows<FormatException>(
+        () => LocalizationCatalog.Parse("Key,ko,en\nA,{value},{other}\n"),
+        "A ko/en placeholder mismatch must fail validation before build.");
+    }
+  }
+}

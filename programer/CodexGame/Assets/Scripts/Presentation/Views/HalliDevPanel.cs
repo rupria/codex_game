@@ -5,6 +5,7 @@ using CodexGame.Core.Cards;
 using CodexGame.Core.Halli;
 using CodexGame.Core.Shared;
 using CodexGame.Presentation.Art;
+using CodexGame.Presentation.Localization;
 using UnityEngine;
 
 namespace CodexGame.Presentation.Views
@@ -12,7 +13,7 @@ namespace CodexGame.Presentation.Views
   internal sealed class HalliDevPanel
   {
     private readonly HalliBellControl _bellControl = new HalliBellControl();
-    private Vector2 _rewardScroll;
+    private LocalizationRuntime _localization;
 
     public void Draw(
       PrototypeHalliSnapshot snapshot,
@@ -23,12 +24,12 @@ namespace CodexGame.Presentation.Views
       PlayableDevStyles styles,
       PlayableCardRenderer cards,
       HalliUiArtSet uiArt,
-      int rewardFocus,
+      LocalizationRuntime localization,
       Action advance,
       Action leftBell,
-      Action rightBell,
-      Action<CardId> selectWrongBellReward)
+      Action rightBell)
     {
+      _localization = localization;
       if (gamePhase == PlayableGamePhase.HalliOpening)
       {
         DrawOpening(snapshot, transition.Progress, playerHealth, aiHealth, styles, cards, uiArt);
@@ -49,34 +50,22 @@ namespace CodexGame.Presentation.Views
       DrawAiTray(snapshot, styles, cards, uiArt);
       DrawAiStatus(snapshot, styles);
 
-      if (snapshot.Phase == PrototypeSessionPhase.WrongBellRewardSelection)
-      {
-        DrawWrongBellRewardSelection(
-          snapshot,
-          rewardFocus,
-          styles,
-          cards,
-          selectWrongBellReward);
-      }
-      else
-      {
-        DrawControls(
-          snapshot,
-          gamePhase == PlayableGamePhase.Halli,
-          styles,
-          cards,
-          uiArt,
-          advance,
-          leftBell,
-          rightBell);
-      }
+      DrawControls(
+        snapshot,
+        gamePhase == PlayableGamePhase.Halli,
+        styles,
+        cards,
+        uiArt,
+        advance,
+        leftBell,
+        rightBell);
 
       DrawRevealMotion(snapshot, cards);
       DrawAcquisitionMotion(snapshot, cards);
       GUI.color = previousColor;
     }
 
-    private static void DrawOpening(
+    private void DrawOpening(
       PrototypeHalliSnapshot snapshot,
       float progress,
       int playerHealth,
@@ -101,12 +90,12 @@ namespace CodexGame.Presentation.Views
       }
       GUI.Label(
         new Rect(270f, 370f, 420f, 52f),
-        progress < 0.55f ? "DEALER OPENS THE FIRST COMMUNITY CARD" : "HALLI TABLE READY",
+        progress < 0.55f ? L("UI_HALLI_DEALER_FIRST") : L("UI_HALLI_TABLE_READY"),
         styles.Status);
-      GUI.Label(new Rect(330f, 430f, 300f, 28f), "INPUT UNLOCKS AFTER THE CAMERA SETTLES", styles.Small);
+      GUI.Label(new Rect(330f, 430f, 300f, 28f), L("UI_HALLI_INPUT_AFTER_CAMERA"), styles.Small);
     }
 
-    private static void DrawScoreboard(
+    private void DrawScoreboard(
       PrototypeHalliSnapshot snapshot,
       int playerHealth,
       int aiHealth,
@@ -115,20 +104,31 @@ namespace CodexGame.Presentation.Views
       GUI.Box(HalliBoardLayout.PlayerScore, GUIContent.none);
       GUI.Label(
         HalliBoardLayout.PlayerScore,
-        "PLAYER  HP " + playerHealth + "/3\nHALLI " + snapshot.PlayerWins + "/" + snapshot.WinTarget,
+        L(
+          "UI_HALLI_PLAYER_SCORE",
+          new LocalizationArgument("hp", playerHealth),
+          new LocalizationArgument("wins", snapshot.PlayerWins),
+          new LocalizationArgument("target", snapshot.WinTarget)),
         styles.Heading);
       GUI.Box(HalliBoardLayout.AiScore, GUIContent.none);
       GUI.Label(
         HalliBoardLayout.AiScore,
-        "AI  HP " + aiHealth + "/3\nHALLI " + snapshot.AiWins + "/" + snapshot.WinTarget,
+        L(
+          "UI_HALLI_AI_SCORE",
+          new LocalizationArgument("hp", aiHealth),
+          new LocalizationArgument("wins", snapshot.AiWins),
+          new LocalizationArgument("target", snapshot.WinTarget)),
         styles.Heading);
       GUI.Label(
         new Rect(350f, 16f, 260f, 28f),
-        "DISTRIBUTIONS " + snapshot.FlipCount + "/12  ·  DECK " + snapshot.RemainingDeckCards,
+        L(
+          "UI_HALLI_DISTRIBUTION_DECK",
+          new LocalizationArgument("count", snapshot.FlipCount),
+          new LocalizationArgument("remaining", snapshot.RemainingDeckCards)),
         styles.Small);
     }
 
-    private static void DrawPublic(
+    private void DrawPublic(
       PrototypeHalliSnapshot snapshot,
       PlayableDevStyles styles,
       PlayableCardRenderer cards,
@@ -139,10 +139,10 @@ namespace CodexGame.Presentation.Views
         cards.DrawAt(HalliBoardLayout.PublicCard, snapshot.FirstPublicCard.Value);
       }
       DrawLockedPublicSlot(styles, uiArt);
-      GUI.Label(new Rect(388f, 120f, 176f, 22f), "COMMUNITY", styles.Small);
+      GUI.Label(new Rect(388f, 120f, 176f, 22f), L("UI_HALLI_COMMUNITY"), styles.Small);
     }
 
-    private static void DrawLockedPublicSlot(PlayableDevStyles styles, HalliUiArtSet uiArt)
+    private void DrawLockedPublicSlot(PlayableDevStyles styles, HalliUiArtSet uiArt)
     {
       if (uiArt != null && uiArt.PublicCardLockedSlot != null)
       {
@@ -154,7 +154,7 @@ namespace CodexGame.Presentation.Views
       }
       else
       {
-        GUI.Box(HalliBoardLayout.LockedPublicCard, "LOCKED", styles.Card);
+        GUI.Box(HalliBoardLayout.LockedPublicCard, L("UI_COMMON_LOCKED"), styles.Card);
       }
     }
 
@@ -185,7 +185,7 @@ namespace CodexGame.Presentation.Views
       }
     }
 
-    private static void DrawStatus(PrototypeHalliSnapshot snapshot, PlayableDevStyles styles)
+    private void DrawStatus(PrototypeHalliSnapshot snapshot, PlayableDevStyles styles)
     {
       var timer = snapshot.RemainingMicroseconds > 0
         ? Math.Ceiling(snapshot.RemainingMicroseconds / 1_000_000d).ToString("0") + "s"
@@ -193,21 +193,22 @@ namespace CodexGame.Presentation.Views
       GUI.Box(HalliBoardLayout.Status, GUIContent.none);
       GUI.Label(
         HalliBoardLayout.Status,
-        snapshot.Phase == PrototypeSessionPhase.SequentialReveal
-          ? "CARD " + snapshot.RevealStepNumber + "/4  ·  INPUT LOCKED"
-          : snapshot.StatusMessage,
+        _localization.Catalog.Get(snapshot.Status, _localization.Language),
         styles.Small);
       GUI.Label(new Rect(448f, 336f, 64f, 22f), timer, styles.Small);
     }
 
-    private static void DrawPlayerTray(
+    private void DrawPlayerTray(
       PrototypeHalliSnapshot snapshot,
       PlayableDevStyles styles,
       PlayableCardRenderer cards,
       HalliUiArtSet uiArt)
     {
       DrawPanelTexture(HalliBoardLayout.PlayerTray, uiArt?.PlayerAcquiredTray);
-      GUI.Label(new Rect(44f, 396f, 268f, 22f), "PLAYER ACQUIRED  " + snapshot.PlayerAcquiredCount, styles.Small);
+      GUI.Label(
+        new Rect(44f, 396f, 268f, 22f),
+        L("UI_HALLI_PLAYER_ACQUIRED", new LocalizationArgument("count", snapshot.PlayerAcquiredCount)),
+        styles.Small);
       var visible = Math.Min(3, snapshot.PlayerAcquiredCards.Count);
       var start = Math.Max(0, snapshot.PlayerAcquiredCards.Count - visible);
       for (var index = 0; index < visible; index++)
@@ -222,14 +223,17 @@ namespace CodexGame.Presentation.Views
       }
     }
 
-    private static void DrawAiTray(
+    private void DrawAiTray(
       PrototypeHalliSnapshot snapshot,
       PlayableDevStyles styles,
       PlayableCardRenderer cards,
       HalliUiArtSet uiArt)
     {
       DrawPanelTexture(HalliBoardLayout.AiTray, uiArt?.AiAcquiredStatusPanel);
-      GUI.Label(new Rect(712f, 396f, 204f, 22f), "AI ACQUIRED  " + snapshot.AiAcquiredCount, styles.Small);
+      GUI.Label(
+        new Rect(712f, 396f, 204f, 22f),
+        L("UI_HALLI_AI_ACQUIRED", new LocalizationArgument("count", snapshot.AiAcquiredCount)),
+        styles.Small);
       if (snapshot.LastAcquirer == PrototypeAcquirer.Ai
         && snapshot.LastAcquiredCards.Count > 0
         && snapshot.Phase == PrototypeSessionPhase.Review)
@@ -247,11 +251,13 @@ namespace CodexGame.Presentation.Views
       }
     }
 
-    private static void DrawAiStatus(PrototypeHalliSnapshot snapshot, PlayableDevStyles styles)
+    private void DrawAiStatus(PrototypeHalliSnapshot snapshot, PlayableDevStyles styles)
     {
       GUI.Box(HalliBoardLayout.AiStatus, GUIContent.none);
-      var state = snapshot.LeadActor == HalliActor.Ai ? "AI STARTS NEXT" : "AI WATCHING";
-      if (snapshot.Phase == PrototypeSessionPhase.BellOpen) state = "AI JUDGING";
+      var state = snapshot.LeadActor == HalliActor.Ai
+        ? L("UI_HALLI_AI_STARTS_NEXT")
+        : L("UI_HALLI_AI_WATCHING");
+      if (snapshot.CanRing) state = L("UI_HALLI_AI_JUDGING");
       GUI.Label(HalliBoardLayout.AiStatus, state, styles.Small);
     }
 
@@ -270,7 +276,8 @@ namespace CodexGame.Presentation.Views
         PileSide.Left,
         HalliBoardLayout.LeftBellVisual,
         HalliBoardLayout.LeftBellHit,
-        "Q  LEFT",
+        L("UI_HALLI_LEFT_BELL"),
+        L("UI_HALLI_BELL"),
         canRing,
         snapshot,
         uiArt,
@@ -279,7 +286,8 @@ namespace CodexGame.Presentation.Views
         PileSide.Right,
         HalliBoardLayout.RightBellVisual,
         HalliBoardLayout.RightBellHit,
-        "E  RIGHT",
+        L("UI_HALLI_RIGHT_BELL"),
+        L("UI_HALLI_BELL"),
         canRing,
         snapshot,
         uiArt,
@@ -307,7 +315,10 @@ namespace CodexGame.Presentation.Views
         }
         GUI.color = previousColor;
       }
-      GUI.Label(new Rect(410f, 462f, 140f, 24f), canFlip ? "W  FLIP 1" : "W  LOCKED", styles.Heading);
+      GUI.Label(
+        new Rect(410f, 462f, 140f, 24f),
+        canFlip ? L("UI_HALLI_FLIP_ONE") : L("UI_HALLI_FLIP_LOCKED"),
+        styles.Heading);
       GUI.enabled = canFlip;
       if (GUI.Button(HalliBoardLayout.FlipHit, GUIContent.none, GUIStyle.none)) advance();
       GUI.enabled = true;
@@ -332,36 +343,6 @@ namespace CodexGame.Presentation.Views
       else GUI.Box(rect, GUIContent.none);
     }
 
-    private void DrawWrongBellRewardSelection(
-      PrototypeHalliSnapshot snapshot,
-      int focusedIndex,
-      PlayableDevStyles styles,
-      PlayableCardRenderer cards,
-      Action<CardId> select)
-    {
-      var candidates = snapshot.WrongBellRewardCandidates;
-      GUILayout.BeginArea(new Rect(160f, 250f, 640f, 260f), GUI.skin.box);
-      GUILayout.Label(
-        "REWARD CARD " + (focusedIndex + 1) + "/" + candidates.Count
-        + (snapshot.WrongBellRewardSelectionEnabled ? "  ·  Q/E MOVE, W SELECT" : "  ·  REVIEW LOCK"),
-        styles.Heading);
-      _rewardScroll = GUILayout.BeginScrollView(_rewardScroll, true, false, GUILayout.Height(190f));
-      GUILayout.BeginHorizontal();
-      for (var index = 0; index < candidates.Count; index++)
-      {
-        var card = candidates[index];
-        GUILayout.BeginVertical(GUILayout.Width(92f));
-        cards.Draw(card, 82f, 112f, index == focusedIndex);
-        GUI.enabled = snapshot.WrongBellRewardSelectionEnabled;
-        if (GUILayout.Button(index == focusedIndex ? "SELECT [W]" : "SELECT", GUILayout.Height(25f))) select(card.Id);
-        GUI.enabled = true;
-        GUILayout.EndVertical();
-      }
-      GUILayout.EndHorizontal();
-      GUILayout.EndScrollView();
-      GUILayout.EndArea();
-    }
-
     private static void DrawRevealMotion(PrototypeHalliSnapshot snapshot, PlayableCardRenderer cards)
     {
       if (snapshot.Phase != PrototypeSessionPhase.SequentialReveal
@@ -375,7 +356,7 @@ namespace CodexGame.Presentation.Views
       var pile = snapshot.RevealingPile.Value == PileSide.Left ? snapshot.LeftPile : snapshot.RightPile;
       var target = HalliBoardLayout.RevealTarget(
         snapshot.RevealingPile.Value == PileSide.Left,
-        Math.Max(0, pile.Count - 1));
+        Math.Min(GameRules.ExposedCardsPerPile - 1, pile.Count));
       var progress = Smooth(snapshot.RevealProgress);
       var rect = LerpRect(HalliBoardLayout.FlipDeck, target, progress);
       var flipScale = Mathf.Max(0.08f, Mathf.Abs(progress * 2f - 1f));
@@ -407,7 +388,7 @@ namespace CodexGame.Presentation.Views
     private static float AcquisitionProgress(PrototypeHalliSnapshot snapshot)
     {
       if (snapshot.Phase != PrototypeSessionPhase.Review || !snapshot.LastAcquiredPile.HasValue) return 1f;
-      var elapsed = GameRules.NextFlipLockMicroseconds - snapshot.RemainingMicroseconds;
+      var elapsed = GameRules.HalliResultLockMicroseconds - snapshot.RemainingMicroseconds;
       return Mathf.Clamp01((float)elapsed / 450_000f);
     }
 
@@ -418,6 +399,11 @@ namespace CodexGame.Presentation.Views
         if (cards[index].Id == id) return true;
       }
       return false;
+    }
+
+    private string L(string key, params LocalizationArgument[] arguments)
+    {
+      return _localization.Get(key, arguments);
     }
 
     private static float Smooth(float value)

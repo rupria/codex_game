@@ -3,6 +3,7 @@ using CodexGame.Application.Playable;
 using CodexGame.Core.Cards;
 using CodexGame.Core.Rewards;
 using CodexGame.Presentation.Art;
+using CodexGame.Presentation.Localization;
 using UnityEngine;
 
 namespace CodexGame.Presentation.Views
@@ -28,16 +29,28 @@ namespace CodexGame.Presentation.Views
     private PlayableCardRenderer _pokerCards;
     private int _selectionFocus;
     private bool _guideOpen;
+    private LocalizationRuntime _localization;
 
     public event Action StartRequested;
     public event Action AdvanceRequested;
     public event Action LeftBellRequested;
     public event Action RightBellRequested;
-    public event Action<CardId> WrongBellRewardRequested;
     public event Action<CardId> PrivateCardToggleRequested;
     public event Action PrivateCardsConfirmRequested;
     public event Action<PredictionChoice> PredictionRequested;
     public event Action MainRequested;
+
+    private void Awake()
+    {
+      _localization = GetComponent<LocalizationRuntime>();
+      if (_localization == null) _localization = gameObject.AddComponent<LocalizationRuntime>();
+      _localization.Changed += HandleLocalizationChanged;
+    }
+
+    private void OnDestroy()
+    {
+      if (_localization != null) _localization.Changed -= HandleLocalizationChanged;
+    }
 
     public void Configure(Texture2D boardTexture, PlayableCardArtSet cardArtSet)
     {
@@ -68,7 +81,7 @@ namespace CodexGame.Presentation.Views
 
     private void Update()
     {
-      if (_snapshot == null) return;
+      if (_snapshot == null || _localization == null || !_localization.IsReady) return;
 
       switch (_snapshot.Phase)
       {
@@ -93,9 +106,6 @@ namespace CodexGame.Presentation.Views
         case PlayableGamePhase.PrivateSelection:
           HandleSelectionInput();
           break;
-        case PlayableGamePhase.PokerItemWindow:
-          if (Pressed(KeyCode.Return, KeyCode.Space)) AdvanceRequested?.Invoke();
-          break;
         case PlayableGamePhase.PokerPrediction:
           if (_snapshot.Poker != null
             && _snapshot.Poker.Phase == Application.Poker.PokerRoundPhase.AwaitingPrediction)
@@ -119,7 +129,6 @@ namespace CodexGame.Presentation.Views
     private void OnGUI()
     {
       if (_snapshot == null) return;
-      EnsureRenderers();
       PlayableViewport.Apply();
       if (_boardTexture != null)
       {
@@ -130,6 +139,8 @@ namespace CodexGame.Presentation.Views
           true);
       }
       _tableLightOverlay.Draw(Time.unscaledTime, _snapshot.Phase == PlayableGamePhase.Intro ? 0.65f : 1f);
+      if (_localization == null || !_localization.IsReady) return;
+      EnsureRenderers();
 
       if (_snapshot.Phase == PlayableGamePhase.Intro)
       {
@@ -151,25 +162,25 @@ namespace CodexGame.Presentation.Views
           _styles,
           _halliCards,
           _halliUiArtSet,
-          _selectionFocus,
+          _localization,
           () => AdvanceRequested?.Invoke(),
           () => LeftBellRequested?.Invoke(),
-          () => RightBellRequested?.Invoke(),
-          cardId => WrongBellRewardRequested?.Invoke(cardId));
+          () => RightBellRequested?.Invoke());
         return;
       }
 
       GUILayout.BeginArea(new Rect(48f, 28f, 864f, 484f));
-      GUILayout.Label("CODEX GAME", _styles.Title);
+      GUILayout.Label(L("UI_GAME_TITLE"), _styles.Title);
       GUILayout.BeginHorizontal();
-      GUILayout.Label("STAGE " + _snapshot.StageNumber, _styles.Heading);
-      GUILayout.Label("COMBAT ROUND " + _snapshot.CombatRoundNumber, _styles.Heading);
-      GUILayout.Label("PLAYER HP " + _snapshot.Health.Player + "/3", _styles.Heading);
-      GUILayout.Label("AI HP " + _snapshot.Health.Ai + "/3", _styles.Heading);
+      GUILayout.Label(L("UI_HUD_STAGE", new LocalizationArgument("stage", _snapshot.StageNumber)), _styles.Heading);
+      GUILayout.Label(L("UI_HUD_COMBAT_ROUND", new LocalizationArgument("round", _snapshot.CombatRoundNumber)), _styles.Heading);
+      GUILayout.Label(L("UI_HUD_PLAYER_HP", new LocalizationArgument("current", _snapshot.Health.Player)), _styles.Heading);
+      GUILayout.Label(L("UI_HUD_AI_HP", new LocalizationArgument("current", _snapshot.Health.Ai)), _styles.Heading);
       GUILayout.EndHorizontal();
       GUILayout.Label(
-        "REWARDS  ITEM " + _snapshot.ItemRewardCount
-        + " / COIN BONUS EVENTS " + _snapshot.CoinIncreaseEventCount,
+        L(
+          "UI_HUD_REWARDS",
+          new LocalizationArgument("coins", _snapshot.CoinCount)),
         _styles.Small);
       GUILayout.Space(4f);
 
@@ -181,14 +192,14 @@ namespace CodexGame.Presentation.Views
             _selectionPanel.Draw(
               _snapshot.Selection,
               _selectionFocus,
-                _styles,
-                _pokerCards,
-                index => _selectionFocus = index,
-                cardId => PrivateCardToggleRequested?.Invoke(cardId),
+              _styles,
+              _pokerCards,
+              _localization,
+              index => _selectionFocus = index,
+              cardId => PrivateCardToggleRequested?.Invoke(cardId),
               () => PrivateCardsConfirmRequested?.Invoke());
           }
           break;
-        case PlayableGamePhase.PokerItemWindow:
         case PlayableGamePhase.PokerPrediction:
         case PlayableGamePhase.PokerResult:
           if (_snapshot.Poker != null)
@@ -197,6 +208,7 @@ namespace CodexGame.Presentation.Views
               _snapshot.Poker,
               _styles,
               _pokerCards,
+              _localization,
               prediction => PredictionRequested?.Invoke(prediction),
               () => AdvanceRequested?.Invoke());
           }
@@ -215,35 +227,46 @@ namespace CodexGame.Presentation.Views
     private void DrawIntro()
     {
       GUI.Box(new Rect(244f, 92f, 472f, 356f), GUIContent.none);
-      GUI.Label(new Rect(250f, 118f, 460f, 70f), "CODEX GAME", _styles.Title);
-      GUI.Label(new Rect(300f, 184f, 360f, 34f), "HALLI  ×  POKER", _styles.Heading);
-      if (GUI.Button(new Rect(330f, 260f, 300f, 62f), "START"))
+      GUI.Label(new Rect(250f, 118f, 460f, 70f), L("UI_GAME_TITLE"), _styles.Title);
+      GUI.Label(new Rect(300f, 184f, 360f, 34f), L("UI_GAME_SUBTITLE"), _styles.Heading);
+      if (GUI.Button(new Rect(330f, 246f, 300f, 58f), L("UI_MAIN_START")))
       {
         StartRequested?.Invoke();
       }
-      if (GUI.Button(new Rect(330f, 338f, 300f, 62f), "GUIDE"))
+      if (GUI.Button(new Rect(330f, 318f, 300f, 58f), L("UI_MAIN_GUIDE")))
       {
         _guideOpen = true;
       }
+      GUI.enabled = _localization.Language != LocalizationCatalog.DefaultLanguage;
+      if (GUI.Button(new Rect(330f, 390f, 145f, 38f), "한국어"))
+      {
+        _localization.SetLanguage(LocalizationCatalog.DefaultLanguage);
+      }
+      GUI.enabled = _localization.Language != LocalizationCatalog.FallbackLanguage;
+      if (GUI.Button(new Rect(485f, 390f, 145f, 38f), "English"))
+      {
+        _localization.SetLanguage(LocalizationCatalog.FallbackLanguage);
+      }
+      GUI.enabled = true;
       if (_guideOpen) DrawGuideOverlay();
     }
 
     private void DrawGuideOverlay()
     {
       GUI.Box(new Rect(86f, 54f, 788f, 432f), GUIContent.none);
-      GUI.Label(new Rect(120f, 72f, 720f, 44f), "HOW TO PLAY", _styles.Title);
-      DrawGuideStep(new Rect(126f, 136f, 210f, 230f), "1", "W", "FLIP ONE CARD\nAI FOLLOWS");
+      GUI.Label(new Rect(120f, 72f, 720f, 44f), L("UI_GUIDE_TITLE"), _styles.Title);
+      DrawGuideStep(new Rect(126f, 136f, 210f, 230f), "1", L("UI_GUIDE_FLIP_KEY"), L("UI_GUIDE_FLIP_DESC"));
       DrawGuideStep(
         new Rect(375f, 136f, 210f, 230f),
         "2",
-        "Q / E",
-        "RING THE MATCHING SIDE\nWHEN SAME-SUIT SKULLS TOTAL 3");
+        L("UI_GUIDE_BELL_KEY"),
+        L("UI_GUIDE_BELL_DESC"));
       DrawGuideStep(
         new Rect(624f, 136f, 210f, 230f),
         "3",
-        "1 / 2",
-        "BUILD A POKER HAND\nAND PREDICT THE RESULT");
-      if (GUI.Button(new Rect(360f, 404f, 240f, 52f), "CLOSE  [ESC]")) _guideOpen = false;
+        L("UI_GUIDE_PREDICT_KEY"),
+        L("UI_GUIDE_PREDICT_DESC"));
+      if (GUI.Button(new Rect(360f, 404f, 240f, 52f), L("UI_COMMON_CLOSE_ESC"))) _guideOpen = false;
     }
 
     private void DrawGuideStep(Rect rect, string number, string key, string description)
@@ -258,10 +281,10 @@ namespace CodexGame.Presentation.Views
     {
       GUILayout.FlexibleSpace();
       GUILayout.Label(
-        "PLAYER DEFEATED - RETURN TO MAIN",
+        L("UI_BATTLE_DEFEATED"),
         _styles.Status,
         GUILayout.Height(90f));
-      if (GUILayout.Button("RETURN TO MAIN  [R / ENTER]", GUILayout.Height(62f)))
+      if (GUILayout.Button(L("UI_RETURN_MAIN"), GUILayout.Height(62f)))
       {
         MainRequested?.Invoke();
       }
@@ -272,13 +295,10 @@ namespace CodexGame.Presentation.Views
     {
       GUILayout.FlexibleSpace();
       GUILayout.Label(
-        "STAGE CLEAR - BASE COINS " + _snapshot.LastStageBaseCoinReward,
+        L("UI_STAGE_CLEAR", new LocalizationArgument("coins", _snapshot.CoinCount)),
         _styles.Status,
         GUILayout.Height(80f));
-      GUILayout.Label(
-        "Coin bonus event values and item effects remain pending in the 0.08 design.",
-        _styles.Body);
-      if (GUILayout.Button("NEXT STAGE  [ENTER / SPACE]", GUILayout.Height(62f)))
+      if (GUILayout.Button(L("UI_NEXT_STAGE"), GUILayout.Height(62f)))
       {
         AdvanceRequested?.Invoke();
       }
@@ -289,27 +309,6 @@ namespace CodexGame.Presentation.Views
     {
       var halli = _snapshot.Halli;
       if (halli == null) return;
-      if (halli.Phase == PrototypeSessionPhase.WrongBellRewardSelection)
-      {
-        var count = halli.WrongBellRewardCandidates.Count;
-        if (count == 0) return;
-        if (Input.GetKeyDown(KeyCode.Q))
-        {
-          _selectionFocus = (_selectionFocus - 1 + count) % count;
-        }
-        else if (Input.GetKeyDown(KeyCode.E))
-        {
-          _selectionFocus = (_selectionFocus + 1) % count;
-        }
-        else if (halli.WrongBellRewardSelectionEnabled
-          && Pressed(KeyCode.W, KeyCode.Return))
-        {
-          WrongBellRewardRequested?.Invoke(
-            halli.WrongBellRewardCandidates[_selectionFocus].Id);
-        }
-        return;
-      }
-
       if (halli.CanRing && (Input.GetKeyDown(KeyCode.Q) || Input.GetKeyDown(KeyCode.LeftArrow)))
       {
         LeftBellRequested?.Invoke();
@@ -357,15 +356,28 @@ namespace CodexGame.Presentation.Views
         _halliCards = new PlayableCardRenderer(
           _cardArtSet?.Halli,
           _cardArtSet?.BackTexture,
-          _styles);
+          _styles,
+          _localization);
       }
       if (_pokerCards == null)
       {
         _pokerCards = new PlayableCardRenderer(
           _cardArtSet?.Poker,
           _cardArtSet?.BackTexture,
-          _styles);
+          _styles,
+          _localization);
       }
+    }
+
+    private string L(string key, params LocalizationArgument[] arguments)
+    {
+      return _localization.Get(key, arguments);
+    }
+
+    private void HandleLocalizationChanged()
+    {
+      _halliCards = null;
+      _pokerCards = null;
     }
 
     private static bool Pressed(KeyCode first, KeyCode second)
