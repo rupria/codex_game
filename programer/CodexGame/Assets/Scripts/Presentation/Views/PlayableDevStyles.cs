@@ -6,6 +6,8 @@ namespace CodexGame.Presentation.Views
   {
     public PlayableDevStyles()
     {
+      var runtimeFont = Resources.Load<Font>("Fonts/NotoSansKR");
+      if (runtimeFont != null) GUI.skin.font = runtimeFont;
       Title = new GUIStyle(GUI.skin.label)
       {
         fontSize = 25,

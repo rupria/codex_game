@@ -1,0 +1,120 @@
+Key,ko,en
+UI_GAME_TITLE,CODEX GAME,CODEX GAME
+UI_GAME_SUBTITLE,할리갈리 × 포커,HALLI × POKER
+UI_MAIN_START,시작,START
+UI_MAIN_GUIDE,가이드,GUIDE
+UI_GUIDE_TITLE,게임 방법,HOW TO PLAY
+UI_GUIDE_FLIP_KEY,W,W
+UI_GUIDE_FLIP_DESC,"카드를 1장 펼칩니다
+이후 AI가 진행합니다","FLIP ONE CARD
+AI FOLLOWS"
+UI_GUIDE_BELL_KEY,Q / E,Q / E
+UI_GUIDE_BELL_DESC,"같은 문양의 해골 합이 3이면
+해당 방향의 벨을 누릅니다","RING THE MATCHING SIDE
+WHEN SAME-SUIT SKULLS TOTAL 3"
+UI_GUIDE_PREDICT_KEY,1 / 2,1 / 2
+UI_GUIDE_PREDICT_DESC,"포커 패를 완성하고
+승패를 예측합니다","BUILD A POKER HAND
+AND PREDICT THE RESULT"
+UI_COMMON_CLOSE_ESC,닫기  [ESC],CLOSE  [ESC]
+UI_HUD_STAGE,스테이지 {stage},STAGE {stage}
+UI_HUD_COMBAT_ROUND,전투 라운드 {round},COMBAT ROUND {round}
+UI_HUD_PLAYER_HP,플레이어 HP {current}/3,PLAYER HP {current}/3
+UI_HUD_AI_HP,AI HP {current}/3,AI HP {current}/3
+UI_HUD_REWARDS,코인 {coins},COINS {coins}
+UI_BATTLE_DEFEATED,플레이어 패배 - 메인으로 돌아갑니다,PLAYER DEFEATED - RETURN TO MAIN
+UI_RETURN_MAIN,메인으로  [R / ENTER],RETURN TO MAIN  [R / ENTER]
+UI_STAGE_CLEAR,스테이지 클리어 · 코인 {coins},STAGE CLEAR · COINS {coins}
+UI_STAGE_PENDING_REWARD,코인 {coins},COINS {coins}
+UI_NEXT_STAGE,다음 스테이지  [ENTER / SPACE],NEXT STAGE  [ENTER / SPACE]
+UI_HALLI_DEALER_FIRST,딜러가 첫 커뮤니티 카드를 공개합니다,DEALER OPENS THE FIRST COMMUNITY CARD
+UI_HALLI_TABLE_READY,할리갈리 테이블 준비 완료,HALLI TABLE READY
+UI_HALLI_INPUT_AFTER_CAMERA,카메라 연출이 끝나면 입력할 수 있습니다,INPUT UNLOCKS AFTER THE CAMERA SETTLES
+UI_HALLI_PLAYER_SCORE,"플레이어  HP {hp}/3
+할리갈리 {wins}/{target}","PLAYER  HP {hp}/3
+HALLI {wins}/{target}"
+UI_HALLI_AI_SCORE,"AI  HP {hp}/3
+할리갈리 {wins}/{target}","AI  HP {hp}/3
+HALLI {wins}/{target}"
+UI_HALLI_DISTRIBUTION_DECK,배분 {count}/12  ·  남은 덱 {remaining},DISTRIBUTIONS {count}/12  ·  DECK {remaining}
+UI_HALLI_COMMUNITY,커뮤니티,COMMUNITY
+UI_COMMON_LOCKED,잠김,LOCKED
+UI_HALLI_CARD_REVEAL_LOCKED,카드 {step}/4  ·  입력 잠김,CARD {step}/4  ·  INPUT LOCKED
+UI_HALLI_PLAYER_ACQUIRED,플레이어 획득  {count},PLAYER ACQUIRED  {count}
+UI_HALLI_AI_ACQUIRED,AI 획득  {count},AI ACQUIRED  {count}
+UI_HALLI_AI_STARTS_NEXT,다음은 AI가 시작,AI STARTS NEXT
+UI_HALLI_AI_WATCHING,AI 관찰 중,AI WATCHING
+UI_HALLI_AI_JUDGING,AI 판정 중,AI JUDGING
+UI_HALLI_BELL,벨,BELL
+UI_HALLI_LEFT_BELL,Q  왼쪽,Q  LEFT
+UI_HALLI_RIGHT_BELL,E  오른쪽,E  RIGHT
+UI_HALLI_FLIP_ONE,W  1장 펼치기,W  FLIP 1
+UI_HALLI_FLIP_LOCKED,W  잠김,W  LOCKED
+UI_HALLI_REWARD_CARD,보상 카드 {current}/{total},REWARD CARD {current}/{total}
+UI_HALLI_REWARD_CONTROLS,"Q/E 이동, W 선택","Q/E MOVE, W SELECT"
+UI_HALLI_REVIEW_LOCK,결과 확인 중,REVIEW LOCK
+UI_COMMON_SELECT,선택,SELECT
+UI_COMMON_SELECT_W,선택 [W],SELECT [W]
+UI_COMMON_SELECTED,선택됨,SELECTED
+UI_COMMON_HIDDEN,비공개,HIDDEN
+UI_CARD_SKULL_COUNT,해골 {count},SKULL {count}
+UI_SUIT_SPADE,스페이드,SPADE
+UI_SUIT_DIAMOND,다이아몬드,DIAMOND
+UI_SUIT_HEART,하트,HEART
+UI_SUIT_CLUB,클로버,CLUB
+UI_PRIVATE_SELECTION_TITLE,개인 카드 선택,PRIVATE CARD SELECTION
+UI_PRIVATE_SELECTION_GUIDE,"정확히 {required}장을 선택하세요. Q/E 이동, W 선택, ENTER 확정. {seconds}초","Select exactly {required} cards. Q/E moves focus, W toggles, ENTER confirms. {seconds}s"
+UI_COMMON_FOCUS,현재 위치,FOCUS
+UI_COMMON_REMOVE,제외,REMOVE
+UI_PRIVATE_CONFIRM,확정 {selected}/{required}  [ENTER],CONFIRM {selected}/{required}  [ENTER]
+UI_POKER_PLAYER_PRIVATE,플레이어 개인 카드,PLAYER PRIVATE
+UI_POKER_PUBLIC,커뮤니티 카드,PUBLIC
+UI_POKER_AI_PRIVATE,AI 개인 카드,AI PRIVATE
+UI_POKER_ITEM_WINDOW,아이템 단계: 보관 보상 {count}개. 아이템 효과가 확정될 때까지 건너뛰면 보관됩니다.,"ITEM WINDOW: {count} stored reward(s). Until item effects are finalized, skipping keeps them stored."
+UI_POKER_LOCK_HAND,패 확정 / 아이템 건너뛰기  [ENTER / SPACE],LOCK HAND / SKIP ITEM  [ENTER / SPACE]
+UI_POKER_PREDICTION_GUIDE,패가 확정됐습니다. AI 카드는 비공개입니다. {seconds}초 안에 예측하세요.,HAND LOCKED. AI cards are concealed. Predict within {seconds}s.
+UI_POKER_PLAYER_WINS,플레이어 승리  [1],PLAYER WINS  [1]
+UI_POKER_PLAYER_LOSES,플레이어 패배  [2],PLAYER LOSES  [2]
+UI_POKER_RESULT_PENDING,포커 결과 계산 중... 1초 안에 공개됩니다.,Calculating poker result... announcement within one second.
+UI_COMMON_CONTINUE,계속  [ENTER / SPACE],CONTINUE  [ENTER / SPACE]
+UI_POKER_RESULT_SUMMARY,포커 승자: {winner}  |  플레이어 {playerHand} vs AI {aiHand}  |  예측 {prediction}  |  HP 플레이어 {playerHp} / AI {aiHp},POKER WINNER: {winner}  |  PLAYER {playerHand} vs AI {aiHand}  |  PREDICTION {prediction}  |  HP PLAYER {playerHp} / AI {aiHp}
+UI_ACTOR_PLAYER,플레이어,PLAYER
+UI_ACTOR_AI,AI,AI
+UI_SIDE_LEFT,왼쪽,LEFT
+UI_SIDE_RIGHT,오른쪽,RIGHT
+UI_PREDICTION_SKIPPED,건너뜀 / 보상 없음,SKIPPED / NO REWARD
+UI_PREDICTION_CORRECT,성공,CORRECT
+UI_PREDICTION_WRONG,실패,WRONG
+UI_HAND_HIGH_CARD,하이 카드,HIGH CARD
+UI_HAND_ONE_PAIR,원 페어,PAIR
+UI_HAND_TWO_PAIR,투 페어,TWO PAIR
+UI_HAND_THREE_KIND,트리플,THREE KIND
+UI_HAND_STRAIGHT,스트레이트,STRAIGHT
+UI_HAND_FLUSH,플러시,FLUSH
+UI_HAND_FULL_HOUSE,풀하우스,FULL HOUSE
+UI_HAND_FOUR_KIND,포카드,FOUR KIND
+UI_HAND_STRAIGHT_FLUSH,스트레이트 플러시,STRAIGHT FLUSH
+UI_HAND_ROYAL_STRAIGHT_FLUSH,로열 스트레이트 플러시,ROYAL STRAIGHT FLUSH
+STATUS_HALLI_PRESS_START,시작 버튼을 눌러 플레이하세요.,Press START to play.
+STATUS_HALLI_DEALER_OPENING,딜러가 첫 커뮤니티 카드를 공개하고 있습니다.,Dealer is opening the first public card.
+STATUS_HALLI_FIRST_PUBLIC_READY,첫 커뮤니티 카드가 공개됐습니다. 플레이어가 첫 배분을 시작합니다.,First public card opened. Player starts the first distribution.
+STATUS_HALLI_BELL_UNAVAILABLE,현재 단계에서는 벨을 누를 수 없습니다.,Bell input is unavailable during this phase.
+STATUS_HALLI_DISTRIBUTING,카드 {step}/4 배분 중: {actor} {side}.,Distributing card {step}/4: {actor} {side}.
+STATUS_HALLI_AI_CARD_OPENED,AI 카드가 공개됐습니다. 다음 플레이어 카드를 펼치세요.,AI card opened. Flip the next player card.
+STATUS_HALLI_NO_VALID_BELL,정답 벨이 없습니다. 현재 시작 참가자가 계속 진행합니다.,No valid bell. The current starter continues.
+STATUS_HALLI_BELL_OPEN,벨 입력 가능. 결과 확정 뒤 2초 잠금이 적용됩니다.,Bell input is open. A two-second lock follows the result.
+STATUS_HALLI_PLAYER_INVALID_PILE,플레이어가 오답 더미를 선택했습니다.,Player selected an invalid pile.
+STATUS_HALLI_SIMULTANEOUS_WRONG,동시 입력이 모두 오답입니다. 플레이어 입력을 먼저 판정합니다.,Both simultaneous inputs were wrong; player input resolves first.
+STATUS_HALLI_AI_INVALID_PILE,AI가 오답 더미를 선택했습니다.,AI selected an invalid pile.
+STATUS_HALLI_PLAYER_CORRECT,정답입니다. 플레이어가 할리갈리 1승을 얻고 다음 진행을 시작합니다.,Correct bell. Player gains one Halli win and leads next.
+STATUS_HALLI_AI_CORRECT,AI 정답입니다. AI가 할리갈리 1승을 얻고 다음 진행을 시작합니다.,"AI rang correctly, gains one Halli win, and leads next."
+STATUS_HALLI_NO_REWARD_CARD,상대가 할리갈리 1승을 얻었지만 지급할 보상 카드가 없습니다.,Opponent gains one Halli win; no reward card is available.
+STATUS_HALLI_PLAYER_REWARD_UNLOCK,2초 뒤 보상 목록이 열립니다. 이후 30초 안에 선택하세요.,"Reward list unlocks in two seconds, then select within 30 seconds."
+STATUS_HALLI_AI_REWARD_AUTO,AI 보상을 표시하고 2초 확인 잠금 뒤 자동 처리합니다.,AI reward is shown and resolves after the two-second review lock.
+STATUS_HALLI_REWARD_TIMEOUT,보상 선택 시간이 끝나 시드 기반 무작위 카드 1장을 지급했습니다.,Reward selection timed out; one deterministic random card was awarded.
+STATUS_HALLI_REWARD_AWARDED,오조작 보상 카드를 지급했습니다. 승자가 다음 진행을 시작합니다.,Wrong-bell reward card awarded. Winner leads next.
+STATUS_HALLI_RESULT_LOCK_END,결과 확인이 끝났습니다. 할리갈리 승자가 다음 진행을 시작합니다.,Result lock ended. The Halli winner leads next.
+STATUS_HALLI_FLIP_TIMEOUT,플레이어가 30초 벨 입력 제한 시간을 초과했습니다.,Player exceeded the 30-second bell input limit.
+STATUS_HALLI_PLAYER_STAGE_WIN,플레이어가 할리갈리 단계에서 승리했습니다. 개인 카드 단계로 진행합니다.,PLAYER WINS the Halli stage. Continue to private cards.
+STATUS_HALLI_AI_STAGE_WIN,AI가 할리갈리 단계에서 승리했습니다. 개인 카드 단계로 진행합니다.,AI WINS the Halli stage. Continue to private cards.
+STATUS_HALLI_NO_TARGET_WINNER,목표 승자 없이 할리갈리 단계가 끝났습니다. 개인 카드 단계로 진행합니다.,Halli stage ended without a target winner. Continue to private cards.
