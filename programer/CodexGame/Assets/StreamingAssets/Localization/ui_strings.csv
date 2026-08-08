@@ -4,11 +4,11 @@ UI_GAME_SUBTITLE,할리갈리 × 포커,HALLI × POKER
 UI_MAIN_START,시작,START
 UI_MAIN_GUIDE,가이드,GUIDE
 UI_GUIDE_TITLE,게임 가이드,GAME GUIDE
-UI_GUIDE_FLIP_KEY,W / 클릭,W / CLICK
+UI_GUIDE_FLIP_KEY,↑ / 클릭,↑ / CLICK
 UI_GUIDE_FLIP_DESC,"카드 더미를 눌러
 카드를 1장 펼칩니다","PRESS THE DECK
 TO REVEAL ONE CARD"
-UI_GUIDE_BELL_KEY,Q / E / 클릭,Q / E / CLICK
+UI_GUIDE_BELL_KEY,← / → / 클릭,← / → / CLICK
 UI_GUIDE_BELL_DESC,"같은 문양의 해골 합이 정확히 3이면
 해당 방향의 벨을 누릅니다","RING THE MATCHING SIDE
 WHEN SAME-SUIT SKULLS TOTAL EXACTLY 3"
@@ -46,15 +46,15 @@ UI_HALLI_AI_STARTS_NEXT,다음은 AI가 시작,AI STARTS NEXT
 UI_HALLI_AI_WATCHING,AI 관찰 중,AI WATCHING
 UI_HALLI_AI_JUDGING,AI 판정 중,AI JUDGING
 UI_HALLI_BELL,벨,BELL
-UI_HALLI_LEFT_BELL,Q  왼쪽,Q  LEFT
-UI_HALLI_RIGHT_BELL,E  오른쪽,E  RIGHT
-UI_HALLI_FLIP_ONE,W  1장 펼치기,W  FLIP 1
-UI_HALLI_FLIP_LOCKED,W  잠김,W  LOCKED
+UI_HALLI_LEFT_BELL,←  왼쪽,←  LEFT
+UI_HALLI_RIGHT_BELL,오른쪽  →,RIGHT  →
+UI_HALLI_FLIP_ONE,↑  1장 펼치기,↑  FLIP 1
+UI_HALLI_FLIP_LOCKED,↑  잠김,↑  LOCKED
 UI_HALLI_REWARD_CARD,보상 카드 {current}/{total},REWARD CARD {current}/{total}
-UI_HALLI_REWARD_CONTROLS,"Q/E 이동, W 선택","Q/E MOVE, W SELECT"
+UI_HALLI_REWARD_CONTROLS,"←/→ 이동, ↑ 선택","←/→ MOVE, ↑ SELECT"
 UI_HALLI_REVIEW_LOCK,결과 확인 중,REVIEW LOCK
 UI_COMMON_SELECT,선택,SELECT
-UI_COMMON_SELECT_W,선택 [W],SELECT [W]
+UI_COMMON_SELECT_W,선택 [↑],SELECT [↑]
 UI_COMMON_SELECTED,선택됨,SELECTED
 UI_COMMON_HIDDEN,비공개,HIDDEN
 UI_CARD_SKULL_COUNT,해골 {count},SKULL {count}
@@ -63,7 +63,7 @@ UI_SUIT_DIAMOND,다이아몬드,DIAMOND
 UI_SUIT_HEART,하트,HEART
 UI_SUIT_CLUB,클로버,CLUB
 UI_PRIVATE_SELECTION_TITLE,개인 카드 선택,PRIVATE CARD SELECTION
-UI_PRIVATE_SELECTION_GUIDE,"정확히 {required}장을 선택하세요. Q/E 이동, W 선택, ENTER 확정. {seconds}초","Select exactly {required} cards. Q/E moves focus, W toggles, ENTER confirms. {seconds}s"
+UI_PRIVATE_SELECTION_GUIDE,"정확히 {required}장을 선택하세요. ←/→ 이동, ↑ 선택, ENTER 확정. {seconds}초","Select exactly {required} cards. ←/→ moves focus, ↑ toggles, ENTER confirms. {seconds}s"
 UI_COMMON_FOCUS,현재 위치,FOCUS
 UI_COMMON_REMOVE,제외,REMOVE
 UI_PRIVATE_CONFIRM,확정 {selected}/{required}  [ENTER],CONFIRM {selected}/{required}  [ENTER]
@@ -73,18 +73,20 @@ UI_POKER_AI_PRIVATE,AI 개인 카드,AI PRIVATE
 UI_POKER_ITEM_WINDOW,아이템 단계: 보관 보상 {count}개. 아이템 효과가 확정될 때까지 건너뛰면 보관됩니다.,"ITEM WINDOW: {count} stored reward(s). Until item effects are finalized, skipping keeps them stored."
 UI_POKER_LOCK_HAND,패 확정 / 아이템 건너뛰기  [ENTER / SPACE],LOCK HAND / SKIP ITEM  [ENTER / SPACE]
 UI_POKER_PREDICTION_GUIDE,패가 확정됐습니다. AI 카드는 비공개입니다. {seconds}초 안에 예측하세요.,HAND LOCKED. AI cards are concealed. Predict within {seconds}s.
-UI_POKER_PLAYER_WINS,플레이어 승리  [1],PLAYER WINS  [1]
-UI_POKER_PLAYER_LOSES,플레이어 패배  [2],PLAYER LOSES  [2]
+UI_POKER_PLAYER_WINS,승리,WIN
+UI_POKER_PLAYER_LOSES,패배,LOSE
 UI_POKER_RESULT_PENDING,포커 결과 계산 중... 1초 안에 공개됩니다.,Calculating poker result... announcement within one second.
 UI_COMMON_CONTINUE,계속  [ENTER / SPACE],CONTINUE  [ENTER / SPACE]
-UI_POKER_RESULT_SUMMARY,포커 승자: {winner}  |  플레이어 {playerHand} vs AI {aiHand}  |  예측 {prediction}  |  HP 플레이어 {playerHp} / AI {aiHp},POKER WINNER: {winner}  |  PLAYER {playerHand} vs AI {aiHand}  |  PREDICTION {prediction}  |  HP PLAYER {playerHp} / AI {aiHp}
+UI_POKER_RESULT_SUMMARY,"승자: {winner}
+플레이어 {playerHand} vs AI {aiHand}","WINNER: {winner}
+PLAYER {playerHand} vs AI {aiHand}"
 UI_ACTOR_PLAYER,플레이어,PLAYER
 UI_ACTOR_AI,AI,AI
 UI_SIDE_LEFT,왼쪽,LEFT
 UI_SIDE_RIGHT,오른쪽,RIGHT
 UI_PREDICTION_SKIPPED,건너뜀 / 보상 없음,SKIPPED / NO REWARD
-UI_PREDICTION_CORRECT,성공,CORRECT
-UI_PREDICTION_WRONG,실패,WRONG
+UI_PREDICTION_CORRECT,예측 성공!,PREDICTION SUCCESS!
+UI_PREDICTION_WRONG,예측 실패,PREDICTION FAILED
 UI_HAND_HIGH_CARD,하이 카드,HIGH CARD
 UI_HAND_ONE_PAIR,원 페어,PAIR
 UI_HAND_TWO_PAIR,투 페어,TWO PAIR
@@ -129,14 +131,14 @@ AI HP를 0으로 만들면 승리합니다.","1. Reveal the first community card
 4. The poker loser loses 1 HP
 Reduce AI HP to 0 to win."
 UI_GUIDE_PAGE_HALLI_TITLE,할리갈리 판정,HALLI RULES
-UI_GUIDE_PAGE_HALLI_BODY,"W 또는 카드 더미 클릭: 카드 1장 펼치기
-Q/E 또는 벨 클릭: 왼쪽/오른쪽 판정
+UI_GUIDE_PAGE_HALLI_BODY,"↑ 또는 카드 더미 클릭: 카드 1장 펼치기
+←/→ 또는 벨 클릭: 왼쪽/오른쪽 판정
 같은 문양의 해골 합이 정확히 3이면 정답입니다.
 가능한 조합: 1+2 또는 해골 3 한 장
 승패 후 2초 잠금이 끝나면 30초 안에 판단하세요.
 오답·시간 초과는 상대 승리 1회입니다.
-목표 승수를 먼저 채우거나 최대 12회·덱 소진 시 종료합니다.","W or click the deck: reveal one card
-Q/E or click a bell: judge left/right
+목표 승수를 먼저 채우거나 최대 12회·덱 소진 시 종료합니다.","↑ or click the deck: reveal one card
+←/→ or click a bell: judge left/right
 The same-suit skull total must equal exactly 3.
 Valid sets: 1+2 or one skull-3 card
 After the 2-second lock, decide within 30 seconds.

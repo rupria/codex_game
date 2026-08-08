@@ -107,7 +107,7 @@ namespace CodexGame.Application.Playable
         RecordInput(now);
         _stageNumber++;
         _combatRoundNumber = 1;
-        _health = new BattleHealth(_health.Player, GameRules.StartingHealth);
+        _health = NextStageHealthResolver.RestoreAfterVictory(_health);
         _lastStageReward = 0;
         StartCombatRound(now, nextCombatRoundSeed);
       }

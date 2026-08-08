@@ -243,6 +243,9 @@ namespace CodexGame.Application.Playable
         _flipCount++;
       }
 
+      // An accepted flip is a new decision opportunity. Refresh immediately so
+      // a reveal started near the old deadline cannot time out during its motion.
+      ResetBellTimer(now);
       CloseBellWindow();
       ClearLastAcquisition();
       Phase = PrototypeSessionPhase.SequentialReveal;
@@ -360,6 +363,8 @@ namespace CodexGame.Application.Playable
         _ledger.Move(displaced.Value.Id, destination, CardZone.UnacquiredPool);
       }
       _currentRevealCommitted = true;
+      // Give the player the full window from the moment the new face is readable.
+      ResetBellTimer(committedAt);
       RefreshBellOpportunity(committedAt);
     }
 
@@ -651,10 +656,15 @@ namespace CodexGame.Application.Playable
       Phase = PrototypeSessionPhase.ReadyToFlip;
       if (startBellTimer || !_bellTimerActive)
       {
-        _bellDeadline = Add(now, GameRules.BellInputTimeoutMicroseconds);
-        _bellTimerActive = true;
+        ResetBellTimer(now);
       }
       _status = status;
+    }
+
+    private void ResetBellTimer(GameTimestamp now)
+    {
+      _bellDeadline = Add(now, GameRules.BellInputTimeoutMicroseconds);
+      _bellTimerActive = true;
     }
 
     private void ResolveBellTimeout(GameTimestamp now)

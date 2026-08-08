@@ -24,6 +24,8 @@ LocalizationCatalogTests.Run(tests);
 GuideModalStateTests.Run(tests);
 HealthPipViewStateTests.Run(tests);
 RopeTimerViewStateTests.Run(tests);
+PokerResultOverlayStateTests.Run(tests);
+AcquiredCardFanLayoutTests.Run(tests);
 StageFlowPlanTests.Run(tests);
 
 return tests.Complete();

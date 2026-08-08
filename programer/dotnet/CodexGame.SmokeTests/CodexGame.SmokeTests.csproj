@@ -25,6 +25,12 @@
     <Compile
       Include="..\..\CodexGame\Assets\Scripts\Presentation\Views\RopeTimerViewState.cs"
       Link="Presentation\RopeTimerViewState.cs" />
+    <Compile
+      Include="..\..\CodexGame\Assets\Scripts\Presentation\Views\PokerResultOverlayState.cs"
+      Link="Presentation\PokerResultOverlayState.cs" />
+    <Compile
+      Include="..\..\CodexGame\Assets\Scripts\Presentation\Views\AcquiredCardFanLayout.cs"
+      Link="Presentation\AcquiredCardFanLayout.cs" />
     <None
       Include="..\..\CodexGame\Assets\StreamingAssets\Localization\ui_strings.csv"
       Link="Localization\ui_strings.csv"

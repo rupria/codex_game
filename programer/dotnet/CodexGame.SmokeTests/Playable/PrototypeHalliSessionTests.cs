@@ -11,12 +11,43 @@ namespace CodexGame.SmokeTests.Playable
     public static void Run(TestHarness tests)
     {
       CheckOneCardInputAndFaceUpBoundary(tests);
+      CheckFlipRefreshesBellTimer(tests);
       CheckBellDuringRevealStopsDistribution(tests);
       CheckResultLockAndBellTimeout(tests);
       CheckWrongBellHasNoRewardSelection(tests);
       CheckWrongBellWaitsForManualFlipAfterLock(tests);
       CheckWrongBellPreservesEarlierAcquiredCards(tests);
       CheckGlobalInactivity(tests);
+    }
+
+    private static void CheckFlipRefreshesBellTimer(TestHarness tests)
+    {
+      var session = new PrototypeHalliSession();
+      session.StartNew(new GameTimestamp(0), 20260808);
+      var tenSeconds = new GameTimestamp(10_000_000);
+      session.Tick(tenSeconds);
+      tests.Check(
+        session.GetSnapshot(tenSeconds).RemainingMicroseconds
+          == GameRules.BellInputTimeoutMicroseconds - tenSeconds.Microseconds,
+        "The Halli timer must count down while the player is waiting to flip.");
+
+      var flipAt = new GameTimestamp(tenSeconds.Microseconds + 1);
+      session.Advance(flipAt);
+      tests.Check(
+        session.GetSnapshot(flipAt).RemainingMicroseconds
+          == GameRules.BellInputTimeoutMicroseconds,
+        "Every accepted card flip must immediately restore the full 30-second window.");
+
+      var faceUpAt = new GameTimestamp(flipAt.Microseconds + 221_000);
+      session.Tick(faceUpAt);
+      var faceUpRemaining = session.GetSnapshot(faceUpAt).RemainingMicroseconds;
+      tests.Check(
+        faceUpRemaining <= GameRules.BellInputTimeoutMicroseconds
+          && faceUpRemaining
+            >= GameRules.BellInputTimeoutMicroseconds
+              - GameRules.CardRevealMotionRangeMicroseconds
+              - 1_000,
+        "The timer must refresh from the moment the newly flipped card becomes readable.");
     }
 
     private static void CheckOneCardInputAndFaceUpBoundary(TestHarness tests)

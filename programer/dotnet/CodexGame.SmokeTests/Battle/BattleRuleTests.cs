@@ -14,6 +14,11 @@ namespace CodexGame.SmokeTests.Battle
 
       var wrongPrediction = PredictionResolver.Resolve(PredictionChoice.PlayerWins, PokerWinner.Ai);
       tests.Check(!wrongPrediction.IsCorrect, "Prediction should report incorrect without changing battle health.");
+
+      var nextStage = NextStageHealthResolver.RestoreAfterVictory(new BattleHealth(2, 0));
+      tests.Check(
+        nextStage.Player == 3 && nextStage.Ai == 3,
+        "A new stage must restore both player and AI to maximum HP instead of carrying two HP forward.");
     }
   }
 }

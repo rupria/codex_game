@@ -16,6 +16,8 @@ namespace CodexGame.Presentation.Views
     private const float AiRevealDuration = 0.48f;
     private int _lastVisibleAiCardCount;
     private float _aiRevealStartedAt = float.NegativeInfinity;
+    private bool _wasResolved;
+    private float _resultOverlayStartedAt = float.NegativeInfinity;
 
     public void Draw(
       PokerRoundSnapshot snapshot,
@@ -28,9 +30,10 @@ namespace CodexGame.Presentation.Views
       Action advance)
     {
       UpdateRevealState(snapshot);
+      UpdateResultOverlayState(snapshot);
       DrawGroupLabels(styles, localization);
       DrawHealth(snapshot, styles, healthArt, localization);
-      DrawItems(pokerArt);
+      DrawItems();
       DrawCards(snapshot, cards);
 
       if (snapshot.Phase == PokerRoundPhase.AwaitingPrediction)
@@ -85,6 +88,14 @@ namespace CodexGame.Presentation.Views
       _lastVisibleAiCardCount = visibleCount;
     }
 
+    private void UpdateResultOverlayState(PokerRoundSnapshot snapshot)
+    {
+      var resolved = snapshot.Phase == PokerRoundPhase.Resolved && snapshot.Result != null;
+      if (resolved && !_wasResolved) _resultOverlayStartedAt = Time.unscaledTime;
+      if (!resolved) _resultOverlayStartedAt = float.NegativeInfinity;
+      _wasResolved = resolved;
+    }
+
     private static void DrawGroupLabels(PlayableDevStyles styles, LocalizationRuntime localization)
     {
       GUI.Label(new Rect(382f, 62f, 196f, 24f), localization.Get("UI_POKER_AI_PRIVATE"), styles.Small);
@@ -123,19 +134,10 @@ namespace CodexGame.Presentation.Views
         healthArt);
     }
 
-    private static void DrawItems(PokerUiArtSet art)
+    private static void DrawItems()
     {
-      DrawEmptyItem(PokerTableLayout.AiItem, art?.ItemSlot);
-      DrawEmptyItem(PokerTableLayout.PlayerItem, art?.ItemSlot);
-    }
-
-    private static void DrawEmptyItem(Rect rect, Texture2D texture)
-    {
-      var previousColor = GUI.color;
-      GUI.color = new Color(0.58f, 0.58f, 0.6f, 0.82f);
-      if (texture != null) GUI.DrawTexture(rect, texture, ScaleMode.ScaleToFit, true);
-      else GUI.Box(rect, GUIContent.none);
-      GUI.color = previousColor;
+      PokerItemBoxRenderer.DrawEmpty(PokerTableLayout.AiItem);
+      PokerItemBoxRenderer.DrawEmpty(PokerTableLayout.PlayerItem);
     }
 
     private void DrawCards(PokerRoundSnapshot snapshot, PlayableCardRenderer cards)
@@ -237,8 +239,12 @@ namespace CodexGame.Presentation.Views
       if (texture != null) GUI.DrawTexture(drawRect, texture, ScaleMode.ScaleToFit, true);
       else GUI.Box(drawRect, GUIContent.none);
       GUI.color = previousColor;
+      var labelBackground = new Rect(drawRect.x + 7f, drawRect.y + 38f, drawRect.width - 14f, 17f);
+      GUI.color = new Color(0.04f, 0.025f, 0.02f, 0.82f);
+      GUI.DrawTexture(labelBackground, Texture2D.whiteTexture, ScaleMode.StretchToFill, true);
+      GUI.color = previousColor;
       GUI.Label(
-        new Rect(hitRect.x, visualRect.y + 54f, hitRect.width, 28f),
+        labelBackground,
         label,
         styles.Small);
       GUI.enabled = enabled;
@@ -247,7 +253,7 @@ namespace CodexGame.Presentation.Views
       return clicked;
     }
 
-    private static void DrawResult(
+    private void DrawResult(
       PokerRoundSnapshot snapshot,
       PlayableDevStyles styles,
       LocalizationRuntime localization)
@@ -256,22 +262,36 @@ namespace CodexGame.Presentation.Views
       var comparison = snapshot.Result.Comparison;
       var winner = localization.Get(
         comparison.Winner == PokerWinner.Player ? "UI_ACTOR_PLAYER" : "UI_ACTOR_AI");
-      var prediction = snapshot.Result.Prediction.Choice == PredictionChoice.Skipped
-        ? localization.Get("UI_PREDICTION_SKIPPED")
-        : localization.Get(snapshot.Result.Prediction.IsCorrect
-          ? "UI_PREDICTION_CORRECT"
-          : "UI_PREDICTION_WRONG");
-      GUI.Label(
-        new Rect(150f, 12f, 660f, 70f),
-        localization.Get(
+      var overlayState = PokerResultOverlayState.FromElapsedSeconds(
+        Time.unscaledTime - _resultOverlayStartedAt);
+      string message;
+      var predictionSucceeded = snapshot.Result.Prediction.IsCorrect;
+      if (overlayState.Step == PokerResultOverlayStep.Result)
+      {
+        message = localization.Get(
           "UI_POKER_RESULT_SUMMARY",
           new LocalizationArgument("winner", winner),
           new LocalizationArgument("playerHand", CategoryName(comparison.PlayerValue.Category, localization)),
           new LocalizationArgument("aiHand", CategoryName(comparison.AiValue.Category, localization)),
-          new LocalizationArgument("prediction", prediction),
+          new LocalizationArgument("prediction", string.Empty),
           new LocalizationArgument("playerHp", snapshot.Health.Player),
-          new LocalizationArgument("aiHp", snapshot.Health.Ai)),
-        styles.Status);
+          new LocalizationArgument("aiHp", snapshot.Health.Ai));
+      }
+      else
+      {
+        message = snapshot.Result.Prediction.Choice == PredictionChoice.Skipped
+          ? localization.Get("UI_PREDICTION_SKIPPED")
+          : localization.Get(predictionSucceeded
+            ? "UI_PREDICTION_CORRECT"
+            : "UI_PREDICTION_WRONG");
+      }
+
+      PokerResultOverlayRenderer.Draw(
+        new Rect(86f, 204f, 788f, 92f),
+        message,
+        overlayState.Step == PokerResultOverlayStep.Prediction,
+        predictionSucceeded,
+        styles);
     }
 
     private static string CategoryName(PokerHandCategory category, LocalizationRuntime localization)
