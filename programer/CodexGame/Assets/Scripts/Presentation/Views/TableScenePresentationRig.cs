@@ -235,7 +235,8 @@ namespace CodexGame.Presentation.Views
           return new PhasePresentation(46f, -0.16f, 1.5f, 50f);
         case PlayableGamePhase.StageWon:
           return new PhasePresentation(52f, 0.08f, 2f, 60f);
-        case PlayableGamePhase.Bar:
+        case PlayableGamePhase.BarShop:
+        case PlayableGamePhase.NextStageTransition:
         case PlayableGamePhase.BattleFinished:
           return new PhasePresentation(56f, 0f, 1.15f, 62f);
         default:

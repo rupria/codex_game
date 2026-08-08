@@ -11,7 +11,7 @@ namespace CodexGame.Presentation.Localization
   {
     public const string DefaultLanguage = "ko";
     public const string FallbackLanguage = "en";
-    public const int RequiredKeyCount = 137;
+    public const int RequiredKeyCount = 146;
 
     private static readonly string[] RequiredGuideKeys =
     {
@@ -42,6 +42,19 @@ namespace CodexGame.Presentation.Localization
       "UI_TRANSITION_SIT_START",
       "UI_TRANSITION_APPROACHING_TAVERN",
       "UI_TRANSITION_OPEN_SALOON_DOOR"
+    };
+
+    private static readonly string[] RequiredBarShopKeys =
+    {
+      "UI_BAR_REROLL_FREE",
+      "UI_BAR_REROLL_USED",
+      "UI_BAR_PURCHASE",
+      "UI_BAR_DUMMY_ITEM_01",
+      "UI_BAR_DUMMY_ITEM_02",
+      "UI_BAR_DUMMY_ITEM_03",
+      "UI_BAR_DUMMY_ITEM_04",
+      "UI_BAR_DUMMY_ITEM_05",
+      "UI_BAR_DUMMY_ITEM_06"
     };
 
     private static readonly Regex PlaceholderPattern =
@@ -112,6 +125,14 @@ namespace CodexGame.Presentation.Localization
         {
           throw new FormatException(
             "Missing required stage-flow localization key: " + RequiredStageFlowKeys[index]);
+        }
+      }
+      for (var index = 0; index < RequiredBarShopKeys.Length; index++)
+      {
+        if (!entries.ContainsKey(RequiredBarShopKeys[index]))
+        {
+          throw new FormatException(
+            "Missing required bar-shop localization key: " + RequiredBarShopKeys[index]);
         }
       }
       return new LocalizationCatalog(entries, warning ?? (_ => { }));

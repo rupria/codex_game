@@ -1,6 +1,7 @@
 using System;
 using CodexGame.Application.Distribution;
 using CodexGame.Application.Poker;
+using CodexGame.Application.Shop;
 using CodexGame.Core.Ai;
 using CodexGame.Core.Battle;
 using CodexGame.Core.Cards;
@@ -8,6 +9,7 @@ using CodexGame.Core.Halli;
 using CodexGame.Core.Poker;
 using CodexGame.Core.Rewards;
 using CodexGame.Core.Shared;
+using CodexGame.Core.Shop;
 
 namespace CodexGame.Application.Playable
 {
@@ -19,6 +21,8 @@ namespace CodexGame.Application.Playable
     private PrivateCardSelectionSession? _selection;
     private PokerRoundSession? _poker;
     private readonly PlayableTransitionTimeline _transition = new PlayableTransitionTimeline();
+    private readonly BarShopSession _barShop = new BarShopSession(BarShopCatalog.Dummy);
+    private readonly NextStageTransitionGate _nextStageGate = new NextStageTransitionGate();
     private BulletLedger _bullets = new BulletLedger();
     private BattleHealth _health = BattleHealth.Initial;
     private Card? _firstPublicCard;
@@ -49,6 +53,8 @@ namespace CodexGame.Application.Playable
       _health = BattleHealth.Initial;
       _bullets = new BulletLedger();
       _lastStageReward = 0;
+      _barShop.Close();
+      _nextStageGate.Reset();
       RecordInput(now);
       StartCombatRound(now, combatRoundSeed);
     }
@@ -98,19 +104,29 @@ namespace CodexGame.Application.Playable
       if (Phase == PlayableGamePhase.StageWon)
       {
         RecordInput(now);
-        Phase = PlayableGamePhase.Bar;
+        _barShop.Begin(nextCombatRoundSeed);
+        _nextStageGate.Reset();
+        Phase = PlayableGamePhase.BarShop;
         return;
       }
 
-      if (Phase == PlayableGamePhase.Bar)
+      if (Phase == PlayableGamePhase.BarShop)
       {
+        if (!_nextStageGate.TryRequest(nextCombatRoundSeed)) return;
         RecordInput(now);
-        _stageNumber++;
-        _combatRoundNumber = 1;
-        _health = NextStageHealthResolver.RestoreAfterVictory(_health);
-        _lastStageReward = 0;
-        StartCombatRound(now, nextCombatRoundSeed);
+        _transition.Begin(
+          PlayableTransitionKind.NextStage,
+          now,
+          GameRules.NextStageTransitionPlaceholderMicroseconds);
+        Phase = PlayableGamePhase.NextStageTransition;
       }
+    }
+
+    public bool RerollBarShop(GameTimestamp now)
+    {
+      if (Phase != PlayableGamePhase.BarShop || !_barShop.TryReroll()) return false;
+      RecordInput(now);
+      return true;
     }
 
     public void Ring(PileSide side, GameTimestamp now)
@@ -212,6 +228,11 @@ namespace CodexGame.Application.Playable
       {
         CompletePokerRound();
       }
+      else if (Phase == PlayableGamePhase.NextStageTransition
+        && _transition.IsComplete(now))
+      {
+        CompleteNextStageTransition(now);
+      }
     }
 
     public PlayableGameSnapshot GetSnapshot(GameTimestamp now)
@@ -243,7 +264,8 @@ namespace CodexGame.Application.Playable
           || Phase == PlayableGamePhase.PokerResult)
           && _poker != null
             ? _poker.GetSnapshot(now)
-            : null);
+            : null,
+        Phase == PlayableGamePhase.BarShop ? _barShop.GetSnapshot() : null);
     }
 
     private void StartCombatRound(GameTimestamp now, long combatRoundSeed)
@@ -341,6 +363,18 @@ namespace CodexGame.Application.Playable
       Phase = PlayableGamePhase.PokerResult;
     }
 
+    private void CompleteNextStageTransition(GameTimestamp now)
+    {
+      if (!_nextStageGate.TryConsume(out var nextStageSeed)) return;
+      _transition.Clear();
+      _barShop.Close();
+      _stageNumber++;
+      _combatRoundNumber = 1;
+      _health = NextStageHealthResolver.RestoreAfterVictory(_health);
+      _lastStageReward = 0;
+      StartCombatRound(now, nextStageSeed);
+    }
+
     private void RecordInput(GameTimestamp now)
     {
       _lastUserInputAt = now;
@@ -356,6 +390,8 @@ namespace CodexGame.Application.Playable
       _transition.Clear();
       _bullets = new BulletLedger();
       _lastStageReward = 0;
+      _barShop.Close();
+      _nextStageGate.Reset();
       _stageNumber = 1;
       _combatRoundNumber = 1;
       Phase = PlayableGamePhase.Intro;

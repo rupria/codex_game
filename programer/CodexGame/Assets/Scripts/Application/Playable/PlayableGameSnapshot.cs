@@ -1,5 +1,6 @@
 using CodexGame.Application.Distribution;
 using CodexGame.Application.Poker;
+using CodexGame.Application.Shop;
 using CodexGame.Core.Battle;
 using CodexGame.Core.Rewards;
 
@@ -18,7 +19,8 @@ namespace CodexGame.Application.Playable
       PlayableTransitionSnapshot transition,
       PrototypeHalliSnapshot? halli,
       PrivateCardSelectionSnapshot? selection,
-      PokerRoundSnapshot? poker)
+      PokerRoundSnapshot? poker,
+      BarShopSnapshot? barShop)
     {
       Phase = phase;
       StageNumber = stageNumber;
@@ -31,6 +33,7 @@ namespace CodexGame.Application.Playable
       Halli = halli;
       Selection = selection;
       Poker = poker;
+      BarShop = barShop;
     }
 
     public PlayableGamePhase Phase { get; }
@@ -44,5 +47,6 @@ namespace CodexGame.Application.Playable
     public PrototypeHalliSnapshot? Halli { get; }
     public PrivateCardSelectionSnapshot? Selection { get; }
     public PokerRoundSnapshot? Poker { get; }
+    public BarShopSnapshot? BarShop { get; }
   }
 }

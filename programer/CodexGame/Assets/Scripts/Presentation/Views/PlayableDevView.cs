@@ -2,6 +2,7 @@ using System;
 using CodexGame.Application.Playable;
 using CodexGame.Core.Cards;
 using CodexGame.Core.Rewards;
+using CodexGame.Core.Shared;
 using CodexGame.Presentation.Art;
 using CodexGame.Presentation.Localization;
 using UnityEngine;
@@ -32,6 +33,9 @@ namespace CodexGame.Presentation.Views
     private PokerUiArtSet _pokerUiArtSet;
 
     [SerializeField]
+    private BarShopUiArtSet _barShopUiArtSet;
+
+    [SerializeField]
     private bool _useSceneBackdrop;
 
     [SerializeField]
@@ -43,6 +47,7 @@ namespace CodexGame.Presentation.Views
     private readonly HalliTableLightOverlay _tableLightOverlay = new HalliTableLightOverlay();
     private readonly PrivateSelectionDevPanel _selectionPanel = new PrivateSelectionDevPanel();
     private readonly PokerDevPanel _pokerPanel = new PokerDevPanel();
+    private readonly BarShopDevPanel _barShopPanel = new BarShopDevPanel();
     private PlayableGameSnapshot _snapshot;
     private PlayableDevStyles _styles;
     private PlayableCardRenderer _halliCards;
@@ -57,6 +62,7 @@ namespace CodexGame.Presentation.Views
     public event Action<CardId> PrivateCardToggleRequested;
     public event Action PrivateCardsConfirmRequested;
     public event Action<PredictionChoice> PredictionRequested;
+    public event Action BarShopRerollRequested;
     public event Action MainRequested;
 
     internal PlayableGamePhase CurrentPhase => _snapshot == null
@@ -97,7 +103,8 @@ namespace CodexGame.Presentation.Views
       HealthUiArtSet healthUiArtSet = null,
       PokerUiArtSet pokerUiArtSet = null,
       bool useSceneBackdrop = false,
-      bool useIntroArtLayout = false)
+      bool useIntroArtLayout = false,
+      BarShopUiArtSet barShopUiArtSet = null)
     {
       _boardTexture = boardTexture;
       _cardArtSet = cardArtSet;
@@ -106,6 +113,7 @@ namespace CodexGame.Presentation.Views
       _introTexture = introTexture;
       _healthUiArtSet = healthUiArtSet;
       _pokerUiArtSet = pokerUiArtSet;
+      _barShopUiArtSet = barShopUiArtSet;
       _useSceneBackdrop = useSceneBackdrop;
       _useIntroArtLayout = useIntroArtLayout;
       _halliCards = null;
@@ -165,8 +173,13 @@ namespace CodexGame.Presentation.Views
           if (Pressed(KeyCode.R, KeyCode.Return)) MainRequested?.Invoke();
           break;
         case PlayableGamePhase.StageWon:
-        case PlayableGamePhase.Bar:
           if (Pressed(KeyCode.Return, KeyCode.Space)) AdvanceRequested?.Invoke();
+          break;
+        case PlayableGamePhase.BarShop:
+          if (Input.GetKeyDown(KeyCode.R)) BarShopRerollRequested?.Invoke();
+          else if (Pressed(KeyCode.Return, KeyCode.Space)) AdvanceRequested?.Invoke();
+          break;
+        case PlayableGamePhase.NextStageTransition:
           break;
       }
     }
@@ -260,6 +273,21 @@ namespace CodexGame.Presentation.Views
         return;
       }
 
+      if (_snapshot.Phase == PlayableGamePhase.BarShop && _snapshot.BarShop != null)
+      {
+        _barShopPanel.Draw(
+          _snapshot.BarShop,
+          _snapshot.BulletCount,
+          _snapshot.Health.Player,
+          GameRules.StartingHealth,
+          _styles,
+          _barShopUiArtSet,
+          _localization,
+          () => BarShopRerollRequested?.Invoke(),
+          () => AdvanceRequested?.Invoke());
+        return;
+      }
+
       GUILayout.BeginArea(new Rect(48f, 28f, 864f, 484f));
       GUILayout.Label(L("UI_GAME_TITLE"), _styles.Title);
       GUILayout.BeginHorizontal();
@@ -297,8 +325,8 @@ namespace CodexGame.Presentation.Views
         case PlayableGamePhase.StageWon:
           DrawStageWon();
           break;
-        case PlayableGamePhase.Bar:
-          DrawBar();
+        case PlayableGamePhase.NextStageTransition:
+          DrawNextStageTransition();
           break;
       }
 
@@ -429,23 +457,10 @@ namespace CodexGame.Presentation.Views
       GUILayout.FlexibleSpace();
     }
 
-    private void DrawBar()
+    private void DrawNextStageTransition()
     {
       GUILayout.FlexibleSpace();
-      GUILayout.Label(L("UI_BAR_TITLE"), _styles.Status, GUILayout.Height(70f));
-      GUILayout.Label(
-        L("UI_BULLET_BALANCE", new LocalizationArgument("bullets", _snapshot.BulletCount)),
-        _styles.Heading);
-      GUILayout.Label(
-        L(
-          "UI_BAR_HP_STATUS",
-          new LocalizationArgument("current", _snapshot.Health.Player),
-          new LocalizationArgument("max", 3)),
-        _styles.Heading);
-      if (GUILayout.Button(L("UI_BAR_CONTINUE"), GUILayout.Height(62f)))
-      {
-        AdvanceRequested?.Invoke();
-      }
+      GUILayout.Label(L("UI_TRANSITION_LEAVING"), _styles.Status, GUILayout.Height(90f));
       GUILayout.FlexibleSpace();
     }
 

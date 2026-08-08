@@ -7,6 +7,7 @@ using CodexGame.SmokeTests.Poker;
 using CodexGame.SmokeTests.Battle;
 using CodexGame.SmokeTests.Localization;
 using CodexGame.SmokeTests.Presentation;
+using CodexGame.SmokeTests.Shop;
 
 var tests = new TestHarness();
 
@@ -27,5 +28,7 @@ RopeTimerViewStateTests.Run(tests);
 PokerResultOverlayStateTests.Run(tests);
 AcquiredCardFanLayoutTests.Run(tests);
 StageFlowPlanTests.Run(tests);
+BarShopSessionTests.Run(tests);
+NextStageTransitionGateTests.Run(tests);
 
 return tests.Complete();

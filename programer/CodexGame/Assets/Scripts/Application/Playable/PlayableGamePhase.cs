@@ -12,6 +12,7 @@ namespace CodexGame.Application.Playable
     PokerResult = 7,
     StageWon = 8,
     BattleFinished = 9,
-    Bar = 10
+    BarShop = 10,
+    NextStageTransition = 11
   }
 }
