@@ -19,6 +19,7 @@ namespace CodexGame.Editor
     private const string UiArtRoot = "Assets/Art/Prototype/UI/";
     private const string HalliUiArtRoot = UiArtRoot + "Halli_0_1_0/";
     private const string IntroArtPath = HalliUiArtRoot + "start_screen_background.png";
+    private const string BackdropShaderPath = "Assets/Shaders/RuntimeBackdropLit.shader";
 
     [MenuItem("Codex Game/Playable Dev/Create Scene")]
     public static void CreateScene()
@@ -77,7 +78,12 @@ namespace CodexGame.Editor
         useSceneBackdrop: true,
         useIntroArtLayout: true);
       var presentationRig = gameObject.AddComponent<TableScenePresentationRig>();
-      presentationRig.Configure(camera, view, boardTexture, introTexture);
+      var backdropShader = AssetDatabase.LoadAssetAtPath<Shader>(BackdropShaderPath);
+      if (backdropShader == null)
+      {
+        throw new InvalidOperationException($"Missing backdrop shader at {BackdropShaderPath}");
+      }
+      presentationRig.Configure(camera, view, boardTexture, introTexture, backdropShader);
       gameObject.AddComponent<PlayableDevGameController>();
 
       if (!EditorSceneManager.SaveScene(scene, ScenePath))
