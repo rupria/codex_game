@@ -15,8 +15,10 @@ namespace CodexGame.Presentation.Views
     [SerializeField] private PlayableDevView _view;
     [SerializeField] private Texture2D _battleBackdrop;
     [SerializeField] private Texture2D _introBackdrop;
+    [SerializeField] private Shader _backdropShader;
 
     private MeshRenderer _backdropRenderer;
+    private Mesh _backdropMesh;
     private Material _backdropMaterial;
     private Light _tableLight;
     private float _fieldOfViewVelocity;
@@ -28,12 +30,14 @@ namespace CodexGame.Presentation.Views
       Camera sceneCamera,
       PlayableDevView view,
       Texture2D battleBackdrop,
-      Texture2D introBackdrop)
+      Texture2D introBackdrop,
+      Shader backdropShader)
     {
       _sceneCamera = sceneCamera;
       _view = view;
       _battleBackdrop = battleBackdrop;
       _introBackdrop = introBackdrop;
+      _backdropShader = backdropShader;
     }
 
     private void Awake()
@@ -105,6 +109,7 @@ namespace CodexGame.Presentation.Views
     private void OnDestroy()
     {
       if (_backdropMaterial != null) Destroy(_backdropMaterial);
+      if (_backdropMesh != null) Destroy(_backdropMesh);
     }
 
     private PlayableGamePhase CurrentPhase => _view == null
@@ -113,7 +118,7 @@ namespace CodexGame.Presentation.Views
 
     private void CreateBackdrop()
     {
-      if (_sceneCamera == null || _battleBackdrop == null) return;
+      if (_sceneCamera == null || _battleBackdrop == null || _backdropShader == null) return;
 
       _sceneCamera.clearFlags = CameraClearFlags.SolidColor;
       _sceneCamera.backgroundColor = new Color(0.006f, 0.004f, 0.003f, 1f);
@@ -121,21 +126,18 @@ namespace CodexGame.Presentation.Views
       _sceneCamera.transform.rotation = Quaternion.identity;
       _sceneCamera.fieldOfView = BackdropFov;
 
-      var backdrop = GameObject.CreatePrimitive(PrimitiveType.Quad);
-      backdrop.name = "Lit Saloon Backdrop";
+      var backdrop = new GameObject("Lit Saloon Backdrop");
       backdrop.transform.SetParent(transform, false);
       backdrop.transform.position = Vector3.zero;
 
-      var collider = backdrop.GetComponent<Collider>();
-      if (collider != null) Destroy(collider);
-
-      _backdropRenderer = backdrop.GetComponent<MeshRenderer>();
+      var meshFilter = backdrop.AddComponent<MeshFilter>();
+      _backdropMesh = CreateBackdropMesh();
+      meshFilter.sharedMesh = _backdropMesh;
+      _backdropRenderer = backdrop.AddComponent<MeshRenderer>();
       _backdropRenderer.shadowCastingMode = ShadowCastingMode.Off;
       _backdropRenderer.receiveShadows = false;
 
-      var shader = Shader.Find("Standard");
-      if (shader == null) shader = Shader.Find("Unlit/Texture");
-      _backdropMaterial = new Material(shader)
+      _backdropMaterial = new Material(_backdropShader)
       {
         name = "Runtime Lit Saloon Backdrop",
         mainTexture = _introBackdrop != null ? _introBackdrop : _battleBackdrop,
@@ -154,6 +156,35 @@ namespace CodexGame.Presentation.Views
 
       var height = 2f * CameraDistance * Mathf.Tan(BackdropFov * 0.5f * Mathf.Deg2Rad);
       backdrop.transform.localScale = new Vector3(height * DesignAspect, height, 1f);
+    }
+
+    private static Mesh CreateBackdropMesh()
+    {
+      var mesh = new Mesh { name = "Runtime Backdrop Quad" };
+      mesh.vertices = new[]
+      {
+        new Vector3(-0.5f, -0.5f, 0f),
+        new Vector3(0.5f, -0.5f, 0f),
+        new Vector3(0.5f, 0.5f, 0f),
+        new Vector3(-0.5f, 0.5f, 0f)
+      };
+      mesh.uv = new[]
+      {
+        new Vector2(0f, 0f),
+        new Vector2(1f, 0f),
+        new Vector2(1f, 1f),
+        new Vector2(0f, 1f)
+      };
+      mesh.normals = new[]
+      {
+        Vector3.back,
+        Vector3.back,
+        Vector3.back,
+        Vector3.back
+      };
+      mesh.triangles = new[] { 0, 2, 1, 0, 3, 2 };
+      mesh.RecalculateBounds();
+      return mesh;
     }
 
     private void CreateTableLight()
