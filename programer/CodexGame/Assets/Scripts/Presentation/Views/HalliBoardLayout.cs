@@ -24,9 +24,15 @@ namespace CodexGame.Presentation.Views
     public static readonly Rect FlipDeck = PlayerDeck;
     public static readonly Rect FlipHit = new Rect(414f, 346f, 132f, 118f);
 
-    public static readonly Rect PlayerTray = new Rect(34f, 390f, 288f, 130f);
+    public static readonly Rect PlayerTray = new Rect(34f, 390f, 378f, 130f);
+    public static readonly Rect PlayerAcquiredFan = new Rect(46f, 424f, 354f, 78f);
     public static readonly Rect AiTray = new Rect(702f, 390f, 224f, 130f);
+    public static readonly Rect AiAcquiredFan = new Rect(714f, 424f, 200f, 78f);
     public static readonly Rect AiStatus = new Rect(714f, 340f, 200f, 38f);
+
+    private const float AcquiredCardWidth = 56f;
+    private const float AcquiredCardHeight = 78f;
+    private const float PreferredAcquiredCardStep = 30f;
 
     public static Rect PileCard(bool left, int index)
     {
@@ -37,6 +43,28 @@ namespace CodexGame.Presentation.Views
     public static Rect RevealTarget(bool left, int pileIndex)
     {
       return PileCard(left, Mathf.Clamp(pileIndex, 0, 1));
+    }
+
+    public static Rect PlayerAcquiredCard(int index, int count)
+    {
+      var fan = AcquiredCardFanLayout.Create(
+        count,
+        PlayerAcquiredFan.x,
+        PlayerAcquiredFan.width,
+        AcquiredCardWidth,
+        PreferredAcquiredCardStep);
+      return new Rect(fan.X(index), PlayerAcquiredFan.y, AcquiredCardWidth, AcquiredCardHeight);
+    }
+
+    public static Rect AiAcquiredCard(int index, int count)
+    {
+      var fan = AcquiredCardFanLayout.Create(
+        count,
+        AiAcquiredFan.x,
+        AiAcquiredFan.width,
+        AcquiredCardWidth,
+        PreferredAcquiredCardStep);
+      return new Rect(fan.X(index), AiAcquiredFan.y, AcquiredCardWidth, AcquiredCardHeight);
     }
   }
 }

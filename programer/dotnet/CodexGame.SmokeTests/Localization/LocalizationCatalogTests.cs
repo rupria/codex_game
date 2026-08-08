@@ -50,6 +50,30 @@ namespace CodexGame.SmokeTests.Localization
             new LocalizationArgument("page", 2),
             new LocalizationArgument("total", 4)) == "2 / 4",
         "The four-page guide Keys must load from the same ko/en runtime catalog.");
+      tests.Check(
+        catalog.Get("UI_HALLI_LEFT_BELL", "ko") == "←  왼쪽"
+          && catalog.Get("UI_HALLI_FLIP_ONE", "en") == "↑  FLIP 1"
+          && catalog.Get("UI_HALLI_RIGHT_BELL", "ko") == "오른쪽  →"
+          && !catalog.Get("UI_GUIDE_PAGE_HALLI_BODY", "en").Contains("Q/E")
+          && !catalog.Get("UI_GUIDE_PAGE_HALLI_BODY", "en").Contains("W or"),
+        "Visible gameplay guidance must use arrow controls instead of Q/W/E labels.");
+      tests.Check(
+        catalog.Get("UI_POKER_PLAYER_WINS", "ko") == "승리"
+          && catalog.Get("UI_POKER_PLAYER_LOSES", "ko") == "패배"
+          && catalog.Get("UI_POKER_PLAYER_WINS", "en") == "WIN"
+          && catalog.Get("UI_POKER_PLAYER_LOSES", "en") == "LOSE",
+        "Prediction medal labels must stay short enough to render inside the round buttons.");
+      tests.Check(
+        catalog.Get(
+          "UI_POKER_RESULT_SUMMARY",
+          "ko",
+          new LocalizationArgument("winner", "플레이어"),
+          new LocalizationArgument("playerHand", "원 페어"),
+          new LocalizationArgument("aiHand", "투 페어"))
+            == "승자: 플레이어\n플레이어 원 페어 vs AI 투 페어"
+          && catalog.Get("UI_PREDICTION_CORRECT", "ko") == "예측 성공!"
+          && catalog.Get("UI_PREDICTION_WRONG", "ko") == "예측 실패",
+        "Poker result and prediction overlays must use concise, readable messages.");
 
       var status = new LocalizedStatus(
         "STATUS_HALLI_DISTRIBUTING",

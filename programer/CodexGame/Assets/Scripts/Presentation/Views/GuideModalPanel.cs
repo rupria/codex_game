@@ -54,10 +54,6 @@ namespace CodexGame.Presentation.Views
         new Rect(390f, 145f, 475f, 260f),
         localization.Get(BodyKeys[state.PageIndex]),
         BodyStyle(styles));
-      GUI.Label(
-        new Rect(48f, 432f, 650f, 30f),
-        localization.Get("UI_GUIDE_MODAL_HINT"),
-        styles.Small);
       DrawPageDots(state.PageIndex);
 
       // The visible arrow and close icons are already part of the approved 960x540 art.
@@ -123,8 +119,8 @@ namespace CodexGame.Presentation.Views
         ScaleMode.StretchToFill,
         true);
 
-      const float startX = 447f;
-      const float gap = 22f;
+      const float startX = 426f;
+      const float gap = 34f;
       for (var index = 0; index < GuideModalState.PageCount; index++)
       {
         GUI.color = index == pageIndex

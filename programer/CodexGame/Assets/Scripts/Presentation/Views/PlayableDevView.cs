@@ -365,16 +365,6 @@ namespace CodexGame.Presentation.Views
         _localization.SetLanguage(LocalizationCatalog.FallbackLanguage);
       }
       GUI.enabled = true;
-
-      var controls = string.Join(
-        "  ·  ",
-        L("UI_HALLI_LEFT_BELL"),
-        L("UI_HALLI_FLIP_ONE"),
-        L("UI_HALLI_RIGHT_BELL"));
-      var goal = L("UI_GUIDE_BELL_DESC").Replace('\n', ' ');
-      GUI.Box(new Rect(126f, 452f, 708f, 70f), GUIContent.none);
-      GUI.Label(new Rect(146f, 457f, 668f, 24f), controls, _styles.Heading);
-      GUI.Label(new Rect(146f, 483f, 668f, 32f), goal, _styles.Small);
     }
 
     private bool DrawIntroArtButton(Rect rect, string label, Color coverColor)
@@ -483,16 +473,16 @@ namespace CodexGame.Presentation.Views
     {
       var selection = _snapshot.Selection;
       if (selection == null || selection.WinnerCandidates.Count == 0) return;
-      if (Input.GetKeyDown(KeyCode.Q))
+      if (Pressed(KeyCode.LeftArrow, KeyCode.Q))
       {
         _selectionFocus = (_selectionFocus - 1 + selection.WinnerCandidates.Count)
           % selection.WinnerCandidates.Count;
       }
-      else if (Input.GetKeyDown(KeyCode.E))
+      else if (Pressed(KeyCode.RightArrow, KeyCode.E))
       {
         _selectionFocus = (_selectionFocus + 1) % selection.WinnerCandidates.Count;
       }
-      else if (Input.GetKeyDown(KeyCode.W))
+      else if (Pressed(KeyCode.UpArrow, KeyCode.W))
       {
         PrivateCardToggleRequested?.Invoke(selection.WinnerCandidates[_selectionFocus].Id);
       }
