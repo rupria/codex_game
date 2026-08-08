@@ -148,3 +148,22 @@
 - 제작 방식: OpenAI 내장 ImageGen 신규 생성 모드 후 크로마 제거와 최근접 축소
 - 프롬프트 요약: 기존 뒷면의 세로 대칭 구조와 해골 벨 중심 문양을 유지하고, 짙은 갈색 가죽·어두운 포레스트 그린·앤티크 황동 팔레트와 희미한 보안관 별을 사용한 웨스턴 살롱 카드 뒷면. 글자·숫자·슈트 문양 없이 평면 마젠타 배경에 분리 생성
 - 실사용 후보 규격: 64×90 RGBA, 투명 모서리, Point 필터 권장
+
+## 0.1.4 승인 웨스턴 카드 뒷면 적용
+
+- 승인 실사용 파일: `Assets/Art/Prototype/Cards_0_06/card_back.png`
+- 레퍼런스 보관본: `card_back_western_approved_64x90_0_1_4.png`
+- 확대 검수본: `card_back_western_approved_preview_512x720_0_1_4.png`
+- 실제 카드 적용 화면: `halli_poker_wide_approved_cards_mock_960x540_0_1_4.png`
+- 생성 원본: `sources/card_back_western_approved_chromakey_source_0_1_4.png`
+- 투명화 원본: `sources/card_back_western_approved_transparent_source_0_1_4.png`
+
+사용자 승인에 따라 기존 런타임 `card_back.png`를 교체했다. 기존 `.meta`와 카탈로그 경로는 유지하므로 프로그래머는 참조를 변경할 필요가 없다.
+승인안은 중앙 해골 벨, 완전한 황동 보안관 별, 상·하단 롱혼 뼈, 어두운 갈색 가죽과 녹색 모서리를 사용한다.
+
+### 0.1.4 생성·가공 기록
+
+- 제작 방식: OpenAI 내장 ImageGen 편집 모드
+- 프롬프트 요약: 사용자 편집본을 기준으로 해골 벨·황동 별·상하 롱혼·외곽 황동 테두리·녹색 모서리를 유지하고, 거친 검은 덧칠과 비대칭 경계를 제거해 대칭 픽셀 카드 뒷면으로 정리
+- 후처리: 마젠타 크로마 제거, 알파 경계 검수, 64×90 최근접 축소
+- Unity 권장값: 기존 `.meta` 유지, Point 필터, RGBA, 투명 모서리
