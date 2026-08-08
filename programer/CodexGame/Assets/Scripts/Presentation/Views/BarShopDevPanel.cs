@@ -9,8 +9,11 @@ namespace CodexGame.Presentation.Views
   internal sealed class BarShopDevPanel
   {
     private static readonly Rect FullScreen = new Rect(0f, 0f, 960f, 540f);
-    private static readonly Rect RerollButton = new Rect(250f, 452f, 210f, 54f);
-    private static readonly Rect ContinueButton = new Rect(500f, 452f, 210f, 54f);
+    private static readonly Rect BulletPanel = new Rect(40f, 28f, 200f, 58f);
+    private static readonly Rect HealthPanel = new Rect(720f, 28f, 200f, 58f);
+    private static readonly Rect RerollButton = new Rect(40f, 462f, 180f, 56f);
+    private static readonly Rect ContinueButton = new Rect(380f, 462f, 200f, 56f);
+    private static readonly float[] SlotXPositions = { 40f, 365f, 690f };
 
     public void Draw(
       BarShopSnapshot shop,
@@ -35,25 +38,27 @@ namespace CodexGame.Presentation.Views
         DrawFallbackBackground();
       }
 
-      GUI.Label(new Rect(300f, 28f, 360f, 54f), localization.Get("UI_BAR_TITLE"), styles.Title);
       DrawStatusPanel(
-        new Rect(74f, 82f, 236f, 58f),
+        BulletPanel,
+        new Rect(98f, 45f, 126f, 24f),
         art?.BulletPanel,
         localization.Get("UI_BULLET_BALANCE", new LocalizationArgument("bullets", bullets)),
-        styles.Heading);
+        styles.Small);
       DrawStatusPanel(
-        new Rect(650f, 82f, 236f, 58f),
+        HealthPanel,
+        new Rect(850f, 45f, 58f, 24f),
         art?.HealthPanel,
         localization.Get(
           "UI_BAR_HP_STATUS",
           new LocalizationArgument("current", playerHealth),
           new LocalizationArgument("max", maximumHealth)),
-        styles.Heading);
+        styles.Small);
 
       for (var index = 0; index < shop.Slots.Count; index++)
       {
         var slot = shop.Slots[index];
-        var slotRect = new Rect(78f + index * 278f, 158f, 248f, 262f);
+        if (index >= SlotXPositions.Length) break;
+        var slotRect = new Rect(SlotXPositions[index], 220f, 230f, 210f);
         DrawSlot(slotRect, slot.IconKey, slot.LocalizationNameKey, art, styles, localization);
       }
 
@@ -106,7 +111,7 @@ namespace CodexGame.Presentation.Views
         GUI.color = previous;
       }
 
-      var iconRect = new Rect(rect.x + 66f, rect.y + 34f, 116f, 116f);
+      var iconRect = new Rect(rect.x + 83f, rect.y + 26f, 64f, 64f);
       var icon = art?.FindProductIcon(iconKey);
       if (icon != null)
       {
@@ -118,21 +123,25 @@ namespace CodexGame.Presentation.Views
       }
 
       GUI.Label(
-        new Rect(rect.x + 18f, rect.y + 160f, rect.width - 36f, 42f),
+        new Rect(rect.x + 28f, rect.y + 130f, 174f, 18f),
         localization.Get(nameKey),
-        styles.Heading);
-      GUI.enabled = false;
-      GUI.Button(
-        new Rect(rect.x + 48f, rect.y + 212f, rect.width - 96f, 34f),
-        localization.Get("UI_BAR_PURCHASE"));
-      GUI.enabled = true;
+        styles.Small);
+      GUI.Label(
+        new Rect(rect.x + 58f, rect.y + 162f, 114f, 16f),
+        localization.Get("UI_BAR_PURCHASE"),
+        styles.Small);
     }
 
-    private static void DrawStatusPanel(Rect rect, Texture2D texture, string label, GUIStyle style)
+    private static void DrawStatusPanel(
+      Rect panelRect,
+      Rect labelRect,
+      Texture2D texture,
+      string label,
+      GUIStyle style)
     {
-      if (texture != null) GUI.DrawTexture(rect, texture, ScaleMode.StretchToFill, true);
-      else GUI.Box(rect, GUIContent.none);
-      GUI.Label(rect, label, style);
+      if (texture != null) GUI.DrawTexture(panelRect, texture, ScaleMode.StretchToFill, true);
+      else GUI.Box(panelRect, GUIContent.none);
+      GUI.Label(labelRect, label, style);
     }
 
     private static void DrawFallbackBackground()

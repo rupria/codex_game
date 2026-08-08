@@ -12,6 +12,23 @@ namespace CodexGame.Presentation.Art
 
     public string IconKey => _iconKey;
     public Texture2D Texture => _texture;
+
+    public BarShopProductIconBinding()
+    {
+    }
+
+    public BarShopProductIconBinding(string iconKey, Texture2D texture)
+    {
+      if (string.IsNullOrWhiteSpace(iconKey))
+      {
+        throw new ArgumentException("An icon key is required.", nameof(iconKey));
+      }
+
+      _iconKey = iconKey;
+      _texture = texture != null
+        ? texture
+        : throw new ArgumentNullException(nameof(texture));
+    }
   }
 
   [Serializable]
@@ -43,6 +60,40 @@ namespace CodexGame.Presentation.Art
     public Texture2D BulletPanel => _bulletPanel;
     public Texture2D HealthPanel => _healthPanel;
 
+    public BarShopUiArtSet()
+    {
+    }
+
+    public BarShopUiArtSet(
+      Texture2D background,
+      Texture2D slotFrame,
+      Texture2D rerollIdle,
+      Texture2D rerollHover,
+      Texture2D rerollPressed,
+      Texture2D rerollDisabled,
+      Texture2D continueIdle,
+      Texture2D continueHover,
+      Texture2D continuePressed,
+      Texture2D bulletPanel,
+      Texture2D healthPanel,
+      IReadOnlyList<BarShopProductIconBinding> productIcons)
+    {
+      _background = RequireTexture(background, nameof(background));
+      _slotFrame = RequireTexture(slotFrame, nameof(slotFrame));
+      _rerollIdle = RequireTexture(rerollIdle, nameof(rerollIdle));
+      _rerollHover = RequireTexture(rerollHover, nameof(rerollHover));
+      _rerollPressed = RequireTexture(rerollPressed, nameof(rerollPressed));
+      _rerollDisabled = RequireTexture(rerollDisabled, nameof(rerollDisabled));
+      _continueIdle = RequireTexture(continueIdle, nameof(continueIdle));
+      _continueHover = RequireTexture(continueHover, nameof(continueHover));
+      _continuePressed = RequireTexture(continuePressed, nameof(continuePressed));
+      _bulletPanel = RequireTexture(bulletPanel, nameof(bulletPanel));
+      _healthPanel = RequireTexture(healthPanel, nameof(healthPanel));
+      _productIcons = productIcons != null
+        ? new List<BarShopProductIconBinding>(productIcons)
+        : throw new ArgumentNullException(nameof(productIcons));
+    }
+
     public Texture2D FindProductIcon(string iconKey)
     {
       if (string.IsNullOrEmpty(iconKey) || _productIcons == null) return null;
@@ -56,6 +107,13 @@ namespace CodexGame.Presentation.Art
         }
       }
       return null;
+    }
+
+    private static Texture2D RequireTexture(Texture2D texture, string parameterName)
+    {
+      return texture != null
+        ? texture
+        : throw new ArgumentNullException(parameterName);
     }
   }
 }

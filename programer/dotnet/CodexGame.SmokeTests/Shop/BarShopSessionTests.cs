@@ -53,6 +53,16 @@ namespace CodexGame.SmokeTests.Shop
           && !string.IsNullOrWhiteSpace(product.IconKey)
           && !string.IsNullOrWhiteSpace(product.EffectKey),
         "Every dummy product must expose replaceable data keys without enabling purchase effects.");
+
+      var catalogKeysMatchArtHandoff = BarShopCatalog.Dummy.Count == 6;
+      for (var index = 0; index < BarShopCatalog.Dummy.Count; index++)
+      {
+        catalogKeysMatchArtHandoff &= BarShopCatalog.Dummy[index].IconKey
+          == $"bar_shop.item.dummy_{index + 1:00}";
+      }
+      tests.Check(
+        catalogKeysMatchArtHandoff,
+        "Dummy product icon keys must match the replaceable BarShop 0.3.0 art catalog.");
     }
 
     private static HashSet<string> Ids(IReadOnlyList<BarShopProductDefinition> products)
