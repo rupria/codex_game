@@ -119,7 +119,7 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
---- !u!1 &655622748
+--- !u!1 &313172522
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -127,10 +127,10 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 655622752}
-  - component: {fileID: 655622751}
-  - component: {fileID: 655622750}
-  - component: {fileID: 655622749}
+  - component: {fileID: 313172526}
+  - component: {fileID: 313172525}
+  - component: {fileID: 313172524}
+  - component: {fileID: 313172523}
   m_Layer: 0
   m_Name: CodexGame.PlayableDev
   m_TagString: Untagged
@@ -138,48 +138,48 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &655622749
+--- !u!114 &313172523
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 655622748}
+  m_GameObject: {fileID: 313172522}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: e01485696a2a0564f8908e12ee526b34, type: 3}
   m_Name:
   m_EditorClassIdentifier: CodexGame.Bootstrap::CodexGame.Bootstrap.PlayableDevGameController
---- !u!114 &655622750
+--- !u!114 &313172524
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 655622748}
+  m_GameObject: {fileID: 313172522}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 63fa6614e8e1444eb69d2c8ca6814cb3, type: 3}
   m_Name:
   m_EditorClassIdentifier: CodexGame.Presentation::CodexGame.Presentation.Views.TableScenePresentationRig
-  _sceneCamera: {fileID: 1188822258}
-  _view: {fileID: 655622751}
-  _battleBackdrop: {fileID: 2800000, guid: 129ba7287afc183049621fb542347b34, type: 3}
+  _sceneCamera: {fileID: 1503656224}
+  _view: {fileID: 313172525}
+  _battleBackdrop: {fileID: 2800000, guid: 263d2d00d83c60947acaa998c8961e7a, type: 3}
   _introBackdrop: {fileID: 2800000, guid: 4fffdd8f5e45fa4cd921945ef9042957, type: 3}
   _backdropShader: {fileID: 4800000, guid: 9b3acbe23ca64a43b7c17fce4b297763, type: 3}
---- !u!114 &655622751
+--- !u!114 &313172525
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 655622748}
+  m_GameObject: {fileID: 313172522}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: bdb4d81e9bb4ec94681bf2457196d90b, type: 3}
   m_Name:
   m_EditorClassIdentifier: CodexGame.Presentation::CodexGame.Presentation.Views.PlayableDevView
-  _boardTexture: {fileID: 2800000, guid: 129ba7287afc183049621fb542347b34, type: 3}
+  _boardTexture: {fileID: 2800000, guid: 263d2d00d83c60947acaa998c8961e7a, type: 3}
   _cardArtSet:
     _halli:
       _entries:
@@ -1243,6 +1243,13 @@ MonoBehaviour:
     _flipDeckDisabled: {fileID: 2800000, guid: 2d492b3818d8b4b324fc77f8d4e7efa2, type: 3}
     _playerAcquiredTray: {fileID: 2800000, guid: 9fd29dd390fd29735b91916ab58c0db0, type: 3}
     _aiAcquiredStatusPanel: {fileID: 2800000, guid: 0a7083aafd8272ecfc1e260259d0ffd4, type: 3}
+    _playerWinPipEmpty: {fileID: 2800000, guid: e6246ad4d7f382549bc080ea4c0a4eaa, type: 3}
+    _playerWinPipFilled: {fileID: 2800000, guid: 2244d31223af1474fac2de8131c08fd9, type: 3}
+    _aiWinPipEmpty: {fileID: 2800000, guid: dd29d7e053310ac4980eff4932e35be0, type: 3}
+    _aiWinPipFilled: {fileID: 2800000, guid: 917384efef74fec4794d40e050965a8f, type: 3}
+    _ropeBody: {fileID: 0}
+    _ropeFlame: {fileID: 0}
+    _ropeExplosion: {fileID: 0}
   _guideUiArtSet:
     _modalBackground: {fileID: 2800000, guid: a1dd36a3860feff372a4fee980af0e30, type: 3}
     _flowPage: {fileID: 2800000, guid: 67c3f94b97e10cda3a68af17fc8ed386, type: 3}
@@ -1253,15 +1260,27 @@ MonoBehaviour:
     _navHover: {fileID: 2800000, guid: e8cd52738cdd0b74445f8a0e0b35ae0d, type: 3}
     _navDisabled: {fileID: 2800000, guid: 19fda25af443b2fb0607898ce8dac0e4, type: 3}
     _pageIndicatorPlate: {fileID: 2800000, guid: 8f6aff2d0203f6d0a759794a9fc979d9, type: 3}
+  _introTexture: {fileID: 2800000, guid: 4fffdd8f5e45fa4cd921945ef9042957, type: 3}
+  _healthUiArtSet:
+    _playerFilled: {fileID: 2800000, guid: 533a2f7af1a86944081856c0b75668b0, type: 3}
+    _playerEmpty: {fileID: 2800000, guid: 7fad81c575f9fa14fbb4122abd410622, type: 3}
+    _aiFilled: {fileID: 2800000, guid: 7326e738fd76e4e47a616eb56b386326, type: 3}
+    _aiEmpty: {fileID: 2800000, guid: 757cb64ab31bd16428a230bb5ee1eca5, type: 3}
+  _pokerUiArtSet:
+    _winIdle: {fileID: 2800000, guid: 8e6a09010529cee4ebcbb599a5dec4e3, type: 3}
+    _winHover: {fileID: 2800000, guid: edc294827ec830b489aa947875b8891d, type: 3}
+    _loseIdle: {fileID: 2800000, guid: 5c499eaf1bdfdd34286628c15e6488a8, type: 3}
+    _loseHover: {fileID: 2800000, guid: f3803198dc1460c46802143fd11ff707, type: 3}
+    _itemSlot: {fileID: 2800000, guid: e354f1f5eed544668d5546ce72fde6e4, type: 3}
   _useSceneBackdrop: 1
   _useIntroArtLayout: 1
---- !u!4 &655622752
+--- !u!4 &313172526
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 655622748}
+  m_GameObject: {fileID: 313172522}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
@@ -1270,7 +1289,7 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &1188822257
+--- !u!1 &1503656223
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -1278,8 +1297,8 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 1188822259}
-  - component: {fileID: 1188822258}
+  - component: {fileID: 1503656225}
+  - component: {fileID: 1503656224}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -1287,13 +1306,13 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!20 &1188822258
+--- !u!20 &1503656224
 Camera:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1188822257}
+  m_GameObject: {fileID: 1503656223}
   m_Enabled: 1
   serializedVersion: 2
   m_ClearFlags: 2
@@ -1338,13 +1357,13 @@ Camera:
   m_OcclusionCulling: 1
   m_StereoConvergence: 10
   m_StereoSeparation: 0.022
---- !u!4 &1188822259
+--- !u!4 &1503656225
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1188822257}
+  m_GameObject: {fileID: 1503656223}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: -10}
@@ -1357,5 +1376,5 @@ Transform:
 SceneRoots:
   m_ObjectHideFlags: 0
   m_Roots:
-  - {fileID: 1188822259}
-  - {fileID: 655622752}
+  - {fileID: 1503656225}
+  - {fileID: 313172526}

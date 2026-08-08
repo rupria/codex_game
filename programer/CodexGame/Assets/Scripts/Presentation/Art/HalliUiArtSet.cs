@@ -20,6 +20,13 @@ namespace CodexGame.Presentation.Art
     [SerializeField] private Texture2D _flipDeckDisabled;
     [SerializeField] private Texture2D _playerAcquiredTray;
     [SerializeField] private Texture2D _aiAcquiredStatusPanel;
+    [SerializeField] private Texture2D _playerWinPipEmpty;
+    [SerializeField] private Texture2D _playerWinPipFilled;
+    [SerializeField] private Texture2D _aiWinPipEmpty;
+    [SerializeField] private Texture2D _aiWinPipFilled;
+    [SerializeField] private Texture2D _ropeBody;
+    [SerializeField] private Texture2D _ropeFlame;
+    [SerializeField] private Texture2D _ropeExplosion;
 
     public HalliUiArtSet(
       Texture2D bellIdle,
@@ -35,7 +42,14 @@ namespace CodexGame.Presentation.Art
       Texture2D flipDeckPressed,
       Texture2D flipDeckDisabled,
       Texture2D playerAcquiredTray,
-      Texture2D aiAcquiredStatusPanel)
+      Texture2D aiAcquiredStatusPanel,
+      Texture2D playerWinPipEmpty = null,
+      Texture2D playerWinPipFilled = null,
+      Texture2D aiWinPipEmpty = null,
+      Texture2D aiWinPipFilled = null,
+      Texture2D ropeBody = null,
+      Texture2D ropeFlame = null,
+      Texture2D ropeExplosion = null)
     {
       _bellIdle = bellIdle ?? throw new ArgumentNullException(nameof(bellIdle));
       _bellHover = bellHover ?? throw new ArgumentNullException(nameof(bellHover));
@@ -54,6 +68,13 @@ namespace CodexGame.Presentation.Art
         ?? throw new ArgumentNullException(nameof(playerAcquiredTray));
       _aiAcquiredStatusPanel = aiAcquiredStatusPanel
         ?? throw new ArgumentNullException(nameof(aiAcquiredStatusPanel));
+      _playerWinPipEmpty = playerWinPipEmpty;
+      _playerWinPipFilled = playerWinPipFilled;
+      _aiWinPipEmpty = aiWinPipEmpty;
+      _aiWinPipFilled = aiWinPipFilled;
+      _ropeBody = ropeBody;
+      _ropeFlame = ropeFlame;
+      _ropeExplosion = ropeExplosion;
     }
 
     public Texture2D BellIdle => _bellIdle;
@@ -70,6 +91,22 @@ namespace CodexGame.Presentation.Art
     public Texture2D FlipDeckDisabled => _flipDeckDisabled;
     public Texture2D PlayerAcquiredTray => _playerAcquiredTray;
     public Texture2D AiAcquiredStatusPanel => _aiAcquiredStatusPanel;
+    public Texture2D PlayerWinPipEmpty => _playerWinPipEmpty;
+    public Texture2D PlayerWinPipFilled => _playerWinPipFilled;
+    public Texture2D AiWinPipEmpty => _aiWinPipEmpty;
+    public Texture2D AiWinPipFilled => _aiWinPipFilled;
+    public Texture2D RopeBody => _ropeBody;
+    public Texture2D RopeFlame => _ropeFlame;
+    public Texture2D RopeExplosion => _ropeExplosion;
+
+    public bool HasRoundWinPips => _playerWinPipEmpty != null
+      && _playerWinPipFilled != null
+      && _aiWinPipEmpty != null
+      && _aiWinPipFilled != null;
+
+    public bool HasRopeTimerArt => _ropeBody != null
+      && _ropeFlame != null
+      && _ropeExplosion != null;
 
     public bool IsComplete => _bellIdle != null
       && _bellHover != null
