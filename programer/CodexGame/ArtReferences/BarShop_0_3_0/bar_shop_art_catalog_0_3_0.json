@@ -1,0 +1,65 @@
+{
+  "artSetId": "bar_shop_0_3_0",
+  "issue": 26,
+  "referenceResolution": [960, 540],
+  "stringsBakedIntoImages": false,
+  "background": {
+    "key": "bar_shop.background.unlit",
+    "file": "bar_shop_background_unlit_960x540_0_3_0.png"
+  },
+  "status": {
+    "ammoPanel": {
+      "key": "bar_shop.status.ammo",
+      "file": "bar_shop_ammo_panel_200x58_0_3_0.png",
+      "anchor": [40, 28]
+    },
+    "hpPanel": {
+      "key": "bar_shop.status.hp",
+      "file": "bar_shop_hp_panel_200x58_0_3_0.png",
+      "anchor": [720, 28]
+    }
+  },
+  "productSlot": {
+    "key": "bar_shop.product.slot",
+    "file": "bar_shop_product_slot_230x210_0_3_0.png",
+    "anchors": [[40, 220], [365, 220], [690, 220]]
+  },
+  "dummyItems": [
+    {"id": "dummy_01", "iconKey": "bar_shop.item.dummy_01", "file": "bar_shop_dummy_item_01_64_0_3_0.png"},
+    {"id": "dummy_02", "iconKey": "bar_shop.item.dummy_02", "file": "bar_shop_dummy_item_02_64_0_3_0.png"},
+    {"id": "dummy_03", "iconKey": "bar_shop.item.dummy_03", "file": "bar_shop_dummy_item_03_64_0_3_0.png"},
+    {"id": "dummy_04", "iconKey": "bar_shop.item.dummy_04", "file": "bar_shop_dummy_item_04_64_0_3_0.png"},
+    {"id": "dummy_05", "iconKey": "bar_shop.item.dummy_05", "file": "bar_shop_dummy_item_05_64_0_3_0.png"},
+    {"id": "dummy_06", "iconKey": "bar_shop.item.dummy_06", "file": "bar_shop_dummy_item_06_64_0_3_0.png"}
+  ],
+  "buttons": {
+    "reroll": {
+      "anchor": [40, 462],
+      "size": [180, 56],
+      "states": {
+        "idle": "bar_shop_reroll_idle_180x56_0_3_0.png",
+        "hover": "bar_shop_reroll_hover_180x56_0_3_0.png",
+        "pressed": "bar_shop_reroll_pressed_180x56_0_3_0.png",
+        "disabled": "bar_shop_reroll_disabled_180x56_0_3_0.png"
+      }
+    },
+    "continue": {
+      "anchor": [380, 462],
+      "size": [200, 56],
+      "states": {
+        "idle": "bar_shop_continue_idle_200x56_0_3_0.png",
+        "hover": "bar_shop_continue_hover_200x56_0_3_0.png",
+        "pressed": "bar_shop_continue_pressed_200x56_0_3_0.png"
+      }
+    }
+  },
+  "localizationKeys": {
+    "title": "bar_shop.title",
+    "ammo": "bar_shop.ammo",
+    "hp": "bar_shop.hp",
+    "reroll": "bar_shop.reroll.free",
+    "rerollUsed": "bar_shop.reroll.used",
+    "continue": "bar_shop.continue",
+    "dummyItemNamePattern": "bar_shop.item.dummy_{00}.name"
+  }
+}

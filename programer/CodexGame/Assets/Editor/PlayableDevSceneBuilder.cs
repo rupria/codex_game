@@ -20,6 +20,7 @@ namespace CodexGame.Editor
     private const string HalliUiArtRoot = UiArtRoot + "Halli_0_1_0/";
     private const string HalliUi021ArtRoot = UiArtRoot + "Halli_0_2_1/";
     private const string PokerUiArtRoot = UiArtRoot + "Poker_0_2_2/";
+    private const string BarShopUiArtRoot = UiArtRoot + "BarShop_0_3_0/";
     private const string IntroArtPath = HalliUiArtRoot + "start_screen_background.png";
     private const string BackdropShaderPath = "Assets/Shaders/RuntimeBackdropLit.shader";
 
@@ -87,6 +88,39 @@ namespace CodexGame.Editor
         LoadTexture(PokerUiArtRoot + "poker_predict_lose_idle_64_0_2_2.png"),
         LoadTexture(PokerUiArtRoot + "poker_predict_lose_hover_64_0_2_2.png"),
         LoadTexture(UiArtRoot + "item_slot.png"));
+      var barShopUiArtSet = new BarShopUiArtSet(
+        LoadTexture(BarShopUiArtRoot + "bar_shop_background_unlit_960x540_0_3_0.png"),
+        LoadTexture(BarShopUiArtRoot + "bar_shop_product_slot_230x210_0_3_0.png"),
+        LoadTexture(BarShopUiArtRoot + "bar_shop_reroll_idle_180x56_0_3_0.png"),
+        LoadTexture(BarShopUiArtRoot + "bar_shop_reroll_hover_180x56_0_3_0.png"),
+        LoadTexture(BarShopUiArtRoot + "bar_shop_reroll_pressed_180x56_0_3_0.png"),
+        LoadTexture(BarShopUiArtRoot + "bar_shop_reroll_disabled_180x56_0_3_0.png"),
+        LoadTexture(BarShopUiArtRoot + "bar_shop_continue_idle_200x56_0_3_0.png"),
+        LoadTexture(BarShopUiArtRoot + "bar_shop_continue_hover_200x56_0_3_0.png"),
+        LoadTexture(BarShopUiArtRoot + "bar_shop_continue_pressed_200x56_0_3_0.png"),
+        LoadTexture(BarShopUiArtRoot + "bar_shop_ammo_panel_200x58_0_3_0.png"),
+        LoadTexture(BarShopUiArtRoot + "bar_shop_hp_panel_200x58_0_3_0.png"),
+        new[]
+        {
+          new BarShopProductIconBinding(
+            "bar_shop.item.dummy_01",
+            LoadTexture(BarShopUiArtRoot + "bar_shop_dummy_item_01_64_0_3_0.png")),
+          new BarShopProductIconBinding(
+            "bar_shop.item.dummy_02",
+            LoadTexture(BarShopUiArtRoot + "bar_shop_dummy_item_02_64_0_3_0.png")),
+          new BarShopProductIconBinding(
+            "bar_shop.item.dummy_03",
+            LoadTexture(BarShopUiArtRoot + "bar_shop_dummy_item_03_64_0_3_0.png")),
+          new BarShopProductIconBinding(
+            "bar_shop.item.dummy_04",
+            LoadTexture(BarShopUiArtRoot + "bar_shop_dummy_item_04_64_0_3_0.png")),
+          new BarShopProductIconBinding(
+            "bar_shop.item.dummy_05",
+            LoadTexture(BarShopUiArtRoot + "bar_shop_dummy_item_05_64_0_3_0.png")),
+          new BarShopProductIconBinding(
+            "bar_shop.item.dummy_06",
+            LoadTexture(BarShopUiArtRoot + "bar_shop_dummy_item_06_64_0_3_0.png"))
+        });
       view.Configure(
         boardTexture,
         cardArtSet,
@@ -96,7 +130,8 @@ namespace CodexGame.Editor
         healthUiArtSet,
         pokerUiArtSet,
         useSceneBackdrop: true,
-        useIntroArtLayout: true);
+        useIntroArtLayout: true,
+        barShopUiArtSet: barShopUiArtSet);
       var presentationRig = gameObject.AddComponent<TableScenePresentationRig>();
       var backdropShader = AssetDatabase.LoadAssetAtPath<Shader>(BackdropShaderPath);
       if (backdropShader == null)
