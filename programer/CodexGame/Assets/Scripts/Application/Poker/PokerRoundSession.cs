@@ -21,7 +21,6 @@ namespace CodexGame.Application.Poker
     private PokerRoundResult? _result;
     private GameTimestamp _predictionDeadline;
     private GameTimestamp _resultRevealAt;
-    private int _availableItemCount;
 
     public PokerRoundPhase Phase { get; private set; } = PokerRoundPhase.NotStarted;
     public PokerRoundResult? Result => _result;
@@ -31,14 +30,12 @@ namespace CodexGame.Application.Poker
       PrivateCardDistributionResult distribution,
       BattleHealth health,
       PokerRuleSet ruleSet,
-      GameTimestamp now,
-      int availableItemCount)
+      GameTimestamp now)
     {
       if (distribution == null) throw new ArgumentNullException(nameof(distribution));
       if (ruleSet == null) throw new ArgumentNullException(nameof(ruleSet));
       if (!firstPublicCard.IsValid) throw new ArgumentException("The first public card is invalid.", nameof(firstPublicCard));
       if (health.IsBattleOver) throw new InvalidOperationException("A poker round cannot begin after battle end.");
-      if (availableItemCount < 0) throw new ArgumentOutOfRangeException(nameof(availableItemCount));
 
       _playerPrivateCards = Copy(distribution.PlayerPrivateCards);
       _aiPrivateCards = Copy(distribution.AiPrivateCards);
@@ -46,18 +43,10 @@ namespace CodexGame.Application.Poker
       _health = health;
       _ruleSet = ruleSet;
       _result = null;
-      _availableItemCount = availableItemCount;
 
       // Validate all seven identities before any concealed information is presented.
       PokerComparer.Compare(_playerPrivateCards, _aiPrivateCards, _publicCards, _ruleSet);
-      if (_availableItemCount > 0)
-      {
-        Phase = PokerRoundPhase.ItemWindow;
-      }
-      else
-      {
-        BeginPrediction(now);
-      }
+      BeginPrediction(now);
     }
 
     public void Begin(
@@ -66,14 +55,7 @@ namespace CodexGame.Application.Poker
       BattleHealth health,
       PokerRuleSet ruleSet)
     {
-      Begin(firstPublicCard, distribution, health, ruleSet, new GameTimestamp(0), 0);
-    }
-
-    public bool SkipItemWindow(GameTimestamp now)
-    {
-      if (Phase != PokerRoundPhase.ItemWindow) return false;
-      BeginPrediction(now);
-      return true;
+      Begin(firstPublicCard, distribution, health, ruleSet, new GameTimestamp(0));
     }
 
     public bool SubmitPrediction(PredictionChoice choice, GameTimestamp now)
@@ -137,8 +119,6 @@ namespace CodexGame.Application.Poker
         _publicCards,
         health,
         remaining,
-        _availableItemCount,
-        Phase != PokerRoundPhase.ItemWindow && Phase != PokerRoundPhase.NotStarted,
         Phase == PokerRoundPhase.Resolved ? _result : null);
     }
 

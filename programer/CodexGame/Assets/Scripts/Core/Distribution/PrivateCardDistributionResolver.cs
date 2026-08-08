@@ -18,144 +18,127 @@ namespace CodexGame.Core.Distribution
       PrivateCardSelectionMode selectionMode,
       IRandomSource random)
     {
+      var playerSelection = winner == HalliStageWinner.Player
+        ? selectedWinnerCards
+        : Array.AsReadOnly(Array.Empty<CardId>());
+      var aiSelection = winner == HalliStageWinner.Ai
+        ? selectedWinnerCards
+        : Array.AsReadOnly(Array.Empty<CardId>());
+      return ResolveBoth(
+        playerAcquiredCards,
+        aiAcquiredCards,
+        otherCandidates,
+        winner,
+        combatRoundNumber,
+        playerSelection,
+        aiSelection,
+        selectionMode,
+        random);
+    }
+
+    public static PrivateCardDistributionResult ResolveBoth(
+      IReadOnlyList<Card> playerAcquiredCards,
+      IReadOnlyList<Card> aiAcquiredCards,
+      IReadOnlyList<Card> otherCandidates,
+      HalliStageWinner winner,
+      int combatRoundNumber,
+      IReadOnlyList<CardId> selectedPlayerCards,
+      IReadOnlyList<CardId> selectedAiCards,
+      PrivateCardSelectionMode playerSelectionMode,
+      IRandomSource random)
+    {
       ValidateInputs(
         playerAcquiredCards,
         aiAcquiredCards,
         otherCandidates,
         winner,
         combatRoundNumber,
-        selectedWinnerCards,
-        selectionMode,
+        selectedPlayerCards,
+        selectedAiCards,
+        playerSelectionMode,
         random);
 
-      if (winner == HalliStageWinner.None)
-      {
-        return ResolveWithoutWinner(
-          playerAcquiredCards,
-          aiAcquiredCards,
-          otherCandidates,
-          combatRoundNumber,
-          random);
-      }
+      var randomCandidates = new List<Card>(otherCandidates);
+      var playerPrivate = RetainOrSelect(
+        playerAcquiredCards,
+        selectedPlayerCards,
+        playerSelectionMode,
+        randomCandidates,
+        random);
+      var aiPrivate = RetainOrSelect(
+        aiAcquiredCards,
+        selectedAiCards,
+        PrivateCardSelectionMode.Confirmed,
+        randomCandidates,
+        random);
 
-      var winnerCards = winner == HalliStageWinner.Player
-        ? playerAcquiredCards
-        : aiAcquiredCards;
-      var loserCards = winner == HalliStageWinner.Player
-        ? aiAcquiredCards
-        : playerAcquiredCards;
-      var directSelectionCount = PrivateCardDistributionRules.GetAvailableDirectSelectionCount(
-        combatRoundNumber,
-        winnerCards.Count);
-      var normalizedSelection = NormalizeSelection(winnerCards, selectedWinnerCards);
-
-      if (selectionMode == PrivateCardSelectionMode.Confirmed
-        && normalizedSelection.Count != directSelectionCount)
-      {
-        throw new ArgumentException(
-          "A confirmed selection must contain the round's exact direct-selection count.",
-          nameof(selectedWinnerCards));
-      }
-
-      if (selectionMode == PrivateCardSelectionMode.TimedOut
-        && normalizedSelection.Count > directSelectionCount)
-      {
-        throw new ArgumentException(
-          "A timed-out selection cannot exceed the round's direct-selection count.",
-          nameof(selectedWinnerCards));
-      }
-
-      var winnerPrivate = new List<Card>(normalizedSelection);
-      var randomCandidates = new List<Card>(
-        loserCards.Count + otherCandidates.Count + winnerCards.Count - normalizedSelection.Count);
-      randomCandidates.AddRange(loserCards);
-      randomCandidates.AddRange(otherCandidates);
-
-      var selectedIds = ToIdSet(normalizedSelection);
-
-      for (var index = 0; index < winnerCards.Count; index++)
-      {
-        if (!selectedIds.Contains(winnerCards[index].Id))
-        {
-          randomCandidates.Add(winnerCards[index]);
-        }
-      }
-
-      EnsureEnoughCandidates(randomCandidates.Count, GameRules.RequiredPrivateCards - winnerPrivate.Count + GameRules.RequiredPrivateCards + 1);
-
-      FillRandom(winnerPrivate, GameRules.RequiredPrivateCards, randomCandidates, random);
-      var loserPrivate = new List<Card>(GameRules.RequiredPrivateCards);
-      FillRandom(loserPrivate, GameRules.RequiredPrivateCards, randomCandidates, random);
+      EnsureEnoughCandidates(
+        randomCandidates.Count,
+        (GameRules.RequiredPrivateCards - playerPrivate.Count)
+          + (GameRules.RequiredPrivateCards - aiPrivate.Count)
+          + 1);
+      FillRandom(playerPrivate, randomCandidates, random);
+      FillRandom(aiPrivate, randomCandidates, random);
       var secondPublic = TakeRandom(randomCandidates, random);
-
-      return winner == HalliStageWinner.Player
-        ? CreateResult(winner, combatRoundNumber, winnerPrivate, loserPrivate, secondPublic, randomCandidates)
-        : CreateResult(winner, combatRoundNumber, loserPrivate, winnerPrivate, secondPublic, randomCandidates);
-    }
-
-    private static PrivateCardDistributionResult ResolveWithoutWinner(
-      IReadOnlyList<Card> playerAcquiredCards,
-      IReadOnlyList<Card> aiAcquiredCards,
-      IReadOnlyList<Card> otherCandidates,
-      int combatRoundNumber,
-      IRandomSource random)
-    {
-      var randomCandidates = new List<Card>(
-        playerAcquiredCards.Count + aiAcquiredCards.Count + otherCandidates.Count);
-      randomCandidates.AddRange(playerAcquiredCards);
-      randomCandidates.AddRange(aiAcquiredCards);
-      randomCandidates.AddRange(otherCandidates);
-      EnsureEnoughCandidates(randomCandidates.Count, (GameRules.RequiredPrivateCards * 2) + 1);
-
-      var playerPrivate = new List<Card>(GameRules.RequiredPrivateCards);
-      var aiPrivate = new List<Card>(GameRules.RequiredPrivateCards);
-
-      for (var index = 0; index < GameRules.RequiredPrivateCards; index++)
-      {
-        playerPrivate.Add(TakeRandom(randomCandidates, random));
-        aiPrivate.Add(TakeRandom(randomCandidates, random));
-      }
-
-      var secondPublic = TakeRandom(randomCandidates, random);
-      return CreateResult(
-        HalliStageWinner.None,
-        combatRoundNumber,
-        playerPrivate,
-        aiPrivate,
-        secondPublic,
-        randomCandidates);
-    }
-
-    private static PrivateCardDistributionResult CreateResult(
-      HalliStageWinner winner,
-      int combatRoundNumber,
-      IReadOnlyList<Card> playerPrivate,
-      IReadOnlyList<Card> aiPrivate,
-      Card secondPublic,
-      IReadOnlyList<Card> remainingCandidates)
-    {
-      if (playerPrivate.Count != GameRules.RequiredPrivateCards
-        || aiPrivate.Count != GameRules.RequiredPrivateCards)
-      {
-        throw new InvalidOperationException("Both sides must finish with exactly three private cards.");
-      }
 
       return new PrivateCardDistributionResult(
         winner,
         combatRoundNumber,
-        playerPrivate,
-        aiPrivate,
+        Array.AsReadOnly(playerPrivate.ToArray()),
+        Array.AsReadOnly(aiPrivate.ToArray()),
         secondPublic,
-        remainingCandidates);
+        Array.AsReadOnly(randomCandidates.ToArray()));
+    }
+
+    private static List<Card> RetainOrSelect(
+      IReadOnlyList<Card> acquired,
+      IReadOnlyList<CardId> selectedIds,
+      PrivateCardSelectionMode mode,
+      List<Card> randomCandidates,
+      IRandomSource random)
+    {
+      if (acquired.Count <= GameRules.RequiredPrivateCards)
+      {
+        if (selectedIds.Count != 0)
+        {
+          throw new ArgumentException("Selections are accepted only when acquired cards exceed three.");
+        }
+        return new List<Card>(acquired);
+      }
+
+      var selected = NormalizeSelection(acquired, selectedIds);
+      if (mode == PrivateCardSelectionMode.Confirmed
+        && selected.Count != GameRules.RequiredPrivateCards)
+      {
+        throw new ArgumentException("A confirmed overflow selection must contain exactly three cards.");
+      }
+      if (mode == PrivateCardSelectionMode.TimedOut
+        && selected.Count > GameRules.RequiredPrivateCards)
+      {
+        throw new ArgumentException("A timed-out selection cannot contain more than three cards.");
+      }
+
+      var selectedSet = ToIdSet(selected);
+      var unselectedAcquired = new List<Card>();
+      for (var index = 0; index < acquired.Count; index++)
+      {
+        if (!selectedSet.Contains(acquired[index].Id)) unselectedAcquired.Add(acquired[index]);
+      }
+
+      while (selected.Count < GameRules.RequiredPrivateCards)
+      {
+        selected.Add(TakeRandom(unselectedAcquired, random));
+      }
+      randomCandidates.AddRange(unselectedAcquired);
+      return selected;
     }
 
     private static void FillRandom(
       List<Card> destination,
-      int requiredCount,
       List<Card> candidates,
       IRandomSource random)
     {
-      while (destination.Count < requiredCount)
+      while (destination.Count < GameRules.RequiredPrivateCards)
       {
         destination.Add(TakeRandom(candidates, random));
       }
@@ -163,11 +146,7 @@ namespace CodexGame.Core.Distribution
 
     private static Card TakeRandom(List<Card> candidates, IRandomSource random)
     {
-      if (candidates.Count == 0)
-      {
-        throw new InvalidOperationException("No candidate remains for random distribution.");
-      }
-
+      if (candidates.Count == 0) throw new InvalidOperationException("No distribution candidate remains.");
       var index = random.NextInt(candidates.Count);
       var card = candidates[index];
       candidates.RemoveAt(index);
@@ -175,49 +154,35 @@ namespace CodexGame.Core.Distribution
     }
 
     private static List<Card> NormalizeSelection(
-      IReadOnlyList<Card> winnerCards,
-      IReadOnlyList<CardId> selectedWinnerCards)
+      IReadOnlyList<Card> candidates,
+      IReadOnlyList<CardId> selectedIds)
     {
       var requested = new HashSet<CardId>();
-
-      for (var index = 0; index < selectedWinnerCards.Count; index++)
+      for (var index = 0; index < selectedIds.Count; index++)
       {
-        if (!requested.Add(selectedWinnerCards[index]))
+        if (!requested.Add(selectedIds[index]))
         {
-          throw new ArgumentException("A winner card cannot be selected twice.", nameof(selectedWinnerCards));
+          throw new ArgumentException("A card cannot be selected twice.", nameof(selectedIds));
         }
       }
 
-      var normalized = new List<Card>(requested.Count);
-
-      for (var index = 0; index < winnerCards.Count; index++)
+      var result = new List<Card>();
+      for (var index = 0; index < candidates.Count; index++)
       {
-        if (requested.Remove(winnerCards[index].Id))
-        {
-          normalized.Add(winnerCards[index]);
-        }
+        if (requested.Remove(candidates[index].Id)) result.Add(candidates[index]);
       }
-
-      if (requested.Count > 0)
+      if (requested.Count != 0)
       {
-        throw new ArgumentException(
-          "Every selected card must belong to the Halli winner's acquired-card pool.",
-          nameof(selectedWinnerCards));
+        throw new ArgumentException("Every selected card must belong to its actor's acquired pool.", nameof(selectedIds));
       }
-
-      return normalized;
+      return result;
     }
 
     private static HashSet<CardId> ToIdSet(IReadOnlyList<Card> cards)
     {
-      var ids = new HashSet<CardId>();
-
-      for (var index = 0; index < cards.Count; index++)
-      {
-        ids.Add(cards[index].Id);
-      }
-
-      return ids;
+      var result = new HashSet<CardId>();
+      for (var index = 0; index < cards.Count; index++) result.Add(cards[index].Id);
+      return result;
     }
 
     private static void ValidateInputs(
@@ -226,67 +191,28 @@ namespace CodexGame.Core.Distribution
       IReadOnlyList<Card> otherCandidates,
       HalliStageWinner winner,
       int combatRoundNumber,
-      IReadOnlyList<CardId> selectedWinnerCards,
+      IReadOnlyList<CardId> selectedPlayerCards,
+      IReadOnlyList<CardId> selectedAiCards,
       PrivateCardSelectionMode selectionMode,
       IRandomSource random)
     {
-      if (playerAcquiredCards == null)
-      {
-        throw new ArgumentNullException(nameof(playerAcquiredCards));
-      }
-
-      if (aiAcquiredCards == null)
-      {
-        throw new ArgumentNullException(nameof(aiAcquiredCards));
-      }
-
-      if (otherCandidates == null)
-      {
-        throw new ArgumentNullException(nameof(otherCandidates));
-      }
-
-      if (selectedWinnerCards == null)
-      {
-        throw new ArgumentNullException(nameof(selectedWinnerCards));
-      }
-
-      if (random == null)
-      {
-        throw new ArgumentNullException(nameof(random));
-      }
-
-      if (!Enum.IsDefined(typeof(HalliStageWinner), winner))
-      {
-        throw new ArgumentOutOfRangeException(nameof(winner));
-      }
-
-      if (!Enum.IsDefined(typeof(PrivateCardSelectionMode), selectionMode))
-      {
-        throw new ArgumentOutOfRangeException(nameof(selectionMode));
-      }
-
+      if (playerAcquiredCards == null) throw new ArgumentNullException(nameof(playerAcquiredCards));
+      if (aiAcquiredCards == null) throw new ArgumentNullException(nameof(aiAcquiredCards));
+      if (otherCandidates == null) throw new ArgumentNullException(nameof(otherCandidates));
+      if (selectedPlayerCards == null) throw new ArgumentNullException(nameof(selectedPlayerCards));
+      if (selectedAiCards == null) throw new ArgumentNullException(nameof(selectedAiCards));
+      if (random == null) throw new ArgumentNullException(nameof(random));
+      if (!Enum.IsDefined(typeof(HalliStageWinner), winner)) throw new ArgumentOutOfRangeException(nameof(winner));
+      if (!Enum.IsDefined(typeof(PrivateCardSelectionMode), selectionMode)) throw new ArgumentOutOfRangeException(nameof(selectionMode));
       HalliStageRules.GetWinTarget(combatRoundNumber);
 
-      if (winner == HalliStageWinner.None && selectedWinnerCards.Count != 0)
-      {
-        throw new ArgumentException("A winner-less stage cannot have direct selections.", nameof(selectedWinnerCards));
-      }
-
       var ids = new HashSet<CardId>();
-      AddAndValidateCards(playerAcquiredCards, ids, nameof(playerAcquiredCards));
-      AddAndValidateCards(aiAcquiredCards, ids, nameof(aiAcquiredCards));
-      AddAndValidateCards(otherCandidates, ids, nameof(otherCandidates));
-
-      if (winner != HalliStageWinner.None)
-      {
-        var winnerCount = winner == HalliStageWinner.Player
-          ? playerAcquiredCards.Count
-          : aiAcquiredCards.Count;
-        PrivateCardDistributionRules.RequiresSelectionUi(combatRoundNumber, winnerCount);
-      }
+      AddAndValidate(playerAcquiredCards, ids, nameof(playerAcquiredCards));
+      AddAndValidate(aiAcquiredCards, ids, nameof(aiAcquiredCards));
+      AddAndValidate(otherCandidates, ids, nameof(otherCandidates));
     }
 
-    private static void AddAndValidateCards(
+    private static void AddAndValidate(
       IReadOnlyList<Card> cards,
       HashSet<CardId> ids,
       string parameterName)
@@ -295,19 +221,16 @@ namespace CodexGame.Core.Distribution
       {
         if (!cards[index].IsValid || !ids.Add(cards[index].Id))
         {
-          throw new ArgumentException(
-            "Distribution inputs must contain valid cards with no duplicate identities.",
-            parameterName);
+          throw new ArgumentException("Distribution inputs must contain unique valid cards.", parameterName);
         }
       }
     }
 
-    private static void EnsureEnoughCandidates(int actualCount, int requiredCount)
+    private static void EnsureEnoughCandidates(int actual, int required)
     {
-      if (actualCount < requiredCount)
+      if (actual < required)
       {
-        throw new ArgumentException(
-          $"Distribution needs at least {requiredCount} random candidates, but only {actualCount} are available.");
+        throw new ArgumentException($"Distribution needs {required} candidates, but only {actual} remain.");
       }
     }
   }

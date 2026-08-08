@@ -10,7 +10,7 @@ namespace CodexGame.Application.Playable
   {
     public PrototypeHalliSnapshot(
       PrototypeSessionPhase phase,
-      string statusMessage,
+      LocalizedStatus status,
       long combatRoundSeed,
       int combatRoundNumber,
       int playerWins,
@@ -26,7 +26,6 @@ namespace CodexGame.Application.Playable
       HalliActor leadActor,
       bool canFlip,
       bool canRing,
-      bool wrongBellRewardSelectionEnabled,
       int revealStepNumber,
       HalliActor? revealingActor,
       HalliRelativeSide? revealingRelativeSide,
@@ -41,11 +40,10 @@ namespace CodexGame.Application.Playable
       PileSide? lastAcquiredPile,
       PileSide? lastBellPile,
       PrototypeBellFeedback bellFeedback,
-      IReadOnlyList<Card> wrongBellRewardCandidates,
       HalliStageEndReason endReason)
     {
       Phase = phase;
-      StatusMessage = statusMessage ?? throw new ArgumentNullException(nameof(statusMessage));
+      Status = status ?? throw new ArgumentNullException(nameof(status));
       CombatRoundSeed = combatRoundSeed;
       CombatRoundNumber = combatRoundNumber;
       PlayerWins = playerWins;
@@ -61,7 +59,6 @@ namespace CodexGame.Application.Playable
       LeadActor = leadActor;
       CanFlip = canFlip;
       CanRing = canRing;
-      WrongBellRewardSelectionEnabled = wrongBellRewardSelectionEnabled;
       RevealStepNumber = revealStepNumber;
       RevealingActor = revealingActor;
       RevealingRelativeSide = revealingRelativeSide;
@@ -76,12 +73,11 @@ namespace CodexGame.Application.Playable
       LastAcquiredPile = lastAcquiredPile;
       LastBellPile = lastBellPile;
       BellFeedback = bellFeedback;
-      WrongBellRewardCandidates = Copy(wrongBellRewardCandidates);
       EndReason = endReason;
     }
 
     public PrototypeSessionPhase Phase { get; }
-    public string StatusMessage { get; }
+    public LocalizedStatus Status { get; }
     public long CombatRoundSeed { get; }
     public int CombatRoundNumber { get; }
     public int PlayerWins { get; }
@@ -97,7 +93,6 @@ namespace CodexGame.Application.Playable
     public HalliActor LeadActor { get; }
     public bool CanFlip { get; }
     public bool CanRing { get; }
-    public bool WrongBellRewardSelectionEnabled { get; }
     public int RevealStepNumber { get; }
     public HalliActor? RevealingActor { get; }
     public HalliRelativeSide? RevealingRelativeSide { get; }
@@ -112,7 +107,6 @@ namespace CodexGame.Application.Playable
     public PileSide? LastAcquiredPile { get; }
     public PileSide? LastBellPile { get; }
     public PrototypeBellFeedback BellFeedback { get; }
-    public IReadOnlyList<Card> WrongBellRewardCandidates { get; }
     public HalliStageEndReason EndReason { get; }
 
     private static IReadOnlyList<Card> Copy(IReadOnlyList<Card> source)

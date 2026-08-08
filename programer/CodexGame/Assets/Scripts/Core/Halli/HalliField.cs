@@ -25,6 +25,11 @@ namespace CodexGame.Core.Halli
       return GetPile(side).Clear();
     }
 
+    public void MoveTopToBottom(PileSide side)
+    {
+      GetPile(side).MoveTopToBottom();
+    }
+
     private PileState GetPile(PileSide side)
     {
       switch (side)

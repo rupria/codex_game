@@ -7,7 +7,6 @@ namespace CodexGame.Application.Playable
     ReadyToFlip,
     SequentialReveal,
     BellOpen,
-    WrongBellRewardSelection,
     Review,
     Finished
   }

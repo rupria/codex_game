@@ -16,8 +16,8 @@ namespace CodexGame.SmokeTests.Poker
     {
       CheckPredictionAndAnnouncement(tests);
       CheckPredictionTimeout(tests);
-      CheckItemWindow(tests);
-      CheckRewardLedger(tests);
+      CheckPublicBuildSkipsItemWindow(tests);
+      CheckCoinLedger(tests);
     }
 
     private static void CheckPredictionAndAnnouncement(TestHarness tests)
@@ -28,14 +28,13 @@ namespace CodexGame.SmokeTests.Poker
         Distribution(),
         BattleHealth.Initial,
         PokerRuleSet.Development,
-        new GameTimestamp(0),
-        0);
+        new GameTimestamp(0));
 
       var concealed = session.GetSnapshot(new GameTimestamp(0));
       tests.Check(
         concealed.Phase == PokerRoundPhase.AwaitingPrediction
           && concealed.RemainingMicroseconds == GameRules.PredictionTimeoutMicroseconds,
-        "Poker prediction must open a one-minute deadline after the hand locks.");
+        "Poker prediction must open a two-minute deadline after the hand locks.");
       tests.Check(concealed.VisibleAiPrivateCards.Count == 0, "AI cards must stay concealed before result announcement.");
       tests.Check(session.SubmitPrediction(PredictionChoice.PlayerWins, new GameTimestamp(10)), "A prediction must be accepted once.");
       tests.Check(
@@ -68,8 +67,7 @@ namespace CodexGame.SmokeTests.Poker
         Distribution(),
         BattleHealth.Initial,
         PokerRuleSet.Development,
-        new GameTimestamp(0),
-        0);
+        new GameTimestamp(0));
       tests.Check(
         !session.Tick(new GameTimestamp(GameRules.PredictionTimeoutMicroseconds)),
         "Prediction timeout must first enter result announcement rather than reveal immediately.");
@@ -83,10 +81,10 @@ namespace CodexGame.SmokeTests.Poker
         result != null
           && result.Prediction.Choice == PredictionChoice.Skipped
           && !result.Prediction.IsCorrect,
-        "One-minute prediction inactivity must skip reward without changing poker damage.");
+        "Two-minute prediction inactivity must skip reward without changing poker damage.");
     }
 
-    private static void CheckItemWindow(TestHarness tests)
+    private static void CheckPublicBuildSkipsItemWindow(TestHarness tests)
     {
       var session = new PokerRoundSession();
       session.Begin(
@@ -94,26 +92,20 @@ namespace CodexGame.SmokeTests.Poker
         Distribution(),
         BattleHealth.Initial,
         PokerRuleSet.Development,
-        new GameTimestamp(100),
-        1);
-      tests.Check(session.GetSnapshot(new GameTimestamp(100)).Phase == PokerRoundPhase.ItemWindow,
-        "A stored item reward must expose the pre-lock item window.");
-      tests.Check(session.SkipItemWindow(new GameTimestamp(200)), "The item window must support an explicit skip.");
-      tests.Check(session.GetSnapshot(new GameTimestamp(200)).HandLocked,
-        "Skipping the item window must lock the hand before prediction.");
+        new GameTimestamp(100));
+      tests.Check(
+        session.GetSnapshot(new GameTimestamp(100)).Phase == PokerRoundPhase.AwaitingPrediction,
+        "The current public build must enter prediction directly without an item window.");
     }
 
-    private static void CheckRewardLedger(TestHarness tests)
+    private static void CheckCoinLedger(TestHarness tests)
     {
-      var ledger = new PredictionRewardLedger();
-      var item = ledger.Award(new FixedRandom(0));
-      var coin = ledger.Award(new FixedRandom(1));
+      var ledger = new CoinLedger();
+      ledger.AwardPredictionCoin();
+      ledger.AwardStageCoins(3);
       tests.Check(
-        item == PredictionRewardKind.Item
-          && coin == PredictionRewardKind.CoinIncrease
-          && ledger.ItemRewardCount == 1
-          && ledger.CoinIncreaseEventCount == 1,
-        "Correct predictions must accumulate deterministic item or coin-increase reward events.");
+        ledger.Balance == 4,
+        "The public reward model must count only prediction and stage coins.");
     }
 
     private static PrivateCardDistributionResult Distribution()
@@ -142,11 +134,5 @@ namespace CodexGame.SmokeTests.Poker
       return new Card(suit, rank, 1);
     }
 
-    private sealed class FixedRandom : IRandomSource
-    {
-      private readonly int _value;
-      public FixedRandom(int value) { _value = value; }
-      public int NextInt(int exclusiveMax) { return _value % exclusiveMax; }
-    }
   }
 }

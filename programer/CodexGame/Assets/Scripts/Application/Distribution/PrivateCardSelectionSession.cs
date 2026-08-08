@@ -16,6 +16,7 @@ namespace CodexGame.Application.Distribution
     private IReadOnlyList<Card> _otherCandidates = EmptyCards;
     private IReadOnlyList<Card> _winnerCandidates = EmptyCards;
     private readonly HashSet<CardId> _selectedIds = new HashSet<CardId>();
+    private IReadOnlyList<CardId> _selectedAiIds = Array.AsReadOnly(Array.Empty<CardId>());
     private IRandomSource? _random;
     private GameTimestamp _deadline;
     private HalliStageWinner _winner;
@@ -51,37 +52,19 @@ namespace CodexGame.Application.Distribution
       _otherCandidates = Copy(otherCandidates);
       _winner = winner;
       _combatRoundNumber = combatRoundNumber;
-      _winnerCandidates = winner == HalliStageWinner.Player
+      _winnerCandidates = _playerAcquiredCards.Count > GameRules.RequiredPrivateCards
         ? _playerAcquiredCards
-        : winner == HalliStageWinner.Ai
-          ? _aiAcquiredCards
-          : EmptyCards;
-      _requiredSelectionCount = winner == HalliStageWinner.None
-        ? 0
-        : PrivateCardDistributionRules.GetAvailableDirectSelectionCount(
-          combatRoundNumber,
-          _winnerCandidates.Count);
+        : EmptyCards;
+      _requiredSelectionCount = _winnerCandidates.Count > 0
+        ? GameRules.RequiredPrivateCards
+        : 0;
       _selectedIds.Clear();
       _result = null;
       _random = DeterministicRandomFactory.Create(combatRoundSeed, RandomChannel.CardDistribution);
+      _selectedAiIds = SelectAiPrivateCards(_aiAcquiredCards, _random);
 
-      if (winner == HalliStageWinner.None)
+      if (_requiredSelectionCount == 0)
       {
-        Complete(PrivateCardSelectionMode.Confirmed);
-        return;
-      }
-
-      var requiresSelection = PrivateCardDistributionRules.RequiresSelectionUi(
-        combatRoundNumber,
-        _winnerCandidates.Count);
-
-      if (!requiresSelection)
-      {
-        for (var index = 0; index < _winnerCandidates.Count; index++)
-        {
-          _selectedIds.Add(_winnerCandidates[index].Id);
-        }
-
         Complete(PrivateCardSelectionMode.Confirmed);
         return;
       }
@@ -143,7 +126,9 @@ namespace CodexGame.Application.Distribution
 
       return new PrivateCardSelectionSnapshot(
         Phase,
-        _winner,
+        Phase == PrivateCardSelectionPhase.AwaitingSelection
+          ? HalliStageWinner.Player
+          : _winner,
         _combatRoundNumber,
         _requiredSelectionCount,
         remaining,
@@ -159,13 +144,14 @@ namespace CodexGame.Application.Distribution
         throw new InvalidOperationException("The selection session has no distribution random source.");
       }
 
-      _result = PrivateCardDistributionResolver.Resolve(
+      _result = PrivateCardDistributionResolver.ResolveBoth(
         _playerAcquiredCards,
         _aiAcquiredCards,
         _otherCandidates,
         _winner,
         _combatRoundNumber,
         GetSelectedCardIds(),
+        _selectedAiIds,
         mode,
         _random);
       Phase = PrivateCardSelectionPhase.Completed;
@@ -197,6 +183,26 @@ namespace CodexGame.Application.Distribution
       }
 
       return Array.AsReadOnly(ids);
+    }
+
+    private static IReadOnlyList<CardId> SelectAiPrivateCards(
+      IReadOnlyList<Card> candidates,
+      IRandomSource random)
+    {
+      if (candidates.Count <= GameRules.RequiredPrivateCards)
+      {
+        return Array.AsReadOnly(Array.Empty<CardId>());
+      }
+
+      var available = new List<Card>(candidates);
+      var selected = new CardId[GameRules.RequiredPrivateCards];
+      for (var index = 0; index < selected.Length; index++)
+      {
+        var selectedIndex = random.NextInt(available.Count);
+        selected[index] = available[selectedIndex].Id;
+        available.RemoveAt(selectedIndex);
+      }
+      return Array.AsReadOnly(selected);
     }
 
     private static bool Contains(IReadOnlyList<Card> cards, CardId cardId)
