@@ -57,3 +57,113 @@
   - W로 4장 펼치기, Q/E 벨 판정, 획득 카드 포커 활용을 그림으로 설명하는 가이드
 - 원본과 투명 시트는 `sources/`에 보관했다.
 - 프로젝트 배포 전 최종 라이선스·상표 검토는 저장소 운영 정책에 따라 진행한다.
+
+## 0.1.1 누락 리소스 보완
+
+2026-08-08에 `게임진행플로우_0.1.0`, 프로그래머 인계서와 아트 요청 산출물을 다시 대조했다.
+기존 카드 2종 덱, 벨 상태, HP·승수, 타이머, 공용 카드 잠금 슬롯은 재사용 가능함을 확인했다.
+개발 적용 경로에 없던 다음 소스를 추가했다.
+
+### Unity 적용용 추가 파일
+
+| 파일 | 규격 | 용도 |
+|---|---:|---|
+| `card_select_idle.png` | 80×106 RGBA | 선택 해제·기본 상태 |
+| `card_select_hover.png` | 80×106 RGBA | 마우스 탐색 상태 |
+| `card_select_selected.png` | 80×106 RGBA | 현재 선택 카드 |
+| `card_select_confirmable.png` | 80×106 RGBA | 필요한 카드 수가 충족된 확정 가능 상태 |
+| `card_select_disabled.png` | 80×106 RGBA | 입력 잠금·선택 불가 상태 |
+| `start_screen_background.png` | 960×540 RGB | `START`, `GUIDE` 시작 화면 런타임 배경 |
+| `guide_overlay_background.png` | 960×540 RGB | 이미지 중심 조작 가이드 런타임 배경 |
+
+선택 프레임은 카드 앞면 위에 별도 UI 레이어로 겹친다. 프레임 자체에 카드 랭크·문양 정보를 넣지 않는다.
+확정 가능 상태는 금색, 탐색·선택은 청록, 비활성은 저채도 회색과 잠금 표시를 사용한다.
+
+### 화면 전환 추가 시안
+
+| 파일 | 용도 |
+|---|---|
+| `halli_first_community_reveal_mock_960x540_0_1_1.png` | START 직후 딜러의 첫 공용 카드 확대·고정 구도 |
+| `halli_poker_wide_mock_960x540_0_1_1.png` | 할리갈리 종료 후 벨·필드 제거, 포커 손패와 공용 카드 중심의 와이드 구도 |
+| `halli_gapfill_preview_960x540_0_1_1.png` | 두 카메라 구도와 카드 선택 5상태 통합 검수 보드 |
+
+포커 와이드 시안의 K·Q는 기존 결정에 맞춰 해골 로열 일러스트를 사용한다. 숫자 카드는 일반 포커 배열을 사용하며
+할리갈리 판정용 중앙 해골 수 표시는 넣지 않는다.
+
+### 0.1.1 생성 기록
+
+- 제작 방식: OpenAI 내장 ImageGen으로 첫 공용 카드 공개·포커 와이드 시안을 생성하고, 960×540 최근접 보간으로 저장
+- 입력 레퍼런스: 저장소의 승인 할리갈리 배치, 카드 뒷면, 포커 카드, AI 실루엣
+- 프롬프트 요약:
+  - 첫 공개: 딜러 실루엣, 확대 중인 공용 카드 1장, 첫 슬롯 청록 강조, 두 번째 슬롯 잠금, 벨 입력 비활성
+  - 포커 와이드: 두 공용 카드, 플레이어 앞면 3장, AI 뒷면 3장, 할리갈리 벨·더미 제거, 해골 K·Q 로열
+- 카드 선택 프레임은 프로젝트 색상표에 따라 결정적으로 제작한 투명 픽셀 UI이며 외부 소스를 포함하지 않는다.
+- 생성 원본은 `sources/halli_first_community_reveal_source_0_1_1.png`와
+  `sources/halli_poker_wide_source_0_1_1.png`에 보관했다.
+
+## 0.1.2 웨스턴 살롱 배경
+
+- 레퍼런스: `halli_western_saloon_background_960x540_0_1_2.png`
+- Unity 적용 파일: `Assets/Art/Prototype/Board/halli_western_saloon_background.png`
+- 생성 원본: `sources/halli_western_saloon_background_source_0_1_2.png`
+- 규격: 960×540 RGB, Point 필터, 무압축, 밉맵 없음
+
+### 시각 기준
+
+1. 기존 할리갈리 3/4 탑다운 시점과 중앙 타원형 테이블 크기를 유지한다.
+2. 배경은 심야의 웨스턴 살롱으로 변경한다. 목재 바, 병 선반, 롱혼 장식, 낡은 의자와 흑백 초상은 암부에서만 보이게 한다.
+3. 단일 호박색 펜던트 조명이 테이블 중앙에만 떨어지며 화면 외곽과 UI 안전 영역은 어둡게 유지한다.
+4. 환경에는 청록·적색 조명을 사용하지 않는다. 해당 색상은 플레이어·AI UI 식별에만 사용한다.
+5. 배경 PNG에는 카드, 벨, 칩, 코인, HUD와 텍스트를 포함하지 않는다. 기존 카드·UI 오브젝트를 별도 레이어로 그대로 사용한다.
+6. 상단 상대 실루엣은 배경 분위기 요소이며 얼굴·세부 복장은 판독 우선순위에서 제외한다.
+
+### 생성 기록
+
+- 제작 방식: OpenAI 내장 ImageGen 편집 모드
+- 입력 역할:
+  - 기존 할리갈리 화면은 카메라·테이블 크기 기준
+  - 사용자 제공 웨스턴 살롱 이미지는 목재·바·롱혼·도박장 분위기 참고
+- 프롬프트 요약: 매우 어두운 심야 웨스턴 살롱, 중앙의 빈 타원형 녹색 펠트 테이블, 단일 호박색 조명을 테이블에만 제한,
+  주변 바와 장식은 거의 검은 실루엣, 카드·벨·HUD를 모두 제외한 독립 배경
+- 참조 이미지의 픽셀을 직접 포함하지 않고 분위기와 소재만 참고해 새로 생성했다.
+
+## 0.1.3 실제 포커 카드 적용 시안과 웨스턴 카드 뒷면 후보
+
+- 실제 적용 카드 확인 시안: `halli_poker_wide_actual_cards_mock_960x540_0_1_3.png`
+- 카드 뒷면 검토용 원본 크기: `card_back_western_concept_64x90_0_1_3.png`
+- 카드 뒷면 확대 미리보기: `card_back_western_concept_preview_512x720_0_1_3.png`
+- 생성 원본: `sources/card_back_western_balanced_chromakey_source_0_1_3.png`
+- 투명화 작업 원본: `sources/card_back_western_balanced_transparent_source_0_1_3.png`
+
+### 적용 상태
+
+1. 포커 와이드 시안의 앞면 카드는 `Assets/Art/Prototype/Cards_0_06/poker_variants/`에 있는 실제 런타임 PNG를 합성했다.
+2. 시안에 사용한 카드는 `card_poker_clubs_10`, `card_poker_hearts_8`, `card_poker_diamonds_k`, `card_poker_clubs_7`, `card_poker_hearts_q`다.
+3. 숫자 카드는 일반 포커 핍, K·Q는 해골 로열 일러스트가 들어간 현재 적용 디자인을 그대로 보여준다.
+4. 기존 `halli_poker_wide_mock_960x540_0_1_1.png`의 생성형 카드 그림은 구도 참고용이며, 카드 외형 검수에는 이번 실제 카드 적용 시안을 기준으로 사용한다.
+5. 웨스턴 카드 뒷면은 승인 전 후보 시안이다. 런타임 `Assets/Art/Prototype/Cards_0_06/card_back.png`는 아직 교체하지 않았다.
+
+### 카드 뒷면 생성 기록
+
+- 제작 방식: OpenAI 내장 ImageGen 신규 생성 모드 후 크로마 제거와 최근접 축소
+- 프롬프트 요약: 기존 뒷면의 세로 대칭 구조와 해골 벨 중심 문양을 유지하고, 짙은 갈색 가죽·어두운 포레스트 그린·앤티크 황동 팔레트와 희미한 보안관 별을 사용한 웨스턴 살롱 카드 뒷면. 글자·숫자·슈트 문양 없이 평면 마젠타 배경에 분리 생성
+- 실사용 후보 규격: 64×90 RGBA, 투명 모서리, Point 필터 권장
+
+## 0.1.4 승인 웨스턴 카드 뒷면 적용
+
+- 승인 실사용 파일: `Assets/Art/Prototype/Cards_0_06/card_back.png`
+- 레퍼런스 보관본: `card_back_western_approved_64x90_0_1_4.png`
+- 확대 검수본: `card_back_western_approved_preview_512x720_0_1_4.png`
+- 실제 카드 적용 화면: `halli_poker_wide_approved_cards_mock_960x540_0_1_4.png`
+- 생성 원본: `sources/card_back_western_approved_chromakey_source_0_1_4.png`
+- 투명화 원본: `sources/card_back_western_approved_transparent_source_0_1_4.png`
+
+사용자 승인에 따라 기존 런타임 `card_back.png`를 교체했다. 기존 `.meta`와 카탈로그 경로는 유지하므로 프로그래머는 참조를 변경할 필요가 없다.
+승인안은 중앙 해골 벨, 완전한 황동 보안관 별, 상·하단 롱혼 뼈, 어두운 갈색 가죽과 녹색 모서리를 사용한다.
+
+### 0.1.4 생성·가공 기록
+
+- 제작 방식: OpenAI 내장 ImageGen 편집 모드
+- 프롬프트 요약: 사용자 편집본을 기준으로 해골 벨·황동 별·상하 롱혼·외곽 황동 테두리·녹색 모서리를 유지하고, 거친 검은 덧칠과 비대칭 경계를 제거해 대칭 픽셀 카드 뒷면으로 정리
+- 후처리: 마젠타 크로마 제거, 알파 경계 검수, 64×90 최근접 축소
+- Unity 권장값: 기존 `.meta` 유지, Point 필터, RGBA, 투명 모서리
