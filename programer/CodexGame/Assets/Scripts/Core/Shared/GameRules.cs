@@ -22,7 +22,15 @@ namespace CodexGame.Core.Shared
     public const long PrivateSelectionTimeoutMicroseconds = 60_000_000;
     public const long PredictionTimeoutMicroseconds = 120_000_000;
     public const long PokerResultAnnouncementMicroseconds = 1_000_000;
-    public const long NextStageTransitionPlaceholderMicroseconds = 1_200_000;
+    public const long NextStageTransitionShopClearMicroseconds = 220_000;
+    public const long NextStageTransitionCameraTurnMicroseconds = 320_000;
+    public const long NextStageTransitionWalkMicroseconds = 650_000;
+    public const long NextStageTransitionDoorOpenMicroseconds = 180_000;
+    public const long NextStageTransitionThresholdMicroseconds = 280_000;
+    public const long NextStageTransitionFadeOutMicroseconds = 250_000;
+    public const long NextStageTransitionFixedPreloadMicroseconds = 1_900_000;
+    public const long NextStageTransitionMinimumBlackHoldMicroseconds = 150_000;
+    public const long NextStageTransitionFadeInMicroseconds = 350_000;
     public const long GlobalInactivityTimeoutMicroseconds = 180_000_000;
     public const long AiMinimumReactionMicroseconds = 1_000_000;
     public const long AiTypicalReactionMicroseconds = 2_000_000;

@@ -36,6 +36,9 @@ namespace CodexGame.Presentation.Views
     private BarShopUiArtSet _barShopUiArtSet;
 
     [SerializeField]
+    private StageTransitionUiArtSet _stageTransitionUiArtSet;
+
+    [SerializeField]
     private bool _useSceneBackdrop;
 
     [SerializeField]
@@ -48,6 +51,8 @@ namespace CodexGame.Presentation.Views
     private readonly PrivateSelectionDevPanel _selectionPanel = new PrivateSelectionDevPanel();
     private readonly PokerDevPanel _pokerPanel = new PokerDevPanel();
     private readonly BarShopDevPanel _barShopPanel = new BarShopDevPanel();
+    private readonly StageTransitionDevPanel _stageTransitionPanel =
+      new StageTransitionDevPanel();
     private PlayableGameSnapshot _snapshot;
     private PlayableDevStyles _styles;
     private PlayableCardRenderer _halliCards;
@@ -68,6 +73,9 @@ namespace CodexGame.Presentation.Views
     internal PlayableGamePhase CurrentPhase => _snapshot == null
       ? PlayableGamePhase.Intro
       : _snapshot.Phase;
+
+    public bool IsNextStagePresentationReady => _stageTransitionUiArtSet != null
+      && _stageTransitionUiArtSet.IsComplete;
 
     private void Awake()
     {
@@ -104,7 +112,8 @@ namespace CodexGame.Presentation.Views
       PokerUiArtSet pokerUiArtSet = null,
       bool useSceneBackdrop = false,
       bool useIntroArtLayout = false,
-      BarShopUiArtSet barShopUiArtSet = null)
+      BarShopUiArtSet barShopUiArtSet = null,
+      StageTransitionUiArtSet stageTransitionUiArtSet = null)
     {
       _boardTexture = boardTexture;
       _cardArtSet = cardArtSet;
@@ -114,6 +123,7 @@ namespace CodexGame.Presentation.Views
       _healthUiArtSet = healthUiArtSet;
       _pokerUiArtSet = pokerUiArtSet;
       _barShopUiArtSet = barShopUiArtSet;
+      _stageTransitionUiArtSet = stageTransitionUiArtSet;
       _useSceneBackdrop = useSceneBackdrop;
       _useIntroArtLayout = useIntroArtLayout;
       _halliCards = null;
@@ -288,6 +298,16 @@ namespace CodexGame.Presentation.Views
         return;
       }
 
+      if (_snapshot.Phase == PlayableGamePhase.NextStageTransition
+        && _snapshot.NextStageTransition != null)
+      {
+        _stageTransitionPanel.Draw(
+          _snapshot.NextStageTransition,
+          _stageTransitionUiArtSet,
+          _barShopUiArtSet);
+        return;
+      }
+
       GUILayout.BeginArea(new Rect(48f, 28f, 864f, 484f));
       GUILayout.Label(L("UI_GAME_TITLE"), _styles.Title);
       GUILayout.BeginHorizontal();
@@ -324,9 +344,6 @@ namespace CodexGame.Presentation.Views
           break;
         case PlayableGamePhase.StageWon:
           DrawStageWon();
-          break;
-        case PlayableGamePhase.NextStageTransition:
-          DrawNextStageTransition();
           break;
       }
 
@@ -454,13 +471,6 @@ namespace CodexGame.Presentation.Views
       {
         AdvanceRequested?.Invoke();
       }
-      GUILayout.FlexibleSpace();
-    }
-
-    private void DrawNextStageTransition()
-    {
-      GUILayout.FlexibleSpace();
-      GUILayout.Label(L("UI_TRANSITION_LEAVING"), _styles.Status, GUILayout.Height(90f));
       GUILayout.FlexibleSpace();
     }
 

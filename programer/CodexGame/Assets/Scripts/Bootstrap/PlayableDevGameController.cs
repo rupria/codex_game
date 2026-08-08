@@ -39,7 +39,13 @@ namespace CodexGame.Bootstrap
 
     private void Update()
     {
-      _session.Tick(Now());
+      var now = Now();
+      if (_session.Phase == PlayableGamePhase.NextStageTransition
+        && _view.IsNextStagePresentationReady)
+      {
+        _session.MarkNextStageLoadComplete(now);
+      }
+      _session.Tick(now);
       Present();
     }
 
