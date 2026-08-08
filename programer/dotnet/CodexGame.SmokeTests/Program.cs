@@ -22,6 +22,8 @@ PokerRoundSessionTests.Run(tests);
 BattleRuleTests.Run(tests);
 LocalizationCatalogTests.Run(tests);
 GuideModalStateTests.Run(tests);
+HealthPipViewStateTests.Run(tests);
+RopeTimerViewStateTests.Run(tests);
 StageFlowPlanTests.Run(tests);
 
 return tests.Complete();

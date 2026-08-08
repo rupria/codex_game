@@ -33,10 +33,15 @@ namespace CodexGame.Presentation.Views
 
     public void DrawAt(Rect rect, Card card, bool selected = false)
     {
-      GUI.Box(rect, GUIContent.none, selected ? _styles.SelectedCard : _styles.Card);
+      DrawAt(rect, card, selected, true);
+    }
+
+    public void DrawAt(Rect rect, Card card, bool selected, bool drawFrame)
+    {
+      if (drawFrame) GUI.Box(rect, GUIContent.none, selected ? _styles.SelectedCard : _styles.Card);
       if (_art != null && _art.TryGetTexture(card, out var texture))
       {
-        GUI.DrawTexture(Inset(rect), texture, ScaleMode.ScaleToFit, true);
+        GUI.DrawTexture(drawFrame ? Inset(rect) : rect, texture, ScaleMode.ScaleToFit, true);
       }
       else
       {
@@ -58,15 +63,20 @@ namespace CodexGame.Presentation.Views
 
     public void DrawBackAt(Rect rect, float rotationDegrees = 0f)
     {
+      DrawBackAt(rect, rotationDegrees, true);
+    }
+
+    public void DrawBackAt(Rect rect, float rotationDegrees, bool drawFrame)
+    {
       var previousMatrix = GUI.matrix;
       if (Mathf.Abs(rotationDegrees) > 0.01f)
       {
         GUIUtility.RotateAroundPivot(rotationDegrees, rect.center);
       }
-      GUI.Box(rect, GUIContent.none, _styles.Card);
+      if (drawFrame) GUI.Box(rect, GUIContent.none, _styles.Card);
       if (_backTexture != null)
       {
-        GUI.DrawTexture(Inset(rect), _backTexture, ScaleMode.ScaleToFit, true);
+        GUI.DrawTexture(drawFrame ? Inset(rect) : rect, _backTexture, ScaleMode.ScaleToFit, true);
       }
       else
       {

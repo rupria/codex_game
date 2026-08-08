@@ -23,6 +23,15 @@ namespace CodexGame.Presentation.Views
     private GuideUiArtSet _guideUiArtSet;
 
     [SerializeField]
+    private Texture2D _introTexture;
+
+    [SerializeField]
+    private HealthUiArtSet _healthUiArtSet;
+
+    [SerializeField]
+    private PokerUiArtSet _pokerUiArtSet;
+
+    [SerializeField]
     private bool _useSceneBackdrop;
 
     [SerializeField]
@@ -84,6 +93,9 @@ namespace CodexGame.Presentation.Views
       PlayableCardArtSet cardArtSet,
       HalliUiArtSet halliUiArtSet,
       GuideUiArtSet guideUiArtSet,
+      Texture2D introTexture = null,
+      HealthUiArtSet healthUiArtSet = null,
+      PokerUiArtSet pokerUiArtSet = null,
       bool useSceneBackdrop = false,
       bool useIntroArtLayout = false)
     {
@@ -91,6 +103,9 @@ namespace CodexGame.Presentation.Views
       _cardArtSet = cardArtSet;
       _halliUiArtSet = halliUiArtSet;
       _guideUiArtSet = guideUiArtSet;
+      _introTexture = introTexture;
+      _healthUiArtSet = healthUiArtSet;
+      _pokerUiArtSet = pokerUiArtSet;
       _useSceneBackdrop = useSceneBackdrop;
       _useIntroArtLayout = useIntroArtLayout;
       _halliCards = null;
@@ -160,7 +175,18 @@ namespace CodexGame.Presentation.Views
     {
       if (_snapshot == null) return;
       PlayableViewport.Apply();
-      if (!_useSceneBackdrop && _boardTexture != null)
+      var drewExactIntroArt = _snapshot.Phase == PlayableGamePhase.Intro
+        && _useIntroArtLayout
+        && _introTexture != null;
+      if (drewExactIntroArt)
+      {
+        GUI.DrawTexture(
+          new Rect(0f, 0f, PlayableViewport.Width, PlayableViewport.Height),
+          _introTexture,
+          ScaleMode.StretchToFill,
+          true);
+      }
+      else if (!_useSceneBackdrop && _boardTexture != null)
       {
         GUI.DrawTexture(
           new Rect(0f, 0f, PlayableViewport.Width, PlayableViewport.Height),
@@ -168,7 +194,7 @@ namespace CodexGame.Presentation.Views
           ScaleMode.StretchToFill,
           true);
       }
-      if (!_useSceneBackdrop)
+      if (!_useSceneBackdrop && !drewExactIntroArt)
       {
         _tableLightOverlay.Draw(
           Time.unscaledTime,
@@ -210,10 +236,27 @@ namespace CodexGame.Presentation.Views
           _styles,
           _halliCards,
           _halliUiArtSet,
+          _healthUiArtSet,
           _localization,
           () => AdvanceRequested?.Invoke(),
           () => LeftBellRequested?.Invoke(),
           () => RightBellRequested?.Invoke());
+        return;
+      }
+
+      if ((_snapshot.Phase == PlayableGamePhase.PokerPrediction
+          || _snapshot.Phase == PlayableGamePhase.PokerResult)
+        && _snapshot.Poker != null)
+      {
+        _pokerPanel.Draw(
+          _snapshot.Poker,
+          _styles,
+          _pokerCards,
+          _healthUiArtSet,
+          _pokerUiArtSet,
+          _localization,
+          prediction => PredictionRequested?.Invoke(prediction),
+          () => AdvanceRequested?.Invoke());
         return;
       }
 
@@ -246,19 +289,6 @@ namespace CodexGame.Presentation.Views
               index => _selectionFocus = index,
               cardId => PrivateCardToggleRequested?.Invoke(cardId),
               () => PrivateCardsConfirmRequested?.Invoke());
-          }
-          break;
-        case PlayableGamePhase.PokerPrediction:
-        case PlayableGamePhase.PokerResult:
-          if (_snapshot.Poker != null)
-          {
-            _pokerPanel.Draw(
-              _snapshot.Poker,
-              _styles,
-              _pokerCards,
-              _localization,
-              prediction => PredictionRequested?.Invoke(prediction),
-              () => AdvanceRequested?.Invoke());
           }
           break;
         case PlayableGamePhase.BattleFinished:
@@ -350,21 +380,26 @@ namespace CodexGame.Presentation.Views
     private bool DrawIntroArtButton(Rect rect, string label, Color coverColor)
     {
       var hovered = rect.Contains(Event.current.mousePosition);
+      var pressed = hovered && Input.GetMouseButton(0);
       var previousColor = GUI.color;
       GUI.color = hovered
         ? new Color(
           Mathf.Min(coverColor.r * 1.35f, 1f),
           Mathf.Min(coverColor.g * 1.35f, 1f),
           Mathf.Min(coverColor.b * 1.35f, 1f),
-          coverColor.a)
-        : coverColor;
+          1f)
+        : new Color(coverColor.r, coverColor.g, coverColor.b, 1f);
       GUI.DrawTexture(
-        new Rect(rect.x + 12f, rect.y + 12f, rect.width - 24f, rect.height - 24f),
+        new Rect(rect.x + 9f, rect.y + 9f, rect.width - 18f, rect.height - 18f),
         Texture2D.whiteTexture,
         ScaleMode.StretchToFill,
         true);
       GUI.color = previousColor;
-      return GUI.Button(rect, label, _styles.IntroButton);
+      var labelRect = pressed
+        ? new Rect(rect.x, rect.y + 2f, rect.width, rect.height)
+        : rect;
+      GUI.Label(labelRect, label, _styles.IntroButton);
+      return GUI.Button(rect, GUIContent.none, GUIStyle.none);
     }
 
     private void DrawBattleFinished()

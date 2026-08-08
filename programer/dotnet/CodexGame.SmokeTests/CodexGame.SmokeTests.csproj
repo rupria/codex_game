@@ -19,6 +19,12 @@
     <Compile
       Include="..\..\CodexGame\Assets\Scripts\Presentation\Views\GuideModalState.cs"
       Link="Presentation\GuideModalState.cs" />
+    <Compile
+      Include="..\..\CodexGame\Assets\Scripts\Presentation\Views\HealthPipViewState.cs"
+      Link="Presentation\HealthPipViewState.cs" />
+    <Compile
+      Include="..\..\CodexGame\Assets\Scripts\Presentation\Views\RopeTimerViewState.cs"
+      Link="Presentation\RopeTimerViewState.cs" />
     <None
       Include="..\..\CodexGame\Assets\StreamingAssets\Localization\ui_strings.csv"
       Link="Localization\ui_strings.csv"

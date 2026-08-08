@@ -15,9 +15,11 @@ namespace CodexGame.Editor
   {
     public const string ScenePath = "Assets/Scenes/PlayableDev.unity";
     public const string BoardArtPath =
-      "Assets/Art/Prototype/Board/halli_western_saloon_background.png";
+      "Assets/Art/Prototype/Board/halli_western_round_table_unlit.png";
     private const string UiArtRoot = "Assets/Art/Prototype/UI/";
     private const string HalliUiArtRoot = UiArtRoot + "Halli_0_1_0/";
+    private const string HalliUi021ArtRoot = UiArtRoot + "Halli_0_2_1/";
+    private const string PokerUiArtRoot = UiArtRoot + "Poker_0_2_2/";
     private const string IntroArtPath = HalliUiArtRoot + "start_screen_background.png";
     private const string BackdropShaderPath = "Assets/Shaders/RuntimeBackdropLit.shader";
 
@@ -59,7 +61,11 @@ namespace CodexGame.Editor
         LoadTexture(HalliUiArtRoot + "flip_deck_pressed.png"),
         LoadTexture(HalliUiArtRoot + "flip_deck_disabled.png"),
         LoadTexture(HalliUiArtRoot + "player_acquired_tray.png"),
-        LoadTexture(HalliUiArtRoot + "ai_acquired_status_panel.png"));
+        LoadTexture(HalliUiArtRoot + "ai_acquired_status_panel.png"),
+        LoadTexture(HalliUi021ArtRoot + "round_win_pip_player_empty_32_0_2_1.png"),
+        LoadTexture(HalliUi021ArtRoot + "round_win_pip_player_filled_32_0_2_1.png"),
+        LoadTexture(HalliUi021ArtRoot + "round_win_pip_ai_empty_32_0_2_1.png"),
+        LoadTexture(HalliUi021ArtRoot + "round_win_pip_ai_filled_32_0_2_1.png"));
       var guideUiArtSet = new GuideUiArtSet(
         LoadTexture(HalliUiArtRoot + "guide_modal_background.png"),
         LoadTexture(HalliUiArtRoot + "guide_page_flow_art.png"),
@@ -70,11 +76,25 @@ namespace CodexGame.Editor
         LoadTexture(HalliUiArtRoot + "guide_nav_button_hover.png"),
         LoadTexture(HalliUiArtRoot + "guide_nav_button_disabled.png"),
         LoadTexture(HalliUiArtRoot + "guide_page_indicator_plate.png"));
+      var healthUiArtSet = new HealthUiArtSet(
+        LoadTexture(PokerUiArtRoot + "hp_heart_player_filled_24_0_2_2.png"),
+        LoadTexture(PokerUiArtRoot + "hp_heart_player_empty_24_0_2_2.png"),
+        LoadTexture(PokerUiArtRoot + "hp_heart_ai_filled_24_0_2_2.png"),
+        LoadTexture(PokerUiArtRoot + "hp_heart_ai_empty_24_0_2_2.png"));
+      var pokerUiArtSet = new PokerUiArtSet(
+        LoadTexture(PokerUiArtRoot + "poker_predict_win_idle_64_0_2_2.png"),
+        LoadTexture(PokerUiArtRoot + "poker_predict_win_hover_64_0_2_2.png"),
+        LoadTexture(PokerUiArtRoot + "poker_predict_lose_idle_64_0_2_2.png"),
+        LoadTexture(PokerUiArtRoot + "poker_predict_lose_hover_64_0_2_2.png"),
+        LoadTexture(UiArtRoot + "item_slot.png"));
       view.Configure(
         boardTexture,
         cardArtSet,
         halliUiArtSet,
         guideUiArtSet,
+        introTexture,
+        healthUiArtSet,
+        pokerUiArtSet,
         useSceneBackdrop: true,
         useIntroArtLayout: true);
       var presentationRig = gameObject.AddComponent<TableScenePresentationRig>();

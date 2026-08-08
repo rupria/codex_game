@@ -14,7 +14,8 @@ namespace CodexGame.Presentation.Views
       Rect source,
       Rect destination,
       float normalizedProgress,
-      bool rotateBackForOpponent)
+      bool rotateBackForOpponent,
+      bool drawFrame = true)
     {
       var progress = Mathf.Clamp01(normalizedProgress);
       var travel = progress * progress * (3f - 2f * progress);
@@ -30,9 +31,9 @@ namespace CodexGame.Presentation.Views
       DrawShadow(rect, progress);
       if (flipProgress < 0.5f)
       {
-        renderer.DrawBackAt(rect, rotateBackForOpponent ? 180f : 0f);
+        renderer.DrawBackAt(rect, rotateBackForOpponent ? 180f : 0f, drawFrame);
       }
-      else renderer.DrawAt(rect, card);
+      else renderer.DrawAt(rect, card, false, drawFrame);
     }
 
     private static void DrawShadow(Rect cardRect, float progress)
