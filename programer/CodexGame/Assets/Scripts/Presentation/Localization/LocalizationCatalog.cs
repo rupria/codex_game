@@ -11,7 +11,23 @@ namespace CodexGame.Presentation.Localization
   {
     public const string DefaultLanguage = "ko";
     public const string FallbackLanguage = "en";
-    public const int RequiredInitialKeyCount = 109;
+    public const int RequiredKeyCount = 121;
+
+    private static readonly string[] RequiredGuideKeys =
+    {
+      "UI_GUIDE_PAGE_FLOW_TITLE",
+      "UI_GUIDE_PAGE_FLOW_BODY",
+      "UI_GUIDE_PAGE_HALLI_TITLE",
+      "UI_GUIDE_PAGE_HALLI_BODY",
+      "UI_GUIDE_PAGE_CARDS_TITLE",
+      "UI_GUIDE_PAGE_CARDS_BODY",
+      "UI_GUIDE_PAGE_RESULT_TITLE",
+      "UI_GUIDE_PAGE_RESULT_BODY",
+      "UI_GUIDE_PREV",
+      "UI_GUIDE_NEXT",
+      "UI_GUIDE_PAGE_INDICATOR",
+      "UI_GUIDE_MODAL_HINT"
+    };
 
     private static readonly Regex PlaceholderPattern =
       new Regex(@"\{([A-Za-z][A-Za-z0-9_]*)\}", RegexOptions.Compiled);
@@ -63,10 +79,17 @@ namespace CodexGame.Presentation.Localization
         }
       }
 
-      if (entries.Count != RequiredInitialKeyCount)
+      if (entries.Count != RequiredKeyCount)
       {
         throw new FormatException(
-          "Localization CSV must contain " + RequiredInitialKeyCount + " initial keys, but found " + entries.Count + ".");
+          "Localization CSV must contain " + RequiredKeyCount + " keys, but found " + entries.Count + ".");
+      }
+      for (var index = 0; index < RequiredGuideKeys.Length; index++)
+      {
+        if (!entries.ContainsKey(RequiredGuideKeys[index]))
+        {
+          throw new FormatException("Missing required guide localization key: " + RequiredGuideKeys[index]);
+        }
       }
       return new LocalizationCatalog(entries, warning ?? (_ => { }));
     }

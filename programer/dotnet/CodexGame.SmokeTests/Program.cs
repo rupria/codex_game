@@ -6,6 +6,7 @@ using CodexGame.SmokeTests.Playable;
 using CodexGame.SmokeTests.Poker;
 using CodexGame.SmokeTests.Battle;
 using CodexGame.SmokeTests.Localization;
+using CodexGame.SmokeTests.Presentation;
 
 var tests = new TestHarness();
 
@@ -20,5 +21,6 @@ PokerEvaluatorTests.Run(tests);
 PokerRoundSessionTests.Run(tests);
 BattleRuleTests.Run(tests);
 LocalizationCatalogTests.Run(tests);
+GuideModalStateTests.Run(tests);
 
 return tests.Complete();

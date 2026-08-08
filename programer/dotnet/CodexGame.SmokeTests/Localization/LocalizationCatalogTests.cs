@@ -14,8 +14,8 @@ namespace CodexGame.SmokeTests.Localization
       var warnings = new List<string>();
       var catalog = LocalizationCatalog.Parse(File.ReadAllText(csvPath), warnings.Add);
       tests.Check(
-        catalog.Count == LocalizationCatalog.RequiredInitialKeyCount,
-        "The runtime localization catalog must validate all 109 initial keys.");
+        catalog.Count == LocalizationCatalog.RequiredKeyCount,
+        "The runtime localization catalog must validate all 121 keys.");
       tests.Check(
         catalog.Get("UI_MAIN_START", "ko") == "시작"
           && catalog.Get("UI_MAIN_START", "en") == "START",
@@ -36,6 +36,15 @@ namespace CodexGame.SmokeTests.Localization
             "en",
             new LocalizationArgument("coins", 4)) == "STAGE CLEAR · COINS 4",
         "Public reward strings must expose only the current coin count.");
+      tests.Check(
+        catalog.Get("UI_GUIDE_PAGE_FLOW_TITLE", "ko") == "목표와 게임 흐름"
+          && catalog.Get("UI_GUIDE_PAGE_RESULT_TITLE", "en") == "PREDICTION & VICTORY"
+          && catalog.Get(
+            "UI_GUIDE_PAGE_INDICATOR",
+            "ko",
+            new LocalizationArgument("page", 2),
+            new LocalizationArgument("total", 4)) == "2 / 4",
+        "The four-page guide Keys must load from the same ko/en runtime catalog.");
 
       var status = new LocalizedStatus(
         "STATUS_HALLI_DISTRIBUTING",

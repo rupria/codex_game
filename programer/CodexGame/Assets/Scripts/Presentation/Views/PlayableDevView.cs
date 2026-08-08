@@ -20,6 +20,8 @@ namespace CodexGame.Presentation.Views
     private HalliUiArtSet _halliUiArtSet;
 
     private readonly HalliDevPanel _halliPanel = new HalliDevPanel();
+    private readonly GuideModalPanel _guidePanel = new GuideModalPanel();
+    private readonly GuideModalState _guide = new GuideModalState();
     private readonly HalliTableLightOverlay _tableLightOverlay = new HalliTableLightOverlay();
     private readonly PrivateSelectionDevPanel _selectionPanel = new PrivateSelectionDevPanel();
     private readonly PokerDevPanel _pokerPanel = new PokerDevPanel();
@@ -28,7 +30,6 @@ namespace CodexGame.Presentation.Views
     private PlayableCardRenderer _halliCards;
     private PlayableCardRenderer _pokerCards;
     private int _selectionFocus;
-    private bool _guideOpen;
     private LocalizationRuntime _localization;
 
     public event Action StartRequested;
@@ -83,18 +84,19 @@ namespace CodexGame.Presentation.Views
     {
       if (_snapshot == null || _localization == null || !_localization.IsReady) return;
 
+      if (_guide.IsOpen)
+      {
+        if (Input.GetKeyDown(KeyCode.Escape)) _guide.Close();
+        else if (Input.GetKeyDown(KeyCode.LeftArrow)) _guide.MovePrevious();
+        else if (Input.GetKeyDown(KeyCode.RightArrow)) _guide.MoveNext();
+        return;
+      }
+
       switch (_snapshot.Phase)
       {
         case PlayableGamePhase.Intro:
-          if (_guideOpen)
-          {
-            if (Input.GetKeyDown(KeyCode.Escape)) _guideOpen = false;
-          }
-          else
-          {
-            if (Pressed(KeyCode.Return, KeyCode.Space)) StartRequested?.Invoke();
-            else if (Input.GetKeyDown(KeyCode.G)) _guideOpen = true;
-          }
+          if (Pressed(KeyCode.Return, KeyCode.Space)) StartRequested?.Invoke();
+          else if (Input.GetKeyDown(KeyCode.G)) _guide.Open();
           break;
         case PlayableGamePhase.HalliOpening:
           break;
@@ -141,6 +143,18 @@ namespace CodexGame.Presentation.Views
       _tableLightOverlay.Draw(Time.unscaledTime, _snapshot.Phase == PlayableGamePhase.Intro ? 0.65f : 1f);
       if (_localization == null || !_localization.IsReady) return;
       EnsureRenderers();
+
+      if (_guide.IsOpen)
+      {
+        _guidePanel.Draw(
+          _guide,
+          _styles,
+          _localization,
+          _guide.MovePrevious,
+          _guide.MoveNext,
+          _guide.Close);
+        return;
+      }
 
       if (_snapshot.Phase == PlayableGamePhase.Intro)
       {
@@ -235,7 +249,7 @@ namespace CodexGame.Presentation.Views
       }
       if (GUI.Button(new Rect(330f, 318f, 300f, 58f), L("UI_MAIN_GUIDE")))
       {
-        _guideOpen = true;
+        _guide.Open();
       }
       GUI.enabled = _localization.Language != LocalizationCatalog.DefaultLanguage;
       if (GUI.Button(new Rect(330f, 390f, 145f, 38f), "한국어"))
@@ -248,33 +262,6 @@ namespace CodexGame.Presentation.Views
         _localization.SetLanguage(LocalizationCatalog.FallbackLanguage);
       }
       GUI.enabled = true;
-      if (_guideOpen) DrawGuideOverlay();
-    }
-
-    private void DrawGuideOverlay()
-    {
-      GUI.Box(new Rect(86f, 54f, 788f, 432f), GUIContent.none);
-      GUI.Label(new Rect(120f, 72f, 720f, 44f), L("UI_GUIDE_TITLE"), _styles.Title);
-      DrawGuideStep(new Rect(126f, 136f, 210f, 230f), "1", L("UI_GUIDE_FLIP_KEY"), L("UI_GUIDE_FLIP_DESC"));
-      DrawGuideStep(
-        new Rect(375f, 136f, 210f, 230f),
-        "2",
-        L("UI_GUIDE_BELL_KEY"),
-        L("UI_GUIDE_BELL_DESC"));
-      DrawGuideStep(
-        new Rect(624f, 136f, 210f, 230f),
-        "3",
-        L("UI_GUIDE_PREDICT_KEY"),
-        L("UI_GUIDE_PREDICT_DESC"));
-      if (GUI.Button(new Rect(360f, 404f, 240f, 52f), L("UI_COMMON_CLOSE_ESC"))) _guideOpen = false;
-    }
-
-    private void DrawGuideStep(Rect rect, string number, string key, string description)
-    {
-      GUI.Box(rect, GUIContent.none);
-      GUI.Label(new Rect(rect.x, rect.y + 14f, rect.width, 32f), number, _styles.Title);
-      GUI.Label(new Rect(rect.x + 20f, rect.y + 62f, rect.width - 40f, 54f), key, _styles.Status);
-      GUI.Label(new Rect(rect.x + 14f, rect.y + 128f, rect.width - 28f, 80f), description, _styles.Body);
     }
 
     private void DrawBattleFinished()
