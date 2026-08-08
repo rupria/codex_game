@@ -48,6 +48,15 @@ namespace CodexGame.Presentation.Views
         alignment = TextAnchor.MiddleCenter,
         wordWrap = true
       };
+      IntroButton = new GUIStyle(GUI.skin.label)
+      {
+        fontSize = 28,
+        fontStyle = FontStyle.Bold,
+        alignment = TextAnchor.MiddleCenter
+      };
+      IntroButton.normal.textColor = new Color(0.96f, 0.92f, 0.82f);
+      IntroButton.hover.textColor = Color.white;
+      IntroButton.active.textColor = new Color(1f, 0.76f, 0.34f);
     }
 
     public GUIStyle Title { get; }
@@ -57,5 +66,6 @@ namespace CodexGame.Presentation.Views
     public GUIStyle SelectedCard { get; }
     public GUIStyle Status { get; }
     public GUIStyle Small { get; }
+    public GUIStyle IntroButton { get; }
   }
 }

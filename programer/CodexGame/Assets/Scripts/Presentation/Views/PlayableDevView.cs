@@ -22,6 +22,12 @@ namespace CodexGame.Presentation.Views
     [SerializeField]
     private GuideUiArtSet _guideUiArtSet;
 
+    [SerializeField]
+    private bool _useSceneBackdrop;
+
+    [SerializeField]
+    private bool _useIntroArtLayout;
+
     private readonly HalliDevPanel _halliPanel = new HalliDevPanel();
     private readonly GuideModalPanel _guidePanel = new GuideModalPanel();
     private readonly GuideModalState _guide = new GuideModalState();
@@ -43,6 +49,10 @@ namespace CodexGame.Presentation.Views
     public event Action PrivateCardsConfirmRequested;
     public event Action<PredictionChoice> PredictionRequested;
     public event Action MainRequested;
+
+    internal PlayableGamePhase CurrentPhase => _snapshot == null
+      ? PlayableGamePhase.Intro
+      : _snapshot.Phase;
 
     private void Awake()
     {
@@ -73,12 +83,16 @@ namespace CodexGame.Presentation.Views
       Texture2D boardTexture,
       PlayableCardArtSet cardArtSet,
       HalliUiArtSet halliUiArtSet,
-      GuideUiArtSet guideUiArtSet)
+      GuideUiArtSet guideUiArtSet,
+      bool useSceneBackdrop = false,
+      bool useIntroArtLayout = false)
     {
       _boardTexture = boardTexture;
       _cardArtSet = cardArtSet;
       _halliUiArtSet = halliUiArtSet;
       _guideUiArtSet = guideUiArtSet;
+      _useSceneBackdrop = useSceneBackdrop;
+      _useIntroArtLayout = useIntroArtLayout;
       _halliCards = null;
       _pokerCards = null;
     }
@@ -146,7 +160,7 @@ namespace CodexGame.Presentation.Views
     {
       if (_snapshot == null) return;
       PlayableViewport.Apply();
-      if (_boardTexture != null)
+      if (!_useSceneBackdrop && _boardTexture != null)
       {
         GUI.DrawTexture(
           new Rect(0f, 0f, PlayableViewport.Width, PlayableViewport.Height),
@@ -154,7 +168,12 @@ namespace CodexGame.Presentation.Views
           ScaleMode.StretchToFill,
           true);
       }
-      _tableLightOverlay.Draw(Time.unscaledTime, _snapshot.Phase == PlayableGamePhase.Intro ? 0.65f : 1f);
+      if (!_useSceneBackdrop)
+      {
+        _tableLightOverlay.Draw(
+          Time.unscaledTime,
+          _snapshot.Phase == PlayableGamePhase.Intro ? 0.65f : 1f);
+      }
       if (_localization == null || !_localization.IsReady) return;
       EnsureRenderers();
 
@@ -258,6 +277,12 @@ namespace CodexGame.Presentation.Views
 
     private void DrawIntro()
     {
+      if (_useIntroArtLayout)
+      {
+        DrawIntroArtLayout();
+        return;
+      }
+
       GUI.Box(new Rect(244f, 92f, 472f, 356f), GUIContent.none);
       GUI.Label(new Rect(250f, 118f, 460f, 70f), L("UI_GAME_TITLE"), _styles.Title);
       GUI.Label(new Rect(300f, 184f, 360f, 34f), L("UI_GAME_SUBTITLE"), _styles.Heading);
@@ -280,6 +305,66 @@ namespace CodexGame.Presentation.Views
         _localization.SetLanguage(LocalizationCatalog.FallbackLanguage);
       }
       GUI.enabled = true;
+    }
+
+    private void DrawIntroArtLayout()
+    {
+      if (DrawIntroArtButton(
+        new Rect(312f, 266f, 336f, 76f),
+        L("UI_MAIN_START"),
+        new Color(0.015f, 0.055f, 0.075f, 0.96f)))
+      {
+        StartRequested?.Invoke();
+      }
+      if (DrawIntroArtButton(
+        new Rect(312f, 354f, 336f, 78f),
+        L("UI_MAIN_GUIDE"),
+        new Color(0.055f, 0.02f, 0.035f, 0.96f)))
+      {
+        _guide.Open();
+      }
+
+      GUI.enabled = _localization.Language != LocalizationCatalog.DefaultLanguage;
+      if (GUI.Button(new Rect(748f, 18f, 92f, 30f), "한국어"))
+      {
+        _localization.SetLanguage(LocalizationCatalog.DefaultLanguage);
+      }
+      GUI.enabled = _localization.Language != LocalizationCatalog.FallbackLanguage;
+      if (GUI.Button(new Rect(846f, 18f, 96f, 30f), "English"))
+      {
+        _localization.SetLanguage(LocalizationCatalog.FallbackLanguage);
+      }
+      GUI.enabled = true;
+
+      var controls = string.Join(
+        "  ·  ",
+        L("UI_HALLI_LEFT_BELL"),
+        L("UI_HALLI_FLIP_ONE"),
+        L("UI_HALLI_RIGHT_BELL"));
+      var goal = L("UI_GUIDE_BELL_DESC").Replace('\n', ' ');
+      GUI.Box(new Rect(126f, 452f, 708f, 70f), GUIContent.none);
+      GUI.Label(new Rect(146f, 457f, 668f, 24f), controls, _styles.Heading);
+      GUI.Label(new Rect(146f, 483f, 668f, 32f), goal, _styles.Small);
+    }
+
+    private bool DrawIntroArtButton(Rect rect, string label, Color coverColor)
+    {
+      var hovered = rect.Contains(Event.current.mousePosition);
+      var previousColor = GUI.color;
+      GUI.color = hovered
+        ? new Color(
+          Mathf.Min(coverColor.r * 1.35f, 1f),
+          Mathf.Min(coverColor.g * 1.35f, 1f),
+          Mathf.Min(coverColor.b * 1.35f, 1f),
+          coverColor.a)
+        : coverColor;
+      GUI.DrawTexture(
+        new Rect(rect.x + 12f, rect.y + 12f, rect.width - 24f, rect.height - 24f),
+        Texture2D.whiteTexture,
+        ScaleMode.StretchToFill,
+        true);
+      GUI.color = previousColor;
+      return GUI.Button(rect, label, _styles.IntroButton);
     }
 
     private void DrawBattleFinished()

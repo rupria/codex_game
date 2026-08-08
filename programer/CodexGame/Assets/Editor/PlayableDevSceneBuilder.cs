@@ -18,6 +18,7 @@ namespace CodexGame.Editor
       "Assets/Art/Prototype/Board/halli_western_saloon_background.png";
     private const string UiArtRoot = "Assets/Art/Prototype/UI/";
     private const string HalliUiArtRoot = UiArtRoot + "Halli_0_1_0/";
+    private const string IntroArtPath = HalliUiArtRoot + "start_screen_background.png";
 
     [MenuItem("Codex Game/Playable Dev/Create Scene")]
     public static void CreateScene()
@@ -41,6 +42,7 @@ namespace CodexGame.Editor
       }
 
       var view = gameObject.AddComponent<PlayableDevView>();
+      var introTexture = LoadTexture(IntroArtPath);
       PlayableCardArtSet cardArtSet = PlayableCardArtLoader.Load();
       var halliUiArtSet = new HalliUiArtSet(
         LoadTexture(UiArtRoot + "bell_idle.png"),
@@ -67,7 +69,15 @@ namespace CodexGame.Editor
         LoadTexture(HalliUiArtRoot + "guide_nav_button_hover.png"),
         LoadTexture(HalliUiArtRoot + "guide_nav_button_disabled.png"),
         LoadTexture(HalliUiArtRoot + "guide_page_indicator_plate.png"));
-      view.Configure(boardTexture, cardArtSet, halliUiArtSet, guideUiArtSet);
+      view.Configure(
+        boardTexture,
+        cardArtSet,
+        halliUiArtSet,
+        guideUiArtSet,
+        useSceneBackdrop: true,
+        useIntroArtLayout: true);
+      var presentationRig = gameObject.AddComponent<TableScenePresentationRig>();
+      presentationRig.Configure(camera, view, boardTexture, introTexture);
       gameObject.AddComponent<PlayableDevGameController>();
 
       if (!EditorSceneManager.SaveScene(scene, ScenePath))
