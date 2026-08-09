@@ -101,7 +101,9 @@ namespace CodexGame.Editor
           throw new InvalidOperationException("Duplicate playable card art key: " + key);
         }
 
-        var texture = !matchSkullCount && rank >= CardRank.Jack
+        var texture = !matchSkullCount
+          && rank >= CardRank.Jack
+          && rank <= CardRank.King
           ? LoadTexture(
             FaceCardRoot + "card_poker_" + SuitFileName(suit) + "_" + RankFileName(rank) + ".png",
             112,
