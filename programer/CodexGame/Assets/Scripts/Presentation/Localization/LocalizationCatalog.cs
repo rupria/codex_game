@@ -11,7 +11,7 @@ namespace CodexGame.Presentation.Localization
   {
     public const string DefaultLanguage = "ko";
     public const string FallbackLanguage = "en";
-    public const int RequiredKeyCount = 146;
+    public const int RequiredKeyCount = 148;
 
     private static readonly string[] RequiredGuideKeys =
     {

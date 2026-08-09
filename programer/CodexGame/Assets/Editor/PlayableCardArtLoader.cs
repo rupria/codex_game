@@ -11,6 +11,8 @@ namespace CodexGame.Editor
   {
     private const string CatalogPath =
       "Assets/Art/Prototype/Cards_0_06/card_art_catalog_0_06.json";
+    private const string FaceCardRoot =
+      "Assets/Art/Prototype/Cards_0_08/poker_face_cards_112x156/";
 
     public static PlayableCardArtSet Load()
     {
@@ -48,7 +50,15 @@ namespace CodexGame.Editor
         new PlayableCardArtLibrary(
           pokerEntries,
           PlayableCardArtLibrary.PokerExpectedTextureCount),
-        backTexture);
+        backTexture,
+        LoadTexture(
+          FaceCardRoot + "card_poker_joker_brass_sheriff_revolver.png",
+          112,
+          156),
+        LoadTexture(
+          FaceCardRoot + "card_poker_joker_crimson_cardsharp.png",
+          112,
+          156));
     }
 
     private static List<PlayableCardArtEntry> LoadEntries(
@@ -91,7 +101,12 @@ namespace CodexGame.Editor
           throw new InvalidOperationException("Duplicate playable card art key: " + key);
         }
 
-        var texture = LoadTexture(source.assetPath, expectedWidth, expectedHeight);
+        var texture = !matchSkullCount && rank >= CardRank.Jack
+          ? LoadTexture(
+            FaceCardRoot + "card_poker_" + SuitFileName(suit) + "_" + RankFileName(rank) + ".png",
+            112,
+            156)
+          : LoadTexture(source.assetPath, expectedWidth, expectedHeight);
         entries.Add(new PlayableCardArtEntry(suit, rank, skullCount, matchSkullCount, texture));
       }
 
@@ -167,6 +182,29 @@ namespace CodexGame.Editor
       }
 
       throw new InvalidOperationException("Unknown card rank in art catalog: " + value);
+    }
+
+    private static string SuitFileName(CardSuit suit)
+    {
+      switch (suit)
+      {
+        case CardSuit.Clubs: return "clubs";
+        case CardSuit.Diamonds: return "diamonds";
+        case CardSuit.Hearts: return "hearts";
+        case CardSuit.Spades: return "spades";
+        default: throw new ArgumentOutOfRangeException(nameof(suit));
+      }
+    }
+
+    private static string RankFileName(CardRank rank)
+    {
+      switch (rank)
+      {
+        case CardRank.Jack: return "j";
+        case CardRank.Queen: return "q";
+        case CardRank.King: return "k";
+        default: throw new ArgumentOutOfRangeException(nameof(rank));
+      }
     }
 
     [Serializable]

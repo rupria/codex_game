@@ -15,7 +15,7 @@ namespace CodexGame.SmokeTests.Localization
       var catalog = LocalizationCatalog.Parse(File.ReadAllText(csvPath), warnings.Add);
       tests.Check(
         catalog.Count == LocalizationCatalog.RequiredKeyCount,
-        "The runtime localization catalog must validate all 146 keys.");
+        "The runtime localization catalog must validate all 148 keys.");
       tests.Check(
         catalog.Get("UI_MAIN_START", "ko") == "시작"
           && catalog.Get("UI_MAIN_START", "en") == "START",

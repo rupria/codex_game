@@ -11,10 +11,14 @@ namespace CodexGame.Presentation.Views
     public static readonly Rect AiDeck = new Rect(440f, 40f, 80f, 100f);
     public static readonly Rect Status = new Rect(300f, 142f, 360f, 42f);
 
-    public static readonly Rect LeftPileFirst = new Rect(248f, 194f, 96f, 135f);
-    public static readonly Rect LeftPileSecond = new Rect(276f, 194f, 96f, 135f);
-    public static readonly Rect RightPileFirst = new Rect(588f, 194f, 96f, 135f);
-    public static readonly Rect RightPileSecond = new Rect(616f, 194f, 96f, 135f);
+    public static readonly Rect LeftPileFirst = new Rect(
+      HalliPileOverlapLayout.X(true, 0), 194f, HalliPileOverlapLayout.CardWidth, 135f);
+    public static readonly Rect LeftPileSecond = new Rect(
+      HalliPileOverlapLayout.X(true, 1), 194f, HalliPileOverlapLayout.CardWidth, 135f);
+    public static readonly Rect RightPileFirst = new Rect(
+      HalliPileOverlapLayout.X(false, 0), 194f, HalliPileOverlapLayout.CardWidth, 135f);
+    public static readonly Rect RightPileSecond = new Rect(
+      HalliPileOverlapLayout.X(false, 1), 194f, HalliPileOverlapLayout.CardWidth, 135f);
 
     public static readonly Rect LeftBellVisual = new Rect(390f, 286f, 64f, 64f);
     public static readonly Rect RightBellVisual = new Rect(506f, 286f, 64f, 64f);

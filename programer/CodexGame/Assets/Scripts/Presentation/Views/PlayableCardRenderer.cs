@@ -9,6 +9,8 @@ namespace CodexGame.Presentation.Views
   {
     private readonly PlayableCardArtLibrary _art;
     private readonly Texture2D _backTexture;
+    private readonly Texture2D _playerJokerTexture;
+    private readonly Texture2D _aiJokerTexture;
     private readonly PlayableDevStyles _styles;
     private readonly LocalizationRuntime _localization;
 
@@ -16,12 +18,16 @@ namespace CodexGame.Presentation.Views
       PlayableCardArtLibrary art,
       Texture2D backTexture,
       PlayableDevStyles styles,
-      LocalizationRuntime localization)
+      LocalizationRuntime localization,
+      Texture2D playerJokerTexture = null,
+      Texture2D aiJokerTexture = null)
     {
       _art = art;
       _backTexture = backTexture;
       _styles = styles;
       _localization = localization;
+      _playerJokerTexture = playerJokerTexture;
+      _aiJokerTexture = aiJokerTexture;
     }
 
     public Rect Draw(Card card, float width, float height, bool selected = false)
@@ -39,7 +45,16 @@ namespace CodexGame.Presentation.Views
     public void DrawAt(Rect rect, Card card, bool selected, bool drawFrame)
     {
       if (drawFrame) GUI.Box(rect, GUIContent.none, selected ? _styles.SelectedCard : _styles.Card);
-      if (_art != null && _art.TryGetTexture(card, out var texture))
+      var jokerTexture = card.IsJoker
+        ? card.JokerKind == PokerJokerKind.BrassSheriffRevolver
+          ? _playerJokerTexture
+          : _aiJokerTexture
+        : null;
+      if (jokerTexture != null)
+      {
+        GUI.DrawTexture(drawFrame ? Inset(rect) : rect, jokerTexture, ScaleMode.ScaleToFit, true);
+      }
+      else if (_art != null && _art.TryGetTexture(card, out var texture))
       {
         GUI.DrawTexture(drawFrame ? Inset(rect) : rect, texture, ScaleMode.ScaleToFit, true);
       }
@@ -87,6 +102,7 @@ namespace CodexGame.Presentation.Views
 
     public string FormatInline(Card card)
     {
+      if (card.IsJoker) return L("UI_CARD_JOKER");
       return RankText(card.Rank) + " " + SuitText(card.Suit) + " / "
         + L("UI_CARD_SKULL_COUNT", new LocalizationArgument("count", card.SkullCount));
     }
@@ -98,6 +114,7 @@ namespace CodexGame.Presentation.Views
 
     private string Format(Card card)
     {
+      if (card.IsJoker) return L("UI_CARD_JOKER");
       return RankText(card.Rank) + " " + SuitText(card.Suit) + "\n"
         + L("UI_CARD_SKULL_COUNT", new LocalizationArgument("count", card.SkullCount));
     }
