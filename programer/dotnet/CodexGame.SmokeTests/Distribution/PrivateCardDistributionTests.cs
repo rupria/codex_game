@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using CodexGame.Application.Distribution;
+using CodexGame.Core.Battle;
 using CodexGame.Core.Cards;
 using CodexGame.Core.Distribution;
 using CodexGame.Core.Halli;
@@ -18,6 +19,9 @@ namespace CodexGame.SmokeTests.Distribution
       CheckBothActorsSelectOverflow(tests);
       CheckSeededFillAndTimeout(tests);
       CheckSelectionSession(tests);
+      CheckPairAssistHealthRule(tests);
+      CheckPairAssistRecommendation(tests);
+      CheckPairAssistFill(tests);
     }
 
     private static void CheckOverflowRule(TestHarness tests)
@@ -161,11 +165,123 @@ namespace CodexGame.SmokeTests.Distribution
         "An actor with no acquisitions must receive three seeded random cards.");
     }
 
+    private static void CheckPairAssistHealthRule(TestHarness tests)
+    {
+      tests.Check(
+        PrivateCardDistributionRules.IsPairAssistEnabled(new BattleHealth(3, 3))
+          && PrivateCardDistributionRules.IsPairAssistEnabled(new BattleHealth(3, 2))
+          && !PrivateCardDistributionRules.IsPairAssistEnabled(new BattleHealth(2, 2))
+          && !PrivateCardDistributionRules.IsPairAssistEnabled(new BattleHealth(0, 3)),
+        "Pair assistance must use combined remaining health and stop at four or battle end.");
+    }
+
+    private static void CheckPairAssistRecommendation(TestHarness tests)
+    {
+      var cards = TestCardSet.Create();
+      var player = Array.AsReadOnly(new[]
+      {
+        Find(cards, CardSuit.Clubs, CardRank.Two),
+        Find(cards, CardSuit.Hearts, CardRank.Two),
+        Find(cards, CardSuit.Diamonds, CardRank.Five),
+        Find(cards, CardSuit.Spades, CardRank.Nine),
+        Find(cards, CardSuit.Clubs, CardRank.King)
+      });
+      var session = new PrivateCardSelectionSession();
+      session.Begin(
+        player,
+        Array.AsReadOnly(Array.Empty<Card>()),
+        Excluding(cards, player, 20),
+        HalliStageWinner.Player,
+        1,
+        20260909,
+        new GameTimestamp(0),
+        true);
+      var snapshot = session.GetSnapshot(new GameTimestamp(0));
+
+      tests.Check(
+        snapshot.SelectedCards.Count == 3
+          && CountRank(snapshot.SelectedCards, CardRank.Two) == 2,
+        "Early-health overflow selection must recommend an available rank pair.");
+    }
+
+    private static void CheckPairAssistFill(TestHarness tests)
+    {
+      var cards = TestCardSet.Create();
+      var player = Array.AsReadOnly(new[]
+      {
+        Find(cards, CardSuit.Clubs, CardRank.Two),
+        Find(cards, CardSuit.Clubs, CardRank.Five)
+      });
+      var other = Array.AsReadOnly(new[]
+      {
+        Find(cards, CardSuit.Hearts, CardRank.Two),
+        Find(cards, CardSuit.Diamonds, CardRank.Seven),
+        Find(cards, CardSuit.Spades, CardRank.Nine),
+        Find(cards, CardSuit.Hearts, CardRank.Jack),
+        Find(cards, CardSuit.Diamonds, CardRank.Queen),
+        Find(cards, CardSuit.Spades, CardRank.King),
+        Find(cards, CardSuit.Hearts, CardRank.Ace)
+      });
+      var result = PrivateCardDistributionResolver.ResolveBoth(
+        player,
+        Array.AsReadOnly(Array.Empty<Card>()),
+        other,
+        HalliStageWinner.Player,
+        2,
+        EmptyIds(),
+        EmptyIds(),
+        PrivateCardSelectionMode.Confirmed,
+        new ZeroRandom(),
+        true);
+
+      tests.Check(
+        CountRank(result.PlayerPrivateCards, CardRank.Two) == 2,
+        "Early-health random fill must prefer an existing rank when pair assistance triggers.");
+    }
+
     private static IReadOnlyList<Card> Slice(IReadOnlyList<Card> cards, int start, int count)
     {
       var result = new Card[count];
       for (var index = 0; index < count; index++) result[index] = cards[start + index];
       return Array.AsReadOnly(result);
+    }
+
+    private static Card Find(
+      IReadOnlyList<Card> cards,
+      CardSuit suit,
+      CardRank rank)
+    {
+      for (var index = 0; index < cards.Count; index++)
+      {
+        if (cards[index].Suit == suit && cards[index].Rank == rank) return cards[index];
+      }
+
+      throw new InvalidOperationException("Requested test card was not found.");
+    }
+
+    private static IReadOnlyList<Card> Excluding(
+      IReadOnlyList<Card> cards,
+      IReadOnlyList<Card> excluded,
+      int count)
+    {
+      var result = new List<Card>(count);
+      for (var index = 0; index < cards.Count && result.Count < count; index++)
+      {
+        if (!Contains(excluded, cards[index].Id)) result.Add(cards[index]);
+      }
+
+      return Array.AsReadOnly(result.ToArray());
+    }
+
+    private static int CountRank(IReadOnlyList<Card> cards, CardRank rank)
+    {
+      var count = 0;
+      for (var index = 0; index < cards.Count; index++)
+      {
+        if (cards[index].Rank == rank) count++;
+      }
+
+      return count;
     }
 
     private static IReadOnlyList<CardId> EmptyIds() => Array.AsReadOnly(Array.Empty<CardId>());

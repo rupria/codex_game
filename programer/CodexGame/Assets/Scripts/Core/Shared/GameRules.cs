@@ -15,6 +15,8 @@ namespace CodexGame.Core.Shared
     public const int MaximumPredictionSuccessCount = 5;
     public const int BarShopSlotCount = 4;
     public const int InitialStageCount = 3;
+    public const int PairAssistMinimumCombinedHealth = 5;
+    public const int PairAssistFillPercent = 85;
 
     public const long SimultaneousBellThresholdMicroseconds = 33_300;
     public const long BellInputTimeoutMicroseconds = 30_000_000;

@@ -1,4 +1,5 @@
 using System;
+using CodexGame.Core.Battle;
 using CodexGame.Core.Halli;
 using CodexGame.Core.Shared;
 
@@ -35,6 +36,12 @@ namespace CodexGame.Core.Distribution
     {
       GetDirectSelectionCount(combatRoundNumber);
       return winnerCandidateCount > GameRules.RequiredPrivateCards;
+    }
+
+    public static bool IsPairAssistEnabled(BattleHealth health)
+    {
+      return !health.IsBattleOver
+        && health.Player + health.Ai >= GameRules.PairAssistMinimumCombinedHealth;
     }
   }
 }

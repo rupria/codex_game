@@ -196,7 +196,9 @@ namespace CodexGame.Application.Playable
         _endReason);
     }
 
-    public PrivateCardSelectionSession BeginPrivateCardDistribution(GameTimestamp now)
+    public PrivateCardSelectionSession BeginPrivateCardDistribution(
+      GameTimestamp now,
+      bool pairAssistEnabled = false)
     {
       if (Phase != PrototypeSessionPhase.Finished)
       {
@@ -226,7 +228,8 @@ namespace CodexGame.Application.Playable
         _combatRoundNumber,
         _combatRoundSeed,
         _firstPublicCard,
-        now);
+        now,
+        pairAssistEnabled);
       return selection;
     }
 
