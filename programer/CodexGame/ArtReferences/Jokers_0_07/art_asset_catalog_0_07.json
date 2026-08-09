@@ -1,0 +1,9 @@
+{
+  "version": "0.07",
+  "tool": "Aseprite 1.3.18.1",
+  "runtimeRoot": "Assets/Art/Prototype/Cards_0_07/joker_variants",
+  "assets": [
+    {"file": "card_poker_joker_brass_sheriff.png", "size": [56, 78], "rank": "joker", "suit": null, "variant": "brass_sheriff"},
+    {"file": "card_poker_joker_crimson_outlaw.png", "size": [56, 78], "rank": "joker", "suit": null, "variant": "crimson_outlaw"}
+  ]
+}
