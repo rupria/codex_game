@@ -1,3 +1,4 @@
+using System;
 using CodexGame.Core.Cards;
 
 namespace CodexGame.Application.Playable
@@ -6,14 +7,48 @@ namespace CodexGame.Application.Playable
   {
     public int ResolveSkullCount(CardSuit suit, CardRank rank)
     {
-      var cardIndex = CardId.Create(suit, rank).Value;
+      // Validate public inputs before resolving the explicit balance table.
+      CardId.Create(suit, rank);
 
-      if (cardIndex < 18)
+      switch (suit)
       {
-        return 1;
+        case CardSuit.Clubs:
+          if (rank == CardRank.Ten) return 3;
+          return rank == CardRank.Three
+            || rank == CardRank.Six
+            || rank == CardRank.Nine
+            || rank == CardRank.Queen
+            || rank == CardRank.Ace
+              ? 2
+              : 1;
+        case CardSuit.Hearts:
+          if (rank == CardRank.Three) return 3;
+          return rank == CardRank.Four
+            || rank == CardRank.Seven
+            || rank == CardRank.Ten
+            || rank == CardRank.Ace
+              ? 2
+              : 1;
+        case CardSuit.Diamonds:
+          if (rank == CardRank.Six) return 3;
+          return rank == CardRank.Two
+            || rank == CardRank.Five
+            || rank == CardRank.Eight
+            || rank == CardRank.Jack
+            || rank == CardRank.King
+              ? 2
+              : 1;
+        case CardSuit.Spades:
+          if (rank == CardRank.Queen) return 3;
+          return rank == CardRank.Four
+            || rank == CardRank.Seven
+            || rank == CardRank.Ten
+            || rank == CardRank.King
+              ? 2
+              : 1;
+        default:
+          throw new ArgumentOutOfRangeException(nameof(suit));
       }
-
-      return cardIndex < 35 ? 2 : 3;
     }
   }
 }

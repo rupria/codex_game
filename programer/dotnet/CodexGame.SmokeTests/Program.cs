@@ -15,6 +15,7 @@ using CodexGame.SmokeTests.Development;
 var tests = new TestHarness();
 
 CardDeckTests.Run(tests);
+PrototypeSkullPolicyTests.Run(tests);
 CardStorageTests.Run(tests);
 BellTimingTests.Run(tests);
 HalliRuleTests.Run(tests);
