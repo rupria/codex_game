@@ -14,6 +14,7 @@ namespace CodexGame.SmokeTests.Halli
       var clubs1 = Create(CardSuit.Clubs, CardRank.Six, 1);
       var clubs2 = Create(CardSuit.Clubs, CardRank.Seven, 2);
       var diamonds3 = Create(CardSuit.Diamonds, CardRank.Eight, 3);
+      var diamonds1 = Create(CardSuit.Diamonds, CardRank.Ten, 1);
       var clubs3 = Create(CardSuit.Clubs, CardRank.Nine, 3);
 
       tests.Check(
@@ -32,8 +33,11 @@ namespace CodexGame.SmokeTests.Halli
         SkullAcquisitionResolver.Resolve(spades1, hearts1) == AcquisitionKind.None,
         "Skull 1 + 1 must not acquire cards regardless of suit.");
       tests.Check(
-        SkullAcquisitionResolver.Resolve(diamonds3, clubs1) == AcquisitionKind.LeftOnly,
-        "Skull 3 + 1 must acquire only the skull-3 card regardless of suit.");
+        SkullAcquisitionResolver.Resolve(diamonds3, clubs1) == AcquisitionKind.None,
+        "A previous skull-3 card must become inert after a newer card is exposed.");
+      tests.Check(
+        SkullAcquisitionResolver.Resolve(diamonds3, diamonds1) == AcquisitionKind.None,
+        "A previous skull-3 card must remain inert even when the newer card has the same suit.");
       tests.Check(
         SkullAcquisitionResolver.Resolve(clubs2, diamonds3) == AcquisitionKind.RightOnly,
         "Skull 2 + 3 must acquire only the skull-3 card regardless of suit.");

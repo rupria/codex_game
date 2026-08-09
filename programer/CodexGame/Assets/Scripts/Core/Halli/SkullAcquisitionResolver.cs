@@ -28,20 +28,17 @@ namespace CodexGame.Core.Halli
       var left = leftCard.Value;
       var right = rightCard.Value;
 
-      if (left.SkullCount == 3 && right.SkullCount == 3)
+      if (right.SkullCount == 3)
       {
-        // Pile order is oldest to newest, so the newest skull-3 is on the right.
+        // Pile order is oldest to newest. Skull-3 is active only while it is
+        // the newest exposed card, including a 3 + 3 pair.
         return AcquisitionKind.RightOnly;
       }
 
       if (left.SkullCount == 3)
       {
-        return AcquisitionKind.LeftOnly;
-      }
-
-      if (right.SkullCount == 3)
-      {
-        return AcquisitionKind.RightOnly;
+        // Once another card is exposed, the previous skull-3 becomes inert.
+        return AcquisitionKind.None;
       }
 
       if (left.SkullCount + right.SkullCount == 3 && left.Suit == right.Suit)
