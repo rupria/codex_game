@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using CodexGame.Core.Cards;
 using CodexGame.Core.Distribution;
 using CodexGame.Core.Halli;
+using CodexGame.Core.Poker;
 using CodexGame.Core.Shared;
 
 namespace CodexGame.Application.Distribution
@@ -23,6 +24,8 @@ namespace CodexGame.Application.Distribution
     private int _combatRoundNumber;
     private int _requiredSelectionCount;
     private PrivateCardDistributionResult? _result;
+    private Card? _firstPublicCard;
+    private long _combatRoundSeed;
 
     public PrivateCardSelectionPhase Phase { get; private set; } = PrivateCardSelectionPhase.NotStarted;
 
@@ -33,6 +36,27 @@ namespace CodexGame.Application.Distribution
       HalliStageWinner winner,
       int combatRoundNumber,
       long combatRoundSeed,
+      GameTimestamp now)
+    {
+      Begin(
+        playerAcquiredCards,
+        aiAcquiredCards,
+        otherCandidates,
+        winner,
+        combatRoundNumber,
+        combatRoundSeed,
+        null,
+        now);
+    }
+
+    public void Begin(
+      IReadOnlyList<Card> playerAcquiredCards,
+      IReadOnlyList<Card> aiAcquiredCards,
+      IReadOnlyList<Card> otherCandidates,
+      HalliStageWinner winner,
+      int combatRoundNumber,
+      long combatRoundSeed,
+      Card? firstPublicCard,
       GameTimestamp now)
     {
       if (Phase == PrivateCardSelectionPhase.AwaitingSelection)
@@ -47,11 +71,25 @@ namespace CodexGame.Application.Distribution
         throw new ArgumentOutOfRangeException(nameof(winner));
       }
 
-      _playerAcquiredCards = Copy(playerAcquiredCards);
-      _aiAcquiredCards = Copy(aiAcquiredCards);
+      var playerAwarded = JokerAwardResolver.Roll(
+        playerAcquiredCards.Count,
+        DeterministicRandomFactory.Create(combatRoundSeed, RandomChannel.PlayerJokerAward));
+      var aiAwarded = JokerAwardResolver.Roll(
+        aiAcquiredCards.Count,
+        DeterministicRandomFactory.Create(combatRoundSeed, RandomChannel.AiJokerAward));
+      _playerAcquiredCards = AppendJoker(
+        playerAcquiredCards,
+        playerAwarded,
+        PokerJokerKind.BrassSheriffRevolver);
+      _aiAcquiredCards = AppendJoker(
+        aiAcquiredCards,
+        aiAwarded,
+        PokerJokerKind.CrimsonCardsharp);
       _otherCandidates = Copy(otherCandidates);
       _winner = winner;
       _combatRoundNumber = combatRoundNumber;
+      _combatRoundSeed = combatRoundSeed;
+      _firstPublicCard = firstPublicCard;
       _winnerCandidates = _playerAcquiredCards.Count > GameRules.RequiredPrivateCards
         ? _playerAcquiredCards
         : EmptyCards;
@@ -144,17 +182,42 @@ namespace CodexGame.Application.Distribution
         throw new InvalidOperationException("The selection session has no distribution random source.");
       }
 
-      _result = PrivateCardDistributionResolver.ResolveBoth(
-        _playerAcquiredCards,
-        _aiAcquiredCards,
-        _otherCandidates,
-        _winner,
-        _combatRoundNumber,
-        GetSelectedCardIds(),
-        _selectedAiIds,
-        mode,
-        _random);
+      _result = _firstPublicCard.HasValue
+        ? PrivateCardDistributionResolver.ResolveBothBalanced(
+          _playerAcquiredCards,
+          _aiAcquiredCards,
+          _otherCandidates,
+          _winner,
+          _combatRoundNumber,
+          GetSelectedCardIds(),
+          _selectedAiIds,
+          mode,
+          _random,
+          _firstPublicCard.Value,
+          DeterministicRandomFactory.Create(_combatRoundSeed, RandomChannel.PlayerPokerBalance),
+          DeterministicRandomFactory.Create(_combatRoundSeed, RandomChannel.AiPokerBalance))
+        : PrivateCardDistributionResolver.ResolveBoth(
+          _playerAcquiredCards,
+          _aiAcquiredCards,
+          _otherCandidates,
+          _winner,
+          _combatRoundNumber,
+          GetSelectedCardIds(),
+          _selectedAiIds,
+          mode,
+          _random);
       Phase = PrivateCardSelectionPhase.Completed;
+    }
+
+    private static IReadOnlyList<Card> AppendJoker(
+      IReadOnlyList<Card> source,
+      bool awarded,
+      PokerJokerKind kind)
+    {
+      var copy = new Card[source.Count + (awarded ? 1 : 0)];
+      for (var index = 0; index < source.Count; index++) copy[index] = source[index];
+      if (awarded) copy[copy.Length - 1] = new Card(kind);
+      return Array.AsReadOnly(copy);
     }
 
     private IReadOnlyList<Card> GetSelectedCards()

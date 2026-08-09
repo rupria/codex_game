@@ -36,6 +36,7 @@ namespace CodexGame.Core.Ai
       {
         cards.Sort((left, right) =>
         {
+          if (left.IsJoker != right.IsJoker) return left.IsJoker ? -1 : 1;
           var rank = ((int)right.Rank).CompareTo((int)left.Rank);
           return rank != 0 ? rank : ((int)right.Suit).CompareTo((int)left.Suit);
         });

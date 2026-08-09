@@ -18,6 +18,23 @@ namespace CodexGame.Core.Cards
       Suit = suit;
       Rank = rank;
       SkullCount = skullCount;
+      JokerKind = default;
+      IsJoker = false;
+    }
+
+    public Card(PokerJokerKind jokerKind)
+    {
+      if (!Enum.IsDefined(typeof(PokerJokerKind), jokerKind))
+      {
+        throw new ArgumentOutOfRangeException(nameof(jokerKind));
+      }
+
+      Id = CardId.CreateJoker(jokerKind);
+      Suit = default;
+      Rank = default;
+      SkullCount = 0;
+      JokerKind = jokerKind;
+      IsJoker = true;
     }
 
     public CardId Id { get; }
@@ -28,10 +45,21 @@ namespace CodexGame.Core.Cards
 
     public int SkullCount { get; }
 
+    public PokerJokerKind JokerKind { get; }
+
+    public bool IsJoker { get; }
+
     public bool IsValid
     {
       get
       {
+        if (IsJoker)
+        {
+          return Enum.IsDefined(typeof(PokerJokerKind), JokerKind)
+            && Id == CardId.CreateJoker(JokerKind)
+            && SkullCount == 0;
+        }
+
         return Enum.IsDefined(typeof(CardSuit), Suit)
           && Enum.IsDefined(typeof(CardRank), Rank)
           && SkullCount >= 1

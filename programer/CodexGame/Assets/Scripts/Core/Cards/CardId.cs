@@ -6,6 +6,8 @@ namespace CodexGame.Core.Cards
   {
     public const int CardCount = 52;
     public const int RanksPerSuit = 13;
+    private const int BrassSheriffJokerValue = CardCount;
+    private const int CrimsonCardsharpJokerValue = CardCount + 1;
 
     private CardId(int value)
     {
@@ -13,6 +15,9 @@ namespace CodexGame.Core.Cards
     }
 
     public int Value { get; }
+
+    public bool IsJoker => Value == BrassSheriffJokerValue
+      || Value == CrimsonCardsharpJokerValue;
 
     public static CardId Create(CardSuit suit, CardRank rank)
     {
@@ -31,6 +36,19 @@ namespace CodexGame.Core.Cards
       }
 
       return new CardId(value);
+    }
+
+    public static CardId CreateJoker(PokerJokerKind kind)
+    {
+      switch (kind)
+      {
+        case PokerJokerKind.BrassSheriffRevolver:
+          return new CardId(BrassSheriffJokerValue);
+        case PokerJokerKind.CrimsonCardsharp:
+          return new CardId(CrimsonCardsharpJokerValue);
+        default:
+          throw new ArgumentOutOfRangeException(nameof(kind));
+      }
     }
 
     public bool Equals(CardId other)

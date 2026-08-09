@@ -8,6 +8,10 @@ namespace CodexGame.Core.Cards
     AiChoice = 4,
     Reward = 5,
     BarShop = 6,
-    RevealTiming = 8
+    RevealTiming = 8,
+    PlayerJokerAward = 9,
+    AiJokerAward = 10,
+    PlayerPokerBalance = 11,
+    AiPokerBalance = 12
   }
 }

@@ -21,6 +21,7 @@ namespace CodexGame.Application.Poker
     private PokerRoundResult? _result;
     private GameTimestamp _predictionDeadline;
     private GameTimestamp _resultRevealAt;
+    private GameTimestamp _jokerPresentationEndsAt;
 
     public PokerRoundPhase Phase { get; private set; } = PokerRoundPhase.NotStarted;
     public PokerRoundResult? Result => _result;
@@ -46,7 +47,15 @@ namespace CodexGame.Application.Poker
 
       // Validate all seven identities before any concealed information is presented.
       PokerComparer.Compare(_playerPrivateCards, _aiPrivateCards, _publicCards, _ruleSet);
-      BeginPrediction(now);
+      if (ContainsJoker(_playerPrivateCards))
+      {
+        Phase = PokerRoundPhase.PlayerJokerPresentation;
+        _jokerPresentationEndsAt = Add(now, GameRules.PlayerJokerPresentationMicroseconds);
+      }
+      else
+      {
+        BeginPrediction(now);
+      }
     }
 
     public void Begin(
@@ -72,6 +81,12 @@ namespace CodexGame.Application.Poker
 
     public bool Tick(GameTimestamp now)
     {
+      if (Phase == PokerRoundPhase.PlayerJokerPresentation
+        && now.Microseconds >= _jokerPresentationEndsAt.Microseconds)
+      {
+        BeginPrediction(_jokerPresentationEndsAt);
+      }
+
       if (Phase == PokerRoundPhase.AwaitingPrediction
         && now.Microseconds >= _predictionDeadline.Microseconds)
       {
@@ -109,6 +124,8 @@ namespace CodexGame.Application.Poker
         : _health;
       var remaining = Phase == PokerRoundPhase.AwaitingPrediction
         ? Math.Max(0, _predictionDeadline.Microseconds - now.Microseconds)
+        : Phase == PokerRoundPhase.PlayerJokerPresentation
+          ? Math.Max(0, _jokerPresentationEndsAt.Microseconds - now.Microseconds)
         : Phase == PokerRoundPhase.ResultPending
           ? Math.Max(0, _resultRevealAt.Microseconds - now.Microseconds)
           : 0;
@@ -152,6 +169,15 @@ namespace CodexGame.Application.Poker
       var copy = new Card[cards.Count];
       for (var index = 0; index < cards.Count; index++) copy[index] = cards[index];
       return Array.AsReadOnly(copy);
+    }
+
+    private static bool ContainsJoker(IReadOnlyList<Card> cards)
+    {
+      for (var index = 0; index < cards.Count; index++)
+      {
+        if (cards[index].IsJoker) return true;
+      }
+      return false;
     }
 
     private static GameTimestamp Add(GameTimestamp timestamp, long microseconds)
