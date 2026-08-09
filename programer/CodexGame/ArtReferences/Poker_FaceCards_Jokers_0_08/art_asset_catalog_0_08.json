@@ -1,0 +1,34 @@
+{
+  "version": "0.08",
+  "status": "approved_for_programmer_integration",
+  "supersedes": [
+    "Jokers_0_07"
+  ],
+  "unityRoots": {
+    "highres": "Assets/Art/Prototype/Cards_0_08/poker_face_cards_hires",
+    "runtime112": "Assets/Art/Prototype/Cards_0_08/poker_face_cards_112x156",
+    "runtime56": "Assets/Art/Prototype/Cards_0_08/poker_face_cards_56x78"
+  },
+  "faceCards": [
+    "card_poker_clubs_j.png",
+    "card_poker_clubs_q.png",
+    "card_poker_clubs_k.png",
+    "card_poker_diamonds_j.png",
+    "card_poker_diamonds_q.png",
+    "card_poker_diamonds_k.png",
+    "card_poker_hearts_j.png",
+    "card_poker_hearts_q.png",
+    "card_poker_hearts_k.png",
+    "card_poker_spades_j.png",
+    "card_poker_spades_q.png",
+    "card_poker_spades_k.png"
+  ],
+  "jokers": [
+    "card_poker_joker_brass_sheriff_revolver.png",
+    "card_poker_joker_crimson_cardsharp.png"
+  ],
+  "excluded": [
+    "bell_holding_sheriff_joker",
+    "Jokers_0_07 runtime sprites"
+  ]
+}
