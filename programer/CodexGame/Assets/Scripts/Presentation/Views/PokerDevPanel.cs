@@ -36,7 +36,11 @@ namespace CodexGame.Presentation.Views
       DrawItems();
       DrawCards(snapshot, cards);
 
-      if (snapshot.Phase == PokerRoundPhase.AwaitingPrediction)
+      if (snapshot.Phase == PokerRoundPhase.PlayerJokerPresentation)
+      {
+        DrawPlayerJokerPresentation(snapshot, styles, cards, localization);
+      }
+      else if (snapshot.Phase == PokerRoundPhase.AwaitingPrediction)
       {
         DrawPredictionTimer(snapshot, styles, localization);
       }
@@ -143,7 +147,14 @@ namespace CodexGame.Presentation.Views
     private void DrawCards(PokerRoundSnapshot snapshot, PlayableCardRenderer cards)
     {
       DrawFaceCards(snapshot.PublicCards, PokerTableLayout.CommunityCard, 2, cards);
-      DrawFaceCards(snapshot.PlayerPrivateCards, PokerTableLayout.PlayerCard, 3, cards);
+      for (var index = 0; index < Math.Min(3, snapshot.PlayerPrivateCards.Count); index++)
+      {
+        var card = snapshot.PlayerPrivateCards[index];
+        if (snapshot.Phase == PokerRoundPhase.PlayerJokerPresentation && card.IsJoker) continue;
+        var rect = PokerTableLayout.PlayerCard(index);
+        DrawShadow(rect);
+        cards.DrawAt(rect, card, false, false);
+      }
 
       if (snapshot.VisibleAiPrivateCards.Count == 0)
       {
@@ -176,6 +187,48 @@ namespace CodexGame.Presentation.Views
           cards.DrawAt(rect, snapshot.VisibleAiPrivateCards[index], false, false);
         }
       }
+    }
+
+    private static void DrawPlayerJokerPresentation(
+      PokerRoundSnapshot snapshot,
+      PlayableDevStyles styles,
+      PlayableCardRenderer cards,
+      LocalizationRuntime localization)
+    {
+      var jokerIndex = -1;
+      for (var index = 0; index < snapshot.PlayerPrivateCards.Count; index++)
+      {
+        if (snapshot.PlayerPrivateCards[index].IsJoker)
+        {
+          jokerIndex = index;
+          break;
+        }
+      }
+      if (jokerIndex < 0) return;
+
+      var progress = 1f - Mathf.Clamp01(
+        (float)snapshot.RemainingMicroseconds / GameRules.PlayerJokerPresentationMicroseconds);
+      var target = PokerTableLayout.PlayerCard(jokerIndex);
+      CardFlipMotion.Draw(
+        cards,
+        snapshot.PlayerPrivateCards[jokerIndex],
+        PokerTableLayout.PlayerItem,
+        target,
+        progress,
+        false,
+        false);
+      var previousColor = GUI.color;
+      GUI.color = new Color(1f, 0.72f, 0.18f, 0.34f * Mathf.Sin(progress * Mathf.PI));
+      GUI.DrawTexture(
+        new Rect(target.x - 8f, target.y - 8f, target.width + 16f, target.height + 16f),
+        Texture2D.whiteTexture,
+        ScaleMode.StretchToFill,
+        true);
+      GUI.color = previousColor;
+      GUI.Label(
+        new Rect(280f, 18f, 400f, 44f),
+        localization.Get("UI_POKER_JOKER_REVEAL"),
+        styles.Status);
     }
 
     private static void DrawFaceCards(

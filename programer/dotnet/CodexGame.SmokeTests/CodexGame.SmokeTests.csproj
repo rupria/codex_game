@@ -31,6 +31,9 @@
     <Compile
       Include="..\..\CodexGame\Assets\Scripts\Presentation\Views\AcquiredCardFanLayout.cs"
       Link="Presentation\AcquiredCardFanLayout.cs" />
+    <Compile
+      Include="..\..\CodexGame\Assets\Scripts\Presentation\Views\HalliPileOverlapLayout.cs"
+      Link="Presentation\HalliPileOverlapLayout.cs" />
     <None
       Include="..\..\CodexGame\Assets\StreamingAssets\Localization\ui_strings.csv"
       Link="Localization\ui_strings.csv"

@@ -83,6 +83,12 @@ namespace CodexGame.Presentation.Art
 
     public bool TryGetTexture(Card card, out Texture2D texture)
     {
+      if (card.IsJoker)
+      {
+        texture = null;
+        return false;
+      }
+
       if (_entries != null)
       {
         for (var index = 0; index < _entries.Count; index++)
@@ -113,14 +119,24 @@ namespace CodexGame.Presentation.Art
     [SerializeField]
     private Texture2D _backTexture;
 
+    [SerializeField]
+    private Texture2D _playerJokerTexture;
+
+    [SerializeField]
+    private Texture2D _aiJokerTexture;
+
     public PlayableCardArtSet(
       PlayableCardArtLibrary halli,
       PlayableCardArtLibrary poker,
-      Texture2D backTexture)
+      Texture2D backTexture,
+      Texture2D playerJokerTexture = null,
+      Texture2D aiJokerTexture = null)
     {
       _halli = halli ?? throw new ArgumentNullException(nameof(halli));
       _poker = poker ?? throw new ArgumentNullException(nameof(poker));
       _backTexture = backTexture ?? throw new ArgumentNullException(nameof(backTexture));
+      _playerJokerTexture = playerJokerTexture;
+      _aiJokerTexture = aiJokerTexture;
     }
 
     public PlayableCardArtLibrary Halli => _halli;
@@ -129,10 +145,16 @@ namespace CodexGame.Presentation.Art
 
     public Texture2D BackTexture => _backTexture;
 
+    public Texture2D PlayerJokerTexture => _playerJokerTexture;
+
+    public Texture2D AiJokerTexture => _aiJokerTexture;
+
     public bool IsComplete => _halli != null
       && _halli.IsComplete
       && _poker != null
       && _poker.IsComplete
-      && _backTexture != null;
+      && _backTexture != null
+      && _playerJokerTexture != null
+      && _aiJokerTexture != null;
   }
 }

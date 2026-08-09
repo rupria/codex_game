@@ -534,7 +534,9 @@ namespace CodexGame.Presentation.Views
           _cardArtSet?.Poker,
           _cardArtSet?.BackTexture,
           _styles,
-          _localization);
+          _localization,
+          _cardArtSet?.PlayerJokerTexture,
+          _cardArtSet?.AiJokerTexture);
       }
     }
 
