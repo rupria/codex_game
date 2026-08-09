@@ -9,6 +9,8 @@ namespace CodexGame.Core.Shared
     public const int HalliFlipLimit = HalliDistributionLimit;
     public const int RequiredPrivateCards = 3;
     public const int ExposedCardsPerPile = 2;
+    public const int JokerEligibilityAcquiredCards = 4;
+    public const int JokerAwardPercent = 10;
 
     public const long SimultaneousBellThresholdMicroseconds = 33_300;
     public const long BellInputTimeoutMicroseconds = 30_000_000;
@@ -22,6 +24,7 @@ namespace CodexGame.Core.Shared
     public const long PrivateSelectionTimeoutMicroseconds = 60_000_000;
     public const long PredictionTimeoutMicroseconds = 120_000_000;
     public const long PokerResultAnnouncementMicroseconds = 1_000_000;
+    public const long PlayerJokerPresentationMicroseconds = 900_000;
     public const long NextStageTransitionShopClearMicroseconds = 220_000;
     public const long NextStageTransitionCameraTurnMicroseconds = 320_000;
     public const long NextStageTransitionWalkMicroseconds = 650_000;

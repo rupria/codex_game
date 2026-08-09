@@ -47,6 +47,64 @@ namespace CodexGame.Core.Distribution
       PrivateCardSelectionMode playerSelectionMode,
       IRandomSource random)
     {
+      return ResolveBothInternal(
+        playerAcquiredCards,
+        aiAcquiredCards,
+        otherCandidates,
+        winner,
+        combatRoundNumber,
+        selectedPlayerCards,
+        selectedAiCards,
+        playerSelectionMode,
+        random,
+        null,
+        null,
+        null);
+    }
+
+    public static PrivateCardDistributionResult ResolveBothBalanced(
+      IReadOnlyList<Card> playerAcquiredCards,
+      IReadOnlyList<Card> aiAcquiredCards,
+      IReadOnlyList<Card> otherCandidates,
+      HalliStageWinner winner,
+      int combatRoundNumber,
+      IReadOnlyList<CardId> selectedPlayerCards,
+      IReadOnlyList<CardId> selectedAiCards,
+      PrivateCardSelectionMode playerSelectionMode,
+      IRandomSource random,
+      Card firstPublicCard,
+      IRandomSource playerBalanceRandom,
+      IRandomSource aiBalanceRandom)
+    {
+      return ResolveBothInternal(
+        playerAcquiredCards,
+        aiAcquiredCards,
+        otherCandidates,
+        winner,
+        combatRoundNumber,
+        selectedPlayerCards,
+        selectedAiCards,
+        playerSelectionMode,
+        random,
+        firstPublicCard,
+        playerBalanceRandom,
+        aiBalanceRandom);
+    }
+
+    private static PrivateCardDistributionResult ResolveBothInternal(
+      IReadOnlyList<Card> playerAcquiredCards,
+      IReadOnlyList<Card> aiAcquiredCards,
+      IReadOnlyList<Card> otherCandidates,
+      HalliStageWinner winner,
+      int combatRoundNumber,
+      IReadOnlyList<CardId> selectedPlayerCards,
+      IReadOnlyList<CardId> selectedAiCards,
+      PrivateCardSelectionMode playerSelectionMode,
+      IRandomSource random,
+      Card? firstPublicCard,
+      IRandomSource? playerBalanceRandom,
+      IRandomSource? aiBalanceRandom)
+    {
       ValidateInputs(
         playerAcquiredCards,
         aiAcquiredCards,
@@ -77,6 +135,28 @@ namespace CodexGame.Core.Distribution
         (GameRules.RequiredPrivateCards - playerPrivate.Count)
           + (GameRules.RequiredPrivateCards - aiPrivate.Count)
           + 1);
+
+      if (firstPublicCard.HasValue)
+      {
+        if (playerBalanceRandom == null) throw new ArgumentNullException(nameof(playerBalanceRandom));
+        if (aiBalanceRandom == null) throw new ArgumentNullException(nameof(aiBalanceRandom));
+        var balanced = BalancedPokerDealResolver.Resolve(
+          playerPrivate,
+          aiPrivate,
+          randomCandidates,
+          firstPublicCard.Value,
+          random,
+          playerBalanceRandom,
+          aiBalanceRandom);
+        return new PrivateCardDistributionResult(
+          winner,
+          combatRoundNumber,
+          balanced.PlayerPrivateCards,
+          balanced.AiPrivateCards,
+          balanced.SecondPublicCard,
+          balanced.RemainingCandidates);
+      }
+
       FillRandom(playerPrivate, randomCandidates, random);
       FillRandom(aiPrivate, randomCandidates, random);
       var secondPublic = TakeRandom(randomCandidates, random);
@@ -129,7 +209,10 @@ namespace CodexGame.Core.Distribution
       {
         selected.Add(TakeRandom(unselectedAcquired, random));
       }
-      randomCandidates.AddRange(unselectedAcquired);
+      for (var index = 0; index < unselectedAcquired.Count; index++)
+      {
+        if (!unselectedAcquired[index].IsJoker) randomCandidates.Add(unselectedAcquired[index]);
+      }
       return selected;
     }
 

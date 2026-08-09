@@ -225,6 +225,7 @@ namespace CodexGame.Application.Playable
         winner,
         _combatRoundNumber,
         _combatRoundSeed,
+        _firstPublicCard,
         now);
       return selection;
     }

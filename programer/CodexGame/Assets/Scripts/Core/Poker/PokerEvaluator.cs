@@ -13,6 +13,19 @@ namespace CodexGame.Core.Poker
       PokerRuleSet ruleSet)
     {
       Validate(cards, ruleSet);
+      var jokerIndex = FindJoker(cards);
+      if (jokerIndex >= 0)
+      {
+        return EvaluateWithJoker(cards, ruleSet, jokerIndex);
+      }
+
+      return EvaluateStandard(cards, ruleSet);
+    }
+
+    private static PokerHandValue EvaluateStandard(
+      IReadOnlyList<Card> cards,
+      PokerRuleSet ruleSet)
+    {
       var byRank = GroupByRank(cards);
       var flush = IsFlush(cards);
       var straightHigh = GetStraightHigh(byRank, ruleSet.AceStraightMode);
@@ -75,6 +88,33 @@ namespace CodexGame.Core.Poker
       return new PokerHandValue(category, rankVector, DescendingSuits(cards, wheel));
     }
 
+    private static PokerHandValue EvaluateWithJoker(
+      IReadOnlyList<Card> cards,
+      PokerRuleSet ruleSet,
+      int jokerIndex)
+    {
+      PokerHandValue? best = null;
+      for (var suitValue = (int)CardSuit.Clubs; suitValue <= (int)CardSuit.Spades; suitValue++)
+      {
+        for (var rankValue = (int)CardRank.Two; rankValue <= (int)CardRank.Ace; rankValue++)
+        {
+          var replacement = new Card((CardSuit)suitValue, (CardRank)rankValue, 1);
+          if (ContainsId(cards, replacement.Id)) continue;
+          var substituted = new Card[cards.Count];
+          for (var index = 0; index < cards.Count; index++)
+          {
+            substituted[index] = index == jokerIndex ? replacement : cards[index];
+          }
+
+          var value = EvaluateStandard(Array.AsReadOnly(substituted), ruleSet);
+          if (best == null || value.CompareTo(best) > 0) best = value;
+        }
+      }
+
+      if (best == null) throw new InvalidOperationException("Joker has no legal substitution.");
+      return best;
+    }
+
     private static void Validate(IReadOnlyList<Card> cards, PokerRuleSet ruleSet)
     {
       if (cards == null)
@@ -93,6 +133,7 @@ namespace CodexGame.Core.Poker
       }
 
       var ids = new HashSet<CardId>();
+      var jokerCount = 0;
       for (var index = 0; index < cards.Count; index++)
       {
         if (!cards[index].IsValid || !ids.Add(cards[index].Id))
@@ -101,7 +142,33 @@ namespace CodexGame.Core.Poker
             "A poker hand must contain valid cards with no duplicate identities.",
             nameof(cards));
         }
+
+        if (cards[index].IsJoker) jokerCount++;
       }
+
+
+      if (jokerCount > 1)
+      {
+        throw new ArgumentException("A poker hand can use at most one Joker.", nameof(cards));
+      }
+    }
+
+    private static int FindJoker(IReadOnlyList<Card> cards)
+    {
+      for (var index = 0; index < cards.Count; index++)
+      {
+        if (cards[index].IsJoker) return index;
+      }
+      return -1;
+    }
+
+    private static bool ContainsId(IReadOnlyList<Card> cards, CardId id)
+    {
+      for (var index = 0; index < cards.Count; index++)
+      {
+        if (!cards[index].IsJoker && cards[index].Id == id) return true;
+      }
+      return false;
     }
 
     private static Dictionary<int, List<Card>> GroupByRank(IReadOnlyList<Card> cards)
