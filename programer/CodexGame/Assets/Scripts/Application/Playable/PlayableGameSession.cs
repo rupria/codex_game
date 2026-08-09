@@ -8,6 +8,7 @@ using CodexGame.Application.Items;
 using CodexGame.Core.Ai;
 using CodexGame.Core.Battle;
 using CodexGame.Core.Cards;
+using CodexGame.Core.Distribution;
 using CodexGame.Core.Halli;
 using CodexGame.Core.Items;
 using CodexGame.Core.Poker;
@@ -453,7 +454,9 @@ namespace CodexGame.Application.Playable
       }
 
       _firstPublicCard = halliSnapshot.FirstPublicCard.Value;
-      _selection = _halli.BeginPrivateCardDistribution(now);
+      _selection = _halli.BeginPrivateCardDistribution(
+        now,
+        PrivateCardDistributionRules.IsPairAssistEnabled(_health));
       Phase = PlayableGamePhase.PrivateSelection;
       var selectionSnapshot = _selection.GetSnapshot(now);
 

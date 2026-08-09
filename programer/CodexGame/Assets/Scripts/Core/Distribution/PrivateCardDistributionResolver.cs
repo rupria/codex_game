@@ -16,7 +16,8 @@ namespace CodexGame.Core.Distribution
       int combatRoundNumber,
       IReadOnlyList<CardId> selectedWinnerCards,
       PrivateCardSelectionMode selectionMode,
-      IRandomSource random)
+      IRandomSource random,
+      bool pairAssistEnabled = false)
     {
       var playerSelection = winner == HalliStageWinner.Player
         ? selectedWinnerCards
@@ -33,7 +34,8 @@ namespace CodexGame.Core.Distribution
         playerSelection,
         aiSelection,
         selectionMode,
-        random);
+        random,
+        pairAssistEnabled);
     }
 
     public static PrivateCardDistributionResult ResolveBoth(
@@ -45,7 +47,8 @@ namespace CodexGame.Core.Distribution
       IReadOnlyList<CardId> selectedPlayerCards,
       IReadOnlyList<CardId> selectedAiCards,
       PrivateCardSelectionMode playerSelectionMode,
-      IRandomSource random)
+      IRandomSource random,
+      bool pairAssistEnabled = false)
     {
       return ResolveBothInternal(
         playerAcquiredCards,
@@ -59,7 +62,8 @@ namespace CodexGame.Core.Distribution
         random,
         null,
         null,
-        null);
+        null,
+        pairAssistEnabled);
     }
 
     public static PrivateCardDistributionResult ResolveBothBalanced(
@@ -74,7 +78,8 @@ namespace CodexGame.Core.Distribution
       IRandomSource random,
       Card firstPublicCard,
       IRandomSource playerBalanceRandom,
-      IRandomSource aiBalanceRandom)
+      IRandomSource aiBalanceRandom,
+      bool pairAssistEnabled = false)
     {
       return ResolveBothInternal(
         playerAcquiredCards,
@@ -88,7 +93,8 @@ namespace CodexGame.Core.Distribution
         random,
         firstPublicCard,
         playerBalanceRandom,
-        aiBalanceRandom);
+        aiBalanceRandom,
+        pairAssistEnabled);
     }
 
     private static PrivateCardDistributionResult ResolveBothInternal(
@@ -103,7 +109,8 @@ namespace CodexGame.Core.Distribution
       IRandomSource random,
       Card? firstPublicCard,
       IRandomSource? playerBalanceRandom,
-      IRandomSource? aiBalanceRandom)
+      IRandomSource? aiBalanceRandom,
+      bool pairAssistEnabled)
     {
       ValidateInputs(
         playerAcquiredCards,
@@ -135,11 +142,15 @@ namespace CodexGame.Core.Distribution
         (GameRules.RequiredPrivateCards - playerPrivate.Count)
           + (GameRules.RequiredPrivateCards - aiPrivate.Count)
           + 1);
-
       if (firstPublicCard.HasValue)
       {
         if (playerBalanceRandom == null) throw new ArgumentNullException(nameof(playerBalanceRandom));
         if (aiBalanceRandom == null) throw new ArgumentNullException(nameof(aiBalanceRandom));
+        if (pairAssistEnabled)
+        {
+          FillRandom(playerPrivate, randomCandidates, random, true);
+          FillRandom(aiPrivate, randomCandidates, random, true);
+        }
         var balanced = BalancedPokerDealResolver.Resolve(
           playerPrivate,
           aiPrivate,
@@ -157,8 +168,8 @@ namespace CodexGame.Core.Distribution
           balanced.RemainingCandidates);
       }
 
-      FillRandom(playerPrivate, randomCandidates, random);
-      FillRandom(aiPrivate, randomCandidates, random);
+      FillRandom(playerPrivate, randomCandidates, random, pairAssistEnabled);
+      FillRandom(aiPrivate, randomCandidates, random, pairAssistEnabled);
       var secondPublic = TakeRandom(randomCandidates, random);
 
       return new PrivateCardDistributionResult(
@@ -219,12 +230,41 @@ namespace CodexGame.Core.Distribution
     private static void FillRandom(
       List<Card> destination,
       List<Card> candidates,
-      IRandomSource random)
+      IRandomSource random,
+      bool pairAssistEnabled)
     {
       while (destination.Count < GameRules.RequiredPrivateCards)
       {
-        destination.Add(TakeRandom(candidates, random));
+        destination.Add(
+          pairAssistEnabled
+            && destination.Count > 0
+            && random.NextInt(100) < GameRules.PairAssistFillPercent
+              ? TakeRankMatchOrRandom(destination, candidates, random)
+              : TakeRandom(candidates, random));
       }
+    }
+
+    private static Card TakeRankMatchOrRandom(
+      IReadOnlyList<Card> destination,
+      List<Card> candidates,
+      IRandomSource random)
+    {
+      var matchingIndexes = new List<int>();
+      for (var candidateIndex = 0; candidateIndex < candidates.Count; candidateIndex++)
+      {
+        for (var destinationIndex = 0; destinationIndex < destination.Count; destinationIndex++)
+        {
+          if (candidates[candidateIndex].Rank != destination[destinationIndex].Rank) continue;
+          matchingIndexes.Add(candidateIndex);
+          break;
+        }
+      }
+
+      if (matchingIndexes.Count == 0) return TakeRandom(candidates, random);
+      var selectedIndex = matchingIndexes[random.NextInt(matchingIndexes.Count)];
+      var selected = candidates[selectedIndex];
+      candidates.RemoveAt(selectedIndex);
+      return selected;
     }
 
     private static Card TakeRandom(List<Card> candidates, IRandomSource random)

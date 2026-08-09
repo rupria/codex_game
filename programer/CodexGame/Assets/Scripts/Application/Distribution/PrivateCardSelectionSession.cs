@@ -23,6 +23,7 @@ namespace CodexGame.Application.Distribution
     private HalliStageWinner _winner;
     private int _combatRoundNumber;
     private int _requiredSelectionCount;
+    private bool _pairAssistEnabled;
     private PrivateCardDistributionResult? _result;
     private Card? _firstPublicCard;
     private long _combatRoundSeed;
@@ -36,7 +37,8 @@ namespace CodexGame.Application.Distribution
       HalliStageWinner winner,
       int combatRoundNumber,
       long combatRoundSeed,
-      GameTimestamp now)
+      GameTimestamp now,
+      bool pairAssistEnabled = false)
     {
       Begin(
         playerAcquiredCards,
@@ -46,7 +48,8 @@ namespace CodexGame.Application.Distribution
         combatRoundNumber,
         combatRoundSeed,
         null,
-        now);
+        now,
+        pairAssistEnabled);
     }
 
     public void Begin(
@@ -57,7 +60,8 @@ namespace CodexGame.Application.Distribution
       int combatRoundNumber,
       long combatRoundSeed,
       Card? firstPublicCard,
-      GameTimestamp now)
+      GameTimestamp now,
+      bool pairAssistEnabled = false)
     {
       if (Phase == PrivateCardSelectionPhase.AwaitingSelection)
       {
@@ -96,10 +100,23 @@ namespace CodexGame.Application.Distribution
       _requiredSelectionCount = _winnerCandidates.Count > 0
         ? GameRules.RequiredPrivateCards
         : 0;
+      _pairAssistEnabled = pairAssistEnabled;
       _selectedIds.Clear();
       _result = null;
       _random = DeterministicRandomFactory.Create(combatRoundSeed, RandomChannel.CardDistribution);
-      _selectedAiIds = SelectAiPrivateCards(_aiAcquiredCards, _random);
+      _selectedAiIds = SelectAiPrivateCards(_aiAcquiredCards, _random, pairAssistEnabled);
+
+      if (_requiredSelectionCount > 0 && pairAssistEnabled)
+      {
+        var recommended = PairAssistSelectionPolicy.Select(
+          _winnerCandidates,
+          _requiredSelectionCount,
+          _random);
+        for (var index = 0; index < recommended.Count; index++)
+        {
+          _selectedIds.Add(recommended[index]);
+        }
+      }
 
       if (_requiredSelectionCount == 0)
       {
@@ -195,7 +212,8 @@ namespace CodexGame.Application.Distribution
           _random,
           _firstPublicCard.Value,
           DeterministicRandomFactory.Create(_combatRoundSeed, RandomChannel.PlayerPokerBalance),
-          DeterministicRandomFactory.Create(_combatRoundSeed, RandomChannel.AiPokerBalance))
+          DeterministicRandomFactory.Create(_combatRoundSeed, RandomChannel.AiPokerBalance),
+          _pairAssistEnabled)
         : PrivateCardDistributionResolver.ResolveBoth(
           _playerAcquiredCards,
           _aiAcquiredCards,
@@ -205,7 +223,8 @@ namespace CodexGame.Application.Distribution
           GetSelectedCardIds(),
           _selectedAiIds,
           mode,
-          _random);
+          _random,
+          _pairAssistEnabled);
       Phase = PrivateCardSelectionPhase.Completed;
     }
 
@@ -250,11 +269,20 @@ namespace CodexGame.Application.Distribution
 
     private static IReadOnlyList<CardId> SelectAiPrivateCards(
       IReadOnlyList<Card> candidates,
-      IRandomSource random)
+      IRandomSource random,
+      bool pairAssistEnabled)
     {
       if (candidates.Count <= GameRules.RequiredPrivateCards)
       {
         return Array.AsReadOnly(Array.Empty<CardId>());
+      }
+
+      if (pairAssistEnabled)
+      {
+        return PairAssistSelectionPolicy.Select(
+          candidates,
+          GameRules.RequiredPrivateCards,
+          random);
       }
 
       var available = new List<Card>(candidates);
