@@ -3,8 +3,12 @@
 
 local p=app.params
 local sourceImage=assert(p.pouchImage)
-local screenshotPath=assert(p.screenshot)
 local bulletPath=assert(p.bullet)
+local backgroundPath=assert(p.background)
+local productSlotPath=assert(p.productSlot)
+local ammoPanelPath=assert(p.ammoPanel)
+local hpPanelPath=assert(p.hpPanel)
+local itemPaths={assert(p.item1),assert(p.item2),assert(p.item3),assert(p.item4)}
 local sourceDir=assert(p.sourceDir)
 local previewDir=assert(p.previewDir)
 local outputDir=assert(p.outputDir)
@@ -144,16 +148,33 @@ setImage(ss,spins[1]); ss.frames[1].duration=0.08
 for i=2,6 do local f=ss:newEmptyFrame(); ss:newCel(ss.layers[1],f,spins[i],Point(0,0)); f.duration=0.08 end
 ss:saveAs(sourceDir.."/bar_shop_bullet_toss_spin_0_3_4.aseprite"); ss:close()
 
-local screen=resize(load(screenshotPath),960,540)
--- Remove the two navigation icons; the actual runtime uses localized TMP text over these skins.
-fill(screen,34,455,195,60,Color{r=7,g=5,b=3,a=255}); fill(screen,375,455,220,60,Color{r=7,g=5,b=3,a=255})
+-- Build the presentation on the clean saloon background. This avoids the opaque
+-- patch that used to sit behind the pouch in the screenshot-derived mockup.
+local screen=resize(load(backgroundPath),960,540)
+screen:drawImage(load(ammoPanelPath),Point(40,28))
+screen:drawImage(load(hpPanelPath),Point(720,28))
+
+-- 0.1.2 shop capacity: four products. Keep the whole row above the pouch zone.
+local productSlot=resize(load(productSlotPath),190,174)
+local productXs={20,250,480,710}
+for i=1,4 do
+  local x=productXs[i]
+  screen:drawImage(productSlot,Point(x,124))
+  screen:drawImage(resize(load(itemPaths[i]),54,54),Point(x+68,142))
+end
+
+-- The actual runtime uses localized TMP text over these iconless skins.
 local left=resize(states[1],190,48); local right=resize(states[1],210,48)
 screen:drawImage(left,Point(38,462)); screen:drawImage(right,Point(382,462))
 drawText(screen,"REROLL",133,475,2,C.cream); drawText(screen,"CONTINUE",487,475,2,C.cream)
--- Replace the photographic placeholder with the approved pixel-art pouch.
-fill(screen,760,390,200,150,Color{r=5,g=4,b=3,a=255}); screen:drawImage(pouch,Point(778,390))
+-- Transparent pouch, isolated at bottom-right with no frame and no product overlap.
+screen:drawImage(pouch,Point(776,384))
 save(screen,previewDir.."/bar_shop_text_buttons_and_pouch_preview_960x540_0_3_4.png")
 save(screen,outputDir.."/bar_shop_text_buttons_and_pouch_preview_960x540_0_3_4.png")
+save(screen,previewDir.."/bar_shop_four_slot_pouch_layout_preview_960x540_0_3_4.png")
+save(screen,outputDir.."/bar_shop_four_slot_pouch_layout_preview_960x540_0_3_4.png")
+local layout=Sprite(960,540,ColorMode.RGB); layout.layers[1].name="clean_saloon_four_slot_pouch_layout"
+setImage(layout,screen); layout:saveAs(sourceDir.."/bar_shop_four_slot_pouch_layout_0_3_4.aseprite"); layout:close()
 
 -- Four-step purchase motion storyboard: ready, launch, apex, shopkeeper contact.
 local small=resize(screen,480,270); local board=Image(1920,270,ColorMode.RGB); board:clear(C.ink)
