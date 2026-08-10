@@ -3,6 +3,7 @@ using CodexGame.Application.Playable;
 using CodexGame.Core.Cards;
 using CodexGame.Core.Rewards;
 using CodexGame.Core.Shared;
+using CodexGame.Core.Poker;
 #if UNITY_EDITOR || ENABLE_GAMEPLAY_CHEATS
 using CodexGame.Application.Development;
 using CodexGame.Core.Items;
@@ -32,6 +33,7 @@ namespace CodexGame.Bootstrap
       _view.PrivateCardToggleRequested += TogglePrivateCard;
       _view.PrivateCardsConfirmRequested += ConfirmPrivateCards;
       _view.PredictionRequested += Predict;
+      _view.JokerHandRequested += ChooseJokerHand;
       _view.ReloadItemRequested += UseReload;
       _view.BottomDealRequested += BeginBottomDeal;
       _view.BottomDealChoiceRequested += ChooseBottomDeal;
@@ -75,6 +77,7 @@ namespace CodexGame.Bootstrap
       _view.PrivateCardToggleRequested -= TogglePrivateCard;
       _view.PrivateCardsConfirmRequested -= ConfirmPrivateCards;
       _view.PredictionRequested -= Predict;
+      _view.JokerHandRequested -= ChooseJokerHand;
       _view.ReloadItemRequested -= UseReload;
       _view.BottomDealRequested -= BeginBottomDeal;
       _view.BottomDealChoiceRequested -= ChooseBottomDeal;
@@ -130,6 +133,12 @@ namespace CodexGame.Bootstrap
     private void Predict(PredictionChoice choice)
     {
       _session.Predict(choice, Now());
+      Present();
+    }
+
+    private void ChooseJokerHand(PokerHandCategory category)
+    {
+      _session.ChooseJokerHand(category, Now());
       Present();
     }
 

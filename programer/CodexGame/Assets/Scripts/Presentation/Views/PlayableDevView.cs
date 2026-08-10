@@ -4,6 +4,7 @@ using CodexGame.Core.Cards;
 using CodexGame.Core.Rewards;
 using CodexGame.Core.Shared;
 using CodexGame.Core.Items;
+using CodexGame.Core.Poker;
 #if UNITY_EDITOR || ENABLE_GAMEPLAY_CHEATS
 using CodexGame.Application.Development;
 #endif
@@ -82,6 +83,7 @@ namespace CodexGame.Presentation.Views
     public event Action<CardId> PrivateCardToggleRequested;
     public event Action PrivateCardsConfirmRequested;
     public event Action<PredictionChoice> PredictionRequested;
+    public event Action<PokerHandCategory> JokerHandRequested;
     public event Action<CardId> ReloadItemRequested;
     public event Action<CardId> BottomDealRequested;
     public event Action<CardId> BottomDealChoiceRequested;
@@ -340,6 +342,7 @@ namespace CodexGame.Presentation.Views
           _pokerUiArtSet,
           _pokerItemUiArtSet,
           _localization,
+          category => JokerHandRequested?.Invoke(category),
           prediction => PredictionRequested?.Invoke(prediction),
           () => AdvanceRequested?.Invoke());
         DrawBattleEconomyHud();

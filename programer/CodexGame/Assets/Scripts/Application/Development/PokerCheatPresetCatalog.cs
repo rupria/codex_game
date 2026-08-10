@@ -83,6 +83,11 @@ namespace CodexGame.Application.Development
           return Hand(new Card(PokerJokerKind.BrassSheriffRevolver), Card(CardSuit.Clubs, CardRank.Two), Card(CardSuit.Hearts, CardRank.Five), Card(CardSuit.Diamonds, CardRank.Nine), Card(CardSuit.Spades, CardRank.King));
         case PokerCheatPreset.AiJoker:
           return Hand(Card(CardSuit.Clubs, CardRank.Three), Card(CardSuit.Hearts, CardRank.Six), Card(CardSuit.Diamonds, CardRank.Eight), Card(CardSuit.Spades, CardRank.Jack), Card(CardSuit.Clubs, CardRank.Ace));
+        case PokerCheatPreset.PlayerJokerIneligible:
+        case PokerCheatPreset.PlayerJokerNotAwarded:
+        case PokerCheatPreset.AiJokerIneligible:
+        case PokerCheatPreset.AiJokerNotAwarded:
+          return Hand(Card(CardSuit.Clubs, CardRank.Three), Card(CardSuit.Hearts, CardRank.Six), Card(CardSuit.Diamonds, CardRank.Eight), Card(CardSuit.Spades, CardRank.Jack), Card(CardSuit.Clubs, CardRank.Ace));
         default:
           throw new ArgumentOutOfRangeException(nameof(preset));
       }

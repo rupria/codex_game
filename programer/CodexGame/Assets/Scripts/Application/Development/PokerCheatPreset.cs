@@ -15,6 +15,10 @@ namespace CodexGame.Application.Development
     RoyalStraightFlush = 10,
     PlayerJoker = 11,
     AiJoker = 12,
-    SuitTieBoundary = 13
+    SuitTieBoundary = 13,
+    PlayerJokerIneligible = 14,
+    PlayerJokerNotAwarded = 15,
+    AiJokerIneligible = 16,
+    AiJokerNotAwarded = 17
   }
 }
