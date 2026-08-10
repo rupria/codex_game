@@ -179,7 +179,7 @@ namespace CodexGame.Presentation.Views
       }
 
 #if UNITY_EDITOR || ENABLE_GAMEPLAY_CHEATS
-      if (Input.GetKeyDown(KeyCode.F10))
+      if (Input.GetKeyDown(KeyCode.BackQuote))
       {
         _cheatOpen = !_cheatOpen;
         return;

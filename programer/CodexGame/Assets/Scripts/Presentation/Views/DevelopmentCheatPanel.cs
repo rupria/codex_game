@@ -23,7 +23,7 @@ namespace CodexGame.Presentation.Views
       GUI.color = previous;
 
       GUI.Box(new Rect(24f, 20f, 912f, 500f), GUIContent.none);
-      GUI.Label(new Rect(48f, 34f, 720f, 32f), "DEVELOPMENT CHEATS — F10", styles.Heading);
+      GUI.Label(new Rect(48f, 34f, 720f, 32f), "DEVELOPMENT CHEATS — `", styles.Heading);
       GUI.Label(
         new Rect(48f, 70f, 840f, 24f),
         $"STAGE {snapshot.StageNumber} / ROUND {snapshot.CombatRoundNumber} / {snapshot.Phase} / HP {snapshot.Health.Player}:{snapshot.Health.Ai}",
