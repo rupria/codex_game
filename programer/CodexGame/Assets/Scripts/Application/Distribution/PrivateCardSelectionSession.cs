@@ -25,6 +25,7 @@ namespace CodexGame.Application.Distribution
     private int _requiredSelectionCount;
     private PrivateCardDistributionResult? _result;
     private Card? _firstPublicCard;
+    private Card? _secondPublicCard;
     private long _combatRoundSeed;
 
     public PrivateCardSelectionPhase Phase { get; private set; } = PrivateCardSelectionPhase.NotStarted;
@@ -59,9 +60,9 @@ namespace CodexGame.Application.Distribution
       Card? firstPublicCard,
       GameTimestamp now)
     {
-      if (Phase == PrivateCardSelectionPhase.AwaitingSelection)
+      if (Phase != PrivateCardSelectionPhase.NotStarted)
       {
-        throw new InvalidOperationException("An active selection session cannot be restarted.");
+        throw new InvalidOperationException("A selection session cannot be restarted or rerolled.");
       }
 
       ValidatePools(playerAcquiredCards, aiAcquiredCards, otherCandidates);
@@ -71,37 +72,64 @@ namespace CodexGame.Application.Distribution
         throw new ArgumentOutOfRangeException(nameof(winner));
       }
 
+      var retainedPlayer = winner == HalliStageWinner.Player
+        ? Copy(playerAcquiredCards)
+        : EmptyCards;
+      var retainedAi = winner == HalliStageWinner.Ai
+        ? Copy(aiAcquiredCards)
+        : EmptyCards;
+      var pooledCandidates = MergeWithLoserCards(
+        otherCandidates,
+        winner == HalliStageWinner.Player ? EmptyCards : playerAcquiredCards,
+        winner == HalliStageWinner.Ai ? EmptyCards : aiAcquiredCards);
+
       var playerAwarded = JokerAwardResolver.Roll(
-        playerAcquiredCards.Count,
+        retainedPlayer.Count,
         DeterministicRandomFactory.Create(combatRoundSeed, RandomChannel.PlayerJokerAward));
       var aiAwarded = JokerAwardResolver.Roll(
-        aiAcquiredCards.Count,
+        retainedAi.Count,
         DeterministicRandomFactory.Create(combatRoundSeed, RandomChannel.AiJokerAward));
       _playerAcquiredCards = AppendJoker(
-        playerAcquiredCards,
+        retainedPlayer,
         playerAwarded,
         PokerJokerKind.BrassSheriffRevolver);
       _aiAcquiredCards = AppendJoker(
-        aiAcquiredCards,
+        retainedAi,
         aiAwarded,
         PokerJokerKind.CrimsonCardsharp);
-      _otherCandidates = Copy(otherCandidates);
+      _random = DeterministicRandomFactory.Create(combatRoundSeed, RandomChannel.CardDistribution);
+      _firstPublicCard = firstPublicCard;
+      _secondPublicCard = firstPublicCard.HasValue
+        ? TakeSecondPublicCard(pooledCandidates, firstPublicCard.Value, _random)
+        : null;
+      _otherCandidates = Copy(pooledCandidates);
       _winner = winner;
       _combatRoundNumber = combatRoundNumber;
       _combatRoundSeed = combatRoundSeed;
-      _firstPublicCard = firstPublicCard;
-      _winnerCandidates = _playerAcquiredCards.Count > GameRules.RequiredPrivateCards
+      var actualWinnerCandidates = winner == HalliStageWinner.Player
         ? _playerAcquiredCards
+        : winner == HalliStageWinner.Ai
+          ? _aiAcquiredCards
+          : EmptyCards;
+      var requiresSelection = PrivateCardDistributionRules.RequiresSelectionUi(
+        combatRoundNumber,
+        actualWinnerCandidates.Count);
+      _winnerCandidates = winner == HalliStageWinner.Player && requiresSelection
+        ? actualWinnerCandidates
         : EmptyCards;
-      _requiredSelectionCount = _winnerCandidates.Count > 0
-        ? GameRules.RequiredPrivateCards
+      _requiredSelectionCount = requiresSelection
+        ? PrivateCardDistributionRules.GetDirectSelectionCount(combatRoundNumber)
         : 0;
       _selectedIds.Clear();
       _result = null;
-      _random = DeterministicRandomFactory.Create(combatRoundSeed, RandomChannel.CardDistribution);
-      _selectedAiIds = SelectAiPrivateCards(_aiAcquiredCards, _random);
+      _selectedAiIds = winner == HalliStageWinner.Ai && requiresSelection
+        ? SelectAiPrivateCards(
+          actualWinnerCandidates,
+          _requiredSelectionCount,
+          DeterministicRandomFactory.Create(combatRoundSeed, RandomChannel.AiChoice))
+        : Array.AsReadOnly(Array.Empty<CardId>());
 
-      if (_requiredSelectionCount == 0)
+      if (_requiredSelectionCount == 0 || winner != HalliStageWinner.Player)
       {
         Complete(PrivateCardSelectionMode.Confirmed);
         return;
@@ -172,7 +200,9 @@ namespace CodexGame.Application.Distribution
         remaining,
         _winnerCandidates,
         GetSelectedCards(),
-        _result);
+        _result,
+        _firstPublicCard,
+        _secondPublicCard);
     }
 
     private void Complete(PrivateCardSelectionMode mode)
@@ -182,8 +212,8 @@ namespace CodexGame.Application.Distribution
         throw new InvalidOperationException("The selection session has no distribution random source.");
       }
 
-      _result = _firstPublicCard.HasValue
-        ? PrivateCardDistributionResolver.ResolveBothBalanced(
+      _result = _firstPublicCard.HasValue && _secondPublicCard.HasValue
+        ? PrivateCardDistributionResolver.ResolveBothBalancedWithPublicCards(
           _playerAcquiredCards,
           _aiAcquiredCards,
           _otherCandidates,
@@ -194,6 +224,7 @@ namespace CodexGame.Application.Distribution
           mode,
           _random,
           _firstPublicCard.Value,
+          _secondPublicCard.Value,
           DeterministicRandomFactory.Create(_combatRoundSeed, RandomChannel.PlayerPokerBalance),
           DeterministicRandomFactory.Create(_combatRoundSeed, RandomChannel.AiPokerBalance))
         : PrivateCardDistributionResolver.ResolveBoth(
@@ -250,15 +281,16 @@ namespace CodexGame.Application.Distribution
 
     private static IReadOnlyList<CardId> SelectAiPrivateCards(
       IReadOnlyList<Card> candidates,
+      int requiredCount,
       IRandomSource random)
     {
-      if (candidates.Count <= GameRules.RequiredPrivateCards)
+      if (requiredCount == 0)
       {
         return Array.AsReadOnly(Array.Empty<CardId>());
       }
 
       var available = new List<Card>(candidates);
-      var selected = new CardId[GameRules.RequiredPrivateCards];
+      var selected = new CardId[requiredCount];
       for (var index = 0; index < selected.Length; index++)
       {
         var selectedIndex = random.NextInt(available.Count);
@@ -266,6 +298,49 @@ namespace CodexGame.Application.Distribution
         available.RemoveAt(selectedIndex);
       }
       return Array.AsReadOnly(selected);
+    }
+
+    private static List<Card> MergeWithLoserCards(
+      IReadOnlyList<Card> otherCandidates,
+      IReadOnlyList<Card> playerLoserCards,
+      IReadOnlyList<Card> aiLoserCards)
+    {
+      var result = new List<Card>(
+        otherCandidates.Count + playerLoserCards.Count + aiLoserCards.Count);
+      for (var index = 0; index < otherCandidates.Count; index++) result.Add(otherCandidates[index]);
+      for (var index = 0; index < playerLoserCards.Count; index++) result.Add(playerLoserCards[index]);
+      for (var index = 0; index < aiLoserCards.Count; index++) result.Add(aiLoserCards[index]);
+      return result;
+    }
+
+    private static Card TakeSecondPublicCard(
+      List<Card> candidates,
+      Card firstPublicCard,
+      IRandomSource random)
+    {
+      if (!firstPublicCard.IsValid || firstPublicCard.IsJoker)
+      {
+        throw new ArgumentException("The first public card must be a standard card.", nameof(firstPublicCard));
+      }
+      for (var index = 0; index < candidates.Count; index++)
+      {
+        if (candidates[index].Id == firstPublicCard.Id)
+        {
+          throw new ArgumentException("The first public card cannot remain in the distribution pool.");
+        }
+      }
+      if (candidates.Count == 0)
+      {
+        throw new ArgumentException("A second public card candidate is required.", nameof(candidates));
+      }
+      var selectedIndex = random.NextInt(candidates.Count);
+      var selected = candidates[selectedIndex];
+      if (selected.IsJoker)
+      {
+        throw new ArgumentException("The public candidate pool cannot contain a Joker.", nameof(candidates));
+      }
+      candidates.RemoveAt(selectedIndex);
+      return selected;
     }
 
     private static bool Contains(IReadOnlyList<Card> cards, CardId cardId)

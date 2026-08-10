@@ -19,6 +19,53 @@ namespace CodexGame.Core.Distribution
       IRandomSource playerBalanceRandom,
       IRandomSource aiBalanceRandom)
     {
+      return ResolveInternal(
+        fixedPlayerCards,
+        fixedAiCards,
+        candidates,
+        firstPublicCard,
+        null,
+        dealRandom,
+        playerBalanceRandom,
+        aiBalanceRandom);
+    }
+
+    public static Deal ResolveWithFixedPublicCards(
+      IReadOnlyList<Card> fixedPlayerCards,
+      IReadOnlyList<Card> fixedAiCards,
+      IReadOnlyList<Card> candidates,
+      Card firstPublicCard,
+      Card secondPublicCard,
+      IRandomSource dealRandom,
+      IRandomSource playerBalanceRandom,
+      IRandomSource aiBalanceRandom)
+    {
+      if (!secondPublicCard.IsValid || secondPublicCard.IsJoker
+        || secondPublicCard.Id == firstPublicCard.Id)
+      {
+        throw new ArgumentException("The second public card must be a distinct standard card.", nameof(secondPublicCard));
+      }
+      return ResolveInternal(
+        fixedPlayerCards,
+        fixedAiCards,
+        candidates,
+        firstPublicCard,
+        secondPublicCard,
+        dealRandom,
+        playerBalanceRandom,
+        aiBalanceRandom);
+    }
+
+    private static Deal ResolveInternal(
+      IReadOnlyList<Card> fixedPlayerCards,
+      IReadOnlyList<Card> fixedAiCards,
+      IReadOnlyList<Card> candidates,
+      Card firstPublicCard,
+      Card? fixedSecondPublicCard,
+      IRandomSource dealRandom,
+      IRandomSource playerBalanceRandom,
+      IRandomSource aiBalanceRandom)
+    {
       if (!firstPublicCard.IsValid || firstPublicCard.IsJoker)
       {
         throw new ArgumentException("The first public card must be a standard card.", nameof(firstPublicCard));
@@ -31,7 +78,12 @@ namespace CodexGame.Core.Distribution
 
       for (var attempt = 0; attempt < MaximumAttempts; attempt++)
       {
-        var deal = Draw(fixedPlayerCards, fixedAiCards, candidates, dealRandom);
+        var deal = Draw(
+          fixedPlayerCards,
+          fixedAiCards,
+          candidates,
+          fixedSecondPublicCard,
+          dealRandom);
         var playerMatches = Matches(
           deal.PlayerPrivateCards,
           firstPublicCard,
@@ -59,6 +111,7 @@ namespace CodexGame.Core.Distribution
       IReadOnlyList<Card> fixedPlayerCards,
       IReadOnlyList<Card> fixedAiCards,
       IReadOnlyList<Card> candidates,
+      Card? fixedSecondPublicCard,
       IRandomSource random)
     {
       var pool = new List<Card>(candidates);
@@ -66,7 +119,7 @@ namespace CodexGame.Core.Distribution
       var ai = new List<Card>(fixedAiCards);
       Fill(player, pool, random);
       Fill(ai, pool, random);
-      var secondPublic = TakeRandom(pool, random);
+      var secondPublic = fixedSecondPublicCard ?? TakeRandom(pool, random);
       return new Deal(
         Array.AsReadOnly(player.ToArray()),
         Array.AsReadOnly(ai.ToArray()),

@@ -59,6 +59,7 @@ namespace CodexGame.Core.Distribution
         random,
         null,
         null,
+        null,
         null);
     }
 
@@ -87,6 +88,38 @@ namespace CodexGame.Core.Distribution
         playerSelectionMode,
         random,
         firstPublicCard,
+        null,
+        playerBalanceRandom,
+        aiBalanceRandom);
+    }
+
+    public static PrivateCardDistributionResult ResolveBothBalancedWithPublicCards(
+      IReadOnlyList<Card> playerAcquiredCards,
+      IReadOnlyList<Card> aiAcquiredCards,
+      IReadOnlyList<Card> otherCandidates,
+      HalliStageWinner winner,
+      int combatRoundNumber,
+      IReadOnlyList<CardId> selectedPlayerCards,
+      IReadOnlyList<CardId> selectedAiCards,
+      PrivateCardSelectionMode playerSelectionMode,
+      IRandomSource random,
+      Card firstPublicCard,
+      Card secondPublicCard,
+      IRandomSource playerBalanceRandom,
+      IRandomSource aiBalanceRandom)
+    {
+      return ResolveBothInternal(
+        playerAcquiredCards,
+        aiAcquiredCards,
+        otherCandidates,
+        winner,
+        combatRoundNumber,
+        selectedPlayerCards,
+        selectedAiCards,
+        playerSelectionMode,
+        random,
+        firstPublicCard,
+        secondPublicCard,
         playerBalanceRandom,
         aiBalanceRandom);
     }
@@ -102,6 +135,7 @@ namespace CodexGame.Core.Distribution
       PrivateCardSelectionMode playerSelectionMode,
       IRandomSource random,
       Card? firstPublicCard,
+      Card? fixedSecondPublicCard,
       IRandomSource? playerBalanceRandom,
       IRandomSource? aiBalanceRandom)
     {
@@ -122,32 +156,44 @@ namespace CodexGame.Core.Distribution
         selectedPlayerCards,
         playerSelectionMode,
         randomCandidates,
-        random);
+        random,
+        PrivateCardDistributionRules.GetDirectSelectionCount(combatRoundNumber));
       var aiPrivate = RetainOrSelect(
         aiAcquiredCards,
         selectedAiCards,
         PrivateCardSelectionMode.Confirmed,
         randomCandidates,
-        random);
+        random,
+        PrivateCardDistributionRules.GetDirectSelectionCount(combatRoundNumber));
 
       EnsureEnoughCandidates(
         randomCandidates.Count,
         (GameRules.RequiredPrivateCards - playerPrivate.Count)
           + (GameRules.RequiredPrivateCards - aiPrivate.Count)
-          + 1);
+          + (fixedSecondPublicCard.HasValue ? 0 : 1));
 
       if (firstPublicCard.HasValue)
       {
         if (playerBalanceRandom == null) throw new ArgumentNullException(nameof(playerBalanceRandom));
         if (aiBalanceRandom == null) throw new ArgumentNullException(nameof(aiBalanceRandom));
-        var balanced = BalancedPokerDealResolver.Resolve(
-          playerPrivate,
-          aiPrivate,
-          randomCandidates,
-          firstPublicCard.Value,
-          random,
-          playerBalanceRandom,
-          aiBalanceRandom);
+        var balanced = fixedSecondPublicCard.HasValue
+          ? BalancedPokerDealResolver.ResolveWithFixedPublicCards(
+            playerPrivate,
+            aiPrivate,
+            randomCandidates,
+            firstPublicCard.Value,
+            fixedSecondPublicCard.Value,
+            random,
+            playerBalanceRandom,
+            aiBalanceRandom)
+          : BalancedPokerDealResolver.Resolve(
+            playerPrivate,
+            aiPrivate,
+            randomCandidates,
+            firstPublicCard.Value,
+            random,
+            playerBalanceRandom,
+            aiBalanceRandom);
         return new PrivateCardDistributionResult(
           winner,
           combatRoundNumber,
@@ -175,9 +221,10 @@ namespace CodexGame.Core.Distribution
       IReadOnlyList<CardId> selectedIds,
       PrivateCardSelectionMode mode,
       List<Card> randomCandidates,
-      IRandomSource random)
+      IRandomSource random,
+      int directSelectionCount)
     {
-      if (acquired.Count <= GameRules.RequiredPrivateCards)
+      if (acquired.Count <= directSelectionCount)
       {
         if (selectedIds.Count != 0)
         {
@@ -188,14 +235,14 @@ namespace CodexGame.Core.Distribution
 
       var selected = NormalizeSelection(acquired, selectedIds);
       if (mode == PrivateCardSelectionMode.Confirmed
-        && selected.Count != GameRules.RequiredPrivateCards)
+        && selected.Count != directSelectionCount)
       {
-        throw new ArgumentException("A confirmed overflow selection must contain exactly three cards.");
+        throw new ArgumentException("A confirmed selection must contain the round's direct-selection count.");
       }
       if (mode == PrivateCardSelectionMode.TimedOut
-        && selected.Count > GameRules.RequiredPrivateCards)
+        && selected.Count > directSelectionCount)
       {
-        throw new ArgumentException("A timed-out selection cannot contain more than three cards.");
+        throw new ArgumentException("A timed-out selection exceeds the round's direct-selection count.");
       }
 
       var selectedSet = ToIdSet(selected);
@@ -205,10 +252,6 @@ namespace CodexGame.Core.Distribution
         if (!selectedSet.Contains(acquired[index].Id)) unselectedAcquired.Add(acquired[index]);
       }
 
-      while (selected.Count < GameRules.RequiredPrivateCards)
-      {
-        selected.Add(TakeRandom(unselectedAcquired, random));
-      }
       for (var index = 0; index < unselectedAcquired.Count; index++)
       {
         if (!unselectedAcquired[index].IsJoker) randomCandidates.Add(unselectedAcquired[index]);

@@ -13,11 +13,28 @@ namespace CodexGame.Core.Poker
       IReadOnlyList<Card> publicCards,
       PokerRuleSet ruleSet)
     {
+      return Compare(
+        playerPrivateCards,
+        aiPrivateCards,
+        publicCards,
+        ruleSet,
+        null,
+        null);
+    }
+
+    public static PokerComparisonResult Compare(
+      IReadOnlyList<Card> playerPrivateCards,
+      IReadOnlyList<Card> aiPrivateCards,
+      IReadOnlyList<Card> publicCards,
+      PokerRuleSet ruleSet,
+      PokerHandCategory? playerJokerCategory,
+      PokerHandCategory? aiJokerCategory)
+    {
       ValidateInput(playerPrivateCards, aiPrivateCards, publicCards, ruleSet);
       var playerHand = Join(playerPrivateCards, publicCards);
       var aiHand = Join(aiPrivateCards, publicCards);
-      var playerValue = PokerEvaluator.Evaluate(playerHand, ruleSet);
-      var aiValue = PokerEvaluator.Evaluate(aiHand, ruleSet);
+      var playerValue = Evaluate(playerHand, ruleSet, playerJokerCategory);
+      var aiValue = Evaluate(aiHand, ruleSet, aiJokerCategory);
       var comparison = playerValue.CompareTo(aiValue);
 
       if (comparison == 0)
@@ -30,6 +47,27 @@ namespace CodexGame.Core.Poker
         comparison > 0 ? PokerWinner.Player : PokerWinner.Ai,
         playerValue,
         aiValue);
+    }
+
+    private static PokerHandValue Evaluate(
+      IReadOnlyList<Card> cards,
+      PokerRuleSet ruleSet,
+      PokerHandCategory? jokerCategory)
+    {
+      var hasJoker = false;
+      for (var index = 0; index < cards.Count; index++) hasJoker |= cards[index].IsJoker;
+      if (!hasJoker)
+      {
+        if (jokerCategory.HasValue)
+        {
+          throw new ArgumentException("A Joker category cannot be supplied for a standard hand.");
+        }
+        return PokerEvaluator.Evaluate(cards, ruleSet);
+      }
+
+      return jokerCategory.HasValue
+        ? PokerJokerHandResolver.Resolve(cards, ruleSet, jokerCategory.Value).HandValue
+        : PokerJokerHandResolver.ResolveStrongest(cards, ruleSet).HandValue;
     }
 
     private static void ValidateInput(

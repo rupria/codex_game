@@ -23,6 +23,9 @@ namespace CodexGame.Application.Poker
     private GameTimestamp _resultRevealAt;
     private GameTimestamp _jokerPresentationEndsAt;
     private int _preRevealAiCardIndex = -1;
+    private IReadOnlyList<JokerHandOption> _playerJokerOptions = Array.AsReadOnly(Array.Empty<JokerHandOption>());
+    private PokerHandCategory? _playerJokerCategory;
+    private PokerHandCategory? _aiJokerCategory;
 
     public PokerRoundPhase Phase { get; private set; } = PokerRoundPhase.NotStarted;
     public PokerRoundResult? Result => _result;
@@ -46,16 +49,30 @@ namespace CodexGame.Application.Poker
       _health = health;
       _ruleSet = ruleSet;
       _result = null;
+      _playerJokerCategory = null;
+      _aiJokerCategory = null;
+      _playerJokerOptions = Array.AsReadOnly(Array.Empty<JokerHandOption>());
       if (preRevealAiCardIndex < -1 || preRevealAiCardIndex >= _aiPrivateCards.Count)
       {
         throw new ArgumentOutOfRangeException(nameof(preRevealAiCardIndex));
       }
-      _preRevealAiCardIndex = preRevealAiCardIndex;
+      _preRevealAiCardIndex = NormalizePreRevealAiCardIndex(
+        _aiPrivateCards,
+        preRevealAiCardIndex);
 
       // Validate all seven identities before any concealed information is presented.
       PokerComparer.Compare(_playerPrivateCards, _aiPrivateCards, _publicCards, _ruleSet);
+      if (ContainsJoker(_aiPrivateCards))
+      {
+        _aiJokerCategory = PokerJokerHandResolver.ResolveStrongest(
+          Join(_aiPrivateCards, _publicCards),
+          _ruleSet).Category;
+      }
       if (ContainsJoker(_playerPrivateCards))
       {
+        _playerJokerOptions = PokerJokerHandResolver.GetLegalOptions(
+          Join(_playerPrivateCards, _publicCards),
+          _ruleSet);
         Phase = PokerRoundPhase.PlayerJokerPresentation;
         _jokerPresentationEndsAt = Add(now, GameRules.PlayerJokerPresentationMicroseconds);
       }
@@ -86,12 +103,25 @@ namespace CodexGame.Application.Poker
       return true;
     }
 
+    public bool SubmitPlayerJokerChoice(PokerHandCategory category, GameTimestamp now)
+    {
+      if (Phase != PokerRoundPhase.AwaitingPlayerJokerChoice) return false;
+      for (var index = 0; index < _playerJokerOptions.Count; index++)
+      {
+        if (_playerJokerOptions[index].Category != category) continue;
+        _playerJokerCategory = category;
+        BeginPrediction(now);
+        return true;
+      }
+      return false;
+    }
+
     public bool Tick(GameTimestamp now)
     {
       if (Phase == PokerRoundPhase.PlayerJokerPresentation
         && now.Microseconds >= _jokerPresentationEndsAt.Microseconds)
       {
-        BeginPrediction(_jokerPresentationEndsAt);
+        Phase = PokerRoundPhase.AwaitingPlayerJokerChoice;
       }
 
       if (Phase == PokerRoundPhase.AwaitingPrediction
@@ -113,6 +143,18 @@ namespace CodexGame.Application.Poker
     // Compatibility entry point for non-runtime callers. Runtime flow uses SubmitPrediction + Tick.
     public PokerRoundResult Resolve(PredictionChoice choice)
     {
+      if (Phase == PokerRoundPhase.PlayerJokerPresentation)
+      {
+        Tick(_jokerPresentationEndsAt);
+      }
+      if (Phase == PokerRoundPhase.AwaitingPlayerJokerChoice)
+      {
+        if (_playerJokerOptions.Count == 0
+          || !SubmitPlayerJokerChoice(_playerJokerOptions[0].Category, new GameTimestamp(0)))
+        {
+          throw new InvalidOperationException("The Joker hand choice could not be resolved.");
+        }
+      }
       if (!SubmitPrediction(choice, new GameTimestamp(0)))
       {
         throw new InvalidOperationException("A prediction can resolve only once during the poker round.");
@@ -145,7 +187,11 @@ namespace CodexGame.Application.Poker
         _publicCards,
         health,
         remaining,
-        Phase == PokerRoundPhase.Resolved ? _result : null);
+        Phase == PokerRoundPhase.Resolved ? _result : null,
+        Phase == PokerRoundPhase.AwaitingPlayerJokerChoice
+          ? _playerJokerOptions
+          : Array.AsReadOnly(Array.Empty<JokerHandOption>()),
+        _playerJokerCategory);
     }
 
     public PokerRoundSnapshot GetSnapshot()
@@ -165,7 +211,9 @@ namespace CodexGame.Application.Poker
         _playerPrivateCards,
         _aiPrivateCards,
         _publicCards,
-        _ruleSet);
+        _ruleSet,
+        _playerJokerCategory,
+        _aiJokerCategory);
       var damage = DamageResolver.ApplyPokerLoss(_health, comparison.Winner);
       var prediction = PredictionResolver.Resolve(choice, comparison.Winner);
       _result = new PokerRoundResult(comparison, damage, prediction);
@@ -187,6 +235,31 @@ namespace CodexGame.Application.Poker
         if (cards[index].IsJoker) return true;
       }
       return false;
+    }
+
+    private static IReadOnlyList<Card> Join(
+      IReadOnlyList<Card> privateCards,
+      IReadOnlyList<Card> publicCards)
+    {
+      var cards = new Card[privateCards.Count + publicCards.Count];
+      for (var index = 0; index < privateCards.Count; index++) cards[index] = privateCards[index];
+      for (var index = 0; index < publicCards.Count; index++)
+      {
+        cards[privateCards.Count + index] = publicCards[index];
+      }
+      return Array.AsReadOnly(cards);
+    }
+
+    private static int NormalizePreRevealAiCardIndex(
+      IReadOnlyList<Card> aiPrivateCards,
+      int requestedIndex)
+    {
+      if (requestedIndex < 0 || !aiPrivateCards[requestedIndex].IsJoker) return requestedIndex;
+      for (var index = 0; index < aiPrivateCards.Count; index++)
+      {
+        if (!aiPrivateCards[index].IsJoker) return index;
+      }
+      return -1;
     }
 
     private static GameTimestamp Add(GameTimestamp timestamp, long microseconds)

@@ -27,6 +27,7 @@ namespace CodexGame.Presentation.Views
       PokerUiArtSet pokerArt,
       PokerItemUiArtSet pokerItemArt,
       LocalizationRuntime localization,
+      Action<PokerHandCategory> chooseJokerHand,
       Action<PredictionChoice> predict,
       Action advance)
     {
@@ -40,6 +41,10 @@ namespace CodexGame.Presentation.Views
       if (snapshot.Phase == PokerRoundPhase.PlayerJokerPresentation)
       {
         DrawPlayerJokerPresentation(snapshot, styles, cards, localization);
+      }
+      else if (snapshot.Phase == PokerRoundPhase.AwaitingPlayerJokerChoice)
+      {
+        DrawJokerHandChoice(snapshot, styles, localization, chooseJokerHand);
       }
       else if (snapshot.Phase == PokerRoundPhase.AwaitingPrediction)
       {
@@ -284,6 +289,40 @@ namespace CodexGame.Presentation.Views
           "UI_POKER_PREDICTION_GUIDE",
           new LocalizationArgument("seconds", seconds.ToString("0"))),
         styles.Small);
+    }
+
+    private static void DrawJokerHandChoice(
+      PokerRoundSnapshot snapshot,
+      PlayableDevStyles styles,
+      LocalizationRuntime localization,
+      Action<PokerHandCategory> chooseJokerHand)
+    {
+      var panel = new Rect(238f, 110f, 484f, 300f);
+      GUI.Box(panel, GUIContent.none);
+      GUI.Label(
+        new Rect(panel.x + 22f, panel.y + 14f, panel.width - 44f, 34f),
+        localization.Get("UI_POKER_JOKER_CHOICE_TITLE"),
+        styles.Status);
+      GUI.Label(
+        new Rect(panel.x + 22f, panel.y + 48f, panel.width - 44f, 30f),
+        localization.Get("UI_POKER_JOKER_CHOICE_GUIDE"),
+        styles.Small);
+
+      for (var index = 0; index < snapshot.LegalPlayerJokerOptions.Count; index++)
+      {
+        var option = snapshot.LegalPlayerJokerOptions[index];
+        var column = index % 2;
+        var row = index / 2;
+        var button = new Rect(
+          panel.x + 22f + column * 222f,
+          panel.y + 86f + row * 44f,
+          208f,
+          36f);
+        if (GUI.Button(button, CategoryName(option.Category, localization)))
+        {
+          chooseJokerHand(option.Category);
+        }
+      }
     }
 
     private static bool DrawPredictionButton(
