@@ -14,6 +14,13 @@ namespace CodexGame.Presentation.Views
   {
     private readonly HalliBellControl _bellControl = new HalliBellControl();
     private readonly HalliRopeTimer _ropeTimer = new HalliRopeTimer();
+    private readonly List<Card> _playerLeftHistory = new List<Card>(3);
+    private readonly List<Card> _playerRightHistory = new List<Card>(3);
+    private readonly List<Card> _aiLeftHistory = new List<Card>(3);
+    private readonly List<Card> _aiRightHistory = new List<Card>(3);
+    private long _historyRoundSeed = long.MinValue;
+    private CardId? _lastHistoryReveal;
+    private CardId? _lastHistoryAcquisition;
     private LocalizationRuntime _localization;
 
     public void Draw(
@@ -32,6 +39,7 @@ namespace CodexGame.Presentation.Views
       Action rightBell)
     {
       _localization = localization;
+      UpdateRevealHistory(snapshot);
       if (gamePhase == PlayableGamePhase.HalliOpening)
       {
         DrawOpening(
@@ -55,7 +63,7 @@ namespace CodexGame.Presentation.Views
       DrawScoreboard(snapshot, playerHealth, aiHealth, styles, healthArt);
       DrawPublic(snapshot, styles, cards, uiArt);
       DrawAiDeck(cards);
-      DrawPiles(snapshot, cards);
+      DrawRevealHistories(snapshot, cards, uiArt);
       DrawStatus(snapshot, styles);
       DrawPlayerTray(snapshot, styles, cards, uiArt);
       DrawAiStatus(snapshot, styles, cards, uiArt);
@@ -235,22 +243,54 @@ namespace CodexGame.Presentation.Views
       }
     }
 
-    private static void DrawPiles(PrototypeHalliSnapshot snapshot, PlayableCardRenderer cards)
+    private void DrawRevealHistories(
+      PrototypeHalliSnapshot snapshot,
+      PlayableCardRenderer cards,
+      HalliUiArtSet uiArt)
     {
-      DrawPile(snapshot, PileSide.Left, snapshot.LeftPile, cards);
-      DrawPile(snapshot, PileSide.Right, snapshot.RightPile, cards);
+      DrawRevealHistory(
+        snapshot,
+        HalliActor.Player,
+        HalliRelativeSide.Left,
+        _playerLeftHistory,
+        cards,
+        uiArt?.PlayerRevealHistoryRail);
+      DrawRevealHistory(
+        snapshot,
+        HalliActor.Player,
+        HalliRelativeSide.Right,
+        _playerRightHistory,
+        cards,
+        uiArt?.PlayerRevealHistoryRail);
+      DrawRevealHistory(
+        snapshot,
+        HalliActor.Ai,
+        HalliRelativeSide.Left,
+        _aiLeftHistory,
+        cards,
+        uiArt?.AiRevealHistoryRail);
+      DrawRevealHistory(
+        snapshot,
+        HalliActor.Ai,
+        HalliRelativeSide.Right,
+        _aiRightHistory,
+        cards,
+        uiArt?.AiRevealHistoryRail);
     }
 
-    private static void DrawPile(
+    private static void DrawRevealHistory(
       PrototypeHalliSnapshot snapshot,
-      PileSide side,
-      IReadOnlyList<Card> pile,
-      PlayableCardRenderer cards)
+      HalliActor actor,
+      HalliRelativeSide side,
+      IReadOnlyList<Card> history,
+      PlayableCardRenderer cards,
+      Texture2D rail)
     {
-      var isLeft = side == PileSide.Left;
-      for (var index = 0; index < pile.Count; index++)
+      var railRect = HalliBoardLayout.RevealHistoryRail(actor, side);
+      if (rail != null) GUI.DrawTexture(railRect, rail, ScaleMode.StretchToFill, true);
+      for (var index = 0; index < history.Count; index++)
       {
-        var card = pile[index];
+        var card = history[index];
         if (snapshot.Phase == PrototypeSessionPhase.SequentialReveal
           && snapshot.RevealingCard.HasValue
           && snapshot.RevealingCard.Value.Id == card.Id
@@ -258,7 +298,7 @@ namespace CodexGame.Presentation.Views
         {
           continue;
         }
-        cards.DrawAt(HalliBoardLayout.PileCard(isLeft, index), card);
+        cards.DrawAt(HalliBoardLayout.RevealHistoryCard(actor, side, index), card);
       }
     }
 
@@ -404,7 +444,7 @@ namespace CodexGame.Presentation.Views
       else GUI.Box(rect, GUIContent.none);
     }
 
-    private static void DrawRevealMotion(PrototypeHalliSnapshot snapshot, PlayableCardRenderer cards)
+    private void DrawRevealMotion(PrototypeHalliSnapshot snapshot, PlayableCardRenderer cards)
     {
       if (snapshot.Phase != PrototypeSessionPhase.SequentialReveal
         || !snapshot.RevealingCard.HasValue
@@ -414,10 +454,15 @@ namespace CodexGame.Presentation.Views
         return;
       }
 
-      var pile = snapshot.RevealingPile.Value == PileSide.Left ? snapshot.LeftPile : snapshot.RightPile;
-      var target = HalliBoardLayout.RevealTarget(
-        snapshot.RevealingPile.Value == PileSide.Left,
-        Math.Min(GameRules.ExposedCardsPerPile - 1, pile.Count));
+      if (!snapshot.RevealingRelativeSide.HasValue) return;
+      var target = HalliBoardLayout.RevealHistoryCard(
+        snapshot.RevealingActor.Value,
+        snapshot.RevealingRelativeSide.Value,
+        Math.Max(
+          0,
+          GetRevealHistory(
+            snapshot.RevealingActor.Value,
+            snapshot.RevealingRelativeSide.Value).Count - 1));
       CardFlipMotion.Draw(
         cards,
         snapshot.RevealingCard.Value,
@@ -435,7 +480,10 @@ namespace CodexGame.Presentation.Views
       if (snapshot.LastAcquirer == PrototypeAcquirer.Ai) return;
       var progress = AcquisitionProgress(snapshot);
       if (progress >= 1f) return;
-      var source = HalliBoardLayout.PileCard(snapshot.LastAcquiredPile.Value == PileSide.Left, 1);
+      var source = HalliBoardLayout.RevealHistoryCard(
+        snapshot.LastAcquiredPile.Value == PileSide.Left ? HalliActor.Player : HalliActor.Ai,
+        HalliRelativeSide.Right,
+        2);
       var firstNewIndex = Math.Max(
         0,
         snapshot.PlayerAcquiredCards.Count - snapshot.LastAcquiredCards.Count);
@@ -463,6 +511,72 @@ namespace CodexGame.Presentation.Views
         if (cards[index].Id == id) return true;
       }
       return false;
+    }
+
+    private void UpdateRevealHistory(PrototypeHalliSnapshot snapshot)
+    {
+      if (_historyRoundSeed != snapshot.CombatRoundSeed)
+      {
+        ClearAllRevealHistory();
+        _historyRoundSeed = snapshot.CombatRoundSeed;
+      }
+
+      if (snapshot.RevealingCard.HasValue
+        && snapshot.RevealingActor.HasValue
+        && snapshot.RevealingRelativeSide.HasValue
+        && (!_lastHistoryReveal.HasValue
+          || _lastHistoryReveal.Value != snapshot.RevealingCard.Value.Id))
+      {
+        var history = GetRevealHistory(
+          snapshot.RevealingActor.Value,
+          snapshot.RevealingRelativeSide.Value);
+        AppendRecent(history, snapshot.RevealingCard.Value);
+        _lastHistoryReveal = snapshot.RevealingCard.Value.Id;
+      }
+
+      if (snapshot.LastAcquiredCards.Count > 0)
+      {
+        var acquisitionId = snapshot.LastAcquiredCards[0].Id;
+        if (!_lastHistoryAcquisition.HasValue || _lastHistoryAcquisition.Value != acquisitionId)
+        {
+          if (snapshot.LastAcquiredPile == PileSide.Left)
+          {
+            _playerLeftHistory.Clear();
+            _playerRightHistory.Clear();
+          }
+          else if (snapshot.LastAcquiredPile == PileSide.Right)
+          {
+            _aiLeftHistory.Clear();
+            _aiRightHistory.Clear();
+          }
+          _lastHistoryAcquisition = acquisitionId;
+        }
+      }
+    }
+
+    private List<Card> GetRevealHistory(HalliActor actor, HalliRelativeSide side)
+    {
+      if (actor == HalliActor.Player)
+      {
+        return side == HalliRelativeSide.Left ? _playerLeftHistory : _playerRightHistory;
+      }
+      return side == HalliRelativeSide.Left ? _aiLeftHistory : _aiRightHistory;
+    }
+
+    private static void AppendRecent(List<Card> history, Card card)
+    {
+      if (history.Count == 3) history.RemoveAt(0);
+      history.Add(card);
+    }
+
+    private void ClearAllRevealHistory()
+    {
+      _playerLeftHistory.Clear();
+      _playerRightHistory.Clear();
+      _aiLeftHistory.Clear();
+      _aiRightHistory.Clear();
+      _lastHistoryReveal = null;
+      _lastHistoryAcquisition = null;
     }
 
     private string L(string key, params LocalizationArgument[] arguments)

@@ -12,7 +12,7 @@ Shader "CodexGame/RuntimeBackdropLit"
     LOD 150
 
     CGPROGRAM
-    #pragma surface surf Lambert noforwardadd
+    #pragma surface surf Lambert
     #pragma target 2.0
 
     sampler2D _MainTex;

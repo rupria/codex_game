@@ -25,6 +25,7 @@ namespace CodexGame.Presentation.Views
       PlayableCardRenderer cards,
       HealthUiArtSet healthArt,
       PokerUiArtSet pokerArt,
+      PokerItemUiArtSet pokerItemArt,
       LocalizationRuntime localization,
       Action<PredictionChoice> predict,
       Action advance)
@@ -33,7 +34,7 @@ namespace CodexGame.Presentation.Views
       UpdateResultOverlayState(snapshot);
       DrawGroupLabels(styles, localization);
       DrawHealth(snapshot, styles, healthArt, localization);
-      DrawItems();
+      DrawItems(pokerItemArt);
       DrawCards(snapshot, cards);
 
       if (snapshot.Phase == PokerRoundPhase.PlayerJokerPresentation)
@@ -138,9 +139,22 @@ namespace CodexGame.Presentation.Views
         healthArt);
     }
 
-    private static void DrawItems()
+    private static void DrawItems(PokerItemUiArtSet pokerItemArt)
     {
-      PokerItemBoxRenderer.DrawEmpty(PokerTableLayout.AiItem);
+      if (pokerItemArt?.CrateClosed != null)
+      {
+        GUI.DrawTexture(
+          new Rect(
+            PokerTableLayout.PlayerItem.x - 16f,
+            PokerTableLayout.PlayerItem.y - 16f,
+            PokerTableLayout.PlayerItem.width + 32f,
+            PokerTableLayout.PlayerItem.height + 32f),
+          pokerItemArt.CrateClosed,
+          ScaleMode.ScaleToFit,
+          true);
+        return;
+      }
+
       PokerItemBoxRenderer.DrawEmpty(PokerTableLayout.PlayerItem);
     }
 
