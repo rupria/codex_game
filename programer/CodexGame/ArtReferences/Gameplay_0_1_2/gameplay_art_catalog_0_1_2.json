@@ -1,10 +1,11 @@
 {
-  "version": "0.1.2-art-bridge",
-  "source": "gameplay flow 0.1.2 / revision 2026-08-10-01",
+  "version": "0.1.2-art-bridge-0.3.6",
+  "source": "gameplay flow 0.1.2 / revision 2026-08-10-02",
   "runtimeRoots": {
     "common": "Assets/Art/Prototype/UI/Gameplay_0_1_2",
     "halli": "Assets/Art/Prototype/UI/Halli_0_3_5",
-    "poker": "Assets/Art/Prototype/UI/Poker_0_3_5"
+    "pokerCrates": "Assets/Art/Prototype/UI/Poker_0_3_4",
+    "pokerPopup": "Assets/Art/Prototype/UI/Poker_0_3_6"
   },
   "items": [
     {"itemId":"IT-01","asset":"item_reload_64_0_1_2.png","price":1},
@@ -18,10 +19,9 @@
     "slotStates": ["idle","hover","selected","disabled"]
   },
   "prediction": {
+    "showBulletCountInPoker": false,
     "maxSuccess": 5,
-    "emptyPip": "prediction_success_pip_empty_28_0_1_2.png",
-    "filledPip": "prediction_success_pip_filled_28_0_1_2.png",
-    "meter": "prediction_success_meter_320x68_0_1_2.png",
+    "resultOnlyMeter": "prediction_success_meter_320x68_0_1_2.png",
     "rewardPanel": "prediction_reward_breakdown_panel_420x112_0_1_2.png"
   },
   "halli": {
@@ -33,7 +33,15 @@
   },
   "poker": {
     "aiUsesItems": false,
-    "collapsed": "reuse Poker_0_3_4 closed crate",
-    "openInventory": "reuse common 4-slot tray"
+    "closedCrate": "Poker_0_3_4/poker_item_crate_closed_160x160_0_3_4.png",
+    "openEmptyCrate": "Poker_0_3_4/poker_item_crate_open_empty_160x160_0_3_4.png",
+    "openFilledCrate": "Poker_0_3_4/poker_item_crate_open_filled_160x160_0_3_4.png",
+    "popupFrame": "Poker_0_3_6/poker_item_popup_frame_560x300_0_3_6.png",
+    "modalBlocksInput": true
+  },
+  "lighting": {
+    "profile": "lighting_profile_0_3_6.json",
+    "tableKeyMultiplier": 1.20,
+    "saloonBackgroundReadable": true
   }
 }
