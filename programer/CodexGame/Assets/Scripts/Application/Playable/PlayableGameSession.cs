@@ -230,6 +230,19 @@ namespace CodexGame.Application.Playable
       return true;
     }
 
+    public bool ChooseJokerHand(PokerHandCategory category, GameTimestamp now)
+    {
+      if (Phase != PlayableGamePhase.PokerPrediction
+        || _poker == null
+        || !_poker.SubmitPlayerJokerChoice(category, now))
+      {
+        return false;
+      }
+
+      RecordInput(now);
+      return true;
+    }
+
     public PokerItemFailure UseReload(CardId target, GameTimestamp now)
     {
       if (Phase != PlayableGamePhase.PokerItems || _items == null)

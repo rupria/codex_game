@@ -16,7 +16,9 @@ namespace CodexGame.Application.Distribution
       long remainingMicroseconds,
       IReadOnlyList<Card> winnerCandidates,
       IReadOnlyList<Card> selectedCards,
-      PrivateCardDistributionResult? result)
+      PrivateCardDistributionResult? result,
+      Card? firstPublicCard = null,
+      Card? secondPublicCard = null)
     {
       Phase = phase;
       Winner = winner;
@@ -26,6 +28,8 @@ namespace CodexGame.Application.Distribution
       WinnerCandidates = Copy(winnerCandidates, nameof(winnerCandidates));
       SelectedCards = Copy(selectedCards, nameof(selectedCards));
       Result = result;
+      FirstPublicCard = firstPublicCard;
+      SecondPublicCard = secondPublicCard;
     }
 
     public PrivateCardSelectionPhase Phase { get; }
@@ -38,6 +42,8 @@ namespace CodexGame.Application.Distribution
     public bool CanConfirm => Phase == PrivateCardSelectionPhase.AwaitingSelection
       && SelectedCards.Count == RequiredSelectionCount;
     public PrivateCardDistributionResult? Result { get; }
+    public Card? FirstPublicCard { get; }
+    public Card? SecondPublicCard { get; }
 
     private static IReadOnlyList<Card> Copy(IReadOnlyList<Card> source, string parameterName)
     {
