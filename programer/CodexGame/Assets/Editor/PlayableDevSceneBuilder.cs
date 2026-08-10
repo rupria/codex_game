@@ -20,6 +20,7 @@ namespace CodexGame.Editor
     private const string UiArtRoot = "Assets/Art/Prototype/UI/";
     private const string HalliUiArtRoot = UiArtRoot + "Halli_0_1_0/";
     private const string HalliUi021ArtRoot = UiArtRoot + "Halli_0_2_1/";
+    private const string HalliUi034ArtRoot = UiArtRoot + "Halli_0_3_4/";
     private const string HalliUi037ArtRoot = UiArtRoot + "Halli_0_3_7/";
     private const string PokerUiArtRoot = UiArtRoot + "Poker_0_2_2/";
     private const string PokerUi034ArtRoot = UiArtRoot + "Poker_0_3_4/";
@@ -82,7 +83,9 @@ namespace CodexGame.Editor
         sharedPileRailPlayerActive: LoadTexture(
           HalliUi037ArtRoot + "halli_shared_pile_rail_player_active_140x136_0_3_7.png"),
         sharedPileRailAiActive: LoadTexture(
-          HalliUi037ArtRoot + "halli_shared_pile_rail_ai_active_140x136_0_3_7.png"));
+          HalliUi037ArtRoot + "halli_shared_pile_rail_ai_active_140x136_0_3_7.png"),
+        playerOnlyAcquiredTray: LoadTexture(
+          HalliUi034ArtRoot + "player_acquired_tray_open_378x130_0_3_4.png"));
       var guideUiArtSet = new GuideUiArtSet(
         LoadTexture(HalliUiArtRoot + "guide_modal_background.png"),
         LoadTexture(HalliUiArtRoot + "guide_page_flow_art.png"),

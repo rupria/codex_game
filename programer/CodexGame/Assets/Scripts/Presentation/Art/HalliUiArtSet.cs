@@ -30,6 +30,7 @@ namespace CodexGame.Presentation.Art
     [SerializeField] private Texture2D _sharedPileRailIdle;
     [SerializeField] private Texture2D _sharedPileRailPlayerActive;
     [SerializeField] private Texture2D _sharedPileRailAiActive;
+    [SerializeField] private Texture2D _playerOnlyAcquiredTray;
 
     public HalliUiArtSet(
       Texture2D bellIdle,
@@ -55,7 +56,8 @@ namespace CodexGame.Presentation.Art
       Texture2D ropeExplosion = null,
       Texture2D sharedPileRailIdle = null,
       Texture2D sharedPileRailPlayerActive = null,
-      Texture2D sharedPileRailAiActive = null)
+      Texture2D sharedPileRailAiActive = null,
+      Texture2D playerOnlyAcquiredTray = null)
     {
       _bellIdle = bellIdle ?? throw new ArgumentNullException(nameof(bellIdle));
       _bellHover = bellHover ?? throw new ArgumentNullException(nameof(bellHover));
@@ -84,6 +86,7 @@ namespace CodexGame.Presentation.Art
       _sharedPileRailIdle = sharedPileRailIdle;
       _sharedPileRailPlayerActive = sharedPileRailPlayerActive;
       _sharedPileRailAiActive = sharedPileRailAiActive;
+      _playerOnlyAcquiredTray = playerOnlyAcquiredTray;
     }
 
     public Texture2D BellIdle => _bellIdle;
@@ -98,7 +101,7 @@ namespace CodexGame.Presentation.Art
     public Texture2D FlipDeckHover => _flipDeckHover;
     public Texture2D FlipDeckPressed => _flipDeckPressed;
     public Texture2D FlipDeckDisabled => _flipDeckDisabled;
-    public Texture2D PlayerAcquiredTray => _playerAcquiredTray;
+    public Texture2D PlayerAcquiredTray => _playerOnlyAcquiredTray ?? _playerAcquiredTray;
     public Texture2D AiAcquiredStatusPanel => _aiAcquiredStatusPanel;
     public Texture2D PlayerWinPipEmpty => _playerWinPipEmpty;
     public Texture2D PlayerWinPipFilled => _playerWinPipFilled;
@@ -110,6 +113,7 @@ namespace CodexGame.Presentation.Art
     public Texture2D SharedPileRailIdle => _sharedPileRailIdle;
     public Texture2D SharedPileRailPlayerActive => _sharedPileRailPlayerActive;
     public Texture2D SharedPileRailAiActive => _sharedPileRailAiActive;
+    public bool UsesPlayerOnlyLowerHud => _playerOnlyAcquiredTray != null;
 
     public bool HasRoundWinPips => _playerWinPipEmpty != null
       && _playerWinPipFilled != null

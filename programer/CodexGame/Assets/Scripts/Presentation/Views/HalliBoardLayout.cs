@@ -1,3 +1,4 @@
+using System;
 using CodexGame.Core.Halli;
 using CodexGame.Core.Shared;
 using UnityEngine;
@@ -30,6 +31,10 @@ namespace CodexGame.Presentation.Views
     private const float AcquiredCardWidth = 56f;
     private const float AcquiredCardHeight = 78f;
     private const float PreferredAcquiredCardStep = 30f;
+    public const int PlayerOnlyMaximumVisibleCards = 5;
+    private const float PlayerOnlyCardStartX = 112f;
+    private const float PlayerOnlyCardStartY = 29f;
+    private const float PlayerOnlyCardStepX = 50f;
 
     public static Rect SharedPileRail(PileSide pile)
     {
@@ -74,6 +79,20 @@ namespace CodexGame.Presentation.Views
         AcquiredCardWidth,
         PreferredAcquiredCardStep);
       return new Rect(fan.X(index), AiAcquiredFan.y, AcquiredCardWidth, AcquiredCardHeight);
+    }
+
+    public static int PlayerOnlyVisibleStart(int cardCount)
+    {
+      return Math.Max(0, cardCount - PlayerOnlyMaximumVisibleCards);
+    }
+
+    public static Rect PlayerOnlyAcquiredCard(int visibleIndex)
+    {
+      return new Rect(
+        PlayerTray.x + PlayerOnlyCardStartX + visibleIndex * PlayerOnlyCardStepX,
+        PlayerTray.y + PlayerOnlyCardStartY,
+        AcquiredCardWidth,
+        AcquiredCardHeight);
     }
   }
 }
