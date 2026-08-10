@@ -13,6 +13,8 @@ local halliBasePath=assert(p.halliBase)
 local roundTablePath=assert(p.roundTable)
 local cardBackPath=assert(p.cardBack)
 local cratePath=assert(p.crate)
+local crateEmptyPath=assert(p.crateEmpty)
+local crateFilledPath=assert(p.crateFilled)
 local playerHeartFilledPath=assert(p.playerHeartFilled)
 local playerHeartEmptyPath=assert(p.playerHeartEmpty)
 local aiHeartFilledPath=assert(p.aiHeartFilled)
@@ -64,6 +66,33 @@ local function resize(src,w,h)
   for y=0,h-1 do local sy=math.min(src.height-1,math.floor(y*src.height/h))
     for x=0,w-1 do local sx=math.min(src.width-1,math.floor(x*src.width/w)); dst:drawPixel(x,y,src:getPixel(sx,sy)) end
   end
+  return dst
+end
+local function clamp(v) return math.max(0,math.min(255,math.floor(v+0.5))) end
+local function warmSaloonLighting(src)
+  local dst=Image(src.width,src.height,ColorMode.RGB); dst:clear(C.transparent)
+  local w=src.width; local h=src.height
+  local function pool(x,y,cx,cy,rx,ry,power)
+    local dx=(x-cx)/rx; local dy=(y-cy)/ry; local d=dx*dx+dy*dy
+    if d>=1 then return 0 end
+    return (1-d)*power
+  end
+  for y=0,h-1 do for x=0,w-1 do
+    local px=src:getPixel(x,y); local a=app.pixelColor.rgbaA(px)
+    if a>0 then
+      local r=app.pixelColor.rgbaR(px); local g=app.pixelColor.rgbaG(px); local b=app.pixelColor.rgbaB(px)
+      local dx=(x-w*0.50)/(w*0.39); local dy=(y-h*0.60)/(h*0.36)
+      local onTable=(dx*dx+dy*dy)<=1
+      local mul=onTable and 1.20 or 1.34
+      local addR=onTable and 5 or 15; local addG=onTable and 3 or 10; local addB=onTable and 1 or 6
+      -- Two broad practical-light pools reveal the bar shelves and wall decor.
+      local practical=pool(x,y,w*0.22,h*0.28,w*0.28,h*0.34,18)
+        +pool(x,y,w*0.80,h*0.25,w*0.24,h*0.32,15)
+      dst:drawPixel(x,y,app.pixelColor.rgba(
+        clamp(r*mul+addR+practical),clamp(g*mul+addG+practical*0.68),
+        clamp(b*mul+addB+practical*0.28),a))
+    end
+  end end
   return dst
 end
 local function rotate180(src)
@@ -157,8 +186,8 @@ fill(tray,4,10,380,76,C.ink); stroke(tray,2,6,384,80,C.brassDark,3); fill(tray,8
 for i=1,4 do tray:drawImage(slotStates[1],Point(10+(i-1)*93,10)) end
 diamond(tray,4,46,4,C.brass); diamond(tray,383,46,4,C.brass)
 saveRuntime(tray,"inventory_tray_4slot_388x92_0_1_2.png",commonDir)
-save(tray,pokerDir.."/poker_item_inventory_tray_388x92_0_3_5.png")
-save(tray,outputDir.."/poker_item_inventory_tray_388x92_0_3_5.png")
+save(tray,pokerDir.."/poker_item_inventory_tray_388x92_0_3_6.png")
+save(tray,outputDir.."/poker_item_inventory_tray_388x92_0_3_6.png")
 local uiSource=Sprite(388,92,ColorMode.RGB); uiSource.layers[1].name="inventory_four_slot_tray"; setImage(uiSource,tray)
 uiSource:saveAs(sourceDir.."/inventory_tray_4slot_0_1_2.aseprite"); uiSource:close()
 
@@ -178,8 +207,6 @@ fill(meter,5,8,310,54,C.shadow); stroke(meter,3,5,314,58,C.brassDark,3); fill(me
 for i=1,5 do meter:drawImage(i<=3 and pipFilled or pipEmpty,Point(78+(i-1)*42,20)) end
 ring(meter,38,34,17,3,C.brass); disk(meter,38,34,5,C.brassHi)
 saveRuntime(meter,"prediction_success_meter_320x68_0_1_2.png",commonDir)
-save(meter,pokerDir.."/poker_prediction_success_meter_320x68_0_3_5.png")
-save(meter,outputDir.."/poker_prediction_success_meter_320x68_0_3_5.png")
 
 local reward=Image(420,112,ColorMode.RGB); reward:clear(C.transparent)
 fill(reward,5,8,410,98,C.shadow); stroke(reward,3,5,414,102,C.brassDark,3); fill(reward,10,12,400,90,C.wood)
@@ -226,7 +253,22 @@ save(stackSheet,outputDir.."/halli_reveal_history_states_480x140_0_3_5.png")
 
 -- Poker wide layout. 0.1.2 removes the AI item slot because AI cannot use items.
 local back=resize(load(cardBackPath),56,80); local backAI=rotate180(back)
-local roundTable=resize(load(roundTablePath),960,540)
+local roundTableRaw=resize(load(roundTablePath),960,540)
+local roundTable=warmSaloonLighting(roundTableRaw)
+local lightingBoard=Image(1920,540,ColorMode.RGB); lightingBoard:clear(C.ink)
+lightingBoard:drawImage(roundTableRaw,Point(0,0)); lightingBoard:drawImage(roundTable,Point(960,0))
+fill(lightingBoard,957,0,6,540,C.brassHi)
+save(roundTable,previewDir.."/saloon_lighting_visibility_reference_960x540_0_3_6.png")
+save(roundTable,outputDir.."/saloon_lighting_visibility_reference_960x540_0_3_6.png")
+save(lightingBoard,previewDir.."/saloon_lighting_before_after_1920x540_0_3_6.png")
+save(lightingBoard,outputDir.."/saloon_lighting_before_after_1920x540_0_3_6.png")
+local lightingSource=Sprite(960,540,ColorMode.RGB); lightingSource.layers[1].name="before_after_lighting_reference"
+setImage(lightingSource,roundTableRaw); lightingSource.frames[1].duration=0.4
+local lightingFrame=lightingSource:newEmptyFrame(); lightingSource:newCel(lightingSource.layers[1],lightingFrame,roundTable,Point(0,0)); lightingFrame.duration=0.4
+lightingSource:saveAs(sourceDir.."/saloon_lighting_visibility_0_3_6.aseprite"); lightingSource:close()
+local crateClosed=resize(load(cratePath),160,160)
+local crateEmpty=resize(load(crateEmptyPath),180,180)
+local crateFilled=resize(load(crateFilledPath),180,180)
 local playerHeartFilled=resize(load(playerHeartFilledPath),24,24)
 local playerHeartEmpty=resize(load(playerHeartEmptyPath),24,24)
 local aiHeartFilled=resize(load(aiHeartFilledPath),24,24)
@@ -241,19 +283,44 @@ local function pokerBase()
   for i=0,2 do img:drawImage(i<2 and aiHeartFilled or aiHeartEmpty,Point(254+i*32,120)) end
   for i=0,2 do img:drawImage(playerHeartFilled,Point(254+i*32,366)) end
   img:drawImage(predictWin,Point(400,450)); img:drawImage(predictLose,Point(474,450))
-  img:drawImage(meter,Point(620,30))
   return img
 end
-local collapsed=pokerBase(); collapsed:drawImage(resize(load(cratePath),112,112),Point(682,326))
-save(collapsed,previewDir.."/poker_item_phase_collapsed_preview_960x540_0_3_5.png")
-save(collapsed,outputDir.."/poker_item_phase_collapsed_preview_960x540_0_3_5.png")
-local opened=pokerBase(); local traySmall=resize(tray,330,78); opened:drawImage(traySmall,Point(620,334))
-for i=1,4 do opened:drawImage(resize(icons[i],48,48),Point(634+(i-1)*79,349)) end
-save(opened,previewDir.."/poker_item_phase_open_preview_960x540_0_3_5.png")
-save(opened,outputDir.."/poker_item_phase_open_preview_960x540_0_3_5.png")
-local pokerSource=Sprite(960,540,ColorMode.RGB); pokerSource.layers[1].name="collapsed_item_crate"; setImage(pokerSource,collapsed)
-local f=pokerSource:newEmptyFrame(); pokerSource:newCel(pokerSource.layers[1],f,opened,Point(0,0)); f.duration=0.25
-pokerSource:saveAs(sourceDir.."/poker_item_phase_layout_states_0_3_5.aseprite"); pokerSource:close()
+
+local popup=Image(560,300,ColorMode.RGB); popup:clear(C.transparent)
+fill(popup,8,12,544,280,Color{r=8,g=6,b=5,a=248}); stroke(popup,4,8,552,288,C.brassDark,4)
+stroke(popup,12,16,536,272,C.woodHi,2); fill(popup,18,22,524,260,Color{r=25,g=15,b=10,a=245})
+diamond(popup,18,22,5,C.brass); diamond(popup,541,22,5,C.brass)
+diamond(popup,18,281,5,C.brass); diamond(popup,541,281,5,C.brass)
+fill(popup,509,28,24,24,C.redDark); stroke(popup,509,28,24,24,C.brassDark,2)
+for i=0,10 do fill(popup,515+i,34+i,2,2,C.red); fill(popup,525-i,34+i,2,2,C.red) end
+save(popup,pokerDir.."/poker_item_popup_frame_560x300_0_3_6.png")
+save(popup,outputDir.."/poker_item_popup_frame_560x300_0_3_6.png")
+
+local function withDim(base)
+  local img=Image(base)
+  local dim=Image(960,540,ColorMode.RGB); dim:clear(C.transparent)
+  fill(dim,0,0,960,540,Color{r=0,g=0,b=0,a=168}); img:drawImage(dim,Point(0,0))
+  img:drawImage(popup,Point(200,120)); return img
+end
+
+local collapsed=pokerBase(); collapsed:drawImage(crateClosed,Point(670,310))
+save(collapsed,previewDir.."/poker_item_box_closed_preview_960x540_0_3_6.png")
+save(collapsed,outputDir.."/poker_item_box_closed_preview_960x540_0_3_6.png")
+
+local emptyPopup=withDim(pokerBase()); emptyPopup:drawImage(crateEmpty,Point(390,180))
+save(emptyPopup,previewDir.."/poker_item_box_open_empty_popup_preview_960x540_0_3_6.png")
+save(emptyPopup,outputDir.."/poker_item_box_open_empty_popup_preview_960x540_0_3_6.png")
+
+local filledPopup=withDim(pokerBase()); filledPopup:drawImage(crateFilled,Point(260,180))
+local traySmall=resize(tray,292,69); filledPopup:drawImage(traySmall,Point(440,229))
+for i=1,4 do filledPopup:drawImage(resize(icons[i],42,42),Point(454+(i-1)*69,242)) end
+save(filledPopup,previewDir.."/poker_item_box_open_filled_popup_preview_960x540_0_3_6.png")
+save(filledPopup,outputDir.."/poker_item_box_open_filled_popup_preview_960x540_0_3_6.png")
+
+local pokerSource=Sprite(960,540,ColorMode.RGB); pokerSource.layers[1].name="closed_box"; setImage(pokerSource,collapsed)
+local f2=pokerSource:newEmptyFrame(); pokerSource:newCel(pokerSource.layers[1],f2,emptyPopup,Point(0,0)); f2.duration=0.25
+local f3=pokerSource:newEmptyFrame(); pokerSource:newCel(pokerSource.layers[1],f3,filledPopup,Point(0,0)); f3.duration=0.25
+pokerSource:saveAs(sourceDir.."/poker_item_box_popup_states_0_3_6.aseprite"); pokerSource:close()
 
 local rewardPreview=Image(960,540,ColorMode.RGB); rewardPreview:drawImage(roundTable,Point(0,0))
 rewardPreview:drawImage(reward,Point(270,205)); rewardPreview:drawImage(meter,Point(320,126))
