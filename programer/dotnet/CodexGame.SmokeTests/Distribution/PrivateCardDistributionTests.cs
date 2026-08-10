@@ -28,10 +28,11 @@ namespace CodexGame.SmokeTests.Distribution
     {
       tests.Check(
         PrivateCardDistributionRules.GetDirectSelectionCount(1) == 3
-          && PrivateCardDistributionRules.GetDirectSelectionCount(2) == 3
-          && PrivateCardDistributionRules.RequiresSelectionUi(3, 4)
-          && !PrivateCardDistributionRules.RequiresSelectionUi(3, 3),
-        "Any actor with more than three acquired cards must choose exactly three.");
+          && PrivateCardDistributionRules.GetDirectSelectionCount(2) == 2
+          && PrivateCardDistributionRules.GetDirectSelectionCount(3) == 2
+          && PrivateCardDistributionRules.RequiresSelectionUi(3, 3)
+          && !PrivateCardDistributionRules.RequiresSelectionUi(3, 2),
+        "Round one must select three cards; later rounds must select two and receive one random fill.");
     }
 
     private static void CheckBothActorsRetainAcquiredCards(TestHarness tests)
@@ -66,8 +67,8 @@ namespace CodexGame.SmokeTests.Distribution
       var player = Slice(cards, 0, 5);
       var ai = Slice(cards, 5, 4);
       var other = Slice(cards, 9, 20);
-      var playerIds = Ids(player[0], player[2], player[4]);
-      var aiIds = Ids(ai[0], ai[1], ai[3]);
+      var playerIds = Ids(player[0], player[4]);
+      var aiIds = Ids(ai[1], ai[3]);
       var result = PrivateCardDistributionResolver.ResolveBoth(
         player,
         ai,
@@ -82,7 +83,7 @@ namespace CodexGame.SmokeTests.Distribution
       tests.Check(
         ContainsAllIds(result.PlayerPrivateCards, playerIds)
           && ContainsAllIds(result.AiPrivateCards, aiIds),
-        "Player and AI overflow selections must both be preserved regardless of Halli winner.");
+        "Round-two direct selections must preserve exactly two cards before random fill.");
       CheckUniqueAndConserved(tests, result, player.Count + ai.Count + other.Count);
     }
 
@@ -130,39 +131,58 @@ namespace CodexGame.SmokeTests.Distribution
       session.Begin(
         player,
         ai,
-        Slice(cards, 9, 20),
-        HalliStageWinner.Ai,
+        Slice(cards, 10, 20),
+        HalliStageWinner.Player,
         2,
         99,
+        cards[9],
         new GameTimestamp(0));
       var waiting = session.GetSnapshot(new GameTimestamp(0));
       tests.Check(
         waiting.Phase == PrivateCardSelectionPhase.AwaitingSelection
           && waiting.Winner == HalliStageWinner.Player
-          && waiting.RequiredSelectionCount == 3,
-        "The local player must receive a three-card UI even when the AI won Halli.");
-      for (var index = 0; index < 3; index++) session.Toggle(player[index].Id);
-      tests.Check(session.TryConfirm(), "Exactly three player overflow cards must confirm.");
+          && waiting.RequiredSelectionCount == 2
+          && waiting.FirstPublicCard?.Id == cards[9].Id
+          && waiting.SecondPublicCard.HasValue,
+        "Round-two winner selection must expose both public cards before asking for two private cards.");
+      session.Toggle(player[0].Id);
+      session.Toggle(player[1].Id);
+      tests.Check(session.TryConfirm(), "Exactly two round-two winner cards must confirm.");
       var completed = session.GetSnapshot(new GameTimestamp(0));
       tests.Check(
         completed.Result != null
-          && completed.Result.Winner == HalliStageWinner.Ai
+          && completed.Result.Winner == HalliStageWinner.Player
           && completed.Result.PlayerPrivateCards.Count == 3
-          && completed.Result.AiPrivateCards.Count == 3,
-        "AI overflow choice must auto-resolve while preserving the actual Halli winner metadata.");
+          && completed.Result.AiPrivateCards.Count == 3
+          && completed.Result.SecondPublicCard.Id == waiting.SecondPublicCard?.Id
+          && ContainsAllIds(completed.Result.PlayerPrivateCards, Ids(player[0], player[1])),
+        "Winner choices and the pre-revealed second public card must stay fixed through final distribution.");
+
+      var restartRejected = false;
+      try
+      {
+        session.Begin(player, ai, Slice(cards, 10, 20), HalliStageWinner.Player, 2, 99, cards[9], new GameTimestamp(0));
+      }
+      catch (InvalidOperationException)
+      {
+        restartRejected = true;
+      }
+      tests.Check(restartRejected, "Reopening a selection session must not reroll Joker or public-card channels.");
 
       var fillOnly = new PrivateCardSelectionSession();
       fillOnly.Begin(
         Slice(cards, 0, 0),
         Slice(cards, 0, 0),
-        Slice(cards, 0, 20),
+        Slice(cards, 1, 20),
         HalliStageWinner.None,
         1,
         100,
+        cards[0],
         new GameTimestamp(0));
       tests.Check(
-        fillOnly.GetSnapshot(new GameTimestamp(0)).Result?.PlayerPrivateCards.Count == 3,
-        "An actor with no acquisitions must receive three seeded random cards.");
+        fillOnly.GetSnapshot(new GameTimestamp(0)).Result?.PlayerPrivateCards.Count == 3
+          && fillOnly.GetSnapshot(new GameTimestamp(0)).SecondPublicCard.HasValue,
+        "No-winner distribution must reveal the second public card first, then fill both hands randomly.");
     }
 
     private static void CheckPairAssistHealthRule(TestHarness tests)
