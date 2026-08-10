@@ -146,6 +146,28 @@ namespace CodexGame.SmokeTests.Items
       tests.Check(
         poker.GetSnapshot(new GameTimestamp(0)).VisibleAiPrivateCards.Count == 1,
         "The Hype Man reveal must remain visible before the prediction result opens the full AI hand.");
+
+      var jokerInventory = new RunInventory();
+      jokerInventory.TryAdd(GameItemId.HypeMan);
+      var jokerSession = new PokerItemSession();
+      var jokerDistribution = new PrivateCardDistributionResult(
+        HalliStageWinner.Ai,
+        1,
+        distribution.PlayerPrivateCards,
+        Array.AsReadOnly(new[]
+        {
+          new Card(PokerJokerKind.CrimsonCardsharp),
+          distribution.AiPrivateCards[1],
+          distribution.AiPrivateCards[2]
+        }),
+        distribution.SecondPublicCard,
+        distribution.RemainingCandidates);
+      jokerSession.Begin(C(CardSuit.Spades, CardRank.Ace), jokerDistribution, jokerInventory, 777);
+      jokerSession.UseHypeMan();
+      tests.Check(
+        jokerSession.GetSnapshot().VisibleAiPrivateCards.Count == 1
+          && !jokerSession.GetSnapshot().VisibleAiPrivateCards[0].IsJoker,
+        "Hype Man must keep an AI Joker concealed and reveal one standard AI card instead.");
     }
 
     private static void CheckHealthRecoveryGuard(TestHarness tests)

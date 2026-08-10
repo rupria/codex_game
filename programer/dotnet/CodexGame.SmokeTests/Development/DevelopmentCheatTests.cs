@@ -45,6 +45,14 @@ namespace CodexGame.SmokeTests.Development
       tests.Check(
         presetsValid,
         "Every guarded poker cheat preset must create eight unique and evaluable cards.");
+      tests.Check(
+        ContainsJoker(PokerCheatPresetCatalog.Create(PokerCheatPreset.PlayerJoker).PlayerCards)
+          && ContainsJoker(PokerCheatPresetCatalog.Create(PokerCheatPreset.AiJoker).AiCards)
+          && !ContainsJoker(PokerCheatPresetCatalog.Create(PokerCheatPreset.PlayerJokerIneligible).PlayerCards)
+          && !ContainsJoker(PokerCheatPresetCatalog.Create(PokerCheatPreset.PlayerJokerNotAwarded).PlayerCards)
+          && !ContainsJoker(PokerCheatPresetCatalog.Create(PokerCheatPreset.AiJokerIneligible).AiCards)
+          && !ContainsJoker(PokerCheatPresetCatalog.Create(PokerCheatPreset.AiJokerNotAwarded).AiCards),
+        "QA presets must cover player/AI Joker ineligible, not-awarded, and awarded downstream states.");
     }
 
     private static bool Unique(params IReadOnlyList<Card>[] groups)
@@ -58,6 +66,15 @@ namespace CodexGame.SmokeTests.Development
         }
       }
       return true;
+    }
+
+    private static bool ContainsJoker(IReadOnlyList<Card> cards)
+    {
+      for (var index = 0; index < cards.Count; index++)
+      {
+        if (cards[index].IsJoker) return true;
+      }
+      return false;
     }
   }
 }

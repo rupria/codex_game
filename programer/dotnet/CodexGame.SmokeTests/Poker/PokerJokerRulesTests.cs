@@ -19,6 +19,7 @@ namespace CodexGame.SmokeTests.Poker
       CheckNormalizedProfile(tests);
       CheckIndependentJokerRoll(tests);
       CheckSelectionCandidateIntegration(tests);
+      CheckLoserCannotReceiveJoker(tests);
       CheckBalancedHiddenDeal(tests);
       CheckBestLegalSubstitution(tests);
       CheckPlayerPresentationLock(tests);
@@ -70,6 +71,23 @@ namespace CodexGame.SmokeTests.Poker
         PokerEvaluator.Evaluate(hand, PokerRuleSet.Development).Category
           == PokerHandCategory.ThreeOfAKind,
         "Joker must choose the strongest legal non-duplicate substitution.");
+      var options = PokerJokerHandResolver.GetLegalOptions(hand, PokerRuleSet.Development);
+      var hasThree = false;
+      var hasHighCard = false;
+      var replacementIsUnique = true;
+      for (var index = 0; index < options.Count; index++)
+      {
+        hasThree |= options[index].Category == PokerHandCategory.ThreeOfAKind;
+        hasHighCard |= options[index].Category == PokerHandCategory.HighCard;
+        replacementIsUnique &= options[index].ReplacementCard.Id != hand[0].Id
+          && options[index].ReplacementCard.Id != hand[1].Id
+          && options[index].ReplacementCard.Id != hand[2].Id
+          && options[index].ReplacementCard.Id != hand[3].Id;
+      }
+      tests.Check(
+        hasThree && !hasHighCard && replacementIsUnique
+          && options[0].Category == PokerHandCategory.ThreeOfAKind,
+        "Joker choices must expose only completable categories and keep the strongest legal substitution per category.");
     }
 
     private static void CheckBalancedHiddenDeal(TestHarness tests)
@@ -143,13 +161,19 @@ namespace CodexGame.SmokeTests.Poker
       tests.Check(
         !session.Tick(new GameTimestamp(GameRules.PlayerJokerPresentationMicroseconds))
           && session.GetSnapshot(new GameTimestamp(GameRules.PlayerJokerPresentationMicroseconds)).Phase
-            == PokerRoundPhase.AwaitingPrediction,
-        "Joker presentation must complete once and then open the full prediction window.");
-      session.Tick(new GameTimestamp(GameRules.PlayerJokerPresentationMicroseconds + 1));
+            == PokerRoundPhase.AwaitingPlayerJokerChoice,
+        "Joker presentation must complete once and then require a legal hand choice.");
+      var choice = session.GetSnapshot(new GameTimestamp(GameRules.PlayerJokerPresentationMicroseconds));
       tests.Check(
-        session.GetSnapshot(new GameTimestamp(GameRules.PlayerJokerPresentationMicroseconds + 1))
-          .RemainingMicroseconds == GameRules.PredictionTimeoutMicroseconds - 1,
-        "Repeated ticks must not restart the Joker presentation or prediction timer.");
+        choice.LegalPlayerJokerOptions.Count > 0
+          && !session.SubmitPrediction(PredictionChoice.PlayerWins, new GameTimestamp(1)),
+        "Prediction must remain locked until the player chooses a legal Joker category.");
+      tests.Check(
+        session.SubmitPlayerJokerChoice(choice.LegalPlayerJokerOptions[0].Category, new GameTimestamp(10))
+          && session.GetSnapshot(new GameTimestamp(10)).Phase == PokerRoundPhase.AwaitingPrediction
+          && session.GetSnapshot(new GameTimestamp(11)).RemainingMicroseconds
+            == GameRules.PredictionTimeoutMicroseconds - 1,
+        "A legal Joker category must lock the hand and start one full prediction window.");
     }
 
     private static void CheckAiSecrecy(TestHarness tests)
@@ -164,8 +188,22 @@ namespace CodexGame.SmokeTests.Poker
       var concealed = session.GetSnapshot(new GameTimestamp(0));
       tests.Check(
         concealed.Phase == PokerRoundPhase.AwaitingPrediction
-          && concealed.VisibleAiPrivateCards.Count == 0,
+          && concealed.VisibleAiPrivateCards.Count == 0
+          && concealed.LegalPlayerJokerOptions.Count == 0,
         "AI Joker must not change the pre-showdown phase, count, or visible card payload.");
+      var itemRevealSession = new PokerRoundSession();
+      itemRevealSession.Begin(
+        C(CardSuit.Clubs, CardRank.Two),
+        Distribution(playerJoker: false, aiJoker: true),
+        BattleHealth.Initial,
+        PokerRuleSet.Development,
+        new GameTimestamp(0),
+        0);
+      var itemReveal = itemRevealSession.GetSnapshot(new GameTimestamp(0));
+      tests.Check(
+        itemReveal.VisibleAiPrivateCards.Count == 1
+          && !itemReveal.VisibleAiPrivateCards[0].IsJoker,
+        "An item pre-reveal aimed at an AI Joker must reveal a standard AI card instead of leaking Joker ownership.");
       session.SubmitPrediction(PredictionChoice.PlayerWins, new GameTimestamp(0));
       session.Tick(new GameTimestamp(GameRules.PokerResultAnnouncementMicroseconds));
       var revealed = session.GetSnapshot(new GameTimestamp(GameRules.PokerResultAnnouncementMicroseconds));
@@ -173,6 +211,27 @@ namespace CodexGame.SmokeTests.Poker
         revealed.VisibleAiPrivateCards.Count == 3
           && ContainsJoker(revealed.VisibleAiPrivateCards),
         "AI Joker may reveal only at showdown when it is one of the three actually used cards.");
+    }
+
+    private static void CheckLoserCannotReceiveJoker(TestHarness tests)
+    {
+      var deck = TestCardSet.Create();
+      var player = Slice(deck, 0, 4);
+      var session = new PrivateCardSelectionSession();
+      session.Begin(
+        player,
+        Array.AsReadOnly(Array.Empty<Card>()),
+        Slice(deck, 4, 20),
+        HalliStageWinner.Ai,
+        1,
+        FindPlayerJokerSeed(),
+        new GameTimestamp(0));
+      var result = session.GetSnapshot(new GameTimestamp(0)).Result;
+      tests.Check(
+        result != null
+          && !ContainsJoker(result.PlayerPrivateCards)
+          && !ContainsJoker(result.AiPrivateCards),
+        "A Halli loser must move acquired cards to the random pool before Joker eligibility is evaluated.");
     }
 
     private static PrivateCardDistributionResult Distribution(bool playerJoker, bool aiJoker)
