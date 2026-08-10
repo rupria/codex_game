@@ -10,9 +10,15 @@ namespace CodexGame.Presentation.Views
 {
   internal sealed class PokerItemDevPanel
   {
+    private static readonly Rect FullScreen = new Rect(0f, 0f, 960f, 540f);
     private static readonly Rect CrateRect = new Rect(760f, 326f, 128f, 128f);
-    private static readonly Rect PopupRect = new Rect(200f, 120f, 560f, 300f);
-    private GameItemId? _selectedTargetItem;
+    private static readonly Rect PopupRect = new Rect(160f, 102f, 640f, 336f);
+    private static readonly Rect DetailRect = new Rect(404f, 236f, 376f, 112f);
+    private static readonly Rect UseButton = new Rect(410f, 372f, 172f, 44f);
+    private static readonly Rect ConfirmButton = new Rect(598f, 372f, 172f, 44f);
+
+    private GameItemId? _selectedItem;
+    private CardId? _selectedTargetCard;
     private bool _inventoryOpen;
 
     public void Draw(
@@ -29,17 +35,18 @@ namespace CodexGame.Presentation.Views
       Action confirm)
     {
       if (snapshot == null) throw new ArgumentNullException(nameof(snapshot));
+      SyncSelection(snapshot);
 
       GUI.Label(new Rect(56f, 24f, 848f, 38f), localization.Get("UI_ITEM_WINDOW_TITLE"), styles.Title);
-      DrawTableCards(snapshot, cards, styles, localization, reload, beginBottomDeal);
+      DrawTableCards(snapshot, cards, styles, localization);
 
       var canAct = snapshot.Phase == PokerItemPhase.AwaitingActions;
       DrawClosedCrate(snapshot.Inventory.Count, canAct, art, styles, localization);
 
-      GUI.enabled = canAct && !_inventoryOpen && !_selectedTargetItem.HasValue;
+      GUI.enabled = canAct && !_inventoryOpen;
       if (GUI.Button(new Rect(734f, 472f, 170f, 42f), localization.Get("UI_ITEM_CONFIRM_HAND")))
       {
-        _selectedTargetItem = null;
+        ClearSelection();
         confirm();
       }
       GUI.enabled = true;
@@ -52,7 +59,17 @@ namespace CodexGame.Presentation.Views
 
       if (_inventoryOpen)
       {
-        DrawInventoryModal(snapshot, art, styles, localization, hypeMan, healthRecovery);
+        DrawInventoryModal(
+          snapshot,
+          cards,
+          art,
+          styles,
+          localization,
+          reload,
+          beginBottomDeal,
+          hypeMan,
+          healthRecovery,
+          confirm);
       }
 
       if (snapshot.LastFailure != PokerItemFailure.None)
@@ -80,17 +97,19 @@ namespace CodexGame.Presentation.Views
         styles.Small);
 
       GUI.enabled = enabled;
-      if (GUI.Button(CrateRect, GUIContent.none, GUIStyle.none)) _inventoryOpen = true;
+      if (GUI.Button(CrateRect, GUIContent.none, GUIStyle.none))
+      {
+        _inventoryOpen = true;
+        ClearSelection();
+      }
       GUI.enabled = true;
     }
 
-    private void DrawTableCards(
+    private static void DrawTableCards(
       PokerItemSnapshot snapshot,
       PlayableCardRenderer cards,
       PlayableDevStyles styles,
-      LocalizationRuntime localization,
-      Action<CardId> reload,
-      Action<CardId> beginBottomDeal)
+      LocalizationRuntime localization)
     {
       GUI.Label(new Rect(56f, 82f, 180f, 26f), localization.Get("UI_POKER_AI_HAND"), styles.Heading);
       if (snapshot.VisibleAiPrivateCards.Count == 0)
@@ -117,74 +136,74 @@ namespace CodexGame.Presentation.Views
       GUI.Label(new Rect(56f, 346f, 220f, 26f), localization.Get("UI_POKER_PLAYER_PRIVATE"), styles.Heading);
       for (var index = 0; index < snapshot.PlayerPrivateCards.Count; index++)
       {
-        var rect = new Rect(382f + index * 78f, 328f, 64f, 90f);
-        cards.DrawAt(rect, snapshot.PlayerPrivateCards[index]);
-        if (_selectedTargetItem.HasValue
-          && snapshot.Phase == PokerItemPhase.AwaitingActions)
-        {
-          var previous = GUI.color;
-          GUI.color = new Color(0.1f, 0.9f, 0.9f, 0.25f);
-          GUI.DrawTexture(
-            new Rect(rect.x - 4f, rect.y - 4f, rect.width + 8f, rect.height + 8f),
-            Texture2D.whiteTexture,
-            ScaleMode.StretchToFill,
-            true);
-          GUI.color = previous;
-          if (GUI.Button(rect, GUIContent.none, GUIStyle.none))
-          {
-            if (_selectedTargetItem == GameItemId.Reload) reload(snapshot.PlayerPrivateCards[index].Id);
-            else if (_selectedTargetItem == GameItemId.BottomDeal)
-            {
-              beginBottomDeal(snapshot.PlayerPrivateCards[index].Id);
-            }
-            _selectedTargetItem = null;
-          }
-        }
-      }
-
-      if (_selectedTargetItem.HasValue)
-      {
-        GUI.Label(new Rect(310f, 430f, 420f, 28f), localization.Get("UI_ITEM_CHOOSE_CARD"), styles.Heading);
+        cards.DrawAt(
+          new Rect(382f + index * 78f, 328f, 64f, 90f),
+          snapshot.PlayerPrivateCards[index]);
       }
     }
 
     private void DrawInventoryModal(
       PokerItemSnapshot snapshot,
+      PlayableCardRenderer cards,
       PokerItemUiArtSet art,
       PlayableDevStyles styles,
       LocalizationRuntime localization,
+      Action<CardId> reload,
+      Action<CardId> beginBottomDeal,
       Action hypeMan,
-      Action healthRecovery)
+      Action healthRecovery,
+      Action confirm)
     {
       var previous = GUI.color;
-      GUI.color = new Color(0f, 0f, 0f, 168f / 255f);
-      GUI.DrawTexture(new Rect(0f, 0f, 960f, 540f), Texture2D.whiteTexture, ScaleMode.StretchToFill, true);
+      GUI.color = new Color(0f, 0f, 0f, 0.74f);
+      GUI.DrawTexture(FullScreen, Texture2D.whiteTexture, ScaleMode.StretchToFill, true);
       GUI.color = previous;
+      GUI.Button(FullScreen, GUIContent.none, GUIStyle.none);
 
-      if (art?.PopupFrame != null) GUI.DrawTexture(PopupRect, art.PopupFrame, ScaleMode.StretchToFill, true);
+      var panel = art?.SelectionPanel ?? art?.PopupFrame;
+      if (panel != null) GUI.DrawTexture(PopupRect, panel, ScaleMode.StretchToFill, true);
       else GUI.Box(PopupRect, GUIContent.none);
-      GUI.Label(new Rect(230f, 142f, 460f, 34f), localization.Get("UI_ITEM_INVENTORY"), styles.Heading);
+      GUI.Label(new Rect(388f, 118f, 390f, 32f), localization.Get("UI_ITEM_INVENTORY"), styles.Heading);
 
       var crate = snapshot.Inventory.Count == 0 ? art?.CrateOpenEmpty : art?.CrateOpenFilled;
-      var openCrateRect = new Rect(218f, 188f, 132f, 132f);
-      if (crate != null) GUI.DrawTexture(openCrateRect, crate, ScaleMode.ScaleToFit, true);
-
-      var trayRect = new Rect(350f, 192f, 388f, 92f);
-      if (art?.InventoryTray != null) GUI.DrawTexture(trayRect, art.InventoryTray, ScaleMode.StretchToFill, true);
+      if (crate != null)
+      {
+        GUI.DrawTexture(new Rect(184f, 154f, 190f, 190f), crate, ScaleMode.ScaleToFit, true);
+      }
 
       for (var index = 0; index < 4; index++)
       {
-        var rect = new Rect(362f + index * 91f, 202f, 72f, 72f);
-        DrawInventorySlot(snapshot, index, rect, art, styles, localization, hypeMan, healthRecovery);
+        DrawInventorySlot(
+          snapshot,
+          index,
+          new Rect(408f + index * 80f, 158f, 64f, 64f),
+          art,
+          styles,
+          localization);
       }
 
-      GUI.Label(
-        new Rect(354f, 310f, 376f, 48f),
-        snapshot.Inventory.Count == 0
-          ? localization.Get("UI_ITEM_EMPTY_SLOT")
-          : localization.Get("UI_ITEM_WINDOW_TITLE"),
-        styles.Small);
-      if (GUI.Button(new Rect(700f, 140f, 38f, 32f), "X")) _inventoryOpen = false;
+      DrawItemDetail(snapshot, cards, art, styles, localization);
+      var canUse = CanUseSelected();
+      if (DrawActionButton(
+        UseButton,
+        localization.Get("UI_COMMON_SELECT"),
+        canUse,
+        art,
+        styles.Heading))
+      {
+        UseSelectedItem(reload, beginBottomDeal, hypeMan, healthRecovery);
+      }
+      if (DrawActionButton(
+        ConfirmButton,
+        localization.Get("UI_ITEM_CONFIRM_HAND"),
+        true,
+        art,
+        styles.Heading))
+      {
+        _inventoryOpen = false;
+        ClearSelection();
+        confirm();
+      }
     }
 
     private void DrawInventorySlot(
@@ -193,22 +212,23 @@ namespace CodexGame.Presentation.Views
       Rect rect,
       PokerItemUiArtSet art,
       PlayableDevStyles styles,
-      LocalizationRuntime localization,
-      Action hypeMan,
-      Action healthRecovery)
+      LocalizationRuntime localization)
     {
       var occupied = index < snapshot.Inventory.Count;
+      var itemId = occupied ? snapshot.Inventory[index] : default;
+      var selected = occupied && _selectedItem == itemId;
       var hovered = occupied && rect.Contains(Event.current.mousePosition);
       var texture = !occupied
         ? art?.SlotDisabled
-        : hovered
-          ? art?.SlotHover
-          : art?.SlotIdle;
+        : selected
+          ? art?.SlotSelected
+          : hovered
+            ? art?.SlotHover
+            : art?.SlotIdle;
       if (texture != null) GUI.DrawTexture(rect, texture, ScaleMode.ScaleToFit, true);
       else GUI.Box(rect, GUIContent.none);
       if (!occupied) return;
 
-      var itemId = snapshot.Inventory[index];
       var icon = art?.FindItemIcon(itemId);
       if (icon != null)
       {
@@ -218,27 +238,155 @@ namespace CodexGame.Presentation.Views
           ScaleMode.ScaleToFit,
           true);
       }
-
-      GUI.enabled = snapshot.Phase == PokerItemPhase.AwaitingActions;
       if (GUI.Button(rect, GUIContent.none, GUIStyle.none))
       {
-        if (itemId == GameItemId.Reload || itemId == GameItemId.BottomDeal)
-        {
-          _selectedTargetItem = itemId;
-          _inventoryOpen = false;
-        }
-        else if (itemId == GameItemId.HypeMan) hypeMan();
-        else if (itemId == GameItemId.HealthRecovery) healthRecovery();
+        _selectedItem = itemId;
+        _selectedTargetCard = null;
       }
-      GUI.enabled = true;
 
       if (GameItemCatalog.TryGet(itemId, out var definition) && definition != null)
       {
         GUI.Label(
-          new Rect(rect.x - 8f, rect.y + 74f, rect.width + 16f, 18f),
+          new Rect(rect.x - 8f, rect.y + 66f, rect.width + 16f, 18f),
           localization.Get(definition.LocalizationNameKey),
           styles.Small);
       }
+    }
+
+    private void DrawItemDetail(
+      PokerItemSnapshot snapshot,
+      PlayableCardRenderer cards,
+      PokerItemUiArtSet art,
+      PlayableDevStyles styles,
+      LocalizationRuntime localization)
+    {
+      if (art?.DetailPanel != null)
+      {
+        GUI.DrawTexture(DetailRect, art.DetailPanel, ScaleMode.StretchToFill, true);
+      }
+      else GUI.Box(DetailRect, GUIContent.none);
+
+      if (!_selectedItem.HasValue)
+      {
+        GUI.Label(DetailRect, localization.Get("UI_ITEM_EMPTY_SLOT"), styles.Small);
+        return;
+      }
+
+      if (RequiresTarget(_selectedItem.Value))
+      {
+        for (var index = 0; index < snapshot.PlayerPrivateCards.Count; index++)
+        {
+          var card = snapshot.PlayerPrivateCards[index];
+          var rect = new Rect(438f + index * 92f, 252f, 56f, 78f);
+          cards.DrawAt(rect, card);
+          if (_selectedTargetCard.HasValue && _selectedTargetCard.Value == card.Id)
+          {
+            var color = GUI.color;
+            GUI.color = new Color(0.08f, 0.9f, 0.9f, 0.32f);
+            GUI.DrawTexture(
+              new Rect(rect.x - 4f, rect.y - 4f, rect.width + 8f, rect.height + 8f),
+              Texture2D.whiteTexture,
+              ScaleMode.StretchToFill,
+              true);
+            GUI.color = color;
+          }
+          if (GUI.Button(rect, GUIContent.none, GUIStyle.none)) _selectedTargetCard = card.Id;
+        }
+        return;
+      }
+
+      if (GameItemCatalog.TryGet(_selectedItem.Value, out var definition) && definition != null)
+      {
+        var icon = art?.FindItemIcon(_selectedItem.Value);
+        if (icon != null)
+        {
+          GUI.DrawTexture(new Rect(416f, 252f, 80f, 80f), icon, ScaleMode.ScaleToFit, true);
+        }
+        GUI.Label(
+          new Rect(510f, 254f, 250f, 32f),
+          localization.Get(definition.LocalizationNameKey),
+          styles.Heading);
+        GUI.Label(
+          new Rect(510f, 292f, 250f, 34f),
+          localization.Get("UI_ITEM_WINDOW_TITLE"),
+          styles.Small);
+      }
+    }
+
+    private bool CanUseSelected()
+    {
+      if (!_selectedItem.HasValue) return false;
+      return !RequiresTarget(_selectedItem.Value) || _selectedTargetCard.HasValue;
+    }
+
+    private void UseSelectedItem(
+      Action<CardId> reload,
+      Action<CardId> beginBottomDeal,
+      Action hypeMan,
+      Action healthRecovery)
+    {
+      if (!_selectedItem.HasValue) return;
+      var item = _selectedItem.Value;
+      if (item == GameItemId.Reload && _selectedTargetCard.HasValue)
+      {
+        reload(_selectedTargetCard.Value);
+      }
+      else if (item == GameItemId.BottomDeal && _selectedTargetCard.HasValue)
+      {
+        beginBottomDeal(_selectedTargetCard.Value);
+        _inventoryOpen = false;
+      }
+      else if (item == GameItemId.HypeMan) hypeMan();
+      else if (item == GameItemId.HealthRecovery) healthRecovery();
+      ClearSelection();
+    }
+
+    private static bool RequiresTarget(GameItemId itemId)
+    {
+      return itemId == GameItemId.Reload || itemId == GameItemId.BottomDeal;
+    }
+
+    private static bool DrawActionButton(
+      Rect rect,
+      string label,
+      bool enabled,
+      PokerItemUiArtSet art,
+      GUIStyle style)
+    {
+      var hovered = enabled && rect.Contains(Event.current.mousePosition);
+      var texture = !enabled
+        ? art?.ActionButtonDisabled
+        : hovered
+          ? art?.ActionButtonHover
+          : art?.ActionButtonIdle;
+      GUI.enabled = enabled;
+      bool clicked;
+      if (texture != null)
+      {
+        GUI.DrawTexture(rect, texture, ScaleMode.StretchToFill, true);
+        GUI.Label(rect, label, style);
+        clicked = GUI.Button(rect, GUIContent.none, GUIStyle.none);
+      }
+      else clicked = GUI.Button(rect, label);
+      GUI.enabled = true;
+      return clicked;
+    }
+
+    private void SyncSelection(PokerItemSnapshot snapshot)
+    {
+      if (!_selectedItem.HasValue) return;
+      for (var index = 0; index < snapshot.Inventory.Count; index++)
+      {
+        if (snapshot.Inventory[index] == _selectedItem.Value) return;
+      }
+      ClearSelection();
+      if (snapshot.Inventory.Count == 0) _inventoryOpen = false;
+    }
+
+    private void ClearSelection()
+    {
+      _selectedItem = null;
+      _selectedTargetCard = null;
     }
 
     private static void DrawBottomDealCandidates(
@@ -249,9 +397,10 @@ namespace CodexGame.Presentation.Views
       Action<CardId> chooseBottomDeal)
     {
       var previous = GUI.color;
-      GUI.color = new Color(0f, 0f, 0f, 0.62f);
-      GUI.DrawTexture(new Rect(0f, 0f, 960f, 540f), Texture2D.whiteTexture, ScaleMode.StretchToFill, true);
+      GUI.color = new Color(0f, 0f, 0f, 0.74f);
+      GUI.DrawTexture(FullScreen, Texture2D.whiteTexture, ScaleMode.StretchToFill, true);
       GUI.color = previous;
+      GUI.Button(FullScreen, GUIContent.none, GUIStyle.none);
       GUI.Box(new Rect(280f, 132f, 400f, 270f), GUIContent.none);
       GUI.Label(new Rect(330f, 154f, 300f, 34f), localization.Get("UI_ITEM_CHOOSE_CARD"), styles.Heading);
       for (var index = 0; index < snapshot.BottomDealCandidates.Count; index++)

@@ -27,8 +27,9 @@ namespace CodexGame.Presentation.Art
     [SerializeField] private Texture2D _ropeBody;
     [SerializeField] private Texture2D _ropeFlame;
     [SerializeField] private Texture2D _ropeExplosion;
-    [SerializeField] private Texture2D _playerRevealHistoryRail;
-    [SerializeField] private Texture2D _aiRevealHistoryRail;
+    [SerializeField] private Texture2D _sharedPileRailIdle;
+    [SerializeField] private Texture2D _sharedPileRailPlayerActive;
+    [SerializeField] private Texture2D _sharedPileRailAiActive;
 
     public HalliUiArtSet(
       Texture2D bellIdle,
@@ -52,8 +53,9 @@ namespace CodexGame.Presentation.Art
       Texture2D ropeBody = null,
       Texture2D ropeFlame = null,
       Texture2D ropeExplosion = null,
-      Texture2D playerRevealHistoryRail = null,
-      Texture2D aiRevealHistoryRail = null)
+      Texture2D sharedPileRailIdle = null,
+      Texture2D sharedPileRailPlayerActive = null,
+      Texture2D sharedPileRailAiActive = null)
     {
       _bellIdle = bellIdle ?? throw new ArgumentNullException(nameof(bellIdle));
       _bellHover = bellHover ?? throw new ArgumentNullException(nameof(bellHover));
@@ -79,8 +81,9 @@ namespace CodexGame.Presentation.Art
       _ropeBody = ropeBody;
       _ropeFlame = ropeFlame;
       _ropeExplosion = ropeExplosion;
-      _playerRevealHistoryRail = playerRevealHistoryRail;
-      _aiRevealHistoryRail = aiRevealHistoryRail;
+      _sharedPileRailIdle = sharedPileRailIdle;
+      _sharedPileRailPlayerActive = sharedPileRailPlayerActive;
+      _sharedPileRailAiActive = sharedPileRailAiActive;
     }
 
     public Texture2D BellIdle => _bellIdle;
@@ -104,8 +107,9 @@ namespace CodexGame.Presentation.Art
     public Texture2D RopeBody => _ropeBody;
     public Texture2D RopeFlame => _ropeFlame;
     public Texture2D RopeExplosion => _ropeExplosion;
-    public Texture2D PlayerRevealHistoryRail => _playerRevealHistoryRail;
-    public Texture2D AiRevealHistoryRail => _aiRevealHistoryRail;
+    public Texture2D SharedPileRailIdle => _sharedPileRailIdle;
+    public Texture2D SharedPileRailPlayerActive => _sharedPileRailPlayerActive;
+    public Texture2D SharedPileRailAiActive => _sharedPileRailAiActive;
 
     public bool HasRoundWinPips => _playerWinPipEmpty != null
       && _playerWinPipFilled != null

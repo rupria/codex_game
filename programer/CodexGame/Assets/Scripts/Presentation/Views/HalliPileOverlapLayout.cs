@@ -6,22 +6,14 @@ namespace CodexGame.Presentation.Views
 {
   internal static class HalliPileOverlapLayout
   {
-    public const float CardWidth = 96f;
-    public const float CardStep = 84f;
-    public const float LeftStartX = 192f;
-    public const float RightStartX = 588f;
-    public const float LeftHistoryStartX = 212f;
-    public const float RightHistoryStartX = 584f;
-    public const float HistoryLaneStep = 100f;
-    public const float HistoryBaseY = 194f;
-    public const float HistoryVerticalStep = 12f;
-    public const int MaximumHistoryCards = 3;
-
-    public static float X(bool left, int index)
-    {
-      if (index < 0 || index > 1) throw new ArgumentOutOfRangeException(nameof(index));
-      return (left ? LeftStartX : RightStartX) + CardStep * index;
-    }
+    public const float CardWidth = 64f;
+    public const float CardHeight = 90f;
+    public const float PreviousCardOffsetX = -42f;
+    public const float PreviousCardOffsetY = 22f;
+    public const float LeftNewestX = 296f;
+    public const float RightNewestX = 656f;
+    public const float NewestY = 190f;
+    public const int MaximumPileCards = 2;
 
     public static PileSide PhysicalPile(HalliActor actor, HalliRelativeSide side)
     {
@@ -41,29 +33,35 @@ namespace CodexGame.Presentation.Views
       return side == HalliRelativeSide.Left ? PileSide.Right : PileSide.Left;
     }
 
-    public static float HistoryX(HalliActor actor, HalliRelativeSide side)
+    public static float CardX(PileSide pile, int cardIndex, int cardCount)
     {
-      var pile = PhysicalPile(actor, side);
-      var lane = pile == PileSide.Left
-        ? actor == HalliActor.Player ? 0 : 1
-        : actor == HalliActor.Ai ? 0 : 1;
-      return (pile == PileSide.Left ? LeftHistoryStartX : RightHistoryStartX)
-        + HistoryLaneStep * lane;
+      ValidateCardIndex(cardIndex, cardCount);
+      var newestX = pile == PileSide.Left ? LeftNewestX : RightNewestX;
+      return cardIndex == cardCount - 1 ? newestX : newestX + PreviousCardOffsetX;
     }
 
-    public static float HistoryY(int historyIndex, int historyCount)
+    public static float CardY(int cardIndex, int cardCount)
     {
-      if (historyCount < 1 || historyCount > MaximumHistoryCards)
-      {
-        throw new ArgumentOutOfRangeException(nameof(historyCount));
-      }
-      if (historyIndex < 0 || historyIndex >= historyCount)
-      {
-        throw new ArgumentOutOfRangeException(nameof(historyIndex));
-      }
+      ValidateCardIndex(cardIndex, cardCount);
+      return cardIndex == cardCount - 1 ? NewestY : NewestY + PreviousCardOffsetY;
+    }
 
-      var distanceFromNewest = historyCount - 1 - historyIndex;
-      return HistoryBaseY + HistoryVerticalStep * distanceFromNewest;
+    public static int DrawOrderIndex(int drawIndex, int cardCount)
+    {
+      ValidateCardIndex(drawIndex, cardCount);
+      return cardCount - 1 - drawIndex;
+    }
+
+    private static void ValidateCardIndex(int cardIndex, int cardCount)
+    {
+      if (cardCount < 1 || cardCount > MaximumPileCards)
+      {
+        throw new ArgumentOutOfRangeException(nameof(cardCount));
+      }
+      if (cardIndex < 0 || cardIndex >= cardCount)
+      {
+        throw new ArgumentOutOfRangeException(nameof(cardIndex));
+      }
     }
   }
 }

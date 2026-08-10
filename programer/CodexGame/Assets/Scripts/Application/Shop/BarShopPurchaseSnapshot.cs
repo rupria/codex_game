@@ -11,7 +11,9 @@ namespace CodexGame.Application.Shop
       BarShopProductDefinition? product,
       long elapsedMicroseconds,
       bool inputLocked,
-      bool committed)
+      bool committed,
+      int bulletCountBefore,
+      int bulletCountAfter)
     {
       Phase = phase;
       Failure = failure;
@@ -19,6 +21,8 @@ namespace CodexGame.Application.Shop
       ElapsedMicroseconds = elapsedMicroseconds;
       InputLocked = inputLocked;
       Committed = committed;
+      BulletCountBefore = bulletCountBefore;
+      BulletCountAfter = bulletCountAfter;
     }
 
     public BarShopPurchasePhase Phase { get; }
@@ -27,5 +31,7 @@ namespace CodexGame.Application.Shop
     public long ElapsedMicroseconds { get; }
     public bool InputLocked { get; }
     public bool Committed { get; }
+    public int BulletCountBefore { get; }
+    public int BulletCountAfter { get; }
   }
 }
