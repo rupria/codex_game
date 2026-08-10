@@ -7,7 +7,9 @@ namespace CodexGame.Core.Rewards
   {
     private readonly HashSet<int> _settledStageNumbers = new HashSet<int>();
 
-    public int Balance { get; private set; }
+    public int BaseBalance { get; private set; }
+    public int TemporaryBalance { get; private set; }
+    public int Balance => BaseBalance + TemporaryBalance;
 
     public StageBulletReward SettleStageVictory(
       int stageNumber,
@@ -34,7 +36,8 @@ namespace CodexGame.Core.Rewards
         predictionSuccessCount);
       checked
       {
-        Balance += reward.TotalBullets;
+        BaseBalance += reward.BaseBullets;
+        TemporaryBalance += reward.BonusBullets;
       }
       return reward;
     }
@@ -52,9 +55,40 @@ namespace CodexGame.Core.Rewards
 
     public bool TrySpend(int amount)
     {
-      if (!CanSpend(amount)) return false;
-      Balance -= amount;
+      return TrySpend(amount, out _);
+    }
+
+    public bool TryPreviewSpend(int amount, out BulletSpend spend)
+    {
+      if (amount < 0) throw new ArgumentOutOfRangeException(nameof(amount));
+      if (!CanSpend(amount))
+      {
+        spend = BulletSpend.None(BaseBalance, TemporaryBalance);
+        return false;
+      }
+
+      var temporarySpent = Math.Min(amount, TemporaryBalance);
+      spend = new BulletSpend(
+        BaseBalance,
+        TemporaryBalance,
+        amount - temporarySpent,
+        temporarySpent);
       return true;
+    }
+
+    public bool TrySpend(int amount, out BulletSpend spend)
+    {
+      if (!TryPreviewSpend(amount, out spend)) return false;
+      BaseBalance = spend.BaseAfter;
+      TemporaryBalance = spend.TemporaryAfter;
+      return true;
+    }
+
+    public int ExpireTemporary()
+    {
+      var expired = TemporaryBalance;
+      TemporaryBalance = 0;
+      return expired;
     }
   }
 }

@@ -24,14 +24,26 @@ namespace CodexGame.SmokeTests.Rewards
         reward.BaseBullets == 3
           && reward.BonusBullets == 7
           && reward.TotalBullets == 10
+          && ledger.BaseBalance == 3
+          && ledger.TemporaryBalance == 7
           && ledger.Balance == 10,
-        "Stage reward must be HP plus floor(HP x successful predictions x 0.5).");
+        "Stage reward must keep stage and prediction currency in separate balances.");
       tests.Check(
         ledger.SettleStageVictory(1, 3, 5).TotalBullets == 0 && ledger.Balance == 10,
         "A stage reward must remain idempotent after prediction bonus settlement.");
       tests.Check(
-        ledger.TrySpend(2) && ledger.Balance == 8 && !ledger.TrySpend(9),
-        "Bullet spending must be atomic and reject an unaffordable cost.");
+        ledger.TrySpend(2, out var spend)
+          && spend.TemporarySpent == 2
+          && spend.BaseSpent == 0
+          && ledger.BaseBalance == 3
+          && ledger.TemporaryBalance == 5
+          && !ledger.TrySpend(9),
+        "Purchases must spend temporary currency first and reject an unaffordable cost atomically.");
+      tests.Check(
+        ledger.ExpireTemporary() == 5
+          && ledger.TemporaryBalance == 0
+          && ledger.BaseBalance == 3,
+        "Leaving the shop must expire only the remaining temporary currency.");
 
       var expected = new[,]
       {

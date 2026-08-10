@@ -46,6 +46,9 @@ namespace CodexGame.Presentation.Views
     private StageTransitionUiArtSet _stageTransitionUiArtSet;
 
     [SerializeField]
+    private EconomyUiArtSet _economyUiArtSet;
+
+    [SerializeField]
     private bool _useSceneBackdrop;
 
     [SerializeField]
@@ -138,7 +141,8 @@ namespace CodexGame.Presentation.Views
       bool useIntroArtLayout = false,
       BarShopUiArtSet barShopUiArtSet = null,
       StageTransitionUiArtSet stageTransitionUiArtSet = null,
-      PokerItemUiArtSet pokerItemUiArtSet = null)
+      PokerItemUiArtSet pokerItemUiArtSet = null,
+      EconomyUiArtSet economyUiArtSet = null)
     {
       _boardTexture = boardTexture;
       _cardArtSet = cardArtSet;
@@ -150,6 +154,7 @@ namespace CodexGame.Presentation.Views
       _pokerItemUiArtSet = pokerItemUiArtSet;
       _barShopUiArtSet = barShopUiArtSet;
       _stageTransitionUiArtSet = stageTransitionUiArtSet;
+      _economyUiArtSet = economyUiArtSet;
       _useSceneBackdrop = useSceneBackdrop;
       _useIntroArtLayout = useIntroArtLayout;
       _halliCards = null;
@@ -319,6 +324,7 @@ namespace CodexGame.Presentation.Views
           () => AdvanceRequested?.Invoke(),
           () => LeftBellRequested?.Invoke(),
           () => RightBellRequested?.Invoke());
+        DrawBattleEconomyHud();
         return;
       }
 
@@ -336,6 +342,7 @@ namespace CodexGame.Presentation.Views
           _localization,
           prediction => PredictionRequested?.Invoke(prediction),
           () => AdvanceRequested?.Invoke());
+        DrawBattleEconomyHud();
         return;
       }
 
@@ -353,6 +360,7 @@ namespace CodexGame.Presentation.Views
           () => HypeManItemRequested?.Invoke(),
           () => HealthRecoveryItemRequested?.Invoke(),
           () => ItemsConfirmRequested?.Invoke());
+        DrawBattleEconomyHud();
         return;
       }
 
@@ -360,12 +368,14 @@ namespace CodexGame.Presentation.Views
       {
         _barShopPanel.Draw(
           _snapshot.BarShop,
-          _snapshot.BulletCount,
+          _snapshot.BaseBulletCount,
+          _snapshot.TemporaryBulletCount,
           _snapshot.Health.Player,
           GameRules.StartingHealth,
           _snapshot.Inventory,
           _styles,
           _barShopUiArtSet,
+          _economyUiArtSet,
           _localization,
           () => BarShopRerollRequested?.Invoke(),
           index => BarShopPurchaseRequested?.Invoke(index),
@@ -392,11 +402,6 @@ namespace CodexGame.Presentation.Views
       GUILayout.Label(L("UI_HUD_PLAYER_HP", new LocalizationArgument("current", _snapshot.Health.Player)), _styles.Heading);
       GUILayout.Label(L("UI_HUD_AI_HP", new LocalizationArgument("current", _snapshot.Health.Ai)), _styles.Heading);
       GUILayout.EndHorizontal();
-      GUILayout.Label(
-        L(
-          "UI_HUD_REWARDS",
-          new LocalizationArgument("bullets", _snapshot.BulletCount)),
-        _styles.Small);
       GUILayout.Space(4f);
 
       switch (_snapshot.Phase)
@@ -530,32 +535,29 @@ namespace CodexGame.Presentation.Views
     private void DrawStageWon()
     {
       GUILayout.FlexibleSpace();
-      GUILayout.Label(
-        L("UI_STAGE_CLEAR", new LocalizationArgument("reward", _snapshot.LastStageReward)),
-        _styles.Status,
-        GUILayout.Height(80f));
-      GUILayout.Label(
-        L(
-          "UI_STAGE_REWARD_FORMULA",
-          new LocalizationArgument("hp", _snapshot.Health.Player),
-          new LocalizationArgument("reward", _snapshot.LastStageBaseReward)),
-        _styles.Heading);
-      GUILayout.Label(
-        L(
-          "UI_STAGE_REWARD_DETAIL",
-          new LocalizationArgument("base", _snapshot.LastStageBaseReward),
-          new LocalizationArgument("bonus", _snapshot.LastStageBonusReward),
-          new LocalizationArgument("success", _snapshot.PredictionSuccessCount),
-          new LocalizationArgument("total", _snapshot.LastStageReward)),
-        _styles.Heading);
-      GUILayout.Label(
-        L("UI_BULLET_BALANCE", new LocalizationArgument("bullets", _snapshot.BulletCount)),
-        _styles.Heading);
+      GUILayout.Space(126f);
+      EconomyUiRenderer.DrawStageRewards(
+        new Rect(206f, 202f, 548f, 96f),
+        _snapshot.LastStageBaseReward,
+        _snapshot.LastStageBonusReward,
+        _economyUiArtSet,
+        _styles.Status);
+      GUILayout.Space(110f);
       if (GUILayout.Button(L("UI_COMMON_CONTINUE"), GUILayout.Height(62f)))
       {
         AdvanceRequested?.Invoke();
       }
       GUILayout.FlexibleSpace();
+    }
+
+    private void DrawBattleEconomyHud()
+    {
+      EconomyUiRenderer.DrawBattleBalances(
+        new Rect(14f, 96f, 108f, 34f),
+        _snapshot.BaseBulletCount,
+        _snapshot.TemporaryBulletCount,
+        _economyUiArtSet,
+        _styles.Small);
     }
 
     private void HandleHalliInput()

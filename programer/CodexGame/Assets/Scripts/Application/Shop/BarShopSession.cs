@@ -79,13 +79,16 @@ namespace CodexGame.Application.Shop
       return true;
     }
 
-    public BarShopSnapshot GetSnapshot(BarShopPurchaseSnapshot? purchase = null)
+    public BarShopSnapshot GetSnapshot(
+      BarShopPurchaseSnapshot? purchase = null,
+      bool exitWarningArmed = false)
     {
       return new BarShopSnapshot(
         _slots,
         _isOpen && !_rerollUsed && !(purchase?.InputLocked ?? false),
         DevelopmentRerollCost,
-        purchase);
+        purchase,
+        exitWarningArmed);
     }
 
     public bool TryGetSlot(int slotIndex, out BarShopProductDefinition? product)

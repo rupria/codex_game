@@ -12,7 +12,7 @@ namespace CodexGame.Presentation.Views
   internal sealed class BarShopDevPanel
   {
     private static readonly Rect FullScreen = new Rect(0f, 0f, 960f, 540f);
-    private static readonly Rect BulletPanel = new Rect(40f, 28f, 200f, 58f);
+    private static readonly Rect EconomyPanel = new Rect(40f, 28f, 278f, 58f);
     private static readonly Rect HealthPanel = new Rect(720f, 28f, 200f, 58f);
     private static readonly Rect RerollButton = new Rect(38f, 462f, 190f, 48f);
     private static readonly Rect ContinueButton = new Rect(382f, 462f, 210f, 48f);
@@ -21,12 +21,14 @@ namespace CodexGame.Presentation.Views
 
     public void Draw(
       BarShopSnapshot shop,
-      int bullets,
+      int baseBullets,
+      int temporaryBullets,
       int playerHealth,
       int maximumHealth,
       IReadOnlyList<GameItemId> inventory,
       PlayableDevStyles styles,
       BarShopUiArtSet art,
+      EconomyUiArtSet economyArt,
       LocalizationRuntime localization,
       Action reroll,
       Action<int> purchase,
@@ -45,12 +47,18 @@ namespace CodexGame.Presentation.Views
         DrawFallbackBackground();
       }
 
-      DrawStatusPanel(
-        BulletPanel,
-        new Rect(98f, 45f, 126f, 24f),
-        art?.BulletPanel,
-        localization.Get("UI_BULLET_BALANCE", new LocalizationArgument("bullets", bullets)),
-        styles.Small);
+      ResolveDisplayedBalances(
+        shop.Purchase,
+        baseBullets,
+        temporaryBullets,
+        out var displayedBaseBullets,
+        out var displayedTemporaryBullets);
+      EconomyUiRenderer.DrawShopBalances(
+        EconomyPanel,
+        displayedTemporaryBullets,
+        displayedBaseBullets,
+        economyArt,
+        styles.Heading);
       DrawStatusPanel(
         HealthPanel,
         new Rect(850f, 45f, 58f, 24f),
@@ -72,6 +80,7 @@ namespace CodexGame.Presentation.Views
           slot.Price,
           !(shop.Purchase?.InputLocked ?? false),
           art,
+          economyArt,
           styles,
           localization))
         {
@@ -106,8 +115,15 @@ namespace CodexGame.Presentation.Views
       {
         continueToNextStage();
       }
+      if (shop.ExitWarningArmed)
+      {
+        EconomyUiRenderer.DrawExitWarning(
+          new Rect(ContinueButton.xMax - 42f, ContinueButton.y + 6f, 36f, 36f),
+          economyArt,
+          styles.Heading);
+      }
 
-      DrawPurchaseMotion(shop.Purchase, bullets, art);
+      DrawPurchaseMotion(shop.Purchase, baseBullets + temporaryBullets, art);
       DrawPurchaseFailure(shop.Purchase, styles, localization);
     }
 
@@ -118,6 +134,7 @@ namespace CodexGame.Presentation.Views
       int price,
       bool enabled,
       BarShopUiArtSet art,
+      EconomyUiArtSet economyArt,
       PlayableDevStyles styles,
       LocalizationRuntime localization)
     {
@@ -148,9 +165,10 @@ namespace CodexGame.Presentation.Views
         new Rect(rect.x + 12f, rect.y + 84f, 166f, 20f),
         localization.Get(nameKey),
         styles.Small);
-      GUI.Label(
-        new Rect(rect.x + 24f, rect.y + 108f, 142f, 18f),
-        localization.Get("UI_BAR_PRICE", new LocalizationArgument("price", price)),
+      EconomyUiRenderer.DrawPrice(
+        new Rect(rect.x + 60f, rect.y + 106f, 70f, 22f),
+        price,
+        economyArt,
         styles.Small);
       GUI.enabled = enabled;
       var clicked = GUI.Button(
@@ -359,6 +377,28 @@ namespace CodexGame.Presentation.Views
             ? "UI_BAR_INVENTORY_FULL"
             : "UI_BAR_PURCHASE_BLOCKED";
       GUI.Label(new Rect(250f, 420f, 460f, 28f), localization.Get(key), styles.Heading);
+    }
+
+    private static void ResolveDisplayedBalances(
+      BarShopPurchaseSnapshot purchase,
+      int currentBaseBullets,
+      int currentTemporaryBullets,
+      out int displayedBaseBullets,
+      out int displayedTemporaryBullets)
+    {
+      displayedBaseBullets = currentBaseBullets;
+      displayedTemporaryBullets = currentTemporaryBullets;
+      if (purchase == null
+        || !purchase.InputLocked
+        || purchase.Phase == BarShopPurchasePhase.Rejected) return;
+
+      var beforeCommit = purchase.ElapsedMicroseconds < GameRules.BarShopPouchCoverMicroseconds;
+      displayedBaseBullets = beforeCommit
+        ? purchase.BaseBulletCountBefore
+        : purchase.BaseBulletCountAfter;
+      displayedTemporaryBullets = beforeCommit
+        ? purchase.TemporaryBulletCountBefore
+        : purchase.TemporaryBulletCountAfter;
     }
 
     private static void DrawStatusPanel(

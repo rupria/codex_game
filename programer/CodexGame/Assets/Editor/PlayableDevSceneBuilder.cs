@@ -29,6 +29,7 @@ namespace CodexGame.Editor
     private const string BarShopUiArtRoot = UiArtRoot + "BarShop_0_3_0/";
     private const string BarShopUi034ArtRoot = UiArtRoot + "BarShop_0_3_4/";
     private const string BarShopUi038ArtRoot = UiArtRoot + "BarShop_0_3_8/";
+    private const string EconomyUi012ArtRoot = UiArtRoot + "Economy_0_1_2/";
     private const string StageTransitionUiArtRoot = UiArtRoot + "StageTransition_0_3_1/";
     private const string IntroArtPath = HalliUiArtRoot + "start_screen_background.png";
     private const string BackdropShaderPath = "Assets/Shaders/RuntimeBackdropLit.shader";
@@ -194,6 +195,15 @@ namespace CodexGame.Editor
           StageTransitionUiArtRoot,
           "stage_transition_loading_{0:00}_64_0_3_1.png",
           8));
+      var economyUiArtSet = new EconomyUiArtSet(
+        LoadOptionalTexture(EconomyUi012ArtRoot + "currency_base_icon_48_0_1_2.png"),
+        LoadOptionalTexture(EconomyUi012ArtRoot + "currency_temporary_icon_48_0_1_2.png"),
+        LoadOptionalTexture(EconomyUi012ArtRoot + "currency_price_icon_24_0_1_2.png"),
+        LoadOptionalTexture(EconomyUi012ArtRoot + "currency_base_panel_160x58_0_1_2.png"),
+        LoadOptionalTexture(EconomyUi012ArtRoot + "currency_temporary_panel_160x58_0_1_2.png"),
+        LoadOptionalTexture(EconomyUi012ArtRoot + "stage_reward_base_frame_240x96_0_1_2.png"),
+        LoadOptionalTexture(EconomyUi012ArtRoot + "stage_reward_temporary_frame_240x96_0_1_2.png"),
+        LoadOptionalTexture(EconomyUi012ArtRoot + "shop_exit_warning_icon_48_0_1_2.png"));
       view.Configure(
         boardTexture,
         cardArtSet,
@@ -206,7 +216,8 @@ namespace CodexGame.Editor
         useIntroArtLayout: true,
         barShopUiArtSet: barShopUiArtSet,
         stageTransitionUiArtSet: stageTransitionUiArtSet,
-        pokerItemUiArtSet: pokerItemUiArtSet);
+        pokerItemUiArtSet: pokerItemUiArtSet,
+        economyUiArtSet: economyUiArtSet);
       var presentationRig = gameObject.AddComponent<TableScenePresentationRig>();
       var backdropShader = AssetDatabase.LoadAssetAtPath<Shader>(BackdropShaderPath);
       if (backdropShader == null)
@@ -330,6 +341,11 @@ namespace CodexGame.Editor
         throw new FileNotFoundException("Playable UI art was not found.", path);
       }
       return texture;
+    }
+
+    private static Texture2D LoadOptionalTexture(string path)
+    {
+      return AssetDatabase.LoadAssetAtPath<Texture2D>(path);
     }
 
     private static Texture2D[] LoadNumberedTextures(
