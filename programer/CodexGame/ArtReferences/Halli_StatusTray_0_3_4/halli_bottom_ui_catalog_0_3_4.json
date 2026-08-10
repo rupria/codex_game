@@ -1,0 +1,8 @@
+{
+  "version": "0.3.4",
+  "runtimeRoot": "Assets/Art/Prototype/UI/Halli_0_3_4",
+  "playerTray": "player_acquired_tray_open_378x130_0_3_4.png",
+  "cardList": { "startX": 112, "startY": 29, "stepX": 50, "maxVisible": 5 },
+  "removeRuntimeObjects": ["AiAcquiredPanel", "AiAcquiredCardBack", "AiAcquiredLoading", "AiAcquiredCountSlots"],
+  "keep": ["AiDecisionStatus", "AiRoundWinPips", "TopCenterAiDeck"]
+}

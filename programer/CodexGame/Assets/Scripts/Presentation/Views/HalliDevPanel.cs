@@ -13,6 +13,7 @@ namespace CodexGame.Presentation.Views
   internal sealed class HalliDevPanel
   {
     private readonly HalliBellControl _bellControl = new HalliBellControl();
+    private readonly HalliLowerHudRenderer _lowerHud = new HalliLowerHudRenderer();
     private readonly HalliRopeTimer _ropeTimer = new HalliRopeTimer();
     private readonly List<SharedPileCard> _leftPileHistory = new List<SharedPileCard>(2);
     private readonly List<SharedPileCard> _rightPileHistory = new List<SharedPileCard>(2);
@@ -63,8 +64,7 @@ namespace CodexGame.Presentation.Views
       DrawAiDeck(cards);
       DrawRevealHistories(snapshot, cards, uiArt);
       DrawStatus(snapshot, styles);
-      DrawPlayerTray(snapshot, styles, cards, uiArt);
-      DrawAiStatus(snapshot, styles, cards, uiArt);
+      _lowerHud.Draw(snapshot, styles, cards, uiArt, _localization);
       DrawRoundWins(snapshot, uiArt);
       _ropeTimer.Draw(snapshot, styles, uiArt);
 
@@ -79,7 +79,7 @@ namespace CodexGame.Presentation.Views
         rightBell);
 
       DrawRevealMotion(snapshot, cards);
-      DrawAcquisitionMotion(snapshot, cards);
+      _lowerHud.DrawAcquisitionMotion(snapshot, cards, uiArt);
       GUI.color = previousColor;
     }
 
@@ -307,57 +307,6 @@ namespace CodexGame.Presentation.Views
         styles.Small);
     }
 
-    private void DrawPlayerTray(
-      PrototypeHalliSnapshot snapshot,
-      PlayableDevStyles styles,
-      PlayableCardRenderer cards,
-      HalliUiArtSet uiArt)
-    {
-      DrawPanelTexture(HalliBoardLayout.PlayerTray, uiArt?.PlayerAcquiredTray);
-      GUI.Label(
-        new Rect(44f, 396f, 356f, 22f),
-        L("UI_HALLI_PLAYER_ACQUIRED", new LocalizationArgument("count", snapshot.PlayerAcquiredCount)),
-        styles.Small);
-      for (var index = 0; index < snapshot.PlayerAcquiredCards.Count; index++)
-      {
-        var card = snapshot.PlayerAcquiredCards[index];
-        var moving = snapshot.LastAcquirer == PrototypeAcquirer.Player
-          && snapshot.LastAcquiredPile.HasValue
-          && Contains(snapshot.LastAcquiredCards, card.Id)
-          && AcquisitionProgress(snapshot) < 1f;
-        if (moving) continue;
-        cards.DrawAt(
-          HalliBoardLayout.PlayerAcquiredCard(index, snapshot.PlayerAcquiredCards.Count),
-          card);
-      }
-    }
-
-    private void DrawAiStatus(
-      PrototypeHalliSnapshot snapshot,
-      PlayableDevStyles styles,
-      PlayableCardRenderer cards,
-      HalliUiArtSet uiArt)
-    {
-      DrawPanelTexture(HalliBoardLayout.AiTray, uiArt?.AiAcquiredStatusPanel);
-      GUI.Label(
-        new Rect(712f, 396f, 204f, 22f),
-        L("UI_HALLI_AI_ACQUIRED", new LocalizationArgument("count", snapshot.AiAcquiredCount)),
-        styles.Small);
-      for (var index = 0; index < snapshot.AiAcquiredCards.Count; index++)
-      {
-        cards.DrawBackAt(
-          HalliBoardLayout.AiAcquiredCard(index, snapshot.AiAcquiredCards.Count),
-          180f);
-      }
-
-      GUI.Box(HalliBoardLayout.AiStatus, GUIContent.none);
-      var state = snapshot.LeadActor == HalliActor.Ai
-        ? L("UI_HALLI_AI_STARTS_NEXT")
-        : L("UI_HALLI_AI_WATCHING");
-      if (snapshot.CanRing) state = L("UI_HALLI_AI_JUDGING");
-      GUI.Label(HalliBoardLayout.AiStatus, state, styles.Small);
-    }
-
     private void DrawControls(
       PrototypeHalliSnapshot snapshot,
       bool phaseAllowsInput,
@@ -434,12 +383,6 @@ namespace CodexGame.Presentation.Views
       return uiArt.FlipDeckIdle;
     }
 
-    private static void DrawPanelTexture(Rect rect, Texture2D texture)
-    {
-      if (texture != null) GUI.DrawTexture(rect, texture, ScaleMode.StretchToFill, true);
-      else GUI.Box(rect, GUIContent.none);
-    }
-
     private void DrawRevealMotion(PrototypeHalliSnapshot snapshot, PlayableCardRenderer cards)
     {
       if (snapshot.Phase != PrototypeSessionPhase.SequentialReveal
@@ -465,42 +408,6 @@ namespace CodexGame.Presentation.Views
         target,
         snapshot.RevealProgress,
         snapshot.RevealingActor == HalliActor.Ai);
-    }
-
-    private static void DrawAcquisitionMotion(PrototypeHalliSnapshot snapshot, PlayableCardRenderer cards)
-    {
-      if (!snapshot.LastAcquiredPile.HasValue || snapshot.LastAcquiredCards.Count == 0) return;
-      if (snapshot.LastAcquirer == PrototypeAcquirer.Ai) return;
-      var progress = AcquisitionProgress(snapshot);
-      if (progress >= 1f) return;
-      var source = HalliBoardLayout.RevealPileSource(snapshot.LastAcquiredPile.Value);
-      var firstNewIndex = Math.Max(
-        0,
-        snapshot.PlayerAcquiredCards.Count - snapshot.LastAcquiredCards.Count);
-      for (var index = 0; index < snapshot.LastAcquiredCards.Count; index++)
-      {
-        var target = HalliBoardLayout.PlayerAcquiredCard(
-          firstNewIndex + index,
-          snapshot.PlayerAcquiredCards.Count);
-        var movingRect = LerpRect(source, target, Smooth(progress));
-        cards.DrawAt(movingRect, snapshot.LastAcquiredCards[index]);
-      }
-    }
-
-    private static float AcquisitionProgress(PrototypeHalliSnapshot snapshot)
-    {
-      if (snapshot.Phase != PrototypeSessionPhase.Review || !snapshot.LastAcquiredPile.HasValue) return 1f;
-      var elapsed = GameRules.HalliResultLockMicroseconds - snapshot.RemainingMicroseconds;
-      return Mathf.Clamp01((float)elapsed / 450_000f);
-    }
-
-    private static bool Contains(IReadOnlyList<Card> cards, CardId id)
-    {
-      for (var index = 0; index < cards.Count; index++)
-      {
-        if (cards[index].Id == id) return true;
-      }
-      return false;
     }
 
     private void UpdateRevealHistory(PrototypeHalliSnapshot snapshot)
