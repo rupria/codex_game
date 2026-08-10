@@ -63,6 +63,7 @@ namespace CodexGame.Core.Distribution
         null,
         null,
         null,
+        null,
         pairAssistEnabled);
     }
 
