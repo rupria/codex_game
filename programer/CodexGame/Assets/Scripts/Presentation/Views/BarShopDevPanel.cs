@@ -14,8 +14,8 @@ namespace CodexGame.Presentation.Views
     private static readonly Rect FullScreen = new Rect(0f, 0f, 960f, 540f);
     private static readonly Rect BulletPanel = new Rect(40f, 28f, 200f, 58f);
     private static readonly Rect HealthPanel = new Rect(720f, 28f, 200f, 58f);
-    private static readonly Rect RerollButton = new Rect(40f, 462f, 180f, 56f);
-    private static readonly Rect ContinueButton = new Rect(380f, 462f, 200f, 56f);
+    private static readonly Rect RerollButton = new Rect(38f, 462f, 190f, 48f);
+    private static readonly Rect ContinueButton = new Rect(382f, 462f, 210f, 48f);
     private static readonly Rect AmmoPouch = new Rect(776f, 384f, 180f, 150f);
     private static readonly float[] SlotXPositions = { 20f, 250f, 480f, 710f };
 
@@ -30,16 +30,17 @@ namespace CodexGame.Presentation.Views
       LocalizationRuntime localization,
       Action reroll,
       Action<int> purchase,
-      Action continueToNextStage)
+      Action continueToNextStage,
+      bool drawBackground = true)
     {
       if (shop == null) throw new ArgumentNullException(nameof(shop));
       if (localization == null) throw new ArgumentNullException(nameof(localization));
 
-      if (art?.Background != null)
+      if (drawBackground && art?.Background != null)
       {
         GUI.DrawTexture(FullScreen, art.Background, ScaleMode.StretchToFill, true);
       }
-      else
+      else if (drawBackground)
       {
         DrawFallbackBackground();
       }
@@ -59,13 +60,11 @@ namespace CodexGame.Presentation.Views
           new LocalizationArgument("current", playerHealth),
           new LocalizationArgument("max", maximumHealth)),
         styles.Small);
-      DrawInventory(inventory, art, styles, localization);
-
       for (var index = 0; index < shop.Slots.Count; index++)
       {
         var slot = shop.Slots[index];
         if (index >= SlotXPositions.Length) break;
-        var slotRect = new Rect(SlotXPositions[index], 124f, 190f, 174f);
+        var slotRect = new Rect(SlotXPositions[index], 146f, 190f, 174f);
         if (DrawSlot(
           slotRect,
           slot.IconKey,
@@ -110,47 +109,6 @@ namespace CodexGame.Presentation.Views
 
       DrawPurchaseMotion(shop.Purchase, art);
       DrawPurchaseFailure(shop.Purchase, styles, localization);
-    }
-
-    private static void DrawInventory(
-      IReadOnlyList<GameItemId> inventory,
-      BarShopUiArtSet art,
-      PlayableDevStyles styles,
-      LocalizationRuntime localization)
-    {
-      GUI.Label(
-        new Rect(300f, 306f, 360f, 24f),
-        localization.Get("UI_ITEM_INVENTORY"),
-        styles.Small);
-      for (var index = 0; index < GameRules.InventoryCapacity; index++)
-      {
-        var rect = new Rect(330f + index * 78f, 332f, 66f, 58f);
-        GUI.Box(rect, GUIContent.none);
-        if (index >= inventory.Count)
-        {
-          GUI.Label(rect, "-", styles.Small);
-          continue;
-        }
-        if (!GameItemCatalog.TryGet(inventory[index], out var definition)
-          || definition == null)
-        {
-          GUI.Label(rect, "?", styles.Small);
-          continue;
-        }
-        var icon = art?.FindProductIcon(definition.IconKey);
-        if (icon != null)
-        {
-          GUI.DrawTexture(
-            new Rect(rect.x + 17f, rect.y + 3f, 32f, 32f),
-            icon,
-            ScaleMode.ScaleToFit,
-            true);
-        }
-        GUI.Label(
-          new Rect(rect.x + 2f, rect.y + 37f, rect.width - 4f, 18f),
-          localization.Get(definition.LocalizationNameKey),
-          styles.Small);
-      }
     }
 
     private static bool DrawSlot(
@@ -252,14 +210,27 @@ namespace CodexGame.Presentation.Views
       var bulletRect = new Rect(point.x - size.x * 0.5f, point.y - size.y * 0.5f, size.x, size.y);
       var previousMatrix = GUI.matrix;
       GUIUtility.RotateAroundPivot(progress * 540f, point);
-      var frame = FindBulletFrame(art, progress);
-      if (frame != null) GUI.DrawTexture(bulletRect, frame, ScaleMode.ScaleToFit, true);
+      if (art?.BulletTossSheet != null)
+      {
+        const int frameCount = 6;
+        var frameIndex = Mathf.Min(frameCount - 1, Mathf.FloorToInt(progress * frameCount));
+        GUI.DrawTextureWithTexCoords(
+          bulletRect,
+          art.BulletTossSheet,
+          new Rect(frameIndex / (float)frameCount, 0f, 1f / frameCount, 1f),
+          true);
+      }
       else
       {
-        var previous = GUI.color;
-        GUI.color = new Color(0.78f, 0.52f, 0.16f, 1f);
-        GUI.DrawTexture(bulletRect, Texture2D.whiteTexture, ScaleMode.StretchToFill, true);
-        GUI.color = previous;
+        var frame = FindBulletFrame(art, progress);
+        if (frame != null) GUI.DrawTexture(bulletRect, frame, ScaleMode.ScaleToFit, true);
+        else
+        {
+          var previous = GUI.color;
+          GUI.color = new Color(0.78f, 0.52f, 0.16f, 1f);
+          GUI.DrawTexture(bulletRect, Texture2D.whiteTexture, ScaleMode.StretchToFill, true);
+          GUI.color = previous;
+        }
       }
       GUI.matrix = previousMatrix;
 

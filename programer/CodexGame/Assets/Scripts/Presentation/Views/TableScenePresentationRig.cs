@@ -10,17 +10,22 @@ namespace CodexGame.Presentation.Views
     private const float BackdropFov = 58f;
     private const float CameraDistance = 10f;
     private const float DesignAspect = 16f / 9f;
+    private const float TableLightArtMultiplier = 1.2f;
 
     [SerializeField] private Camera _sceneCamera;
     [SerializeField] private PlayableDevView _view;
     [SerializeField] private Texture2D _battleBackdrop;
     [SerializeField] private Texture2D _introBackdrop;
+    [SerializeField] private Texture2D _barShopBackdrop;
     [SerializeField] private Shader _backdropShader;
 
     private MeshRenderer _backdropRenderer;
     private Mesh _backdropMesh;
     private Material _backdropMaterial;
     private Light _tableLight;
+    private Light _saloonFillLight;
+    private Light _leftWallLight;
+    private Light _rightWallLight;
     private float _fieldOfViewVelocity;
     private float _cameraYVelocity;
     private float _lightIntensityVelocity;
@@ -31,12 +36,14 @@ namespace CodexGame.Presentation.Views
       PlayableDevView view,
       Texture2D battleBackdrop,
       Texture2D introBackdrop,
+      Texture2D barShopBackdrop,
       Shader backdropShader)
     {
       _sceneCamera = sceneCamera;
       _view = view;
       _battleBackdrop = battleBackdrop;
       _introBackdrop = introBackdrop;
+      _barShopBackdrop = barShopBackdrop;
       _backdropShader = backdropShader;
     }
 
@@ -45,6 +52,7 @@ namespace CodexGame.Presentation.Views
       if (_sceneCamera == null) _sceneCamera = Camera.main;
       CreateBackdrop();
       CreateTableLight();
+      CreateSaloonLights();
       ApplyPhaseImmediately(CurrentPhase);
     }
 
@@ -79,7 +87,7 @@ namespace CodexGame.Presentation.Views
         : 0f;
       _tableLight.intensity = Mathf.SmoothDamp(
         _tableLight.intensity,
-        target.LightIntensity + pulse,
+        target.LightIntensity * TableLightArtMultiplier + pulse,
         ref _lightIntensityVelocity,
         0.55f,
         Mathf.Infinity,
@@ -97,9 +105,24 @@ namespace CodexGame.Presentation.Views
       lightPosition.y = 1.4f + Mathf.Cos(Time.unscaledTime * 0.19f) * 0.08f;
       _tableLight.transform.position = lightPosition;
 
+      var phaseLightScale = phase == PlayableGamePhase.Intro ? 0.62f : 1f;
+      _saloonFillLight.intensity = 0.46f * phaseLightScale;
+      _leftWallLight.intensity = 0.24f * phaseLightScale;
+      _rightWallLight.intensity = 0.2f * phaseLightScale;
+      _leftWallLight.transform.position = new Vector3(
+        -4.4f + Mathf.Sin(Time.unscaledTime * 0.17f) * 0.08f,
+        1.1f,
+        -3.7f);
+      _rightWallLight.transform.position = new Vector3(
+        4.4f + Mathf.Cos(Time.unscaledTime * 0.15f) * 0.08f,
+        0.9f,
+        -3.7f);
+
       var texture = phase == PlayableGamePhase.Intro && _introBackdrop != null
         ? _introBackdrop
-        : _battleBackdrop;
+        : phase == PlayableGamePhase.BarShop && _barShopBackdrop != null
+          ? _barShopBackdrop
+          : _battleBackdrop;
       if (_backdropMaterial != null && _backdropMaterial.mainTexture != texture)
       {
         _backdropMaterial.mainTexture = texture;
@@ -196,12 +219,54 @@ namespace CodexGame.Presentation.Views
 
       _tableLight = lightObject.AddComponent<Light>();
       _tableLight.type = LightType.Spot;
-      _tableLight.color = new Color(1f, 0.66f, 0.34f, 1f);
+      _tableLight.color = new Color(1f, 0.827f, 0.561f, 1f);
       _tableLight.range = 18f;
       _tableLight.spotAngle = 54f;
       _tableLight.intensity = 1.25f;
       _tableLight.shadows = LightShadows.None;
       _tableLight.renderMode = LightRenderMode.ForcePixel;
+    }
+
+    private void CreateSaloonLights()
+    {
+      _saloonFillLight = CreatePointLight(
+        "Warm Saloon Fill",
+        new Vector3(0f, 1.8f, -4.8f),
+        new Color(1f, 0.722f, 0.388f, 1f),
+        0.46f,
+        18f);
+      _leftWallLight = CreatePointLight(
+        "Left Wall Practical",
+        new Vector3(-4.4f, 1.1f, -3.7f),
+        new Color(1f, 0.533f, 0.282f, 1f),
+        0.24f,
+        9f);
+      _rightWallLight = CreatePointLight(
+        "Right Wall Practical",
+        new Vector3(4.4f, 0.9f, -3.7f),
+        new Color(0.878f, 0.427f, 0.22f, 1f),
+        0.2f,
+        9f);
+    }
+
+    private Light CreatePointLight(
+      string objectName,
+      Vector3 position,
+      Color color,
+      float intensity,
+      float range)
+    {
+      var lightObject = new GameObject(objectName);
+      lightObject.transform.SetParent(transform, false);
+      lightObject.transform.position = position;
+      var light = lightObject.AddComponent<Light>();
+      light.type = LightType.Point;
+      light.color = color;
+      light.intensity = intensity;
+      light.range = range;
+      light.shadows = LightShadows.None;
+      light.renderMode = LightRenderMode.ForcePixel;
+      return light;
     }
 
     private void ApplyPhaseImmediately(PlayableGamePhase phase)
@@ -212,7 +277,7 @@ namespace CodexGame.Presentation.Views
       var cameraPosition = _sceneCamera.transform.position;
       cameraPosition.y = target.CameraY;
       _sceneCamera.transform.position = cameraPosition;
-      _tableLight.intensity = target.LightIntensity;
+      _tableLight.intensity = target.LightIntensity * TableLightArtMultiplier;
       _tableLight.spotAngle = target.SpotAngle;
     }
 

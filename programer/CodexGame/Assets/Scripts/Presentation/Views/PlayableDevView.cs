@@ -37,6 +37,9 @@ namespace CodexGame.Presentation.Views
     private PokerUiArtSet _pokerUiArtSet;
 
     [SerializeField]
+    private PokerItemUiArtSet _pokerItemUiArtSet;
+
+    [SerializeField]
     private BarShopUiArtSet _barShopUiArtSet;
 
     [SerializeField]
@@ -134,7 +137,8 @@ namespace CodexGame.Presentation.Views
       bool useSceneBackdrop = false,
       bool useIntroArtLayout = false,
       BarShopUiArtSet barShopUiArtSet = null,
-      StageTransitionUiArtSet stageTransitionUiArtSet = null)
+      StageTransitionUiArtSet stageTransitionUiArtSet = null,
+      PokerItemUiArtSet pokerItemUiArtSet = null)
     {
       _boardTexture = boardTexture;
       _cardArtSet = cardArtSet;
@@ -143,6 +147,7 @@ namespace CodexGame.Presentation.Views
       _introTexture = introTexture;
       _healthUiArtSet = healthUiArtSet;
       _pokerUiArtSet = pokerUiArtSet;
+      _pokerItemUiArtSet = pokerItemUiArtSet;
       _barShopUiArtSet = barShopUiArtSet;
       _stageTransitionUiArtSet = stageTransitionUiArtSet;
       _useSceneBackdrop = useSceneBackdrop;
@@ -327,6 +332,7 @@ namespace CodexGame.Presentation.Views
           _pokerCards,
           _healthUiArtSet,
           _pokerUiArtSet,
+          _pokerItemUiArtSet,
           _localization,
           prediction => PredictionRequested?.Invoke(prediction),
           () => AdvanceRequested?.Invoke());
@@ -339,6 +345,7 @@ namespace CodexGame.Presentation.Views
           _snapshot.PokerItems,
           _pokerCards,
           _styles,
+          _pokerItemUiArtSet,
           _localization,
           cardId => ReloadItemRequested?.Invoke(cardId),
           cardId => BottomDealRequested?.Invoke(cardId),
@@ -362,7 +369,8 @@ namespace CodexGame.Presentation.Views
           _localization,
           () => BarShopRerollRequested?.Invoke(),
           index => BarShopPurchaseRequested?.Invoke(index),
-          () => AdvanceRequested?.Invoke());
+          () => AdvanceRequested?.Invoke(),
+          drawBackground: !_useSceneBackdrop);
         return;
       }
 

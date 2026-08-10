@@ -27,6 +27,8 @@ namespace CodexGame.Presentation.Art
     [SerializeField] private Texture2D _ropeBody;
     [SerializeField] private Texture2D _ropeFlame;
     [SerializeField] private Texture2D _ropeExplosion;
+    [SerializeField] private Texture2D _playerRevealHistoryRail;
+    [SerializeField] private Texture2D _aiRevealHistoryRail;
 
     public HalliUiArtSet(
       Texture2D bellIdle,
@@ -49,7 +51,9 @@ namespace CodexGame.Presentation.Art
       Texture2D aiWinPipFilled = null,
       Texture2D ropeBody = null,
       Texture2D ropeFlame = null,
-      Texture2D ropeExplosion = null)
+      Texture2D ropeExplosion = null,
+      Texture2D playerRevealHistoryRail = null,
+      Texture2D aiRevealHistoryRail = null)
     {
       _bellIdle = bellIdle ?? throw new ArgumentNullException(nameof(bellIdle));
       _bellHover = bellHover ?? throw new ArgumentNullException(nameof(bellHover));
@@ -75,6 +79,8 @@ namespace CodexGame.Presentation.Art
       _ropeBody = ropeBody;
       _ropeFlame = ropeFlame;
       _ropeExplosion = ropeExplosion;
+      _playerRevealHistoryRail = playerRevealHistoryRail;
+      _aiRevealHistoryRail = aiRevealHistoryRail;
     }
 
     public Texture2D BellIdle => _bellIdle;
@@ -98,6 +104,8 @@ namespace CodexGame.Presentation.Art
     public Texture2D RopeBody => _ropeBody;
     public Texture2D RopeFlame => _ropeFlame;
     public Texture2D RopeExplosion => _ropeExplosion;
+    public Texture2D PlayerRevealHistoryRail => _playerRevealHistoryRail;
+    public Texture2D AiRevealHistoryRail => _aiRevealHistoryRail;
 
     public bool HasRoundWinPips => _playerWinPipEmpty != null
       && _playerWinPipFilled != null

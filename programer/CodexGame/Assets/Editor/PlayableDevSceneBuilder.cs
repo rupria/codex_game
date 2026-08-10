@@ -4,6 +4,7 @@ using CodexGame.Bootstrap;
 using CodexGame.Presentation.Art;
 using CodexGame.Presentation.Views;
 using UnityEditor;
+using UnityEditor.Build;
 using UnityEditor.Build.Reporting;
 using UnityEditor.SceneManagement;
 using UnityEngine;
@@ -19,8 +20,13 @@ namespace CodexGame.Editor
     private const string UiArtRoot = "Assets/Art/Prototype/UI/";
     private const string HalliUiArtRoot = UiArtRoot + "Halli_0_1_0/";
     private const string HalliUi021ArtRoot = UiArtRoot + "Halli_0_2_1/";
+    private const string HalliUi035ArtRoot = UiArtRoot + "Halli_0_3_5/";
     private const string PokerUiArtRoot = UiArtRoot + "Poker_0_2_2/";
+    private const string PokerUi034ArtRoot = UiArtRoot + "Poker_0_3_4/";
+    private const string PokerUi036ArtRoot = UiArtRoot + "Poker_0_3_6/";
+    private const string GameplayUi012ArtRoot = UiArtRoot + "Gameplay_0_1_2/";
     private const string BarShopUiArtRoot = UiArtRoot + "BarShop_0_3_0/";
+    private const string BarShopUi034ArtRoot = UiArtRoot + "BarShop_0_3_4/";
     private const string StageTransitionUiArtRoot = UiArtRoot + "StageTransition_0_3_1/";
     private const string IntroArtPath = HalliUiArtRoot + "start_screen_background.png";
     private const string BackdropShaderPath = "Assets/Shaders/RuntimeBackdropLit.shader";
@@ -67,7 +73,11 @@ namespace CodexGame.Editor
         LoadTexture(HalliUi021ArtRoot + "round_win_pip_player_empty_32_0_2_1.png"),
         LoadTexture(HalliUi021ArtRoot + "round_win_pip_player_filled_32_0_2_1.png"),
         LoadTexture(HalliUi021ArtRoot + "round_win_pip_ai_empty_32_0_2_1.png"),
-        LoadTexture(HalliUi021ArtRoot + "round_win_pip_ai_filled_32_0_2_1.png"));
+        LoadTexture(HalliUi021ArtRoot + "round_win_pip_ai_filled_32_0_2_1.png"),
+        playerRevealHistoryRail: LoadTexture(
+          HalliUi035ArtRoot + "halli_reveal_history_rail_player_72x122_0_3_5.png"),
+        aiRevealHistoryRail: LoadTexture(
+          HalliUi035ArtRoot + "halli_reveal_history_rail_ai_72x122_0_3_5.png"));
       var guideUiArtSet = new GuideUiArtSet(
         LoadTexture(HalliUiArtRoot + "guide_modal_background.png"),
         LoadTexture(HalliUiArtRoot + "guide_page_flow_art.png"),
@@ -89,16 +99,30 @@ namespace CodexGame.Editor
         LoadTexture(PokerUiArtRoot + "poker_predict_lose_idle_64_0_2_2.png"),
         LoadTexture(PokerUiArtRoot + "poker_predict_lose_hover_64_0_2_2.png"),
         LoadTexture(UiArtRoot + "item_slot.png"));
+      var pokerItemUiArtSet = new PokerItemUiArtSet(
+        LoadTexture(PokerUi034ArtRoot + "poker_item_crate_closed_160x160_0_3_4.png"),
+        LoadTexture(PokerUi034ArtRoot + "poker_item_crate_open_empty_160x160_0_3_4.png"),
+        LoadTexture(PokerUi034ArtRoot + "poker_item_crate_open_filled_160x160_0_3_4.png"),
+        LoadTexture(PokerUi036ArtRoot + "poker_item_popup_frame_560x300_0_3_6.png"),
+        LoadTexture(PokerUi036ArtRoot + "poker_item_inventory_tray_388x92_0_3_6.png"),
+        LoadTexture(GameplayUi012ArtRoot + "inventory_slot_72_idle_0_1_2.png"),
+        LoadTexture(GameplayUi012ArtRoot + "inventory_slot_72_hover_0_1_2.png"),
+        LoadTexture(GameplayUi012ArtRoot + "inventory_slot_72_selected_0_1_2.png"),
+        LoadTexture(GameplayUi012ArtRoot + "inventory_slot_72_disabled_0_1_2.png"),
+        LoadTexture(GameplayUi012ArtRoot + "item_reload_64_0_1_2.png"),
+        LoadTexture(GameplayUi012ArtRoot + "item_bottom_deal_64_0_1_2.png"),
+        LoadTexture(GameplayUi012ArtRoot + "item_hype_man_64_0_1_2.png"),
+        LoadTexture(GameplayUi012ArtRoot + "item_heal_tonic_64_0_1_2.png"));
       var barShopUiArtSet = new BarShopUiArtSet(
         LoadTexture(BarShopUiArtRoot + "bar_shop_background_unlit_960x540_0_3_0.png"),
         LoadTexture(BarShopUiArtRoot + "bar_shop_product_slot_230x210_0_3_0.png"),
-        LoadTexture(BarShopUiArtRoot + "bar_shop_reroll_idle_180x56_0_3_0.png"),
-        LoadTexture(BarShopUiArtRoot + "bar_shop_reroll_hover_180x56_0_3_0.png"),
-        LoadTexture(BarShopUiArtRoot + "bar_shop_reroll_pressed_180x56_0_3_0.png"),
-        LoadTexture(BarShopUiArtRoot + "bar_shop_reroll_disabled_180x56_0_3_0.png"),
-        LoadTexture(BarShopUiArtRoot + "bar_shop_continue_idle_200x56_0_3_0.png"),
-        LoadTexture(BarShopUiArtRoot + "bar_shop_continue_hover_200x56_0_3_0.png"),
-        LoadTexture(BarShopUiArtRoot + "bar_shop_continue_pressed_200x56_0_3_0.png"),
+        LoadTexture(BarShopUi034ArtRoot + "bar_shop_reroll_idle_180x56_0_3_4.png"),
+        LoadTexture(BarShopUi034ArtRoot + "bar_shop_reroll_hover_180x56_0_3_4.png"),
+        LoadTexture(BarShopUi034ArtRoot + "bar_shop_reroll_pressed_180x56_0_3_4.png"),
+        LoadTexture(BarShopUi034ArtRoot + "bar_shop_reroll_disabled_180x56_0_3_4.png"),
+        LoadTexture(BarShopUi034ArtRoot + "bar_shop_continue_idle_200x56_0_3_4.png"),
+        LoadTexture(BarShopUi034ArtRoot + "bar_shop_continue_hover_200x56_0_3_4.png"),
+        LoadTexture(BarShopUi034ArtRoot + "bar_shop_continue_pressed_200x56_0_3_4.png"),
         LoadTexture(BarShopUiArtRoot + "bar_shop_ammo_panel_200x58_0_3_0.png"),
         LoadTexture(BarShopUiArtRoot + "bar_shop_hp_panel_200x58_0_3_0.png"),
         new[]
@@ -121,7 +145,11 @@ namespace CodexGame.Editor
           new BarShopProductIconBinding(
             "bar_shop.item.dummy_06",
             LoadTexture(BarShopUiArtRoot + "bar_shop_dummy_item_06_64_0_3_0.png"))
-        });
+        },
+        ammoPouch: LoadTexture(
+          BarShopUi034ArtRoot + "bar_shop_ammo_pouch_180x150_0_3_4.png"),
+        bulletTossSheet: LoadTexture(
+          BarShopUi034ArtRoot + "bar_shop_bullet_toss_spin_384x64_0_3_4.png"));
       var stageTransitionUiArtSet = new StageTransitionUiArtSet(
         LoadTexture(StageTransitionUiArtRoot
           + "stage_exit_background_closed_unlit_960x540_0_3_1.png"),
@@ -158,14 +186,21 @@ namespace CodexGame.Editor
         useSceneBackdrop: true,
         useIntroArtLayout: true,
         barShopUiArtSet: barShopUiArtSet,
-        stageTransitionUiArtSet: stageTransitionUiArtSet);
+        stageTransitionUiArtSet: stageTransitionUiArtSet,
+        pokerItemUiArtSet: pokerItemUiArtSet);
       var presentationRig = gameObject.AddComponent<TableScenePresentationRig>();
       var backdropShader = AssetDatabase.LoadAssetAtPath<Shader>(BackdropShaderPath);
       if (backdropShader == null)
       {
         throw new InvalidOperationException($"Missing backdrop shader at {BackdropShaderPath}");
       }
-      presentationRig.Configure(camera, view, boardTexture, introTexture, backdropShader);
+      presentationRig.Configure(
+        camera,
+        view,
+        boardTexture,
+        introTexture,
+        barShopUiArtSet.Background,
+        backdropShader);
       gameObject.AddComponent<PlayableDevGameController>();
 
       if (!EditorSceneManager.SaveScene(scene, ScenePath))
@@ -190,18 +225,35 @@ namespace CodexGame.Editor
     {
       var previousCompressionFormat = PlayerSettings.WebGL.compressionFormat;
       var previousDecompressionFallback = PlayerSettings.WebGL.decompressionFallback;
+      var previousDefines = PlayerSettings.GetScriptingDefineSymbols(NamedBuildTarget.WebGL);
 
       try
       {
         PlayerSettings.WebGL.compressionFormat = WebGLCompressionFormat.Brotli;
         PlayerSettings.WebGL.decompressionFallback = true;
+        PlayerSettings.SetScriptingDefineSymbols(
+          NamedBuildTarget.WebGL,
+          AddDefine(previousDefines, "ENABLE_GAMEPLAY_CHEATS"));
         BuildWebGl(BuildOptions.None);
       }
       finally
       {
         PlayerSettings.WebGL.compressionFormat = previousCompressionFormat;
         PlayerSettings.WebGL.decompressionFallback = previousDecompressionFallback;
+        PlayerSettings.SetScriptingDefineSymbols(NamedBuildTarget.WebGL, previousDefines);
       }
+    }
+
+    private static string AddDefine(string defines, string requiredDefine)
+    {
+      var entries = (defines ?? string.Empty).Split(';');
+      for (var index = 0; index < entries.Length; index++)
+      {
+        if (string.Equals(entries[index], requiredDefine, StringComparison.Ordinal)) return defines;
+      }
+      return string.IsNullOrWhiteSpace(defines)
+        ? requiredDefine
+        : defines + ";" + requiredDefine;
     }
 
     private static void BuildWebGl(BuildOptions buildOptions)
