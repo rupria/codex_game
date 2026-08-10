@@ -1,0 +1,19 @@
+{
+  "version": "0.1.2-art-1",
+  "allSlotsSupplied": true,
+  "runtimeRoot": "Assets/Art/Prototype/UI/Economy_0_1_2",
+  "textEmbedded": false,
+  "assets": {
+    "baseIcon": {"file":"currency_base_icon_48_0_1_2.png","size":[48,48],"shape":"intact_bullet"},
+    "temporaryIcon": {"file":"currency_temporary_icon_48_0_1_2.png","size":[48,48],"shape":"cracked_bullet_plus_hourglass"},
+    "priceIcon": {"file":"currency_price_icon_24_0_1_2.png","size":[24,24]},
+    "basePanel": {"file":"currency_base_panel_160x58_0_1_2.png","size":[160,58]},
+    "temporaryPanel": {"file":"currency_temporary_panel_160x58_0_1_2.png","size":[160,58]},
+    "baseReward": {"file":"stage_reward_base_frame_240x96_0_1_2.png","size":[240,96]},
+    "temporaryReward": {"file":"stage_reward_temporary_frame_240x96_0_1_2.png","size":[240,96]},
+    "exitWarning": {"file":"shop_exit_warning_icon_48_0_1_2.png","size":[48,48]}
+  },
+  "shopOrder": ["temporary", "base"],
+  "display": "icon_plus_runtime_number",
+  "forbiddenEmbeddedWords": ["총알","일회성 총알","가격"]
+}
