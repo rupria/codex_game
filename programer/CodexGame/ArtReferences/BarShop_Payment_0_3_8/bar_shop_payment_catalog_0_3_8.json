@@ -23,8 +23,10 @@
       "mode": "pour_onto_table",
       "sheet": "bar_shop_bullet_pour_table_8f_1280x120_0_3_8.png",
       "duration": 0.75,
-      "spawnCount": "Price"
+      "spawnCount": "Price",
+      "landingPattern": "irregular_scatter",
+      "uniformGrid": false,
+      "varyPositionAndRotation": true
     }
   }
 }
-
