@@ -1,0 +1,21 @@
+{
+  "version": "0.3.3",
+  "tool": "Aseprite 1.3.18.1",
+  "runtimeRoots": [
+    "Assets/Art/Prototype/UI/BarShop_0_3_3",
+    "Assets/Art/Prototype/UI/Halli_0_3_3",
+    "Assets/Art/Prototype/UI/Poker_0_3_3"
+  ],
+  "assets": [
+    {"file": "bar_shop_bullet_realistic_24x40_0_3_3.png", "size": [24, 40], "role": "shop_ammo_idle"},
+    {"file": "bar_shop_bullet_realistic_shine_24x40_0_3_3.png", "size": [24, 40], "role": "shop_ammo_highlight"},
+    {"file": "bar_shop_bullet_realistic_low_24x40_0_3_3.png", "size": [24, 40], "role": "shop_ammo_low"},
+    {"file": "bar_shop_ammo_panel_200x58_0_3_3.png", "size": [200, 58], "role": "shop_ammo_panel"},
+    {"file": "community_reveal_backdrop_960x540_0_3_3.png", "size": [960, 540], "role": "community_reveal_standalone_backdrop"},
+    {"file": "community_reveal_glow_256_0_3_3.png", "size": [256, 256], "role": "community_reveal_glow_overlay"},
+    {"file": "poker_item_crate_closed_112x96_0_3_3.png", "size": [112, 96], "role": "poker_item_hidden"},
+    {"file": "poker_item_crate_empty_112x96_0_3_3.png", "size": [112, 96], "role": "poker_item_empty"},
+    {"file": "poker_item_crate_filled_112x96_0_3_3.png", "size": [112, 96], "role": "poker_item_filled"}
+  ],
+  "communityRevealDurationsSeconds": [0.18, 0.18, 0.10, 0.10, 0.18, 0.55]
+}

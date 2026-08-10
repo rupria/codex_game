@@ -1,0 +1,25 @@
+{
+  "version": "0.3.2",
+  "tool": "Aseprite 1.3.18.1",
+  "issues": [19, 23],
+  "runtimeRoot": "Assets/Art/Prototype/UI/Halli_0_3_2",
+  "assets": [
+    {"file": "hp_heart_player_filled_24_0_3_2.png", "size": [24, 24], "role": "player_hp_filled"},
+    {"file": "hp_heart_player_empty_24_0_3_2.png", "size": [24, 24], "role": "player_hp_empty"},
+    {"file": "hp_heart_player_damage_24_0_3_2.png", "size": [24, 24], "role": "player_hp_damage"},
+    {"file": "hp_heart_ai_filled_24_0_3_2.png", "size": [24, 24], "role": "ai_hp_filled"},
+    {"file": "hp_heart_ai_empty_24_0_3_2.png", "size": [24, 24], "role": "ai_hp_empty"},
+    {"file": "hp_heart_ai_damage_24_0_3_2.png", "size": [24, 24], "role": "ai_hp_damage"},
+    {"file": "player_acquired_tray_378x130_0_3_2.png", "size": [378, 130], "role": "player_acquired_tray_background"},
+    {"file": "ai_status_panel_224x130_0_3_2.png", "size": [224, 130], "role": "ai_status_without_duplicate_deck"}
+  ],
+  "layout": {
+    "exposedCardSize": [96, 135],
+    "currentStep": 28,
+    "approvedStep": 84,
+    "playerAcquiredCardSize": [56, 78],
+    "playerAcquiredStartLocal": [112, 29],
+    "playerAcquiredStep": 52,
+    "playerAcquiredMaxVisible": 3
+  }
+}
