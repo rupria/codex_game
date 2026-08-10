@@ -1,34 +1,38 @@
 # OpenAI Game Builders Seoul
 
-- 목표: 브라우저에서 즉시 플레이할 수 있고 3분 안에 핵심 재미를 전달하는 Track 1 게임 제출
-- PM·QA 역할: 일정, 의존성, 위험, 검증과 릴리스 게이트 관리
-- 현재 상태: 기획 0.03 기준, Unity 6.3 LTS·C#·URP 초기 코어가 `dev` `4f9fb12940bbc024c4db720092d441b291f78975`에 게시됨; Unity 라이선스·WebGL 검증 대기
-- 공식 마감: 확인 필요 (`D`)
-- 플레이 가능 빌드: `D-5`
-- 내부 최종 마감 및 제출: `D-3`
-- 다음 PM 행동: 공식 마감 확인, 기획 미확정 규칙 결정 일정, Unity 라이선스 차단과 19~26 작업일 일정 및 첫 식별 가능 빌드 관리
-- 다음 QA 행동: 식별 가능한 첫 실행 빌드 수신 후 코어 루프와 브라우저 검증
+- 목표: 설치 없이 공개 HTTPS 링크에서 바로 플레이하고, 첫 30초 안에 목표와 조작을 이해하며, 3분 안에 핵심 재미를 전달하는 Track 1 게임
+- 현재 개발 기준: Git `dev`, Unity 6.3 LTS·C#·URP, 게임 버전 `0.1.2`
+- 현재 코드 기준: `ba24a7e`까지 아트·게임플레이·밸런스 통합 완료
+- 공개 플레이: <https://codex-game-web.pages.dev/>
+- 공개 빌드 기준: 소스 `e03281c`, 공개 코드·인계 `b48253c`, 배포 기록 `e797278`
+- 공식 마감: 공식 안내에서 재확인 필요
+- QA 운영: 별도 QA 작업 보고는 사용하지 않으며, 자동 테스트와 빌드 스모크 결과만 코드 변경과 함께 기록
 
-## 실행 문서
+## 현재 기준 문서
 
-- [[../PM/PM_MASTER|PM 통합 운영 현황]]
-- [[../../rules/PM/PM_업무_규칙|PM 업무 규칙]]
-- [[../QA/QA_MASTER|QA 통합 검증 기준 및 기록]]
-- [[../designer/00_기획_현재기준|기획 현재 기준]]
-- [[../../rules/버전관리/BUILD_VERSION_POLICY|빌드 버전 관리 정책]]
+- [프로젝트 기본 지침](../../rules/공모전%20규칙/PROJECT_GUIDELINES.md)
+- [기획 현재 기준](../../designer/00_기획_현재기준.md)
+- [게임진행플로우 0.1.0](../../designer/게임진행플로우_0.1.0.md)
+- [플레이어블 개발 실행 방법](../../programer/PLAYABLE_DEV_실행방법.md)
+- [Codex 협업 근거](Codex_협업_근거_2026-08-10.md)
 
-## 관련 산출물
+## 현재 완료 범위
 
-- [기획 0.03 공유본](https://github.com/rupria/codex_game/blob/dev/project_docs/designer/게임진행플로우_0.03.md)
-- [프로그래밍 인계 공유본](https://github.com/rupria/codex_game/tree/dev/project_docs/programer)
-- [QA 마스터 공유본](https://github.com/rupria/codex_game/blob/dev/project_docs/QA/QA_MASTER.md)
-- [PM 마스터 공유본](https://github.com/rupria/codex_game/blob/dev/project_docs/PM/PM_MASTER.md)
-- [[../30_Decisions/2026-08-05_플랫폼_전략|플랫폼 전략 결정]]
-- [[../30_Decisions/2026-08-05_역할별_작업공간과_브랜치_운영|역할별 작업공간과 브랜치 운영 결정]]
-- [Git 공유 문서 안내](https://github.com/rupria/codex_game/blob/dev/project_docs/README.md)
-- [[../../rules/공모전 규칙/PROJECT_GUIDELINES|프로젝트 기본 지침]]
+- 시작 화면·4쪽 가이드·한국어/영어 현지화
+- 할리갈리 4장 순차 공개, 중앙 벨, 타이머, 획득 카드 누적과 포커 전환
+- 포커 비공개 패·조커·예측·결과·피해 처리
+- 아이템 4종, 4칸 인벤토리, 스테이지 보상과 총알 재화
+- 4슬롯 바 상점, 무료 리롤, 구매·잔액·이탈 처리
+- 웨스턴 카드·테이블·상점·재화·밧줄·조커 런타임 아트
+- 공개 WebGL 빌드와 Cloudflare Pages HTTPS 접근
+- 해골 수 분포와 체력 기반 페어 보정 자동 테스트
 
-## 역할 경계
+## 남은 확인
 
-이 관리 흐름에서는 기획과 코딩을 직접 수행하지 않는다. 해당 담당자가 만든 산출물을 기준으로 일정과 완료 조건을 관리하고 QA 결과와 수정 요청을 기록한다.
+- 공식 제출 마감과 최종 제출 절차
+- 최신 `dev` 기준 WebGL 재빌드·공개 URL 갱신 여부
+- 시크릿 창과 지원 브라우저에서 첫 30초·3분 플레이 수동 확인
+- 외부 에셋·폰트·음원·AI 생성물 출처와 라이선스 최종 목록
+- 제출용 3분 데모 영상과 Codex 활용 설명의 최종 편집
 
+완료된 역할별 작업보고와 QA 마스터는 활성 문서에서 제거한다. 필요한 해결 근거는 Git 이력과 [Codex 협업 근거](Codex_협업_근거_2026-08-10.md)에 통합한다.
