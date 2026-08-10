@@ -1,0 +1,33 @@
+{
+  "version": "0.3.7",
+  "source": "gameplay flow 0.1.2 / human-confirmed shared-pile rule 2026-08-10",
+  "runtimeRoots": {
+    "halli": "Assets/Art/Prototype/UI/Halli_0_3_7",
+    "poker": "Assets/Art/Prototype/UI/Poker_0_3_7"
+  },
+  "halli": {
+    "pileCount": 2,
+    "maxCardsPerPile": 2,
+    "leftSequence": ["player_reveal_1", "ai_reveal_2"],
+    "rightSequence": ["ai_reveal_1", "player_reveal_2"],
+    "previousCardOffset": {"x": -42, "y": 22},
+    "opaqueBackplate": false,
+    "rails": {
+      "idle": "halli_shared_pile_rail_idle_140x136_0_3_7.png",
+      "playerActive": "halli_shared_pile_rail_player_active_140x136_0_3_7.png",
+      "aiActive": "halli_shared_pile_rail_ai_active_140x136_0_3_7.png"
+    }
+  },
+  "pokerItemStage": {
+    "capacity": 4,
+    "aiUsesItems": false,
+    "noItems": "auto_skip",
+    "manualEmptyBoxFeedback": true,
+    "modalBlocksInput": true,
+    "panel": "poker_item_select_panel_640x336_0_3_7.png",
+    "detailPanel": "poker_item_detail_panel_376x112_0_3_7.png",
+    "buttonStates": ["idle", "hover", "disabled"],
+    "flow": ["select_item", "read_effect", "select_target_if_required", "use_or_skip"]
+  }
+}
+

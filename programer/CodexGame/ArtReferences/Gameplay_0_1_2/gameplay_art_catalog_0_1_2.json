@@ -1,11 +1,12 @@
 {
-  "version": "0.1.2-art-bridge-0.3.6",
+  "version": "0.1.2-art-bridge-0.3.7",
   "source": "gameplay flow 0.1.2 / revision 2026-08-10-02",
   "runtimeRoots": {
     "common": "Assets/Art/Prototype/UI/Gameplay_0_1_2",
-    "halli": "Assets/Art/Prototype/UI/Halli_0_3_5",
+    "halli": "Assets/Art/Prototype/UI/Halli_0_3_7",
     "pokerCrates": "Assets/Art/Prototype/UI/Poker_0_3_4",
-    "pokerPopup": "Assets/Art/Prototype/UI/Poker_0_3_6"
+    "pokerPopup": "Assets/Art/Prototype/UI/Poker_0_3_6",
+    "pokerItemSelection": "Assets/Art/Prototype/UI/Poker_0_3_7"
   },
   "items": [
     {"itemId":"IT-01","asset":"item_reload_64_0_1_2.png","price":1},
@@ -25,11 +26,14 @@
     "rewardPanel": "prediction_reward_breakdown_panel_420x112_0_1_2.png"
   },
   "halli": {
-    "visibleHistory": 3,
-    "stepY": 12,
+    "sharedPileCount": 2,
+    "maxCardsPerPile": 2,
+    "previousCardOffset": {"x": -42, "y": 22},
     "activeCard": "latest only",
-    "playerRail": "halli_reveal_history_rail_player_72x122_0_3_5.png",
-    "aiRail": "halli_reveal_history_rail_ai_72x122_0_3_5.png"
+    "opaqueBackplate": false,
+    "idleRail": "halli_shared_pile_rail_idle_140x136_0_3_7.png",
+    "playerActiveRail": "halli_shared_pile_rail_player_active_140x136_0_3_7.png",
+    "aiActiveRail": "halli_shared_pile_rail_ai_active_140x136_0_3_7.png"
   },
   "poker": {
     "aiUsesItems": false,
@@ -37,6 +41,8 @@
     "openEmptyCrate": "Poker_0_3_4/poker_item_crate_open_empty_160x160_0_3_4.png",
     "openFilledCrate": "Poker_0_3_4/poker_item_crate_open_filled_160x160_0_3_4.png",
     "popupFrame": "Poker_0_3_6/poker_item_popup_frame_560x300_0_3_6.png",
+    "selectionPanel": "Poker_0_3_7/poker_item_select_panel_640x336_0_3_7.png",
+    "detailPanel": "Poker_0_3_7/poker_item_detail_panel_376x112_0_3_7.png",
     "modalBlocksInput": true
   },
   "lighting": {

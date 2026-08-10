@@ -1,5 +1,5 @@
 {
-  "version": "0.3.4",
+  "version": "0.3.8",
   "runtimeRoot": "Assets/Art/Prototype/UI/BarShop_0_3_4",
   "localizedLabels": ["UI_BAR_REROLL_FREE", "UI_BAR_REROLL_USED", "UI_BAR_CONTINUE"],
   "pouch": "bar_shop_ammo_pouch_180x150_0_3_4.png",
@@ -7,7 +7,10 @@
   "lightingPreview": "preview/bar_shop_lighting_before_after_1920x540_0_3_6.png",
   "shopSlots": { "capacity": 4, "x": [20, 250, 480, 710], "y": 146, "width": 190, "height": 174 },
   "pouchRect": { "x": 776, "y": 384, "width": 180, "height": 150, "backgroundFrame": false },
-  "bulletSpinSheet": "bar_shop_bullet_toss_spin_384x64_0_3_4.png",
-  "motion": { "duration": 0.50, "inputLock": 0.60, "rotationDegrees": 540, "chargeAt": "impact" },
+  "paymentRuntimeRoot": "Assets/Art/Prototype/UI/BarShop_0_3_8",
+  "bulletSpinSheet": "BarShop_0_3_8/bar_shop_bullet_coin_flip_glint_8f_512x64_0_3_8.png",
+  "emptyPouch": "BarShop_0_3_8/bar_shop_ammo_pouch_empty_180x150_0_3_8.png",
+  "handCover": "BarShop_0_3_8/bar_shop_ammo_pouch_hand_cover_220x180_0_3_8.png",
+  "motion": { "oneOrTwo": "coin_flip_from_bottom", "threeOrMore": "pour_onto_table", "countChangeHiddenByHand": true },
   "lighting": { "tableOrCounterMultiplier": 1.20, "saloonBackgroundReadable": true }
 }

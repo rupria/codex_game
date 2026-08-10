@@ -1,0 +1,30 @@
+{
+  "version": "0.3.8",
+  "runtimeRoot": "Assets/Art/Prototype/UI/BarShop_0_3_8",
+  "currencySource": "PlayableGameSnapshot.BulletCount",
+  "pouch": {
+    "emptyBase": "bar_shop_ammo_pouch_empty_180x150_0_3_8.png",
+    "bullet": "bar_shop_ammo_pouch_bullet_24x40_0_3_8.png",
+    "handCover": "bar_shop_ammo_pouch_hand_cover_220x180_0_3_8.png",
+    "bakedBulletCount": 0,
+    "childrenEqualCurrency": true,
+    "largeLayout": {"min":0,"max":5,"size":[24,40],"anchorsX":[43,60,77,94,111],"y":34},
+    "compactLayout": {"min":6,"max":30,"size":[10,18],"columns":6,"rows":5,"origin":[44,31],"step":[13,13]}
+  },
+  "purchase": {
+    "countChangeOccludedByHand": true,
+    "oneOrTwo": {
+      "mode": "coin_flip_from_screen_bottom",
+      "sheet": "bar_shop_bullet_coin_flip_glint_8f_512x64_0_3_8.png",
+      "duration": 0.50,
+      "glintAtNormalizedTime": 0.55
+    },
+    "threeOrMore": {
+      "mode": "pour_onto_table",
+      "sheet": "bar_shop_bullet_pour_table_8f_1280x120_0_3_8.png",
+      "duration": 0.75,
+      "spawnCount": "Price"
+    }
+  }
+}
+
