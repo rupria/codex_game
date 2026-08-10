@@ -298,7 +298,9 @@ namespace CodexGame.Presentation.Views
         {
           continue;
         }
-        cards.DrawAt(HalliBoardLayout.RevealHistoryCard(actor, side, index), card);
+        cards.DrawAt(
+          HalliBoardLayout.RevealHistoryCard(actor, side, index, history.Count),
+          card);
       }
     }
 
@@ -455,14 +457,14 @@ namespace CodexGame.Presentation.Views
       }
 
       if (!snapshot.RevealingRelativeSide.HasValue) return;
+      var history = GetRevealHistory(
+        snapshot.RevealingActor.Value,
+        snapshot.RevealingRelativeSide.Value);
       var target = HalliBoardLayout.RevealHistoryCard(
         snapshot.RevealingActor.Value,
         snapshot.RevealingRelativeSide.Value,
-        Math.Max(
-          0,
-          GetRevealHistory(
-            snapshot.RevealingActor.Value,
-            snapshot.RevealingRelativeSide.Value).Count - 1));
+        Math.Max(0, history.Count - 1),
+        Math.Max(1, history.Count));
       CardFlipMotion.Draw(
         cards,
         snapshot.RevealingCard.Value,
@@ -480,10 +482,7 @@ namespace CodexGame.Presentation.Views
       if (snapshot.LastAcquirer == PrototypeAcquirer.Ai) return;
       var progress = AcquisitionProgress(snapshot);
       if (progress >= 1f) return;
-      var source = HalliBoardLayout.RevealHistoryCard(
-        snapshot.LastAcquiredPile.Value == PileSide.Left ? HalliActor.Player : HalliActor.Ai,
-        HalliRelativeSide.Right,
-        2);
+      var source = HalliBoardLayout.RevealPileSource(snapshot.LastAcquiredPile.Value);
       var firstNewIndex = Math.Max(
         0,
         snapshot.PlayerAcquiredCards.Count - snapshot.LastAcquiredCards.Count);
@@ -542,12 +541,12 @@ namespace CodexGame.Presentation.Views
           if (snapshot.LastAcquiredPile == PileSide.Left)
           {
             _playerLeftHistory.Clear();
-            _playerRightHistory.Clear();
+            _aiRightHistory.Clear();
           }
           else if (snapshot.LastAcquiredPile == PileSide.Right)
           {
             _aiLeftHistory.Clear();
-            _aiRightHistory.Clear();
+            _playerRightHistory.Clear();
           }
           _lastHistoryAcquisition = acquisitionId;
         }

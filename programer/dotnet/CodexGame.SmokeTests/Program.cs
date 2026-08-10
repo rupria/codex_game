@@ -19,6 +19,7 @@ CardStorageTests.Run(tests);
 BellTimingTests.Run(tests);
 HalliRuleTests.Run(tests);
 HalliStageTests.Run(tests);
+HalliRevealSequenceTests.Run(tests);
 PrototypeHalliSessionTests.Run(tests);
 PrivateCardDistributionTests.Run(tests);
 PokerEvaluatorTests.Run(tests);
