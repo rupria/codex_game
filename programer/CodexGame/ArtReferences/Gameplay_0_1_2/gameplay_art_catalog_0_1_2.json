@@ -1,0 +1,39 @@
+{
+  "version": "0.1.2-art-bridge",
+  "source": "gameplay flow 0.1.2 / revision 2026-08-10-01",
+  "runtimeRoots": {
+    "common": "Assets/Art/Prototype/UI/Gameplay_0_1_2",
+    "halli": "Assets/Art/Prototype/UI/Halli_0_3_5",
+    "poker": "Assets/Art/Prototype/UI/Poker_0_3_5"
+  },
+  "items": [
+    {"itemId":"IT-01","asset":"item_reload_64_0_1_2.png","price":1},
+    {"itemId":"IT-02","asset":"item_bottom_deal_64_0_1_2.png","price":2},
+    {"itemId":"IT-03","asset":"item_hype_man_64_0_1_2.png","price":2},
+    {"itemId":"HP-01","asset":"item_heal_tonic_64_0_1_2.png","price":1}
+  ],
+  "inventory": {
+    "capacity": 4,
+    "tray": "inventory_tray_4slot_388x92_0_1_2.png",
+    "slotStates": ["idle","hover","selected","disabled"]
+  },
+  "prediction": {
+    "maxSuccess": 5,
+    "emptyPip": "prediction_success_pip_empty_28_0_1_2.png",
+    "filledPip": "prediction_success_pip_filled_28_0_1_2.png",
+    "meter": "prediction_success_meter_320x68_0_1_2.png",
+    "rewardPanel": "prediction_reward_breakdown_panel_420x112_0_1_2.png"
+  },
+  "halli": {
+    "visibleHistory": 3,
+    "stepY": 12,
+    "activeCard": "latest only",
+    "playerRail": "halli_reveal_history_rail_player_72x122_0_3_5.png",
+    "aiRail": "halli_reveal_history_rail_ai_72x122_0_3_5.png"
+  },
+  "poker": {
+    "aiUsesItems": false,
+    "collapsed": "reuse Poker_0_3_4 closed crate",
+    "openInventory": "reuse common 4-slot tray"
+  }
+}
