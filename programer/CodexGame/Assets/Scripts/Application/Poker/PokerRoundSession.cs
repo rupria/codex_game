@@ -22,6 +22,7 @@ namespace CodexGame.Application.Poker
     private GameTimestamp _predictionDeadline;
     private GameTimestamp _resultRevealAt;
     private GameTimestamp _jokerPresentationEndsAt;
+    private int _preRevealAiCardIndex = -1;
 
     public PokerRoundPhase Phase { get; private set; } = PokerRoundPhase.NotStarted;
     public PokerRoundResult? Result => _result;
@@ -31,7 +32,8 @@ namespace CodexGame.Application.Poker
       PrivateCardDistributionResult distribution,
       BattleHealth health,
       PokerRuleSet ruleSet,
-      GameTimestamp now)
+      GameTimestamp now,
+      int preRevealAiCardIndex = -1)
     {
       if (distribution == null) throw new ArgumentNullException(nameof(distribution));
       if (ruleSet == null) throw new ArgumentNullException(nameof(ruleSet));
@@ -44,6 +46,11 @@ namespace CodexGame.Application.Poker
       _health = health;
       _ruleSet = ruleSet;
       _result = null;
+      if (preRevealAiCardIndex < -1 || preRevealAiCardIndex >= _aiPrivateCards.Count)
+      {
+        throw new ArgumentOutOfRangeException(nameof(preRevealAiCardIndex));
+      }
+      _preRevealAiCardIndex = preRevealAiCardIndex;
 
       // Validate all seven identities before any concealed information is presented.
       PokerComparer.Compare(_playerPrivateCards, _aiPrivateCards, _publicCards, _ruleSet);
@@ -118,7 +125,9 @@ namespace CodexGame.Application.Poker
     {
       var visibleAiCards = Phase == PokerRoundPhase.Resolved
         ? _aiPrivateCards
-        : EmptyCards;
+        : _preRevealAiCardIndex >= 0
+          ? Array.AsReadOnly(new[] { _aiPrivateCards[_preRevealAiCardIndex] })
+          : EmptyCards;
       var health = Phase == PokerRoundPhase.Resolved && _result != null
         ? _result.Damage.After
         : _health;

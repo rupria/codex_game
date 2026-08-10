@@ -11,7 +11,7 @@ namespace CodexGame.Presentation.Localization
   {
     public const string DefaultLanguage = "ko";
     public const string FallbackLanguage = "en";
-    public const int RequiredKeyCount = 148;
+    public const int RequiredKeyCount = 162;
 
     private static readonly string[] RequiredGuideKeys =
     {
@@ -33,6 +33,7 @@ namespace CodexGame.Presentation.Localization
     {
       "UI_STAGE_REWARD_TITLE",
       "UI_STAGE_REWARD_FORMULA",
+      "UI_STAGE_REWARD_DETAIL",
       "UI_BULLET_BALANCE",
       "UI_BAR_TITLE",
       "UI_BAR_CONTINUE",
@@ -54,7 +55,20 @@ namespace CodexGame.Presentation.Localization
       "UI_BAR_DUMMY_ITEM_03",
       "UI_BAR_DUMMY_ITEM_04",
       "UI_BAR_DUMMY_ITEM_05",
-      "UI_BAR_DUMMY_ITEM_06"
+      "UI_BAR_DUMMY_ITEM_06",
+      "UI_ITEM_RELOAD",
+      "UI_ITEM_BOTTOM_DEAL",
+      "UI_ITEM_HYPE_MAN",
+      "UI_ITEM_HEALTH_RECOVERY",
+      "UI_ITEM_WINDOW_TITLE",
+      "UI_ITEM_CHOOSE_CARD",
+      "UI_ITEM_CONFIRM_HAND",
+      "UI_ITEM_INVENTORY",
+      "UI_ITEM_EMPTY_SLOT",
+      "UI_ITEM_ACTION_FAILED",
+      "UI_BAR_DUPLICATE_ITEM",
+      "UI_BAR_INVENTORY_FULL",
+      "UI_BAR_PURCHASE_BLOCKED"
     };
 
     private static readonly Regex PlaceholderPattern =

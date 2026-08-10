@@ -45,6 +45,9 @@ namespace CodexGame.Presentation.Art
     [SerializeField] private Texture2D _continuePressed;
     [SerializeField] private Texture2D _bulletPanel;
     [SerializeField] private Texture2D _healthPanel;
+    [SerializeField] private Texture2D _ammoPouch;
+    [SerializeField] private List<Texture2D> _bulletTossFrames = new List<Texture2D>();
+    [SerializeField] private Texture2D _brassSpark;
     [SerializeField] private List<BarShopProductIconBinding> _productIcons =
       new List<BarShopProductIconBinding>();
 
@@ -59,6 +62,9 @@ namespace CodexGame.Presentation.Art
     public Texture2D ContinuePressed => _continuePressed;
     public Texture2D BulletPanel => _bulletPanel;
     public Texture2D HealthPanel => _healthPanel;
+    public Texture2D AmmoPouch => _ammoPouch;
+    public Texture2D BrassSpark => _brassSpark;
+    public IReadOnlyList<Texture2D> BulletTossFrames => _bulletTossFrames;
 
     public BarShopUiArtSet()
     {

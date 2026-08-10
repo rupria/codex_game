@@ -3,6 +3,10 @@ using CodexGame.Application.Playable;
 using CodexGame.Core.Cards;
 using CodexGame.Core.Rewards;
 using CodexGame.Core.Shared;
+#if UNITY_EDITOR || ENABLE_GAMEPLAY_CHEATS
+using CodexGame.Application.Development;
+using CodexGame.Core.Items;
+#endif
 using CodexGame.Presentation.Views;
 using UnityEngine;
 
@@ -28,8 +32,20 @@ namespace CodexGame.Bootstrap
       _view.PrivateCardToggleRequested += TogglePrivateCard;
       _view.PrivateCardsConfirmRequested += ConfirmPrivateCards;
       _view.PredictionRequested += Predict;
+      _view.ReloadItemRequested += UseReload;
+      _view.BottomDealRequested += BeginBottomDeal;
+      _view.BottomDealChoiceRequested += ChooseBottomDeal;
+      _view.HypeManItemRequested += UseHypeMan;
+      _view.HealthRecoveryItemRequested += UseHealthRecovery;
+      _view.ItemsConfirmRequested += ConfirmItems;
       _view.BarShopRerollRequested += RerollBarShop;
+      _view.BarShopPurchaseRequested += PurchaseBarShop;
       _view.MainRequested += ReturnToMain;
+#if UNITY_EDITOR || ENABLE_GAMEPLAY_CHEATS
+      _view.CheatStagePassRequested += CheatStagePass;
+      _view.CheatGrantItemRequested += CheatGrantItem;
+      _view.CheatPokerPresetRequested += CheatPokerPreset;
+#endif
     }
 
     private void Start()
@@ -59,8 +75,20 @@ namespace CodexGame.Bootstrap
       _view.PrivateCardToggleRequested -= TogglePrivateCard;
       _view.PrivateCardsConfirmRequested -= ConfirmPrivateCards;
       _view.PredictionRequested -= Predict;
+      _view.ReloadItemRequested -= UseReload;
+      _view.BottomDealRequested -= BeginBottomDeal;
+      _view.BottomDealChoiceRequested -= ChooseBottomDeal;
+      _view.HypeManItemRequested -= UseHypeMan;
+      _view.HealthRecoveryItemRequested -= UseHealthRecovery;
+      _view.ItemsConfirmRequested -= ConfirmItems;
       _view.BarShopRerollRequested -= RerollBarShop;
+      _view.BarShopPurchaseRequested -= PurchaseBarShop;
       _view.MainRequested -= ReturnToMain;
+#if UNITY_EDITOR || ENABLE_GAMEPLAY_CHEATS
+      _view.CheatStagePassRequested -= CheatStagePass;
+      _view.CheatGrantItemRequested -= CheatGrantItem;
+      _view.CheatPokerPresetRequested -= CheatPokerPreset;
+#endif
     }
 
     private void StartNew()
@@ -111,11 +139,78 @@ namespace CodexGame.Bootstrap
       Present();
     }
 
+    private void PurchaseBarShop(int slotIndex)
+    {
+      _session.PurchaseBarShopSlot(slotIndex, Now());
+      Present();
+    }
+
+    private void UseReload(CardId target)
+    {
+      _session.UseReload(target, Now());
+      Present();
+    }
+
+    private void BeginBottomDeal(CardId target)
+    {
+      _session.BeginBottomDeal(target, Now());
+      Present();
+    }
+
+    private void ChooseBottomDeal(CardId candidate)
+    {
+      _session.ChooseBottomDeal(candidate, Now());
+      Present();
+    }
+
+    private void UseHypeMan()
+    {
+      _session.UseHypeMan(Now());
+      Present();
+    }
+
+    private void UseHealthRecovery()
+    {
+      _session.UseHealthRecovery(Now());
+      Present();
+    }
+
+    private void ConfirmItems()
+    {
+      _session.ConfirmItems(Now());
+      Present();
+    }
+
     private void ReturnToMain()
     {
       _session.ReturnToMain();
       Present();
     }
+
+#if UNITY_EDITOR || ENABLE_GAMEPLAY_CHEATS
+    private void CheatStagePass()
+    {
+      _session.CheatCompleteStage(Now());
+      Present();
+    }
+
+    private void CheatGrantItem(GameItemId itemId)
+    {
+      _session.CheatGrantItem(itemId, Now());
+      Present();
+    }
+
+    private void CheatPokerPreset(PokerCheatPreset preset)
+    {
+      var setup = PokerCheatPresetCatalog.Create(preset);
+      _session.CheatSetPokerCards(
+        setup.PlayerCards,
+        setup.AiCards,
+        setup.PublicCards,
+        Now());
+      Present();
+    }
+#endif
 
     private void Present()
     {

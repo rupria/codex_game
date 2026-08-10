@@ -11,6 +11,10 @@ namespace CodexGame.Core.Shared
     public const int ExposedCardsPerPile = 2;
     public const int JokerEligibilityAcquiredCards = 4;
     public const int JokerAwardPercent = 10;
+    public const int InventoryCapacity = 4;
+    public const int MaximumPredictionSuccessCount = 5;
+    public const int BarShopSlotCount = 4;
+    public const int InitialStageCount = 3;
 
     public const long SimultaneousBellThresholdMicroseconds = 33_300;
     public const long BellInputTimeoutMicroseconds = 30_000_000;
@@ -25,6 +29,9 @@ namespace CodexGame.Core.Shared
     public const long PredictionTimeoutMicroseconds = 120_000_000;
     public const long PokerResultAnnouncementMicroseconds = 1_000_000;
     public const long PlayerJokerPresentationMicroseconds = 900_000;
+    public const long BarShopPurchaseContactMicroseconds = 500_000;
+    public const long BarShopPurchaseLockMicroseconds = 600_000;
+    public const long BarShopPurchaseRejectedShakeMicroseconds = 120_000;
     public const long NextStageTransitionShopClearMicroseconds = 220_000;
     public const long NextStageTransitionCameraTurnMicroseconds = 320_000;
     public const long NextStageTransitionWalkMicroseconds = 650_000;

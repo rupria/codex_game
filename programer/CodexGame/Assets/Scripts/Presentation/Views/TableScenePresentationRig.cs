@@ -230,6 +230,7 @@ namespace CodexGame.Presentation.Views
           return new PhasePresentation(47f, 0.2f, 1.45f, 50f);
         case PlayableGamePhase.PrivateSelection:
           return new PhasePresentation(49f, -0.08f, 1.35f, 54f);
+        case PlayableGamePhase.PokerItems:
         case PlayableGamePhase.PokerPrediction:
         case PlayableGamePhase.PokerResult:
           return new PhasePresentation(46f, -0.16f, 1.5f, 50f);
