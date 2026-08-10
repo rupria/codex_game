@@ -1,6 +1,6 @@
 -- Western shop payment animation art 0.3.8.
 -- 1-2 bullets: coin-like flip from screen bottom with one-frame glint.
--- 3+ bullets: pouch tilts in from the bottom and pours rounds onto the table.
+-- 3+ bullets: pouch tilts in from the bottom and pours irregularly scattered rounds onto the table.
 
 local p=app.params
 local sourceDir=assert(p.sourceDir)
@@ -236,6 +236,7 @@ flipSource:saveAs(sourceDir.."/bar_shop_bullet_coin_flip_glint_0_3_8.aseprite")
 flipSource:close()
 
 -- Pour sprite sheet: 8 frames, 160x120 each. The origin is the lower screen edge.
+-- Landed rounds deliberately vary in x/y spacing and rotation; never snap them to a row or grid.
 local pourFrames={}
 local pourSheet=Image(1280,120,ColorMode.RGB); pourSheet:clear(C.transparent)
 local pouchAngles={0,-10,-24,-40,-50,-42,-24,-8}
@@ -244,10 +245,10 @@ local bulletPos={
   {{56,56,1}},
   {{48,62,2},{62,70,4}},
   {{39,72,3},{55,81,5},{72,86,6}},
-  {{27,88,4},{45,91,6},{65,87,2},{83,94,7}},
-  {{22,96,5},{43,86,7},{65,96,3},{87,88,1},{105,97,6}},
-  {{24,98,6},{45,98,2},{66,98,7},{87,98,3},{108,98,5}},
-  {{24,98,7},{45,98,3},{66,98,1},{87,98,5},{108,98,2}}
+  {{25,89,4},{48,95,6},{67,81,2},{89,96,7}},
+  {{18,98,5},{43,83,7},{70,101,3},{96,87,1},{116,97,6}},
+  {{16,101,6},{45,87,2},{72,103,7},{99,92,3},{124,100,5}},
+  {{17,101,7},{49,88,3},{68,103,1},{101,92,5},{126,101,2}}
 }
 for i=1,8 do
   local frame=Image(160,120,ColorMode.RGB); frame:clear(C.transparent)
@@ -294,8 +295,8 @@ local pourPouchPos={{394,246,0},{370,222,-18},{348,206,-42},{402,255,-12}}
 local pourStoryBullets={
   {},
   {{344,204,2},{326,214,4}},
-  {{305,205,3},{325,221,5},{347,213,6},{365,225,2}},
-  {{292,224,4},{316,224,6},{340,224,2},{364,224,7},{388,224,3}}
+  {{302,197,3},{327,216,5},{350,202,6},{369,220,2}},
+  {{286,187,4},{318,169,6},{346,194,2},{378,176,7},{406,199,3}}
 }
 for i=1,4 do
   local frame=Image(background)
