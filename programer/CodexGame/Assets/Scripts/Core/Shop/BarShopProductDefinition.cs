@@ -1,16 +1,30 @@
 using System;
+using CodexGame.Core.Items;
 
 namespace CodexGame.Core.Shop
 {
   public sealed class BarShopProductDefinition
   {
+    public BarShopProductDefinition(GameItemDefinition item)
+      : this(
+        item != null ? item.Code : throw new ArgumentNullException(nameof(item)),
+        item.LocalizationNameKey,
+        item.IconKey,
+        item.Price,
+        item.Code,
+        BarShopProductDisplayState.VisiblePreview,
+        item.Id)
+    {
+    }
+
     public BarShopProductDefinition(
       string id,
       string localizationNameKey,
       string iconKey,
       int price,
       string effectKey,
-      BarShopProductDisplayState displayState)
+      BarShopProductDisplayState displayState,
+      GameItemId? itemId = null)
     {
       if (string.IsNullOrWhiteSpace(id)) throw new ArgumentException("Product id is required.", nameof(id));
       if (string.IsNullOrWhiteSpace(localizationNameKey))
@@ -37,6 +51,7 @@ namespace CodexGame.Core.Shop
       Price = price;
       EffectKey = effectKey;
       DisplayState = displayState;
+      ItemId = itemId;
     }
 
     public string Id { get; }
@@ -45,5 +60,6 @@ namespace CodexGame.Core.Shop
     public int Price { get; }
     public string EffectKey { get; }
     public BarShopProductDisplayState DisplayState { get; }
+    public GameItemId? ItemId { get; }
   }
 }

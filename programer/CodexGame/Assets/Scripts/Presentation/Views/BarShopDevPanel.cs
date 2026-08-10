@@ -1,7 +1,10 @@
 using System;
+using System.Collections.Generic;
 using CodexGame.Application.Shop;
+using CodexGame.Core.Items;
 using CodexGame.Presentation.Art;
 using CodexGame.Presentation.Localization;
+using CodexGame.Core.Shared;
 using UnityEngine;
 
 namespace CodexGame.Presentation.Views
@@ -13,17 +16,20 @@ namespace CodexGame.Presentation.Views
     private static readonly Rect HealthPanel = new Rect(720f, 28f, 200f, 58f);
     private static readonly Rect RerollButton = new Rect(40f, 462f, 180f, 56f);
     private static readonly Rect ContinueButton = new Rect(380f, 462f, 200f, 56f);
-    private static readonly float[] SlotXPositions = { 40f, 365f, 690f };
+    private static readonly Rect AmmoPouch = new Rect(776f, 384f, 180f, 150f);
+    private static readonly float[] SlotXPositions = { 20f, 250f, 480f, 710f };
 
     public void Draw(
       BarShopSnapshot shop,
       int bullets,
       int playerHealth,
       int maximumHealth,
+      IReadOnlyList<GameItemId> inventory,
       PlayableDevStyles styles,
       BarShopUiArtSet art,
       LocalizationRuntime localization,
       Action reroll,
+      Action<int> purchase,
       Action continueToNextStage)
     {
       if (shop == null) throw new ArgumentNullException(nameof(shop));
@@ -53,13 +59,25 @@ namespace CodexGame.Presentation.Views
           new LocalizationArgument("current", playerHealth),
           new LocalizationArgument("max", maximumHealth)),
         styles.Small);
+      DrawInventory(inventory, art, styles, localization);
 
       for (var index = 0; index < shop.Slots.Count; index++)
       {
         var slot = shop.Slots[index];
         if (index >= SlotXPositions.Length) break;
-        var slotRect = new Rect(SlotXPositions[index], 220f, 230f, 210f);
-        DrawSlot(slotRect, slot.IconKey, slot.LocalizationNameKey, art, styles, localization);
+        var slotRect = new Rect(SlotXPositions[index], 124f, 190f, 174f);
+        if (DrawSlot(
+          slotRect,
+          slot.IconKey,
+          slot.LocalizationNameKey,
+          slot.Price,
+          !(shop.Purchase?.InputLocked ?? false),
+          art,
+          styles,
+          localization))
+        {
+          purchase(index);
+        }
       }
 
       var rerollLabel = localization.Get(
@@ -67,7 +85,7 @@ namespace CodexGame.Presentation.Views
       if (DrawButton(
         RerollButton,
         rerollLabel,
-        shop.CanReroll,
+        shop.CanReroll && !(shop.Purchase?.InputLocked ?? false),
         art?.RerollIdle,
         art?.RerollHover,
         art?.RerollPressed,
@@ -80,7 +98,7 @@ namespace CodexGame.Presentation.Views
       if (DrawButton(
         ContinueButton,
         localization.Get("UI_BAR_CONTINUE"),
-        true,
+        !(shop.Purchase?.InputLocked ?? false),
         art?.ContinueIdle,
         art?.ContinueHover,
         art?.ContinuePressed,
@@ -89,12 +107,58 @@ namespace CodexGame.Presentation.Views
       {
         continueToNextStage();
       }
+
+      DrawPurchaseMotion(shop.Purchase, art);
+      DrawPurchaseFailure(shop.Purchase, styles, localization);
     }
 
-    private static void DrawSlot(
+    private static void DrawInventory(
+      IReadOnlyList<GameItemId> inventory,
+      BarShopUiArtSet art,
+      PlayableDevStyles styles,
+      LocalizationRuntime localization)
+    {
+      GUI.Label(
+        new Rect(300f, 306f, 360f, 24f),
+        localization.Get("UI_ITEM_INVENTORY"),
+        styles.Small);
+      for (var index = 0; index < GameRules.InventoryCapacity; index++)
+      {
+        var rect = new Rect(330f + index * 78f, 332f, 66f, 58f);
+        GUI.Box(rect, GUIContent.none);
+        if (index >= inventory.Count)
+        {
+          GUI.Label(rect, "-", styles.Small);
+          continue;
+        }
+        if (!GameItemCatalog.TryGet(inventory[index], out var definition)
+          || definition == null)
+        {
+          GUI.Label(rect, "?", styles.Small);
+          continue;
+        }
+        var icon = art?.FindProductIcon(definition.IconKey);
+        if (icon != null)
+        {
+          GUI.DrawTexture(
+            new Rect(rect.x + 17f, rect.y + 3f, 32f, 32f),
+            icon,
+            ScaleMode.ScaleToFit,
+            true);
+        }
+        GUI.Label(
+          new Rect(rect.x + 2f, rect.y + 37f, rect.width - 4f, 18f),
+          localization.Get(definition.LocalizationNameKey),
+          styles.Small);
+      }
+    }
+
+    private static bool DrawSlot(
       Rect rect,
       string iconKey,
       string nameKey,
+      int price,
+      bool enabled,
       BarShopUiArtSet art,
       PlayableDevStyles styles,
       LocalizationRuntime localization)
@@ -111,7 +175,7 @@ namespace CodexGame.Presentation.Views
         GUI.color = previous;
       }
 
-      var iconRect = new Rect(rect.x + 83f, rect.y + 26f, 64f, 64f);
+      var iconRect = new Rect(rect.x + 67f, rect.y + 14f, 56f, 56f);
       var icon = art?.FindProductIcon(iconKey);
       if (icon != null)
       {
@@ -123,13 +187,124 @@ namespace CodexGame.Presentation.Views
       }
 
       GUI.Label(
-        new Rect(rect.x + 28f, rect.y + 130f, 174f, 18f),
+        new Rect(rect.x + 12f, rect.y + 84f, 166f, 20f),
         localization.Get(nameKey),
         styles.Small);
       GUI.Label(
-        new Rect(rect.x + 58f, rect.y + 162f, 114f, 16f),
-        localization.Get("UI_BAR_PURCHASE"),
+        new Rect(rect.x + 24f, rect.y + 108f, 142f, 18f),
+        localization.Get("UI_BAR_PRICE", new LocalizationArgument("price", price)),
         styles.Small);
+      GUI.enabled = enabled;
+      var clicked = GUI.Button(
+        new Rect(rect.x + 24f, rect.y + 138f, 142f, 28f),
+        localization.Get("UI_BAR_PURCHASE"));
+      GUI.enabled = true;
+      return clicked;
+    }
+
+    private static void DrawPurchaseMotion(
+      BarShopPurchaseSnapshot purchase,
+      BarShopUiArtSet art)
+    {
+      var pouchRect = AmmoPouch;
+      if (purchase != null && purchase.InputLocked)
+      {
+        if (purchase.Phase == BarShopPurchasePhase.Rejected)
+        {
+          var shake = Mathf.Sin(purchase.ElapsedMicroseconds / 120000f * Mathf.PI * 4f) * 8f;
+          pouchRect.x += shake;
+        }
+        else if (purchase.ElapsedMicroseconds < 60000)
+        {
+          pouchRect.y += 6f;
+        }
+      }
+
+      if (art?.AmmoPouch != null)
+      {
+        GUI.DrawTexture(pouchRect, art.AmmoPouch, ScaleMode.ScaleToFit, true);
+      }
+      else
+      {
+        var previous = GUI.color;
+        GUI.color = new Color(0.24f, 0.12f, 0.035f, 0.94f);
+        GUI.DrawTexture(pouchRect, Texture2D.whiteTexture, ScaleMode.StretchToFill, true);
+        GUI.color = previous;
+      }
+
+      if (purchase == null
+        || (purchase.Phase != BarShopPurchasePhase.Tossing
+          && purchase.Phase != BarShopPurchasePhase.Completed)) return;
+
+      var progress = Mathf.Clamp01(
+        purchase.ElapsedMicroseconds / (float)GameRules.BarShopPurchaseContactMicroseconds);
+      var start = new Vector2(868f, 468f);
+      var control = new Vector2(735f, 305f);
+      var end = new Vector2(494f, 182f);
+      var inverse = 1f - progress;
+      var point = (inverse * inverse * start)
+        + (2f * inverse * progress * control)
+        + (progress * progress * end);
+      var scale = progress < 0.5f
+        ? Mathf.Lerp(1f, 1.15f, progress * 2f)
+        : Mathf.Lerp(1.15f, 0.8f, (progress - 0.5f) * 2f);
+      var size = new Vector2(24f, 40f) * scale;
+      var bulletRect = new Rect(point.x - size.x * 0.5f, point.y - size.y * 0.5f, size.x, size.y);
+      var previousMatrix = GUI.matrix;
+      GUIUtility.RotateAroundPivot(progress * 540f, point);
+      var frame = FindBulletFrame(art, progress);
+      if (frame != null) GUI.DrawTexture(bulletRect, frame, ScaleMode.ScaleToFit, true);
+      else
+      {
+        var previous = GUI.color;
+        GUI.color = new Color(0.78f, 0.52f, 0.16f, 1f);
+        GUI.DrawTexture(bulletRect, Texture2D.whiteTexture, ScaleMode.StretchToFill, true);
+        GUI.color = previous;
+      }
+      GUI.matrix = previousMatrix;
+
+      if (purchase.ElapsedMicroseconds >= GameRules.BarShopPurchaseContactMicroseconds
+        && purchase.ElapsedMicroseconds
+          <= GameRules.BarShopPurchaseContactMicroseconds + 80000)
+      {
+        var sparkRect = new Rect(end.x - 30f, end.y - 30f, 60f, 60f);
+        if (art?.BrassSpark != null)
+        {
+          GUI.DrawTexture(sparkRect, art.BrassSpark, ScaleMode.ScaleToFit, true);
+        }
+        else
+        {
+          var previous = GUI.color;
+          GUI.color = new Color(1f, 0.74f, 0.22f, 0.8f);
+          GUI.DrawTexture(sparkRect, Texture2D.whiteTexture, ScaleMode.ScaleToFit, true);
+          GUI.color = previous;
+        }
+      }
+    }
+
+    private static Texture2D FindBulletFrame(BarShopUiArtSet art, float progress)
+    {
+      if (art?.BulletTossFrames == null || art.BulletTossFrames.Count == 0) return null;
+      var index = Mathf.Min(
+        art.BulletTossFrames.Count - 1,
+        Mathf.FloorToInt(progress * art.BulletTossFrames.Count));
+      return art.BulletTossFrames[index];
+    }
+
+    private static void DrawPurchaseFailure(
+      BarShopPurchaseSnapshot purchase,
+      PlayableDevStyles styles,
+      LocalizationRuntime localization)
+    {
+      if (purchase == null || purchase.Phase != BarShopPurchasePhase.Rejected) return;
+      var key = purchase.Failure == BarShopPurchaseFailure.InsufficientBullets
+        ? "UI_BAR_NOT_ENOUGH"
+        : purchase.Failure == BarShopPurchaseFailure.DuplicateItem
+          ? "UI_BAR_DUPLICATE_ITEM"
+          : purchase.Failure == BarShopPurchaseFailure.InventoryFull
+            ? "UI_BAR_INVENTORY_FULL"
+            : "UI_BAR_PURCHASE_BLOCKED";
+      GUI.Label(new Rect(250f, 420f, 460f, 28f), localization.Get(key), styles.Heading);
     }
 
     private static void DrawStatusPanel(

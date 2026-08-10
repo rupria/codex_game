@@ -12,6 +12,7 @@ namespace CodexGame.Core.Cards
     PlayerJokerAward = 9,
     AiJokerAward = 10,
     PlayerPokerBalance = 11,
-    AiPokerBalance = 12
+    AiPokerBalance = 12,
+    ItemUse = 13
   }
 }

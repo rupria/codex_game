@@ -1,13 +1,15 @@
+#nullable enable
 using System;
 using System.Collections.Generic;
 using CodexGame.Core.Cards;
+using CodexGame.Core.Shared;
 using CodexGame.Core.Shop;
 
 namespace CodexGame.Application.Shop
 {
   public sealed class BarShopSession
   {
-    public const int SlotCount = 3;
+    public const int SlotCount = GameRules.BarShopSlotCount;
     public const int DevelopmentRerollCost = 0;
 
     private static readonly IReadOnlyList<BarShopProductDefinition> Empty =
@@ -22,10 +24,10 @@ namespace CodexGame.Application.Shop
     public BarShopSession(IReadOnlyList<BarShopProductDefinition> catalog)
     {
       if (catalog == null) throw new ArgumentNullException(nameof(catalog));
-      if (catalog.Count < SlotCount * 2)
+      if (catalog.Count < SlotCount)
       {
         throw new ArgumentException(
-          "The dummy shop requires at least six products for a full three-slot reroll.",
+          "The shop requires enough products to fill all four slots.",
           nameof(catalog));
       }
       _catalog = Copy(catalog);
@@ -41,9 +43,9 @@ namespace CodexGame.Application.Shop
           visible.Add(_catalog[index]);
         }
       }
-      if (visible.Count < SlotCount * 2)
+      if (visible.Count < SlotCount)
       {
-        throw new InvalidOperationException("The visible dummy shop pool must contain six products.");
+        throw new InvalidOperationException("The visible shop pool must fill all four slots.");
       }
 
       var random = DeterministicRandomFactory.Create(visitSeed, RandomChannel.BarShop);
@@ -56,7 +58,15 @@ namespace CodexGame.Application.Shop
       }
 
       _slots = Take(visible, 0);
-      _rerollSlots = Take(visible, SlotCount);
+      // Reroll is deterministic and may retain products when the catalog has only four entries.
+      for (var index = visible.Count - 1; index > 0; index--)
+      {
+        var swapIndex = random.NextInt(index + 1);
+        var value = visible[index];
+        visible[index] = visible[swapIndex];
+        visible[swapIndex] = value;
+      }
+      _rerollSlots = Take(visible, 0);
       _rerollUsed = false;
       _isOpen = true;
     }
@@ -69,12 +79,24 @@ namespace CodexGame.Application.Shop
       return true;
     }
 
-    public BarShopSnapshot GetSnapshot()
+    public BarShopSnapshot GetSnapshot(BarShopPurchaseSnapshot? purchase = null)
     {
       return new BarShopSnapshot(
         _slots,
-        _isOpen && !_rerollUsed,
-        DevelopmentRerollCost);
+        _isOpen && !_rerollUsed && !(purchase?.InputLocked ?? false),
+        DevelopmentRerollCost,
+        purchase);
+    }
+
+    public bool TryGetSlot(int slotIndex, out BarShopProductDefinition? product)
+    {
+      if (!_isOpen || slotIndex < 0 || slotIndex >= _slots.Count)
+      {
+        product = null;
+        return false;
+      }
+      product = _slots[slotIndex];
+      return true;
     }
 
     public void Close()

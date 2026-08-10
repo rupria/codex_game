@@ -3,6 +3,10 @@ using CodexGame.Application.Playable;
 using CodexGame.Core.Cards;
 using CodexGame.Core.Rewards;
 using CodexGame.Core.Shared;
+using CodexGame.Core.Items;
+#if UNITY_EDITOR || ENABLE_GAMEPLAY_CHEATS
+using CodexGame.Application.Development;
+#endif
 using CodexGame.Presentation.Art;
 using CodexGame.Presentation.Localization;
 using UnityEngine;
@@ -50,9 +54,14 @@ namespace CodexGame.Presentation.Views
     private readonly HalliTableLightOverlay _tableLightOverlay = new HalliTableLightOverlay();
     private readonly PrivateSelectionDevPanel _selectionPanel = new PrivateSelectionDevPanel();
     private readonly PokerDevPanel _pokerPanel = new PokerDevPanel();
+    private readonly PokerItemDevPanel _pokerItemPanel = new PokerItemDevPanel();
     private readonly BarShopDevPanel _barShopPanel = new BarShopDevPanel();
     private readonly StageTransitionDevPanel _stageTransitionPanel =
       new StageTransitionDevPanel();
+#if UNITY_EDITOR || ENABLE_GAMEPLAY_CHEATS
+    private readonly DevelopmentCheatPanel _cheatPanel = new DevelopmentCheatPanel();
+    private bool _cheatOpen;
+#endif
     private PlayableGameSnapshot _snapshot;
     private PlayableDevStyles _styles;
     private PlayableCardRenderer _halliCards;
@@ -67,8 +76,20 @@ namespace CodexGame.Presentation.Views
     public event Action<CardId> PrivateCardToggleRequested;
     public event Action PrivateCardsConfirmRequested;
     public event Action<PredictionChoice> PredictionRequested;
+    public event Action<CardId> ReloadItemRequested;
+    public event Action<CardId> BottomDealRequested;
+    public event Action<CardId> BottomDealChoiceRequested;
+    public event Action HypeManItemRequested;
+    public event Action HealthRecoveryItemRequested;
+    public event Action ItemsConfirmRequested;
     public event Action BarShopRerollRequested;
+    public event Action<int> BarShopPurchaseRequested;
     public event Action MainRequested;
+#if UNITY_EDITOR || ENABLE_GAMEPLAY_CHEATS
+    public event Action CheatStagePassRequested;
+    public event Action<GameItemId> CheatGrantItemRequested;
+    public event Action<PokerCheatPreset> CheatPokerPresetRequested;
+#endif
 
     internal PlayableGamePhase CurrentPhase => _snapshot == null
       ? PlayableGamePhase.Intro
@@ -152,6 +173,15 @@ namespace CodexGame.Presentation.Views
         return;
       }
 
+#if UNITY_EDITOR || ENABLE_GAMEPLAY_CHEATS
+      if (Input.GetKeyDown(KeyCode.F10))
+      {
+        _cheatOpen = !_cheatOpen;
+        return;
+      }
+      if (_cheatOpen) return;
+#endif
+
       switch (_snapshot.Phase)
       {
         case PlayableGamePhase.Intro:
@@ -175,6 +205,8 @@ namespace CodexGame.Presentation.Views
             if (Input.GetKeyDown(KeyCode.Alpha1)) PredictionRequested?.Invoke(PredictionChoice.PlayerWins);
             else if (Input.GetKeyDown(KeyCode.Alpha2)) PredictionRequested?.Invoke(PredictionChoice.PlayerLoses);
           }
+          break;
+        case PlayableGamePhase.PokerItems:
           break;
         case PlayableGamePhase.PokerResult:
           if (Pressed(KeyCode.Return, KeyCode.Space)) AdvanceRequested?.Invoke();
@@ -225,6 +257,24 @@ namespace CodexGame.Presentation.Views
       }
       if (_localization == null || !_localization.IsReady) return;
       EnsureRenderers();
+
+#if UNITY_EDITOR || ENABLE_GAMEPLAY_CHEATS
+      if (_snapshot.CheatUsed)
+      {
+        GUI.Label(new Rect(792f, 8f, 152f, 32f), "CHEAT / QA", _styles.Status);
+      }
+      if (_cheatOpen)
+      {
+        _cheatPanel.Draw(
+          _snapshot,
+          _styles,
+          () => CheatStagePassRequested?.Invoke(),
+          itemId => CheatGrantItemRequested?.Invoke(itemId),
+          preset => CheatPokerPresetRequested?.Invoke(preset),
+          () => _cheatOpen = false);
+        return;
+      }
+#endif
 
       if (_guide.IsOpen)
       {
@@ -283,6 +333,22 @@ namespace CodexGame.Presentation.Views
         return;
       }
 
+      if (_snapshot.Phase == PlayableGamePhase.PokerItems && _snapshot.PokerItems != null)
+      {
+        _pokerItemPanel.Draw(
+          _snapshot.PokerItems,
+          _pokerCards,
+          _styles,
+          _localization,
+          cardId => ReloadItemRequested?.Invoke(cardId),
+          cardId => BottomDealRequested?.Invoke(cardId),
+          cardId => BottomDealChoiceRequested?.Invoke(cardId),
+          () => HypeManItemRequested?.Invoke(),
+          () => HealthRecoveryItemRequested?.Invoke(),
+          () => ItemsConfirmRequested?.Invoke());
+        return;
+      }
+
       if (_snapshot.Phase == PlayableGamePhase.BarShop && _snapshot.BarShop != null)
       {
         _barShopPanel.Draw(
@@ -290,10 +356,12 @@ namespace CodexGame.Presentation.Views
           _snapshot.BulletCount,
           _snapshot.Health.Player,
           GameRules.StartingHealth,
+          _snapshot.Inventory,
           _styles,
           _barShopUiArtSet,
           _localization,
           () => BarShopRerollRequested?.Invoke(),
+          index => BarShopPurchaseRequested?.Invoke(index),
           () => AdvanceRequested?.Invoke());
         return;
       }
@@ -462,7 +530,15 @@ namespace CodexGame.Presentation.Views
         L(
           "UI_STAGE_REWARD_FORMULA",
           new LocalizationArgument("hp", _snapshot.Health.Player),
-          new LocalizationArgument("reward", _snapshot.LastStageReward)),
+          new LocalizationArgument("reward", _snapshot.LastStageBaseReward)),
+        _styles.Heading);
+      GUILayout.Label(
+        L(
+          "UI_STAGE_REWARD_DETAIL",
+          new LocalizationArgument("base", _snapshot.LastStageBaseReward),
+          new LocalizationArgument("bonus", _snapshot.LastStageBonusReward),
+          new LocalizationArgument("success", _snapshot.PredictionSuccessCount),
+          new LocalizationArgument("total", _snapshot.LastStageReward)),
         _styles.Heading);
       GUILayout.Label(
         L("UI_BULLET_BALANCE", new LocalizationArgument("bullets", _snapshot.BulletCount)),

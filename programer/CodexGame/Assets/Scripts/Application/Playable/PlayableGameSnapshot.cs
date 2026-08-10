@@ -1,8 +1,13 @@
 using CodexGame.Application.Distribution;
 using CodexGame.Application.Poker;
 using CodexGame.Application.Shop;
+using CodexGame.Application.Items;
+using CodexGame.Application.Development;
 using CodexGame.Core.Battle;
 using CodexGame.Core.Rewards;
+using CodexGame.Core.Items;
+using System;
+using System.Collections.Generic;
 
 namespace CodexGame.Application.Playable
 {
@@ -15,11 +20,18 @@ namespace CodexGame.Application.Playable
       BattleHealth health,
       int bulletCount,
       int lastStageReward,
+      int lastStageBaseReward,
+      int lastStageBonusReward,
+      int predictionSuccessCount,
+      IReadOnlyList<GameItemId> inventory,
+      bool cheatUsed,
+      IReadOnlyList<CheatCommandEntry> cheatHistory,
       long inactivityRemainingMicroseconds,
       PlayableTransitionSnapshot transition,
       NextStageTransitionSnapshot? nextStageTransition,
       PrototypeHalliSnapshot? halli,
       PrivateCardSelectionSnapshot? selection,
+      PokerItemSnapshot? pokerItems,
       PokerRoundSnapshot? poker,
       BarShopSnapshot? barShop)
     {
@@ -29,11 +41,18 @@ namespace CodexGame.Application.Playable
       Health = health;
       BulletCount = bulletCount;
       LastStageReward = lastStageReward;
+      LastStageBaseReward = lastStageBaseReward;
+      LastStageBonusReward = lastStageBonusReward;
+      PredictionSuccessCount = predictionSuccessCount;
+      Inventory = Copy(inventory);
+      CheatUsed = cheatUsed;
+      CheatHistory = Copy(cheatHistory);
       InactivityRemainingMicroseconds = inactivityRemainingMicroseconds;
       Transition = transition;
       NextStageTransition = nextStageTransition;
       Halli = halli;
       Selection = selection;
+      PokerItems = pokerItems;
       Poker = poker;
       BarShop = barShop;
     }
@@ -44,12 +63,35 @@ namespace CodexGame.Application.Playable
     public BattleHealth Health { get; }
     public int BulletCount { get; }
     public int LastStageReward { get; }
+    public int LastStageBaseReward { get; }
+    public int LastStageBonusReward { get; }
+    public int PredictionSuccessCount { get; }
+    public IReadOnlyList<GameItemId> Inventory { get; }
+    public bool CheatUsed { get; }
+    public IReadOnlyList<CheatCommandEntry> CheatHistory { get; }
     public long InactivityRemainingMicroseconds { get; }
     public PlayableTransitionSnapshot Transition { get; }
     public NextStageTransitionSnapshot? NextStageTransition { get; }
     public PrototypeHalliSnapshot? Halli { get; }
     public PrivateCardSelectionSnapshot? Selection { get; }
+    public PokerItemSnapshot? PokerItems { get; }
     public PokerRoundSnapshot? Poker { get; }
     public BarShopSnapshot? BarShop { get; }
+
+    private static IReadOnlyList<GameItemId> Copy(IReadOnlyList<GameItemId> source)
+    {
+      if (source == null) throw new ArgumentNullException(nameof(source));
+      var result = new GameItemId[source.Count];
+      for (var index = 0; index < result.Length; index++) result[index] = source[index];
+      return Array.AsReadOnly(result);
+    }
+
+    private static IReadOnlyList<CheatCommandEntry> Copy(IReadOnlyList<CheatCommandEntry> source)
+    {
+      if (source == null) throw new ArgumentNullException(nameof(source));
+      var result = new CheatCommandEntry[source.Count];
+      for (var index = 0; index < result.Length; index++) result[index] = source[index];
+      return Array.AsReadOnly(result);
+    }
   }
 }

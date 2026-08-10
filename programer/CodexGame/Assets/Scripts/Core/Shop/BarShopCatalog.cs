@@ -1,36 +1,26 @@
 using System;
 using System.Collections.Generic;
+using CodexGame.Core.Items;
 
 namespace CodexGame.Core.Shop
 {
   public static class BarShopCatalog
   {
-    private static readonly IReadOnlyList<BarShopProductDefinition> DummyProducts =
-      Array.AsReadOnly(new[]
-      {
-        Product("dummy-01", "UI_BAR_DUMMY_ITEM_01", "bar_shop.item.dummy_01", "BAR_DUMMY_EFFECT_01"),
-        Product("dummy-02", "UI_BAR_DUMMY_ITEM_02", "bar_shop.item.dummy_02", "BAR_DUMMY_EFFECT_02"),
-        Product("dummy-03", "UI_BAR_DUMMY_ITEM_03", "bar_shop.item.dummy_03", "BAR_DUMMY_EFFECT_03"),
-        Product("dummy-04", "UI_BAR_DUMMY_ITEM_04", "bar_shop.item.dummy_04", "BAR_DUMMY_EFFECT_04"),
-        Product("dummy-05", "UI_BAR_DUMMY_ITEM_05", "bar_shop.item.dummy_05", "BAR_DUMMY_EFFECT_05"),
-        Product("dummy-06", "UI_BAR_DUMMY_ITEM_06", "bar_shop.item.dummy_06", "BAR_DUMMY_EFFECT_06")
-      });
+    private static readonly IReadOnlyList<BarShopProductDefinition> Products = CreateProducts();
 
-    public static IReadOnlyList<BarShopProductDefinition> Dummy => DummyProducts;
+    public static IReadOnlyList<BarShopProductDefinition> All => Products;
 
-    private static BarShopProductDefinition Product(
-      string id,
-      string nameKey,
-      string iconKey,
-      string effectKey)
+    // Compatibility alias for older callers. The catalog now contains the 0.1.2 products.
+    public static IReadOnlyList<BarShopProductDefinition> Dummy => Products;
+
+    private static IReadOnlyList<BarShopProductDefinition> CreateProducts()
     {
-      return new BarShopProductDefinition(
-        id,
-        nameKey,
-        iconKey,
-        0,
-        effectKey,
-        BarShopProductDisplayState.VisiblePreview);
+      var products = new BarShopProductDefinition[GameItemCatalog.All.Count];
+      for (var index = 0; index < products.Length; index++)
+      {
+        products[index] = new BarShopProductDefinition(GameItemCatalog.All[index]);
+      }
+      return Array.AsReadOnly(products);
     }
   }
 }

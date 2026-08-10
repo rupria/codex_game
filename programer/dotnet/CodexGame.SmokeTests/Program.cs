@@ -8,6 +8,9 @@ using CodexGame.SmokeTests.Battle;
 using CodexGame.SmokeTests.Localization;
 using CodexGame.SmokeTests.Presentation;
 using CodexGame.SmokeTests.Shop;
+using CodexGame.SmokeTests.Items;
+using CodexGame.SmokeTests.Rewards;
+using CodexGame.SmokeTests.Development;
 
 var tests = new TestHarness();
 
@@ -32,5 +35,9 @@ HalliPileOverlapLayoutTests.Run(tests);
 StageFlowPlanTests.Run(tests);
 BarShopSessionTests.Run(tests);
 NextStageTransitionGateTests.Run(tests);
+RunInventoryTests.Run(tests);
+PokerItemSessionTests.Run(tests);
+StageRewardTests.Run(tests);
+DevelopmentCheatTests.Run(tests);
 
 return tests.Complete();
