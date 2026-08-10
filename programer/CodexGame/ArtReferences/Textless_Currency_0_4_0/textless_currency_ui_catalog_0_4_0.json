@@ -1,0 +1,77 @@
+{
+  "version": "0.4.0",
+  "source": "07_인게임_텍스트_최소화_및_재화_UI_기준.md / 2026-08-10",
+  "allRequirementsMandatory": true,
+  "runtimeRoot": "Assets/Art/Prototype/UI/Textless_Currency_0_4_0",
+  "currency": {
+    "basic": {
+      "icon": "currency_basic_bullet_40x40_0_4_0.png",
+      "battlePanel": "battle_currency_basic_panel_112x52_0_4_0.png",
+      "shape": "intact_bullet"
+    },
+    "temporary": {
+      "icon": "currency_temporary_cracked_hourglass_40x40_0_4_0.png",
+      "battlePanel": "battle_currency_temporary_panel_112x52_0_4_0.png",
+      "shape": "cracked_bullet_plus_hourglass_badge",
+      "hideWhenZeroInBattle": true,
+      "expireSheet": {
+        "file": "currency_temporary_expire_8f_320x40_0_4_0.png",
+        "frameSize": [40, 40],
+        "frameCount": 8,
+        "durationSeconds": 0.58
+      }
+    },
+    "shop": {
+      "dualPanel": "shop_currency_dual_panel_240x64_0_4_0.png",
+      "fixedOrder": ["temporary", "basic"],
+      "priceIcon": "shop_price_bullet_24x24_0_4_0.png",
+      "showCurrencyNames": false,
+      "showNumbers": true,
+      "exitWarningBadge": "shop_exit_warning_badge_24x24_0_4_0.png",
+      "exitWarningSheet": {
+        "file": "shop_exit_warning_pulse_6f_144x24_0_4_0.png",
+        "frameSize": [24, 24],
+        "frameCount": 6,
+        "frameDurationSeconds": 0.07
+      },
+      "firstExitWithTemporaryCurrency": "pulse_temporary_icon_and_exit_badge",
+      "secondExitWithTemporaryCurrency": "play_expire_then_transition"
+    }
+  },
+  "pokerPrediction": {
+    "usePortraitSelection": true,
+    "hideWinLoseText": true,
+    "visualSize": [88, 88],
+    "recommendedHitSize": [104, 104],
+    "player": {
+      "idle": "poker_predict_player_portrait_idle_88_0_4_0.png",
+      "hover": "poker_predict_player_portrait_hover_88_0_4_0.png",
+      "selected": "poker_predict_player_portrait_selected_88_0_4_0.png"
+    },
+    "ai": {
+      "idle": "poker_predict_ai_portrait_idle_88_0_4_0.png",
+      "hover": "poker_predict_ai_portrait_hover_88_0_4_0.png",
+      "selected": "poker_predict_ai_portrait_selected_88_0_4_0.png"
+    }
+  },
+  "displayPolicy": {
+    "genreAndStageNames": "hidden",
+    "currencyNames": "hidden",
+    "halliActionWords": "hidden",
+    "predictionWinLoseWords": "hidden",
+    "halliKeycaps": "icon_only",
+    "itemNameAndEffect": "focus_only",
+    "numbersAndTimers": "always"
+  },
+  "forbiddenVisibleStrings": [
+    "총알",
+    "일회성 총알",
+    "할리갈리",
+    "포커",
+    "승리",
+    "패배",
+    "카드 펼치기",
+    "왼쪽",
+    "오른쪽"
+  ]
+}
