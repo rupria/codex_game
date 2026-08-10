@@ -260,6 +260,7 @@ namespace CodexGame.Editor
     {
       CreateScene();
       var output = Environment.GetEnvironmentVariable("CODEX_GAME_WEBGL_OUTPUT");
+      var buildName = Environment.GetEnvironmentVariable("CODEX_GAME_BUILD_NAME");
 
       if (string.IsNullOrWhiteSpace(output))
       {
@@ -267,13 +268,23 @@ namespace CodexGame.Editor
       }
 
       Directory.CreateDirectory(output);
-      var report = BuildPipeline.BuildPlayer(new BuildPlayerOptions
+      var previousProductName = PlayerSettings.productName;
+      if (!string.IsNullOrWhiteSpace(buildName)) PlayerSettings.productName = buildName;
+      BuildReport report;
+      try
       {
-        scenes = new[] { ScenePath },
-        locationPathName = output,
-        target = BuildTarget.WebGL,
-        options = buildOptions
-      });
+        report = BuildPipeline.BuildPlayer(new BuildPlayerOptions
+        {
+          scenes = new[] { ScenePath },
+          locationPathName = output,
+          target = BuildTarget.WebGL,
+          options = buildOptions
+        });
+      }
+      finally
+      {
+        PlayerSettings.productName = previousProductName;
+      }
 
       if (report.summary.result != BuildResult.Succeeded)
       {
