@@ -12,6 +12,18 @@
     "rightSequence": ["ai_reveal_1", "player_reveal_2"],
     "previousCardOffset": {"x": -42, "y": 22},
     "opaqueBackplate": false,
+    "showControlHintLabels": false,
+    "showCommunityCardLabel": false,
+    "playerAcquiredTray": {
+      "required": true,
+      "alwaysVisible": true,
+      "runtimeRoot": "Assets/Art/Prototype/UI/Halli_0_3_4",
+      "file": "player_acquired_tray_open_378x130_0_3_4.png",
+      "screenPosition": [24, 406],
+      "cardList": {"startX":112,"startY":29,"stepX":50,"maxVisible":5},
+      "cardFacesVisible": true
+    },
+    "showAiBottomAcquiredTray": false,
     "rails": {
       "idle": "halli_shared_pile_rail_idle_140x136_0_3_7.png",
       "playerActive": "halli_shared_pile_rail_player_active_140x136_0_3_7.png",
@@ -30,4 +42,3 @@
     "flow": ["select_item", "read_effect", "select_target_if_required", "use_or_skip"]
   }
 }
-

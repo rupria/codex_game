@@ -1,9 +1,13 @@
 {
-  "version": "0.1.2-art-bridge-0.3.7",
-  "source": "gameplay flow 0.1.2 / revision 2026-08-10-02",
+  "version": "0.1.2-art-bridge-0.4.0",
+  "source": "gameplay flow 0.1.2 + textless currency UI / revision 2026-08-10-03",
   "runtimeRoots": {
     "common": "Assets/Art/Prototype/UI/Gameplay_0_1_2",
     "halli": "Assets/Art/Prototype/UI/Halli_0_3_7",
+    "halliStatusTray": "Assets/Art/Prototype/UI/Halli_0_3_4",
+    "halliRope": "Assets/Art/Prototype/UI/Halli_0_3_9",
+    "barShopBullet": "Assets/Art/Prototype/UI/BarShop_0_3_9",
+    "textlessCurrency": "Assets/Art/Prototype/UI/Textless_Currency_0_4_0",
     "pokerCrates": "Assets/Art/Prototype/UI/Poker_0_3_4",
     "pokerPopup": "Assets/Art/Prototype/UI/Poker_0_3_6",
     "pokerItemSelection": "Assets/Art/Prototype/UI/Poker_0_3_7"
@@ -21,9 +25,32 @@
   },
   "prediction": {
     "showBulletCountInPoker": false,
+    "usePortraitSelection": true,
+    "showWinLoseText": false,
+    "catalog": "ArtReferences/Textless_Currency_0_4_0/textless_currency_ui_catalog_0_4_0.json",
     "maxSuccess": 5,
     "resultOnlyMeter": "prediction_success_meter_320x68_0_1_2.png",
     "rewardPanel": "prediction_reward_breakdown_panel_420x112_0_1_2.png"
+  },
+  "currencyUI": {
+    "allRequirementsMandatory": true,
+    "basicIcon": "Textless_Currency_0_4_0/currency_basic_bullet_40x40_0_4_0.png",
+    "temporaryIcon": "Textless_Currency_0_4_0/currency_temporary_cracked_hourglass_40x40_0_4_0.png",
+    "shopDualPanel": "Textless_Currency_0_4_0/shop_currency_dual_panel_240x64_0_4_0.png",
+    "shopOrder": ["temporary", "basic"],
+    "showCurrencyNames": false,
+    "showNumbers": true,
+    "temporaryExitWarning": "Textless_Currency_0_4_0/shop_exit_warning_pulse_6f_144x24_0_4_0.png",
+    "temporaryExpire": "Textless_Currency_0_4_0/currency_temporary_expire_8f_320x40_0_4_0.png"
+  },
+  "displayPolicy": {
+    "genreAndStageNames": "hidden",
+    "currencyNames": "hidden",
+    "halliActionWords": "hidden",
+    "halliKeycaps": "icon_only",
+    "predictionWinLoseWords": "hidden",
+    "itemNameAndEffect": "focus_only",
+    "numbersAndTimers": "always"
   },
   "halli": {
     "sharedPileCount": 2,
@@ -31,6 +58,18 @@
     "previousCardOffset": {"x": -42, "y": 22},
     "activeCard": "latest only",
     "opaqueBackplate": false,
+    "showControlHintLabels": false,
+    "showCommunityCardLabel": false,
+    "playerAcquiredTray": {
+      "required": true,
+      "alwaysVisibleDuringHalli": true,
+      "file": "Halli_0_3_4/player_acquired_tray_open_378x130_0_3_4.png",
+      "position": {"x": 24, "y": 406},
+      "size": {"width": 378, "height": 130},
+      "cardList": {"startX": 112, "startY": 29, "stepX": 50, "maxVisible": 5},
+      "showAcquiredCardFaces": true
+    },
+    "showAiBottomAcquiredTray": false,
     "idleRail": "halli_shared_pile_rail_idle_140x136_0_3_7.png",
     "playerActiveRail": "halli_shared_pile_rail_player_active_140x136_0_3_7.png",
     "aiActiveRail": "halli_shared_pile_rail_ai_active_140x136_0_3_7.png"
