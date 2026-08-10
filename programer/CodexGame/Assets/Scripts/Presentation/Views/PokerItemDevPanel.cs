@@ -41,7 +41,12 @@ namespace CodexGame.Presentation.Views
       DrawTableCards(snapshot, cards, styles, localization);
 
       var canAct = snapshot.Phase == PokerItemPhase.AwaitingActions;
-      DrawClosedCrate(snapshot.Inventory.Count, canAct, art, styles, localization);
+      DrawClosedCrate(
+        snapshot.Inventory.Count,
+        canAct && !_inventoryOpen,
+        art,
+        styles,
+        localization);
 
       GUI.enabled = canAct && !_inventoryOpen;
       if (GUI.Button(new Rect(734f, 472f, 170f, 42f), localization.Get("UI_ITEM_CONFIRM_HAND")))
@@ -158,7 +163,6 @@ namespace CodexGame.Presentation.Views
       GUI.color = new Color(0f, 0f, 0f, 0.74f);
       GUI.DrawTexture(FullScreen, Texture2D.whiteTexture, ScaleMode.StretchToFill, true);
       GUI.color = previous;
-      GUI.Button(FullScreen, GUIContent.none, GUIStyle.none);
 
       var panel = art?.SelectionPanel ?? art?.PopupFrame;
       if (panel != null) GUI.DrawTexture(PopupRect, panel, ScaleMode.StretchToFill, true);
@@ -400,7 +404,6 @@ namespace CodexGame.Presentation.Views
       GUI.color = new Color(0f, 0f, 0f, 0.74f);
       GUI.DrawTexture(FullScreen, Texture2D.whiteTexture, ScaleMode.StretchToFill, true);
       GUI.color = previous;
-      GUI.Button(FullScreen, GUIContent.none, GUIStyle.none);
       GUI.Box(new Rect(280f, 132f, 400f, 270f), GUIContent.none);
       GUI.Label(new Rect(330f, 154f, 300f, 34f), localization.Get("UI_ITEM_CHOOSE_CARD"), styles.Heading);
       for (var index = 0; index < snapshot.BottomDealCandidates.Count; index++)
