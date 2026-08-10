@@ -1,4 +1,5 @@
 using CodexGame.Core.Halli;
+using CodexGame.Core.Shared;
 using UnityEngine;
 
 namespace CodexGame.Presentation.Views
@@ -52,19 +53,28 @@ namespace CodexGame.Presentation.Views
 
     public static Rect RevealHistoryRail(HalliActor actor, HalliRelativeSide side)
     {
-      var card = RevealHistoryCard(actor, side, 0);
+      var card = RevealHistoryCard(actor, side, 0, 1);
       return new Rect(card.x - 4f, card.y - 8f, 72f, 122f);
     }
 
     public static Rect RevealHistoryCard(
       HalliActor actor,
       HalliRelativeSide side,
-      int historyIndex)
+      int historyIndex,
+      int historyCount)
     {
-      var x = actor == HalliActor.Player
-        ? side == HalliRelativeSide.Left ? 212f : 312f
-        : side == HalliRelativeSide.Left ? 584f : 684f;
-      return new Rect(x, 194f + Mathf.Clamp(historyIndex, 0, 2) * 12f, 64f, 90f);
+      return new Rect(
+        HalliPileOverlapLayout.HistoryX(actor, side),
+        HalliPileOverlapLayout.HistoryY(historyIndex, historyCount),
+        64f,
+        90f);
+    }
+
+    public static Rect RevealPileSource(PileSide pile)
+    {
+      return pile == PileSide.Left
+        ? RevealHistoryCard(HalliActor.Ai, HalliRelativeSide.Right, 0, 1)
+        : RevealHistoryCard(HalliActor.Player, HalliRelativeSide.Right, 0, 1);
     }
 
     public static Rect PlayerAcquiredCard(int index, int count)

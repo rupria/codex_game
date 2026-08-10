@@ -96,8 +96,9 @@ namespace CodexGame.SmokeTests.Playable
       tests.Check(
         secondInput.RevealStepNumber == 3
           && secondInput.RevealingActor == HalliActor.Player
-          && secondInput.RevealingRelativeSide == HalliRelativeSide.Right,
-        "The second W input must start only the player's relative-right card.");
+          && secondInput.RevealingRelativeSide == HalliRelativeSide.Right
+          && secondInput.RevealingPile == PileSide.Right,
+        "The second W input must start the player's relative-right card on the physical right pile.");
     }
 
     private static void CheckBellDuringRevealStopsDistribution(TestHarness tests)
