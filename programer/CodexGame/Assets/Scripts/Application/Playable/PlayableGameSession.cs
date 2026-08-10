@@ -28,6 +28,7 @@ namespace CodexGame.Application.Playable
     private readonly PlayableTransitionTimeline _transition = new PlayableTransitionTimeline();
     private readonly BarShopSession _barShop = new BarShopSession(BarShopCatalog.All);
     private readonly BarShopPurchaseSession _shopPurchase = new BarShopPurchaseSession();
+    private readonly BarShopExitGuard _shopExitGuard = new BarShopExitGuard();
     private readonly NextStageTransitionGate _nextStageGate = new NextStageTransitionGate();
     private BulletLedger _bullets = new BulletLedger();
     private readonly RunInventory _inventory = new RunInventory();
@@ -69,6 +70,7 @@ namespace CodexGame.Application.Playable
       _lastStageRewardDetails = StageBulletReward.None;
       _barShop.Close();
       _shopPurchase.Reset();
+      _shopExitGuard.Reset();
       _nextStageGate.Reset();
       RecordInput(now);
       StartCombatRound(now, combatRoundSeed);
@@ -122,6 +124,7 @@ namespace CodexGame.Application.Playable
         RecordInput(now);
         _barShop.Begin(nextCombatRoundSeed);
         _shopPurchase.Reset();
+        _shopExitGuard.Reset();
         _nextStageGate.Reset();
         Phase = PlayableGamePhase.BarShop;
         return;
@@ -130,8 +133,14 @@ namespace CodexGame.Application.Playable
       if (Phase == PlayableGamePhase.BarShop)
       {
         if (_shopPurchase.IsInputLocked) return;
-        if (!_nextStageGate.TryRequest(nextCombatRoundSeed, now)) return;
         RecordInput(now);
+        if (_shopExitGuard.Request(_bullets.TemporaryBalance)
+          == BarShopExitRequestResult.WarningArmed)
+        {
+          return;
+        }
+        if (!_nextStageGate.TryRequest(nextCombatRoundSeed, now)) return;
+        _bullets.ExpireTemporary();
         _transition.Begin(
           PlayableTransitionKind.NextStage,
           now,
@@ -151,6 +160,7 @@ namespace CodexGame.Application.Playable
       if (Phase != PlayableGamePhase.BarShop
         || _shopPurchase.IsInputLocked
         || !_barShop.TryReroll()) return false;
+      _shopExitGuard.Reset();
       RecordInput(now);
       return true;
     }
@@ -165,8 +175,12 @@ namespace CodexGame.Application.Playable
       {
         return BarShopPurchaseFailure.InvalidSlot;
       }
+      _shopExitGuard.Reset();
       var result = _shopPurchase.TryBegin(product!, _bullets, _inventory, now);
-      if (result == BarShopPurchaseFailure.None) RecordInput(now);
+      if (result == BarShopPurchaseFailure.None)
+      {
+        RecordInput(now);
+      }
       return result;
     }
 
@@ -367,7 +381,8 @@ namespace CodexGame.Application.Playable
         _stageNumber,
         _combatRoundNumber,
         _health,
-        _bullets.Balance,
+        _bullets.BaseBalance,
+        _bullets.TemporaryBalance,
         _lastStageReward,
         _lastStageRewardDetails.BaseBullets,
         _lastStageRewardDetails.BonusBullets,
@@ -397,7 +412,9 @@ namespace CodexGame.Application.Playable
             ? _poker.GetSnapshot(now)
             : null,
         Phase == PlayableGamePhase.BarShop
-          ? _barShop.GetSnapshot(_shopPurchase.GetSnapshot(now))
+          ? _barShop.GetSnapshot(
+            _shopPurchase.GetSnapshot(now),
+            _shopExitGuard.WarningArmed)
           : null);
     }
 
@@ -513,6 +530,7 @@ namespace CodexGame.Application.Playable
       _transition.Clear();
       _barShop.Close();
       _shopPurchase.Reset();
+      _shopExitGuard.Reset();
       _stageNumber++;
       _combatRoundNumber = 1;
       _health = NextStageHealthResolver.RestoreAfterVictory(_health);
@@ -538,6 +556,7 @@ namespace CodexGame.Application.Playable
       ResetRunProgress();
       _barShop.Close();
       _shopPurchase.Reset();
+      _shopExitGuard.Reset();
       _nextStageGate.Reset();
       _stageNumber = 1;
       _combatRoundNumber = 1;
@@ -582,6 +601,7 @@ namespace CodexGame.Application.Playable
       _inventory.Clear();
       _predictionStreak.Reset();
       _cheatHistory.Reset();
+      _shopExitGuard.Reset();
       _lastStageReward = 0;
       _lastStageRewardDetails = StageBulletReward.None;
     }

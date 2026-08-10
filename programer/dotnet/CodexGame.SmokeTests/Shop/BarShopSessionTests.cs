@@ -16,6 +16,8 @@ namespace CodexGame.SmokeTests.Shop
       CheckPurchaseTransaction(tests);
       CheckThreeBulletPurchaseLock(tests);
       CheckRejectedPurchases(tests);
+      CheckTemporaryCurrencyPurchase(tests);
+      CheckExitWarning(tests);
     }
 
     private static void CheckVisitAndReroll(TestHarness tests)
@@ -74,7 +76,11 @@ namespace CodexGame.SmokeTests.Shop
         "A valid shop purchase must begin its toss motion.");
       var started = purchase.GetSnapshot(new GameTimestamp(0));
       tests.Check(
-        started.BulletCountBefore == 3 && started.BulletCountAfter == 2,
+        started.BulletCountBefore == 3
+          && started.BulletCountAfter == 2
+          && started.BaseBulletCountBefore == 3
+          && started.BaseBulletCountAfter == 2
+          && started.TemporaryBulletsSpent == 0,
         "The purchase snapshot must capture a decreasing bullet count for the pouch rebuild.");
       purchase.Tick(
         new GameTimestamp(GameRules.BarShopPouchCoverMicroseconds - 1),
@@ -173,6 +179,53 @@ namespace CodexGame.SmokeTests.Shop
       var ledger = new BulletLedger();
       ledger.SettleStageVictory(1, 3, 0);
       return ledger;
+    }
+
+    private static void CheckTemporaryCurrencyPurchase(TestHarness tests)
+    {
+      var ledger = new BulletLedger();
+      ledger.SettleStageVictory(1, 2, 1);
+      var inventory = new RunInventory();
+      var purchase = new BarShopPurchaseSession();
+      tests.Check(
+        purchase.TryBegin(
+          BarShopCatalog.All[1],
+          ledger,
+          inventory,
+          new GameTimestamp(0)) == BarShopPurchaseFailure.None,
+        "A mixed-balance purchase must begin when the combined balance covers the price.");
+      var planned = purchase.GetSnapshot(new GameTimestamp(0));
+      tests.Check(
+        planned.TemporaryBulletsSpent == 1
+          && planned.BaseBulletsSpent == 1
+          && planned.TemporaryBulletCountAfter == 0
+          && planned.BaseBulletCountAfter == 1,
+        "The payment snapshot must expose temporary-first spending for art and motion.");
+      purchase.Tick(
+        new GameTimestamp(GameRules.BarShopPouchCoverMicroseconds),
+        ledger,
+        inventory);
+      tests.Check(
+        ledger.TemporaryBalance == 0
+          && ledger.BaseBalance == 1
+          && inventory.Contains(GameItemId.BottomDeal),
+        "The committed purchase must match the temporary-first spend plan.");
+    }
+
+    private static void CheckExitWarning(TestHarness tests)
+    {
+      var guard = new BarShopExitGuard();
+      tests.Check(
+        guard.Request(2) == BarShopExitRequestResult.WarningArmed
+          && guard.WarningArmed,
+        "The first exit input with temporary currency must arm the icon-only warning.");
+      tests.Check(
+        guard.Request(2) == BarShopExitRequestResult.Proceed
+          && !guard.WarningArmed,
+        "The second exit input must confirm departure.");
+      tests.Check(
+        guard.Request(0) == BarShopExitRequestResult.Proceed,
+        "An empty temporary balance must leave the shop without an extra confirmation.");
     }
 
     private static HashSet<string> Ids(IReadOnlyList<BarShopProductDefinition> products)

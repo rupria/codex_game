@@ -18,7 +18,8 @@ namespace CodexGame.Application.Playable
       int stageNumber,
       int combatRoundNumber,
       BattleHealth health,
-      int bulletCount,
+      int baseBulletCount,
+      int temporaryBulletCount,
       int lastStageReward,
       int lastStageBaseReward,
       int lastStageBonusReward,
@@ -39,7 +40,13 @@ namespace CodexGame.Application.Playable
       StageNumber = stageNumber;
       CombatRoundNumber = combatRoundNumber;
       Health = health;
-      BulletCount = bulletCount;
+      if (baseBulletCount < 0) throw new ArgumentOutOfRangeException(nameof(baseBulletCount));
+      if (temporaryBulletCount < 0)
+      {
+        throw new ArgumentOutOfRangeException(nameof(temporaryBulletCount));
+      }
+      BaseBulletCount = baseBulletCount;
+      TemporaryBulletCount = temporaryBulletCount;
       LastStageReward = lastStageReward;
       LastStageBaseReward = lastStageBaseReward;
       LastStageBonusReward = lastStageBonusReward;
@@ -61,7 +68,9 @@ namespace CodexGame.Application.Playable
     public int StageNumber { get; }
     public int CombatRoundNumber { get; }
     public BattleHealth Health { get; }
-    public int BulletCount { get; }
+    public int BaseBulletCount { get; }
+    public int TemporaryBulletCount { get; }
+    public int BulletCount => BaseBulletCount + TemporaryBulletCount;
     public int LastStageReward { get; }
     public int LastStageBaseReward { get; }
     public int LastStageBonusReward { get; }

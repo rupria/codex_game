@@ -16,6 +16,7 @@ namespace CodexGame.Application.Shop
     private bool _committed;
     private int _bulletCountBefore;
     private int _bulletCountAfter;
+    private BulletSpend _plannedSpend;
 
     public bool IsInputLocked { get; private set; }
 
@@ -31,6 +32,7 @@ namespace CodexGame.Application.Shop
       if (IsInputLocked) return BarShopPurchaseFailure.InputLocked;
       _bulletCountBefore = bullets.Balance;
       _bulletCountAfter = bullets.Balance;
+      _plannedSpend = BulletSpend.None(bullets.BaseBalance, bullets.TemporaryBalance);
       if (!product.ItemId.HasValue
         || !GameItemCatalog.TryGet(product.ItemId.Value, out _))
       {
@@ -39,6 +41,10 @@ namespace CodexGame.Application.Shop
       if (!bullets.CanSpend(product.Price))
       {
         return Reject(BarShopPurchaseFailure.InsufficientBullets, now);
+      }
+      if (!bullets.TryPreviewSpend(product.Price, out _plannedSpend))
+      {
+        throw new InvalidOperationException("An affordable purchase did not produce a spend plan.");
       }
 
       var inventoryResult = inventory.CanAdd(product.ItemId.Value);
@@ -81,7 +87,8 @@ namespace CodexGame.Application.Shop
           throw new InvalidOperationException("A purchase cannot commit without an item product.");
         }
         if (inventory.CanAdd(_product.ItemId.Value) != InventoryAddResult.Added
-          || !bullets.TrySpend(_product.Price)
+          || !bullets.TrySpend(_product.Price, out var committedSpend)
+          || !SameSpend(_plannedSpend, committedSpend)
           || inventory.TryAdd(_product.ItemId.Value) != InventoryAddResult.Added)
         {
           throw new InvalidOperationException("A validated purchase changed during its input lock.");
@@ -112,7 +119,8 @@ namespace CodexGame.Application.Shop
         IsInputLocked,
         _committed,
         _bulletCountBefore,
-        _bulletCountAfter);
+        _bulletCountAfter,
+        _plannedSpend);
     }
 
     public void Reset()
@@ -123,6 +131,7 @@ namespace CodexGame.Application.Shop
       _committed = false;
       _bulletCountBefore = 0;
       _bulletCountAfter = 0;
+      _plannedSpend = BulletSpend.None(0, 0);
       IsInputLocked = false;
     }
 
@@ -135,6 +144,14 @@ namespace CodexGame.Application.Shop
       _committed = false;
       IsInputLocked = true;
       return failure;
+    }
+
+    private static bool SameSpend(BulletSpend expected, BulletSpend actual)
+    {
+      return expected.BaseBefore == actual.BaseBefore
+        && expected.TemporaryBefore == actual.TemporaryBefore
+        && expected.BaseSpent == actual.BaseSpent
+        && expected.TemporarySpent == actual.TemporarySpent;
     }
 
     private static long PurchaseLockDuration(int price)

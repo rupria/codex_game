@@ -11,19 +11,22 @@ namespace CodexGame.Application.Shop
       IReadOnlyList<BarShopProductDefinition> slots,
       bool canReroll,
       int rerollCost,
-      BarShopPurchaseSnapshot? purchase = null)
+      BarShopPurchaseSnapshot? purchase = null,
+      bool exitWarningArmed = false)
     {
       if (slots == null) throw new ArgumentNullException(nameof(slots));
       Slots = Array.AsReadOnly(Copy(slots));
       CanReroll = canReroll;
       RerollCost = rerollCost;
       Purchase = purchase;
+      ExitWarningArmed = exitWarningArmed;
     }
 
     public IReadOnlyList<BarShopProductDefinition> Slots { get; }
     public bool CanReroll { get; }
     public int RerollCost { get; }
     public BarShopPurchaseSnapshot? Purchase { get; }
+    public bool ExitWarningArmed { get; }
 
     private static BarShopProductDefinition[] Copy(
       IReadOnlyList<BarShopProductDefinition> source)
