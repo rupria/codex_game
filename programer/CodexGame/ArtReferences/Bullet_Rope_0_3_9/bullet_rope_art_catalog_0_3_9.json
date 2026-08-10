@@ -1,0 +1,56 @@
+{
+  "version": "0.3.9",
+  "runtimeRoots": {
+    "barShop": "Assets/Art/Prototype/UI/BarShop_0_3_9",
+    "halli": "Assets/Art/Prototype/UI/Halli_0_3_9"
+  },
+  "bullet": {
+    "size": [24, 40],
+    "idle": "bar_shop_bullet_western_brass_24x40_0_3_9.png",
+    "shine": "bar_shop_bullet_western_brass_shine_24x40_0_3_9.png",
+    "low": "bar_shop_bullet_western_brass_low_24x40_0_3_9.png",
+    "coinFlipSheet": {
+      "file": "bar_shop_bullet_coin_flip_glint_8f_512x64_0_3_9.png",
+      "frameSize": [64, 64],
+      "frameCount": 8,
+      "durationSeconds": 0.50,
+      "glintFrame": 4
+    },
+    "pourSheet": {
+      "file": "bar_shop_bullet_pour_table_8f_1280x120_0_3_9.png",
+      "frameSize": [160, 120],
+      "frameCount": 8,
+      "durationSeconds": 0.75,
+      "landingPattern": "irregular_scatter"
+    }
+  },
+  "ropeTimer": {
+    "body": "halli_rope_braided_body_258x16_0_3_9.png",
+    "bodyRender": {
+      "targetRect": [332, 147, 258, 10],
+      "preserveWeaveWithUvCrop": true,
+      "stretchRemainingWidth": false
+    },
+    "charCap": "halli_rope_burn_char_cap_24x16_0_3_9.png",
+    "charCapAnchor": "remaining_rope_xmax",
+    "flameStaticFallback": "halli_rope_burn_flame_32x32_0_3_9.png",
+    "flameSheet": {
+      "file": "halli_rope_burn_flame_6f_192x32_0_3_9.png",
+      "frameSize": [32, 32],
+      "frameCount": 6,
+      "frameDurationSeconds": 0.08,
+      "urgentPlaybackMultiplier": 1.35
+    },
+    "explosionStaticFallback": "halli_rope_timeout_burst_64x64_0_3_9.png",
+    "explosionSheet": {
+      "file": "halli_rope_timeout_burst_8f_512x64_0_3_9.png",
+      "frameSize": [64, 64],
+      "frameCount": 8,
+      "durationSeconds": 0.70
+    },
+    "tint": {
+      "texturedBody": "neutral_white",
+      "urgent": "flame_and_char_cap_only"
+    }
+  }
+}
