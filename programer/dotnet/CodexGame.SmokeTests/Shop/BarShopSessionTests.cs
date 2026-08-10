@@ -14,6 +14,7 @@ namespace CodexGame.SmokeTests.Shop
       CheckVisitAndReroll(tests);
       CheckProductCatalog(tests);
       CheckPurchaseTransaction(tests);
+      CheckThreeBulletPurchaseLock(tests);
       CheckRejectedPurchases(tests);
     }
 
@@ -71,27 +72,68 @@ namespace CodexGame.SmokeTests.Shop
         purchase.TryBegin(product, ledger, inventory, new GameTimestamp(0))
           == BarShopPurchaseFailure.None,
         "A valid shop purchase must begin its toss motion.");
+      var started = purchase.GetSnapshot(new GameTimestamp(0));
+      tests.Check(
+        started.BulletCountBefore == 3 && started.BulletCountAfter == 2,
+        "The purchase snapshot must capture a decreasing bullet count for the pouch rebuild.");
       purchase.Tick(
-        new GameTimestamp(GameRules.BarShopPurchaseContactMicroseconds - 1),
+        new GameTimestamp(GameRules.BarShopPouchCoverMicroseconds - 1),
         ledger,
         inventory);
       tests.Check(
         ledger.Balance == 3 && inventory.Count == 0,
-        "Bullets and inventory must not change before the tossed bullet contacts the product.");
+        "Bullets and inventory must not change before the hand fully covers the pouch.");
       purchase.Tick(
-        new GameTimestamp(GameRules.BarShopPurchaseContactMicroseconds),
+        new GameTimestamp(GameRules.BarShopPouchCoverMicroseconds),
         ledger,
         inventory);
       tests.Check(
         ledger.Balance == 2 && inventory.Contains(GameItemId.Reload),
-        "Purchase cost and item delivery must commit together at the 0.50 second contact point.");
+        "Purchase cost and item delivery must commit together while the pouch count is covered.");
       purchase.Tick(
-        new GameTimestamp(GameRules.BarShopPurchaseLockMicroseconds),
+        new GameTimestamp(
+          GameRules.BarShopPouchCoverMicroseconds
+          + GameRules.BarShopCoinFlipDurationMicroseconds),
         ledger,
         inventory);
       tests.Check(
         !purchase.IsInputLocked && ledger.Balance == 2 && inventory.Count == 1,
-        "The 0.60 second purchase lock must end without committing a second time.");
+        "A one-bullet coin-flip lock must end without committing a second time.");
+    }
+
+    private static void CheckThreeBulletPurchaseLock(TestHarness tests)
+    {
+      var ledger = FundedLedger();
+      var inventory = new RunInventory();
+      var purchase = new BarShopPurchaseSession();
+      var product = new BarShopProductDefinition(
+        "test.pour",
+        "UI_ITEM_RELOAD",
+        "bar_shop.item.reload",
+        3,
+        "test.pour",
+        BarShopProductDisplayState.VisiblePreview,
+        GameItemId.Reload);
+      tests.Check(
+        purchase.TryBegin(product, ledger, inventory, new GameTimestamp(0))
+          == BarShopPurchaseFailure.None,
+        "A three-bullet product must enter the pour-payment path.");
+      purchase.Tick(
+        new GameTimestamp(GameRules.BarShopPouchCoverMicroseconds),
+        ledger,
+        inventory);
+      tests.Check(
+        ledger.Balance == 0 && purchase.IsInputLocked,
+        "A pour payment must deduct the exact price once and stay locked during its 0.75 second motion.");
+      purchase.Tick(
+        new GameTimestamp(
+          GameRules.BarShopPouchCoverMicroseconds
+          + GameRules.BarShopBulletPourDurationMicroseconds),
+        ledger,
+        inventory);
+      tests.Check(
+        !purchase.IsInputLocked && ledger.Balance == 0 && inventory.Count == 1,
+        "A pour payment must unlock after its longer motion without a duplicate deduction.");
     }
 
     private static void CheckRejectedPurchases(TestHarness tests)

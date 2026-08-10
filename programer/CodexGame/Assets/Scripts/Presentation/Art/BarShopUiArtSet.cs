@@ -49,6 +49,11 @@ namespace CodexGame.Presentation.Art
     [SerializeField] private Texture2D _bulletTossSheet;
     [SerializeField] private List<Texture2D> _bulletTossFrames = new List<Texture2D>();
     [SerializeField] private Texture2D _brassSpark;
+    [SerializeField] private Texture2D _ammoPouchEmpty;
+    [SerializeField] private Texture2D _ammoPouchBullet;
+    [SerializeField] private Texture2D _ammoPouchHandCover;
+    [SerializeField] private Texture2D _bulletCoinFlipSheet;
+    [SerializeField] private Texture2D _bulletPourSheet;
     [SerializeField] private List<BarShopProductIconBinding> _productIcons =
       new List<BarShopProductIconBinding>();
 
@@ -66,6 +71,11 @@ namespace CodexGame.Presentation.Art
     public Texture2D AmmoPouch => _ammoPouch;
     public Texture2D BulletTossSheet => _bulletTossSheet;
     public Texture2D BrassSpark => _brassSpark;
+    public Texture2D AmmoPouchEmpty => _ammoPouchEmpty;
+    public Texture2D AmmoPouchBullet => _ammoPouchBullet;
+    public Texture2D AmmoPouchHandCover => _ammoPouchHandCover;
+    public Texture2D BulletCoinFlipSheet => _bulletCoinFlipSheet;
+    public Texture2D BulletPourSheet => _bulletPourSheet;
     public IReadOnlyList<Texture2D> BulletTossFrames => _bulletTossFrames;
 
     public BarShopUiArtSet()
@@ -88,7 +98,12 @@ namespace CodexGame.Presentation.Art
       Texture2D ammoPouch = null,
       Texture2D bulletTossSheet = null,
       IReadOnlyList<Texture2D> bulletTossFrames = null,
-      Texture2D brassSpark = null)
+      Texture2D brassSpark = null,
+      Texture2D ammoPouchEmpty = null,
+      Texture2D ammoPouchBullet = null,
+      Texture2D ammoPouchHandCover = null,
+      Texture2D bulletCoinFlipSheet = null,
+      Texture2D bulletPourSheet = null)
     {
       _background = RequireTexture(background, nameof(background));
       _slotFrame = RequireTexture(slotFrame, nameof(slotFrame));
@@ -107,6 +122,11 @@ namespace CodexGame.Presentation.Art
         ? new List<Texture2D>(bulletTossFrames)
         : new List<Texture2D>();
       _brassSpark = brassSpark;
+      _ammoPouchEmpty = ammoPouchEmpty;
+      _ammoPouchBullet = ammoPouchBullet;
+      _ammoPouchHandCover = ammoPouchHandCover;
+      _bulletCoinFlipSheet = bulletCoinFlipSheet;
+      _bulletPourSheet = bulletPourSheet;
       _productIcons = productIcons != null
         ? new List<BarShopProductIconBinding>(productIcons)
         : throw new ArgumentNullException(nameof(productIcons));

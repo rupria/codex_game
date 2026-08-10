@@ -13,15 +13,6 @@ namespace CodexGame.Presentation.Views
     public static readonly Rect AiDeck = new Rect(440f, 40f, 80f, 100f);
     public static readonly Rect Status = new Rect(300f, 142f, 360f, 42f);
 
-    public static readonly Rect LeftPileFirst = new Rect(
-      HalliPileOverlapLayout.X(true, 0), 194f, HalliPileOverlapLayout.CardWidth, 135f);
-    public static readonly Rect LeftPileSecond = new Rect(
-      HalliPileOverlapLayout.X(true, 1), 194f, HalliPileOverlapLayout.CardWidth, 135f);
-    public static readonly Rect RightPileFirst = new Rect(
-      HalliPileOverlapLayout.X(false, 0), 194f, HalliPileOverlapLayout.CardWidth, 135f);
-    public static readonly Rect RightPileSecond = new Rect(
-      HalliPileOverlapLayout.X(false, 1), 194f, HalliPileOverlapLayout.CardWidth, 135f);
-
     public static readonly Rect LeftBellVisual = new Rect(390f, 286f, 64f, 64f);
     public static readonly Rect RightBellVisual = new Rect(506f, 286f, 64f, 64f);
     public static readonly Rect LeftBellHit = new Rect(378f, 274f, 88f, 88f);
@@ -40,41 +31,27 @@ namespace CodexGame.Presentation.Views
     private const float AcquiredCardHeight = 78f;
     private const float PreferredAcquiredCardStep = 30f;
 
-    public static Rect PileCard(bool left, int index)
+    public static Rect SharedPileRail(PileSide pile)
     {
-      if (left) return index == 0 ? LeftPileFirst : LeftPileSecond;
-      return index == 0 ? RightPileFirst : RightPileSecond;
+      var newest = SharedPileCard(pile, 0, 1);
+      return new Rect(newest.x + HalliPileOverlapLayout.PreviousCardOffsetX - 8f,
+        newest.y - 8f,
+        140f,
+        136f);
     }
 
-    public static Rect RevealTarget(bool left, int pileIndex)
-    {
-      return PileCard(left, Mathf.Clamp(pileIndex, 0, 1));
-    }
-
-    public static Rect RevealHistoryRail(HalliActor actor, HalliRelativeSide side)
-    {
-      var card = RevealHistoryCard(actor, side, 0, 1);
-      return new Rect(card.x - 4f, card.y - 8f, 72f, 122f);
-    }
-
-    public static Rect RevealHistoryCard(
-      HalliActor actor,
-      HalliRelativeSide side,
-      int historyIndex,
-      int historyCount)
+    public static Rect SharedPileCard(PileSide pile, int cardIndex, int cardCount)
     {
       return new Rect(
-        HalliPileOverlapLayout.HistoryX(actor, side),
-        HalliPileOverlapLayout.HistoryY(historyIndex, historyCount),
-        64f,
-        90f);
+        HalliPileOverlapLayout.CardX(pile, cardIndex, cardCount),
+        HalliPileOverlapLayout.CardY(cardIndex, cardCount),
+        HalliPileOverlapLayout.CardWidth,
+        HalliPileOverlapLayout.CardHeight);
     }
 
     public static Rect RevealPileSource(PileSide pile)
     {
-      return pile == PileSide.Left
-        ? RevealHistoryCard(HalliActor.Ai, HalliRelativeSide.Right, 0, 1)
-        : RevealHistoryCard(HalliActor.Player, HalliRelativeSide.Right, 0, 1);
+      return SharedPileCard(pile, 0, 1);
     }
 
     public static Rect PlayerAcquiredCard(int index, int count)

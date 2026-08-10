@@ -14,6 +14,8 @@ namespace CodexGame.Application.Shop
     private BarShopPurchasePhase _phase;
     private BarShopPurchaseFailure _failure;
     private bool _committed;
+    private int _bulletCountBefore;
+    private int _bulletCountAfter;
 
     public bool IsInputLocked { get; private set; }
 
@@ -27,6 +29,8 @@ namespace CodexGame.Application.Shop
       if (bullets == null) throw new ArgumentNullException(nameof(bullets));
       if (inventory == null) throw new ArgumentNullException(nameof(inventory));
       if (IsInputLocked) return BarShopPurchaseFailure.InputLocked;
+      _bulletCountBefore = bullets.Balance;
+      _bulletCountAfter = bullets.Balance;
       if (!product.ItemId.HasValue
         || !GameItemCatalog.TryGet(product.ItemId.Value, out _))
       {
@@ -56,6 +60,7 @@ namespace CodexGame.Application.Shop
       _phase = BarShopPurchasePhase.Tossing;
       _failure = BarShopPurchaseFailure.None;
       _committed = false;
+      _bulletCountAfter = _bulletCountBefore - product.Price;
       IsInputLocked = true;
       return BarShopPurchaseFailure.None;
     }
@@ -69,7 +74,7 @@ namespace CodexGame.Application.Shop
       var elapsed = Math.Max(0, now.Microseconds - _startedAt.Microseconds);
       if (_phase == BarShopPurchasePhase.Tossing
         && !_committed
-        && elapsed >= GameRules.BarShopPurchaseContactMicroseconds)
+        && elapsed >= GameRules.BarShopPouchCoverMicroseconds)
       {
         if (_product == null || !_product.ItemId.HasValue)
         {
@@ -87,7 +92,7 @@ namespace CodexGame.Application.Shop
 
       var lockDuration = _phase == BarShopPurchasePhase.Rejected
         ? GameRules.BarShopPurchaseRejectedShakeMicroseconds
-        : GameRules.BarShopPurchaseLockMicroseconds;
+        : PurchaseLockDuration(_product?.Price ?? 0);
       if (elapsed < lockDuration) return _committed;
 
       IsInputLocked = false;
@@ -105,7 +110,9 @@ namespace CodexGame.Application.Shop
         _product,
         elapsed,
         IsInputLocked,
-        _committed);
+        _committed,
+        _bulletCountBefore,
+        _bulletCountAfter);
     }
 
     public void Reset()
@@ -114,6 +121,8 @@ namespace CodexGame.Application.Shop
       _phase = BarShopPurchasePhase.Idle;
       _failure = BarShopPurchaseFailure.None;
       _committed = false;
+      _bulletCountBefore = 0;
+      _bulletCountAfter = 0;
       IsInputLocked = false;
     }
 
@@ -126,6 +135,14 @@ namespace CodexGame.Application.Shop
       _committed = false;
       IsInputLocked = true;
       return failure;
+    }
+
+    private static long PurchaseLockDuration(int price)
+    {
+      var paymentDuration = price <= 2
+        ? GameRules.BarShopCoinFlipDurationMicroseconds
+        : GameRules.BarShopBulletPourDurationMicroseconds;
+      return GameRules.BarShopPouchCoverMicroseconds + paymentDuration;
     }
   }
 }

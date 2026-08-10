@@ -20,6 +20,11 @@ namespace CodexGame.Presentation.Art
     [SerializeField] private Texture2D _bottomDealIcon;
     [SerializeField] private Texture2D _hypeManIcon;
     [SerializeField] private Texture2D _healthRecoveryIcon;
+    [SerializeField] private Texture2D _selectionPanel;
+    [SerializeField] private Texture2D _detailPanel;
+    [SerializeField] private Texture2D _actionButtonIdle;
+    [SerializeField] private Texture2D _actionButtonHover;
+    [SerializeField] private Texture2D _actionButtonDisabled;
 
     public PokerItemUiArtSet(
       Texture2D crateClosed,
@@ -34,7 +39,12 @@ namespace CodexGame.Presentation.Art
       Texture2D reloadIcon,
       Texture2D bottomDealIcon,
       Texture2D hypeManIcon,
-      Texture2D healthRecoveryIcon)
+      Texture2D healthRecoveryIcon,
+      Texture2D selectionPanel = null,
+      Texture2D detailPanel = null,
+      Texture2D actionButtonIdle = null,
+      Texture2D actionButtonHover = null,
+      Texture2D actionButtonDisabled = null)
     {
       _crateClosed = Require(crateClosed, nameof(crateClosed));
       _crateOpenEmpty = Require(crateOpenEmpty, nameof(crateOpenEmpty));
@@ -49,6 +59,11 @@ namespace CodexGame.Presentation.Art
       _bottomDealIcon = Require(bottomDealIcon, nameof(bottomDealIcon));
       _hypeManIcon = Require(hypeManIcon, nameof(hypeManIcon));
       _healthRecoveryIcon = Require(healthRecoveryIcon, nameof(healthRecoveryIcon));
+      _selectionPanel = selectionPanel;
+      _detailPanel = detailPanel;
+      _actionButtonIdle = actionButtonIdle;
+      _actionButtonHover = actionButtonHover;
+      _actionButtonDisabled = actionButtonDisabled;
     }
 
     public Texture2D CrateClosed => _crateClosed;
@@ -60,6 +75,11 @@ namespace CodexGame.Presentation.Art
     public Texture2D SlotHover => _slotHover;
     public Texture2D SlotSelected => _slotSelected;
     public Texture2D SlotDisabled => _slotDisabled;
+    public Texture2D SelectionPanel => _selectionPanel;
+    public Texture2D DetailPanel => _detailPanel;
+    public Texture2D ActionButtonIdle => _actionButtonIdle;
+    public Texture2D ActionButtonHover => _actionButtonHover;
+    public Texture2D ActionButtonDisabled => _actionButtonDisabled;
 
     public Texture2D FindItemIcon(GameItemId itemId)
     {

@@ -9,13 +9,6 @@ namespace CodexGame.SmokeTests.Presentation
     public static void Run(TestHarness tests)
     {
       tests.Check(
-        HalliPileOverlapLayout.X(true, 1) - HalliPileOverlapLayout.X(true, 0) == 84f
-          && HalliPileOverlapLayout.X(false, 1) - HalliPileOverlapLayout.X(false, 0) == 84f,
-        "Both Halli piles must expose the latest two 96px cards at the approved 84px step.");
-      tests.Check(
-        HalliPileOverlapLayout.CardWidth - HalliPileOverlapLayout.CardStep == 12f,
-        "The approved Halli pile layout must retain a 12px visual overlap.");
-      tests.Check(
         HalliPileOverlapLayout.PhysicalPile(HalliActor.Player, HalliRelativeSide.Left)
             == PileSide.Left
           && HalliPileOverlapLayout.PhysicalPile(HalliActor.Ai, HalliRelativeSide.Right)
@@ -26,16 +19,18 @@ namespace CodexGame.SmokeTests.Presentation
             == PileSide.Right,
         "Player-left and AI-right must share the left pile; AI-left and player-right must share the right pile.");
       tests.Check(
-        HalliPileOverlapLayout.HistoryX(HalliActor.Player, HalliRelativeSide.Left) == 212f
-          && HalliPileOverlapLayout.HistoryX(HalliActor.Ai, HalliRelativeSide.Right) == 312f
-          && HalliPileOverlapLayout.HistoryX(HalliActor.Ai, HalliRelativeSide.Left) == 584f
-          && HalliPileOverlapLayout.HistoryX(HalliActor.Player, HalliRelativeSide.Right) == 684f,
-        "Each physical pile must keep two actor lanes inside the same left or right judgment area.");
+        HalliPileOverlapLayout.CardX(PileSide.Left, 0, 2) == 254f
+          && HalliPileOverlapLayout.CardY(0, 2) == 212f
+          && HalliPileOverlapLayout.CardX(PileSide.Left, 1, 2) == 296f
+          && HalliPileOverlapLayout.CardY(1, 2) == 190f
+          && HalliPileOverlapLayout.CardX(PileSide.Right, 0, 2) == 614f
+          && HalliPileOverlapLayout.CardX(PileSide.Right, 1, 2) == 656f,
+        "The previous card must move (-42,+22) while the newest card stays at each shared-pile anchor.");
       tests.Check(
-        HalliPileOverlapLayout.HistoryY(2, 3) == 194f
-          && HalliPileOverlapLayout.HistoryY(1, 3) == 206f
-          && HalliPileOverlapLayout.HistoryY(0, 3) == 218f,
-        "A new card must occupy the top position while older cards move downward by 12px.");
+        HalliPileOverlapLayout.MaximumPileCards == 2
+          && HalliPileOverlapLayout.DrawOrderIndex(0, 2) == 1
+          && HalliPileOverlapLayout.DrawOrderIndex(1, 2) == 0,
+        "Each shared pile must keep at most two cards and draw the previous card above the newest card.");
     }
   }
 }

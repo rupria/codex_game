@@ -20,13 +20,15 @@ namespace CodexGame.Editor
     private const string UiArtRoot = "Assets/Art/Prototype/UI/";
     private const string HalliUiArtRoot = UiArtRoot + "Halli_0_1_0/";
     private const string HalliUi021ArtRoot = UiArtRoot + "Halli_0_2_1/";
-    private const string HalliUi035ArtRoot = UiArtRoot + "Halli_0_3_5/";
+    private const string HalliUi037ArtRoot = UiArtRoot + "Halli_0_3_7/";
     private const string PokerUiArtRoot = UiArtRoot + "Poker_0_2_2/";
     private const string PokerUi034ArtRoot = UiArtRoot + "Poker_0_3_4/";
     private const string PokerUi036ArtRoot = UiArtRoot + "Poker_0_3_6/";
+    private const string PokerUi037ArtRoot = UiArtRoot + "Poker_0_3_7/";
     private const string GameplayUi012ArtRoot = UiArtRoot + "Gameplay_0_1_2/";
     private const string BarShopUiArtRoot = UiArtRoot + "BarShop_0_3_0/";
     private const string BarShopUi034ArtRoot = UiArtRoot + "BarShop_0_3_4/";
+    private const string BarShopUi038ArtRoot = UiArtRoot + "BarShop_0_3_8/";
     private const string StageTransitionUiArtRoot = UiArtRoot + "StageTransition_0_3_1/";
     private const string IntroArtPath = HalliUiArtRoot + "start_screen_background.png";
     private const string BackdropShaderPath = "Assets/Shaders/RuntimeBackdropLit.shader";
@@ -74,10 +76,12 @@ namespace CodexGame.Editor
         LoadTexture(HalliUi021ArtRoot + "round_win_pip_player_filled_32_0_2_1.png"),
         LoadTexture(HalliUi021ArtRoot + "round_win_pip_ai_empty_32_0_2_1.png"),
         LoadTexture(HalliUi021ArtRoot + "round_win_pip_ai_filled_32_0_2_1.png"),
-        playerRevealHistoryRail: LoadTexture(
-          HalliUi035ArtRoot + "halli_reveal_history_rail_player_72x122_0_3_5.png"),
-        aiRevealHistoryRail: LoadTexture(
-          HalliUi035ArtRoot + "halli_reveal_history_rail_ai_72x122_0_3_5.png"));
+        sharedPileRailIdle: LoadTexture(
+          HalliUi037ArtRoot + "halli_shared_pile_rail_idle_140x136_0_3_7.png"),
+        sharedPileRailPlayerActive: LoadTexture(
+          HalliUi037ArtRoot + "halli_shared_pile_rail_player_active_140x136_0_3_7.png"),
+        sharedPileRailAiActive: LoadTexture(
+          HalliUi037ArtRoot + "halli_shared_pile_rail_ai_active_140x136_0_3_7.png"));
       var guideUiArtSet = new GuideUiArtSet(
         LoadTexture(HalliUiArtRoot + "guide_modal_background.png"),
         LoadTexture(HalliUiArtRoot + "guide_page_flow_art.png"),
@@ -112,7 +116,12 @@ namespace CodexGame.Editor
         LoadTexture(GameplayUi012ArtRoot + "item_reload_64_0_1_2.png"),
         LoadTexture(GameplayUi012ArtRoot + "item_bottom_deal_64_0_1_2.png"),
         LoadTexture(GameplayUi012ArtRoot + "item_hype_man_64_0_1_2.png"),
-        LoadTexture(GameplayUi012ArtRoot + "item_heal_tonic_64_0_1_2.png"));
+        LoadTexture(GameplayUi012ArtRoot + "item_heal_tonic_64_0_1_2.png"),
+        LoadTexture(PokerUi037ArtRoot + "poker_item_select_panel_640x336_0_3_7.png"),
+        LoadTexture(PokerUi037ArtRoot + "poker_item_detail_panel_376x112_0_3_7.png"),
+        LoadTexture(PokerUi037ArtRoot + "poker_item_action_button_idle_172x44_0_3_7.png"),
+        LoadTexture(PokerUi037ArtRoot + "poker_item_action_button_hover_172x44_0_3_7.png"),
+        LoadTexture(PokerUi037ArtRoot + "poker_item_action_button_disabled_172x44_0_3_7.png"));
       var barShopUiArtSet = new BarShopUiArtSet(
         LoadTexture(BarShopUiArtRoot + "bar_shop_background_unlit_960x540_0_3_0.png"),
         LoadTexture(BarShopUiArtRoot + "bar_shop_product_slot_230x210_0_3_0.png"),
@@ -149,7 +158,17 @@ namespace CodexGame.Editor
         ammoPouch: LoadTexture(
           BarShopUi034ArtRoot + "bar_shop_ammo_pouch_180x150_0_3_4.png"),
         bulletTossSheet: LoadTexture(
-          BarShopUi034ArtRoot + "bar_shop_bullet_toss_spin_384x64_0_3_4.png"));
+          BarShopUi034ArtRoot + "bar_shop_bullet_toss_spin_384x64_0_3_4.png"),
+        ammoPouchEmpty: LoadTexture(
+          BarShopUi038ArtRoot + "bar_shop_ammo_pouch_empty_180x150_0_3_8.png"),
+        ammoPouchBullet: LoadTexture(
+          BarShopUi038ArtRoot + "bar_shop_ammo_pouch_bullet_24x40_0_3_8.png"),
+        ammoPouchHandCover: LoadTexture(
+          BarShopUi038ArtRoot + "bar_shop_ammo_pouch_hand_cover_220x180_0_3_8.png"),
+        bulletCoinFlipSheet: LoadTexture(
+          BarShopUi038ArtRoot + "bar_shop_bullet_coin_flip_glint_8f_512x64_0_3_8.png"),
+        bulletPourSheet: LoadTexture(
+          BarShopUi038ArtRoot + "bar_shop_bullet_pour_table_8f_1280x120_0_3_8.png"));
       var stageTransitionUiArtSet = new StageTransitionUiArtSet(
         LoadTexture(StageTransitionUiArtRoot
           + "stage_exit_background_closed_unlit_960x540_0_3_1.png"),

@@ -29,8 +29,9 @@ namespace CodexGame.Core.Shared
     public const long PredictionTimeoutMicroseconds = 120_000_000;
     public const long PokerResultAnnouncementMicroseconds = 1_000_000;
     public const long PlayerJokerPresentationMicroseconds = 900_000;
-    public const long BarShopPurchaseContactMicroseconds = 500_000;
-    public const long BarShopPurchaseLockMicroseconds = 600_000;
+    public const long BarShopPouchCoverMicroseconds = 120_000;
+    public const long BarShopCoinFlipDurationMicroseconds = 500_000;
+    public const long BarShopBulletPourDurationMicroseconds = 750_000;
     public const long BarShopPurchaseRejectedShakeMicroseconds = 120_000;
     public const long NextStageTransitionShopClearMicroseconds = 220_000;
     public const long NextStageTransitionCameraTurnMicroseconds = 320_000;
