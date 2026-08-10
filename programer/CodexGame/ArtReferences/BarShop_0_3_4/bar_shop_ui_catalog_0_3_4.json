@@ -4,8 +4,10 @@
   "localizedLabels": ["UI_BAR_REROLL_FREE", "UI_BAR_REROLL_USED", "UI_BAR_CONTINUE"],
   "pouch": "bar_shop_ammo_pouch_180x150_0_3_4.png",
   "layoutPreview": "preview/bar_shop_four_slot_pouch_layout_preview_960x540_0_3_4.png",
-  "shopSlots": { "capacity": 4, "x": [20, 250, 480, 710], "y": 124, "width": 190, "height": 174 },
+  "lightingPreview": "preview/bar_shop_lighting_before_after_1920x540_0_3_6.png",
+  "shopSlots": { "capacity": 4, "x": [20, 250, 480, 710], "y": 146, "width": 190, "height": 174 },
   "pouchRect": { "x": 776, "y": 384, "width": 180, "height": 150, "backgroundFrame": false },
   "bulletSpinSheet": "bar_shop_bullet_toss_spin_384x64_0_3_4.png",
-  "motion": { "duration": 0.50, "inputLock": 0.60, "rotationDegrees": 540, "chargeAt": "impact" }
+  "motion": { "duration": 0.50, "inputLock": 0.60, "rotationDegrees": 540, "chargeAt": "impact" },
+  "lighting": { "tableOrCounterMultiplier": 1.20, "saloonBackgroundReadable": true }
 }
