@@ -46,6 +46,31 @@ local function resize(src,w,h)
   end
   return dst
 end
+local function clamp(v) return math.max(0,math.min(255,math.floor(v+0.5))) end
+local function warmShopLighting(src)
+  local dst=Image(src.width,src.height,ColorMode.RGB); dst:clear(C.transparent)
+  local w=src.width; local h=src.height
+  local function pool(x,y,cx,cy,rx,ry,power)
+    local dx=(x-cx)/rx; local dy=(y-cy)/ry; local d=dx*dx+dy*dy
+    if d>=1 then return 0 end
+    return (1-d)*power
+  end
+  for y=0,h-1 do for x=0,w-1 do
+    local px=src:getPixel(x,y); local a=app.pixelColor.rgbaA(px)
+    if a>0 then
+      local r=app.pixelColor.rgbaR(px); local g=app.pixelColor.rgbaG(px); local b=app.pixelColor.rgbaB(px)
+      local onCounter=y>h*0.44
+      local mul=onCounter and 1.20 or 1.36
+      local addR=onCounter and 5 or 16; local addG=onCounter and 3 or 11; local addB=onCounter and 1 or 6
+      local practical=pool(x,y,w*0.23,h*0.27,w*0.27,h*0.34,19)
+        +pool(x,y,w*0.76,h*0.24,w*0.25,h*0.32,16)
+      dst:drawPixel(x,y,app.pixelColor.rgba(
+        clamp(r*mul+addR+practical),clamp(g*mul+addG+practical*0.68),
+        clamp(b*mul+addB+practical*0.28),a))
+    end
+  end end
+  return dst
+end
 local function tight(src)
   local x0=src.width-1; local y0=src.height-1; local x1=0; local y1=0; local found=false
   for y=0,src.height-1 do for x=0,src.width-1 do if alpha(src:getPixel(x,y))>8 then
@@ -150,17 +175,27 @@ ss:saveAs(sourceDir.."/bar_shop_bullet_toss_spin_0_3_4.aseprite"); ss:close()
 
 -- Build the presentation on the clean saloon background. This avoids the opaque
 -- patch that used to sit behind the pouch in the screenshot-derived mockup.
-local screen=resize(load(backgroundPath),960,540)
+local rawBackground=resize(load(backgroundPath),960,540)
+local litBackground=warmShopLighting(rawBackground)
+local lightingBoard=Image(1920,540,ColorMode.RGB); lightingBoard:clear(C.ink)
+lightingBoard:drawImage(rawBackground,Point(0,0)); lightingBoard:drawImage(litBackground,Point(960,0))
+fill(lightingBoard,957,0,6,540,C.brassHi)
+save(litBackground,previewDir.."/bar_shop_lighting_visibility_reference_960x540_0_3_6.png")
+save(litBackground,outputDir.."/bar_shop_lighting_visibility_reference_960x540_0_3_6.png")
+save(lightingBoard,previewDir.."/bar_shop_lighting_before_after_1920x540_0_3_6.png")
+save(lightingBoard,outputDir.."/bar_shop_lighting_before_after_1920x540_0_3_6.png")
+local screen=Image(litBackground)
 screen:drawImage(load(ammoPanelPath),Point(40,28))
 screen:drawImage(load(hpPanelPath),Point(720,28))
 
 -- 0.1.2 shop capacity: four products. Keep the whole row above the pouch zone.
 local productSlot=resize(load(productSlotPath),190,174)
 local productXs={20,250,480,710}
+local productY=146
 for i=1,4 do
   local x=productXs[i]
-  screen:drawImage(productSlot,Point(x,124))
-  screen:drawImage(resize(load(itemPaths[i]),54,54),Point(x+68,142))
+  screen:drawImage(productSlot,Point(x,productY))
+  screen:drawImage(resize(load(itemPaths[i]),54,54),Point(x+68,productY+18))
 end
 
 -- The actual runtime uses localized TMP text over these iconless skins.

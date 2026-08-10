@@ -1,0 +1,31 @@
+{
+  "version": "0.3.6",
+  "intent": "Readable warm western saloon while preserving the table as the focal point",
+  "tableKey": {
+    "type": "Spot Light",
+    "intensityMultiplierFromCurrent": 1.20,
+    "color": "#FFD08A",
+    "fixtureVisible": false
+  },
+  "saloonFill": {
+    "type": "wide Area Light or broad Spot Light",
+    "intensityRelativeToTableKey": 0.35,
+    "color": "#B8753F",
+    "purpose": "Reveal walls, floor, chairs, shelves and bottles"
+  },
+  "leftPractical": {
+    "intensityRelativeToTableKey": 0.18,
+    "color": "#D9954F",
+    "target": "bar shelves and bottles"
+  },
+  "rightPractical": {
+    "intensityRelativeToTableKey": 0.15,
+    "color": "#C47B42",
+    "target": "frames, stairs and chairs"
+  },
+  "qa": {
+    "backgroundMustBeMoreThanSilhouette": true,
+    "cardsAndUiUnaffectedByWorldLight": true,
+    "retainDarkWesternMood": true
+  }
+}
