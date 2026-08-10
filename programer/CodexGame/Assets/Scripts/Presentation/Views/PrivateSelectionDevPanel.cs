@@ -27,6 +27,17 @@ namespace CodexGame.Presentation.Views
           new LocalizationArgument("seconds", seconds.ToString("0"))),
         styles.Body);
 
+      if (snapshot.FirstPublicCard.HasValue && snapshot.SecondPublicCard.HasValue)
+      {
+        GUILayout.Label(localization.Get("UI_POKER_PUBLIC"), styles.Small);
+        GUILayout.BeginHorizontal();
+        GUILayout.FlexibleSpace();
+        cards.Draw(snapshot.FirstPublicCard.Value, 82f, 112f, false);
+        cards.Draw(snapshot.SecondPublicCard.Value, 82f, 112f, false);
+        GUILayout.FlexibleSpace();
+        GUILayout.EndHorizontal();
+      }
+
       for (var row = 0; row * 8 < snapshot.WinnerCandidates.Count; row++)
       {
         GUILayout.BeginHorizontal();

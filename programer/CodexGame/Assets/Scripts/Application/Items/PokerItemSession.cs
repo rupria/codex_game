@@ -113,7 +113,13 @@ namespace CodexGame.Application.Items
       if (Phase != PokerItemPhase.AwaitingActions) return Fail(PokerItemFailure.WrongPhase);
       if (!_inventory.Contains(GameItemId.HypeMan)) return Fail(PokerItemFailure.ItemNotOwned);
       if (_aiCards.Count == 0) return Fail(PokerItemFailure.CandidatePoolExhausted);
-      _visibleAiCardIndex = _random.NextInt(_aiCards.Count);
+      var visibleCandidates = new List<int>(_aiCards.Count);
+      for (var index = 0; index < _aiCards.Count; index++)
+      {
+        if (!_aiCards[index].IsJoker) visibleCandidates.Add(index);
+      }
+      if (visibleCandidates.Count == 0) return Fail(PokerItemFailure.CandidatePoolExhausted);
+      _visibleAiCardIndex = visibleCandidates[_random.NextInt(visibleCandidates.Count)];
       Consume(GameItemId.HypeMan);
       return LastFailure;
     }
