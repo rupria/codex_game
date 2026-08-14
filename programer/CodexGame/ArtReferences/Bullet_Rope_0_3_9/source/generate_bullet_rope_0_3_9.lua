@@ -1,6 +1,6 @@
 -- Western bullet and Halli rope-timer art 0.3.9.
 -- Bullet: readable copper projectile, brass case, rim and directional metal glint.
--- Rope: braided/fibrous body, animated burn tip and timeout burst.
+-- Rope: thick three-strand western fuse, animated ember tip and gunpowder burst.
 
 local p=app.params
 local sourceDir=assert(p.sourceDir)
@@ -24,10 +24,10 @@ local C={
   brassHi=Color{r=249,g=194,b=73,a=255},
   brassWhite=Color{r=255,g=235,b=156,a=255},
   steel=Color{r=75,g=73,b=67,a=255},
-  ropeShadow=Color{r=20,g=11,b=8,a=255},
-  ropeDark=Color{r=49,g=27,b=17,a=255},
-  rope=Color{r=91,g=54,b=29,a=255},
-  ropeHi=Color{r=154,g=102,b=51,a=255},
+  ropeShadow=Color{r=37,g=22,b=13,a=255},
+  ropeDark=Color{r=74,g=43,b=22,a=255},
+  rope=Color{r=137,g=91,b=44,a=255},
+  ropeHi=Color{r=211,g=159,b=87,a=255},
   ember=Color{r=255,g=80,b=10,a=255},
   orange=Color{r=255,g=132,b=15,a=255},
   yellow=Color{r=255,g=216,b=55,a=255},
@@ -223,29 +223,46 @@ pourSource:saveAs(sourceDir.."/bar_shop_bullet_pour_table_0_3_9.aseprite"); pour
 
 local function makeRopeBody()
   local img=Image(258,16,ColorMode.RGB); img:clear(C.transparent)
-  for x=4,253 do
-    -- Oiled, smoke-darkened western fuse: irregular silhouette with a slight sag.
-    local cy=7+math.floor(math.sin(x*0.16)*1.25)+((x%61)==0 and 1 or 0)
-    for y=cy-5,cy+5 do
-      local color=(y==cy-5 or y==cy+5) and C.ropeShadow or C.rope
-      if y==cy-3 then color=C.ropeHi end
-      if y==cy+3 or y==cy+4 then color=C.ropeDark end
+  -- Thick irregular silhouette. Light values are deliberate because runtime tinting darkens the body.
+  for x=4,252 do
+    local cy=7+(((x%47)==0 or (x%71)==0) and 1 or 0)
+    local half=((x%31)==0) and 6 or 5
+    for y=cy-half,cy+half do
+      local edge=(y==cy-half or y==cy+half)
+      local color=edge and C.ropeShadow or C.rope
+      if y==cy-half+2 then color=C.ropeHi end
+      if y>=cy+half-2 then color=C.ropeDark end
       img:drawPixel(x,y,color)
     end
   end
-  for x=7,249,12 do
-    local cy=7+math.floor(math.sin(x*0.16)*1.25)
-    line(img,x,cy-5,x+6,cy+5,C.ropeDark)
-    line(img,x+2,cy-4,x+7,cy+4,C.ropeHi)
+
+  -- Broad one-direction twist bands stay readable without becoming a lattice or progress-bar blocks.
+  for x=-8,244,14 do
+    line(img,x,2,x+9,13,C.ropeShadow)
+    line(img,x+1,2,x+10,13,C.ropeDark)
+    line(img,x+4,2,x+10,9,C.ropeHi)
+    line(img,x+5,3,x+11,10,C.ropeHi)
+    line(img,x+3,12,x+7,8,C.rope)
   end
-  -- Loose fibers, scorch scars and repaired wraps remove the clean progress-bar look.
-  line(img,58,3,64,0,C.ropeDark); line(img,119,12,126,15,C.ropeShadow)
-  line(img,197,3,204,1,C.ropeHi); fill(img,84,3,3,10,C.ropeShadow)
-  fill(img,85,4,1,8,C.ropeHi); fill(img,171,3,3,10,C.ropeShadow)
-  fill(img,172,4,1,8,C.ropeHi)
-  -- Frayed end fibers make the timer read as a physical fuse.
-  line(img,2,5,7,7,C.ropeHi); line(img,0,8,7,8,C.ropeDark); line(img,2,12,8,9,C.rope)
-  line(img,251,4,257,1,C.ropeHi); line(img,251,8,257,8,C.ropeDark); line(img,251,11,256,15,C.rope)
+
+  -- Knots, loose fibers and repaired wraps prevent a progress-bar silhouette.
+  line(img,39,3,46,0,C.ropeHi); line(img,74,12,82,15,C.ropeShadow)
+  line(img,132,3,139,0,C.ropeDark); line(img,188,12,196,15,C.ropeHi)
+  fill(img,94,2,3,12,C.ropeShadow); fill(img,95,3,1,10,C.ropeHi)
+  fill(img,178,2,3,12,C.ropeShadow); fill(img,179,3,1,10,C.ropeHi)
+
+  -- Charred fuse tip is baked into the body because the current runtime only binds body + flame.
+  for x=230,253 do
+    local taper=math.min(5,math.max(2,5-math.floor((x-230)/8)))
+    local color=(x<238) and C.smokeDark or C.ink
+    for y=7-taper,7+taper do img:drawPixel(x,y,color) end
+  end
+  line(img,228,3,238,7,C.ropeDark); line(img,228,12,239,8,C.ropeShadow)
+  fill(img,248,5,5,6,C.ember); fill(img,251,6,4,4,C.orange); diamond(img,255,8,1,C.cream)
+
+  -- Frayed fibers at both ends.
+  line(img,2,4,8,7,C.ropeHi); line(img,0,8,8,8,C.ropeDark); line(img,2,13,9,9,C.rope)
+  line(img,251,3,257,0,C.smokeDark); line(img,252,8,257,8,C.ember); line(img,251,12,257,15,C.smoke)
   return img
 end
 
@@ -255,12 +272,12 @@ setImage(ropeSource,ropeBody); ropeSource:saveAs(sourceDir.."/halli_rope_braided
 
 local function makeCharCap()
   local img=Image(24,16,ColorMode.RGB); img:clear(C.transparent)
-  -- Overlap this cap with the remaining rope end before drawing the flame.
-  fill(img,0,3,16,11,C.smokeDark); fill(img,1,5,16,7,C.ink)
-  line(img,1,4,15,7,C.ropeDark); line(img,1,11,15,8,C.ropeShadow)
-  fill(img,14,5,5,7,C.ember); fill(img,16,6,5,5,C.orange)
-  fill(img,19,7,3,3,C.yellow); diamond(img,22,8,1,C.cream)
-  line(img,14,4,20,1,C.smoke); line(img,16,12,21,15,C.smokeDark)
+  -- Thick soot-black end with a narrow ember core and flying fibers.
+  fill(img,0,2,15,12,C.smokeDark); fill(img,1,4,16,8,C.ink)
+  line(img,0,3,15,7,C.ropeDark); line(img,0,12,15,8,C.ropeShadow)
+  fill(img,14,4,6,8,C.ember); fill(img,17,5,5,6,C.orange)
+  fill(img,20,6,3,4,C.yellow); diamond(img,23,8,1,C.cream)
+  line(img,13,3,20,0,C.smoke); line(img,15,13,22,15,C.smokeDark)
   return img
 end
 
@@ -270,16 +287,19 @@ setImage(charSource,charCap); charSource:saveAs(sourceDir.."/halli_rope_burn_cha
 
 local function makeFlame(frame)
   local img=Image(32,32,ColorMode.RGB); img:clear(C.transparent)
-  local sway={-2,1,3,0,-3,-1}; local tipY={4,2,5,1,4,3}
+  local sway={-2,1,3,0,-3,-1}; local tipY={8,6,9,5,8,7}
   local sx=sway[frame]; local ty=tipY[frame]
-  disk(img,16,24,7,Color{r=255,g=74,b=8,a=70})
-  triangle(img,8,27,24,27,16+sx,ty,C.ember)
-  disk(img,11+(frame%3),22,4,C.orange); disk(img,21-((frame+1)%3),23,4,C.orange)
-  triangle(img,11,27,21,27,16-math.floor(sx/2),9,C.yellow)
-  triangle(img,14,27,19,27,16+math.floor(sx/3),15,C.cream)
-  diamond(img,8+(frame*3)%17,27-(frame%2)*3,1,C.brassHi)
-  fill(img,18+sx,3+(frame%3),2,2,C.smoke)
-  fill(img,20+sx,1+(frame%2),2,2,C.smokeDark)
+  disk(img,16,24,7,Color{r=255,g=74,b=8,a=55})
+  triangle(img,9,28,24,28,16+sx,ty,C.ember)
+  disk(img,12+(frame%2),23,4,C.orange); disk(img,20-((frame+1)%2),24,4,C.orange)
+  triangle(img,12,28,21,28,16-math.floor(sx/2),13,C.yellow)
+  triangle(img,14,28,19,28,16+math.floor(sx/3),19,C.cream)
+  diamond(img,7+(frame*3)%19,25-(frame%3),1,C.brassHi)
+  diamond(img,25-((frame*2)%8),20+(frame%2)*3,1,C.ember)
+  -- Thin smoke curl keeps the flame tied to a physical fuse.
+  fill(img,17+sx,5+(frame%2),2,2,C.smoke)
+  fill(img,20+sx,2+(frame%3),2,2,C.smokeDark)
+  line(img,18+sx,7,22+sx,4,C.smoke)
   return img
 end
 
@@ -294,29 +314,38 @@ flameSource:saveAs(sourceDir.."/halli_rope_burn_flame_0_3_9.aseprite"); flameSou
 
 local function makeBurst(frame)
   local img=Image(64,64,ColorMode.RGB); img:clear(C.transparent)
-  local radii={3,7,12,18,24,28,31,34}; local r=radii[frame]
-  if frame<=6 then
-    disk(img,32,32,r,Color{r=255,g=74,b=8,a=75})
-    diamond(img,32,32,math.max(2,r-3),C.orange)
-    diamond(img,32,32,math.max(1,math.floor(r*0.52)),C.yellow)
-    if frame<=4 then diamond(img,32,32,math.max(1,math.floor(r*0.26)),C.cream) end
-    for a=0,7 do
-      local ang=a*math.pi/4+frame*0.17
-      local x0=32+math.floor(math.cos(ang)*(r+2)); local y0=32+math.floor(math.sin(ang)*(r+2))
-      local x1=32+math.floor(math.cos(ang)*(r+8)); local y1=32+math.floor(math.sin(ang)*(r+8))
-      line(img,x0,y0,x1,y1,(a%2==0) and C.brassHi or C.ember)
+  local radii={2,5,10,16,20,23,25,27}; local r=radii[frame]
+  if frame<=5 then
+    -- Irregular gunpowder flash: sharp star, no circular orange HUD ring.
+    local ray=r+10
+    for a=0,11 do
+      local ang=a*math.pi/6+frame*0.09
+      local short=(a%2==0) and ray or math.floor(ray*0.68)
+      local x0=32+math.floor(math.cos(ang)*math.max(2,r*0.35))
+      local y0=32+math.floor(math.sin(ang)*math.max(2,r*0.35))
+      local x1=32+math.floor(math.cos(ang)*short)
+      local y1=32+math.floor(math.sin(ang)*short)
+      line(img,x0,y0,x1,y1,(a%3==0) and C.brassHi or C.ember)
     end
+    diamond(img,32,32,math.max(2,r),C.orange)
+    diamond(img,32,32,math.max(1,math.floor(r*0.58)),C.yellow)
+    diamond(img,32,32,math.max(1,math.floor(r*0.28)),C.cream)
   end
-  if frame>=5 then
-    disk(img,21,27,5+(frame-5)*2,C.smokeDark); disk(img,37,22,6+(frame-5)*2,C.smoke)
-    disk(img,43,37,5+(frame-5),C.smokeDark); disk(img,28,42,6+(frame-5),C.smoke)
+  if frame>=4 then
+    local grow=frame-4
+    disk(img,19-grow,25-grow,4+grow,C.smokeDark)
+    disk(img,39+grow,20-grow,5+grow,C.smoke)
+    disk(img,46+grow,38+grow,4+grow,C.smokeDark)
+    disk(img,28-grow,45+grow,5+grow,C.smoke)
+    diamond(img,14-grow,39+grow,1,C.ember)
+    diamond(img,51+grow,27-grow,1,C.brassHi)
   end
   return img
 end
 
 local burstFrames={}; local burstSheet=Image(512,64,ColorMode.RGB); burstSheet:clear(C.transparent)
 for i=1,8 do burstFrames[i]=makeBurst(i); burstSheet:drawImage(burstFrames[i],Point((i-1)*64,0)) end
-saveHalli(burstFrames[5],"halli_rope_timeout_burst_64x64_0_3_9.png")
+saveHalli(burstFrames[4],"halli_rope_timeout_burst_64x64_0_3_9.png")
 saveHalli(burstSheet,"halli_rope_timeout_burst_8f_512x64_0_3_9.png")
 local burstSource=Sprite(64,64,ColorMode.RGB); burstSource.layers[1].name="timeout_burst_smoke_8f"
 setImage(burstSource,burstFrames[1]); burstSource.frames[1].duration=0.075
