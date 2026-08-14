@@ -1,0 +1,103 @@
+{
+  "artSetId": "presentation_0_1_2_4",
+  "specRevision": "0.1.2.4",
+  "runtimeRoot": "Assets/Art/Prototype/UI/Presentation_0_1_2_4",
+  "sourceRoot": "ArtReferences/Presentation_0_1_2_4",
+  "canvas": {"width": 960, "height": 540, "referenceAspect": "16:9"},
+  "stringsBakedIntoImages": false,
+  "generatedWith": [
+    "OpenAI built-in image generation (visual direction reference only)",
+    "Aseprite 1.3.18.2 batch Lua (runtime sprites)"
+  ],
+  "directionReference": "preview/presentation_ui_direction_imagegen_0_1_2_4.png",
+  "directionReferenceUsage": "Concept reference only. Runtime art is independently redrawn as deterministic Aseprite pixel sprites.",
+  "uiDirection": {
+    "theme": "dark western saloon table",
+    "materials": ["aged brass", "oxidized black iron", "dark walnut"],
+    "layoutRule": "Use compact plaques, thin rails, corner clips and negative space instead of large full-screen sample frames.",
+    "accentRule": "Player teal, AI muted red, selection gold, lock desaturated steel. Avoid neon and cyberpunk treatment."
+  },
+  "license": "project-owned generated artwork; commercial use and modification allowed",
+  "publicWebGLAllowed": true,
+  "newAssets": {
+    "phase": {
+      "threeCallIcon": "phase_three_call_icon_64_0_1_2_4.png",
+      "showdownIcon": "phase_showdown_icon_64_0_1_2_4.png",
+      "entryLabelFrame": "phase_entry_label_frame_288x80_0_1_2_4.png"
+    },
+    "stageEntry": {
+      "skipButtons": [
+        "stage_entry_skip_button_idle_120x44_0_1_2_4.png",
+        "stage_entry_skip_button_hover_120x44_0_1_2_4.png",
+        "stage_entry_skip_button_pressed_120x44_0_1_2_4.png"
+      ],
+      "opponentIntroFrame": "stage_entry_opponent_intro_frame_360x152_0_1_2_4.png",
+      "tableFocusVignette": "stage_entry_table_focus_vignette_960x540_0_1_2_4.png"
+    },
+    "itemPenalty": {
+      "limitOne": "stage_item_limit_one_64_0_1_2_4.png",
+      "limitTwo": "stage_item_limit_two_64_0_1_2_4.png",
+      "usedOne": "stage_item_limit_used_one_64_0_1_2_4.png",
+      "exhausted": "stage_item_limit_exhausted_64_0_1_2_4.png",
+      "inventoryRestricted": "stage_item_inventory_restricted_64_0_1_2_4.png",
+      "cardRestricted": "stage_item_card_restricted_64_0_1_2_4.png",
+      "labelFrame": "stage_item_penalty_label_frame_320x84_0_1_2_4.png"
+    },
+    "transition": {
+      "desaturateOverlay": "phase_transition_desaturate_overlay_960x540_0_1_2_4.png",
+      "focusMask": "phase_transition_focus_mask_960x540_0_1_2_4.png",
+      "playerAcquireTrail": "card_acquire_trail_player_320x96_0_1_2_4.png",
+      "aiAcquireTrail": "card_acquire_trail_ai_320x96_0_1_2_4.png"
+    },
+    "cardSelection": {
+      "idle": "private_card_candidate_idle_124x172_0_1_2_4.png",
+      "hover": "private_card_candidate_hover_124x172_0_1_2_4.png",
+      "selected": "private_card_candidate_selected_124x172_0_1_2_4.png",
+      "confirmed": "private_card_candidate_confirmed_124x172_0_1_2_4.png",
+      "disabled": "private_card_candidate_disabled_124x172_0_1_2_4.png"
+    },
+    "bellFx": {
+      "correctSheet": {"file": "bell_correct_glint_6f_384x64_0_1_2_4.png", "frameSize": [64,64], "frameCount": 6, "durationSeconds": 0.2},
+      "wrongSheet": {"file": "bell_wrong_impact_6f_384x64_0_1_2_4.png", "frameSize": [64,64], "frameCount": 6, "durationSeconds": 0.3}
+    },
+    "wrongReward": {
+      "panel": "wrong_reward_scroll_panel_720x360_0_1_2_4.png",
+      "idle": "wrong_reward_card_idle_124x172_0_1_2_4.png",
+      "selected": "wrong_reward_card_selected_124x172_0_1_2_4.png",
+      "locked": "wrong_reward_card_locked_124x172_0_1_2_4.png"
+    },
+    "showdown": {
+      "wideFrame": "showdown_wide_frame_760x420_0_1_2_4.png",
+      "handLockedFrame": "showdown_hand_locked_frame_420x180_0_1_2_4.png",
+      "bestHandHighlight": "result_best_hand_highlight_420x96_0_1_2_4.png",
+      "resultSummaryFrame": "result_summary_frame_720x360_0_1_2_4.png",
+      "stageClearFrame": "stage_clear_frame_560x240_0_1_2_4.png",
+      "hpDamagePlayer": "hp_damage_flash_player_96_0_1_2_4.png",
+      "hpDamageAi": "hp_damage_flash_ai_96_0_1_2_4.png"
+    }
+  },
+  "reusedAssets": {
+    "stageDoorsAndLoading": "Assets/Art/Prototype/UI/StageTransition_0_3_1",
+    "communityReveal": "Assets/Art/Prototype/UI/Halli_0_3_3",
+    "bellAndDeckStates": "Assets/Art/Prototype/UI/Halli_0_1_0",
+    "roundWinMarkers": "Assets/Art/Prototype/UI/Halli_0_2_1",
+    "ropeTimer": "Assets/Art/Prototype/UI/Halli_0_3_9",
+    "predictionPortraits": "Assets/Art/Prototype/UI/Textless_Currency_0_4_0",
+    "itemCrateAndPopup": ["Assets/Art/Prototype/UI/Poker_0_3_4", "Assets/Art/Prototype/UI/Poker_0_3_6"],
+    "resultWinLose": "Assets/Art/Prototype/FX"
+  },
+  "sceneTiming": {
+    "stageEntrySeconds": 6.0,
+    "stageEntrySkippable": true,
+    "threeCallEntrySeconds": 5.0,
+    "threeCallEntrySkippable": false,
+    "threeCallToSelectionSeconds": 2.0
+  },
+  "import": {
+    "textureType": "Sprite",
+    "filterMode": "Point",
+    "compression": "Uncompressed",
+    "mipMaps": false,
+    "pixelsPerUnit": 1
+  }
+}
