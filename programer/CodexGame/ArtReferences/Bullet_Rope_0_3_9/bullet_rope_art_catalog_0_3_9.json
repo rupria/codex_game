@@ -1,5 +1,6 @@
 {
   "version": "0.3.9",
+  "artRevision": "western_fuse_v2_20260814",
   "runtimeRoots": {
     "barShop": "Assets/Art/Prototype/UI/BarShop_0_3_9",
     "halli": "Assets/Art/Prototype/UI/Halli_0_3_9"
@@ -27,9 +28,11 @@
   "ropeTimer": {
     "body": "halli_rope_braided_body_258x16_0_3_9.png",
     "bodyRender": {
-      "targetRect": [332, 147, 258, 10],
+      "targetRect": [332, 144, 258, 16],
       "preserveWeaveWithUvCrop": true,
-      "stretchRemainingWidth": false
+      "stretchRemainingWidth": false,
+      "neutralTextureTint": true,
+      "minimumReadableHeight": 14
     },
     "charCap": "halli_rope_burn_char_cap_24x16_0_3_9.png",
     "charCapAnchor": "remaining_rope_xmax",
@@ -46,7 +49,8 @@
       "file": "halli_rope_timeout_burst_8f_512x64_0_3_9.png",
       "frameSize": [64, 64],
       "frameCount": 8,
-      "durationSeconds": 0.70
+      "durationSeconds": 0.70,
+      "visual": "ivory_core_brass_starburst_ember_fragments_soot_smoke"
     },
     "tint": {
       "texturedBody": "neutral_white",
