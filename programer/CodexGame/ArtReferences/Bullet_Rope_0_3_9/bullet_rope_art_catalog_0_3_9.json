@@ -1,6 +1,6 @@
 {
   "version": "0.3.9",
-  "artRevision": "western_fuse_v2_20260814",
+  "artRevision": "approved_fuse_contact_flame_v3_20260815",
   "runtimeRoots": {
     "barShop": "Assets/Art/Prototype/UI/BarShop_0_3_9",
     "halli": "Assets/Art/Prototype/UI/Halli_0_3_9"
@@ -37,12 +37,15 @@
     "charCap": "halli_rope_burn_char_cap_24x16_0_3_9.png",
     "charCapAnchor": "remaining_rope_xmax",
     "flameStaticFallback": "halli_rope_burn_flame_32x32_0_3_9.png",
+    "flameContactAnchorNormalized": [0.5, 0.5],
+    "flameDirection": "backward_over_rope_not_vertical_candle",
     "flameSheet": {
       "file": "halli_rope_burn_flame_6f_192x32_0_3_9.png",
       "frameSize": [32, 32],
       "frameCount": 6,
       "frameDurationSeconds": 0.08,
-      "urgentPlaybackMultiplier": 1.35
+      "urgentPlaybackMultiplier": 1.35,
+      "visual": "charred_contact_ivory_core_short_orange_lobes_sparks_smoke"
     },
     "explosionStaticFallback": "halli_rope_timeout_burst_64x64_0_3_9.png",
     "explosionSheet": {

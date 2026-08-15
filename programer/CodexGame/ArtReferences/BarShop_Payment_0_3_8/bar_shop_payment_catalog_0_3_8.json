@@ -4,15 +4,19 @@
   "currencySource": "PlayableGameSnapshot.BulletCount",
   "pouch": {
     "emptyBase": "bar_shop_ammo_pouch_empty_180x150_0_3_8.png",
+    "fiveRoundCompositeFallback": "bar_shop_ammo_pouch_pile_5_180x150_0_3_8.png",
     "bullet": "bar_shop_ammo_pouch_bullet_24x40_0_3_8.png",
-    "handCover": "bar_shop_ammo_pouch_hand_cover_220x180_0_3_8.png",
+    "handCover": null,
+    "deprecatedHandCoverDoNotBind": "bar_shop_ammo_pouch_hand_cover_220x180_0_3_8.png",
     "bakedBulletCount": 0,
     "childrenEqualCurrency": true,
-    "largeLayout": {"min":0,"max":5,"size":[24,40],"anchorsX":[43,60,77,94,111],"y":34},
-    "compactLayout": {"min":6,"max":30,"size":[10,18],"columns":6,"rows":5,"origin":[44,31],"step":[13,13]}
+    "layoutStyle": "loose_overlapping_pile",
+    "largeLayout": {"min":0,"max":5,"size":[24,40],"positions":[[45,45,-0.30],[65,39,0.18],[85,49,-0.12],[103,40,0.28],[73,59,1.04]]},
+    "compactLayout": {"min":6,"max":30,"size":[10,18],"columns":6,"rows":5,"staggered":true,"uniformGrid":false}
   },
   "purchase": {
-    "countChangeOccludedByHand": true,
+    "countChangeOccludedByHand": false,
+    "handAnimationRemoved": true,
     "oneOrTwo": {
       "mode": "coin_flip_from_screen_bottom",
       "sheet": "bar_shop_bullet_coin_flip_glint_8f_512x64_0_3_8.png",
