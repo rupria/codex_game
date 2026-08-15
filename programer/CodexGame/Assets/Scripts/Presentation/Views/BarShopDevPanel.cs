@@ -123,7 +123,7 @@ namespace CodexGame.Presentation.Views
           styles.Heading);
       }
 
-      DrawPurchaseMotion(shop.Purchase, baseBullets + temporaryBullets, art);
+      DrawPurchaseMotion(shop.Purchase, art);
       DrawPurchaseFailure(shop.Purchase, styles, localization);
     }
 
@@ -180,7 +180,6 @@ namespace CodexGame.Presentation.Views
 
     private static void DrawPurchaseMotion(
       BarShopPurchaseSnapshot purchase,
-      int currentBulletCount,
       BarShopUiArtSet art)
     {
       var pouchRect = AmmoPouch;
@@ -197,18 +196,7 @@ namespace CodexGame.Presentation.Views
         }
       }
 
-      var displayedBulletCount = currentBulletCount;
-      if (purchase != null
-        && purchase.InputLocked
-        && purchase.Phase != BarShopPurchasePhase.Rejected)
-      {
-        displayedBulletCount = purchase.ElapsedMicroseconds < GameRules.BarShopPouchCoverMicroseconds
-          ? purchase.BulletCountBefore
-          : purchase.BulletCountAfter;
-      }
-
-      DrawAmmoPouch(pouchRect, displayedBulletCount, art);
-      DrawPouchHandCover(pouchRect, purchase, art);
+      DrawAmmoPouch(pouchRect, art);
 
       if (purchase == null
         || !purchase.InputLocked
@@ -228,9 +216,9 @@ namespace CodexGame.Presentation.Views
       else DrawPourPayment(price, progress, art);
     }
 
-    private static void DrawAmmoPouch(Rect pouchRect, int bulletCount, BarShopUiArtSet art)
+    private static void DrawAmmoPouch(Rect pouchRect, BarShopUiArtSet art)
     {
-      var pouch = art?.AmmoPouchEmpty ?? art?.AmmoPouch;
+      var pouch = art?.AmmoPouch;
       if (pouch != null)
       {
         GUI.DrawTexture(pouchRect, pouch, ScaleMode.ScaleToFit, true);
@@ -243,58 +231,6 @@ namespace CodexGame.Presentation.Views
         GUI.color = previous;
       }
 
-      if (art?.AmmoPouchBullet == null || bulletCount <= 0) return;
-      if (bulletCount <= 5)
-      {
-        var anchors = new[] { 43f, 60f, 77f, 94f, 111f };
-        for (var index = 0; index < bulletCount; index++)
-        {
-          GUI.DrawTexture(
-            new Rect(pouchRect.x + anchors[index], pouchRect.y + 34f, 24f, 40f),
-            art.AmmoPouchBullet,
-            ScaleMode.ScaleToFit,
-            true);
-        }
-        return;
-      }
-
-      for (var index = 0; index < bulletCount; index++)
-      {
-        var column = index % 6;
-        var row = index / 6;
-        GUI.DrawTexture(
-          new Rect(
-            pouchRect.x + 44f + column * 13f,
-            pouchRect.y + 31f + row * 13f,
-            10f,
-            18f),
-          art.AmmoPouchBullet,
-          ScaleMode.ScaleToFit,
-          true);
-      }
-    }
-
-    private static void DrawPouchHandCover(
-      Rect pouchRect,
-      BarShopPurchaseSnapshot purchase,
-      BarShopUiArtSet art)
-    {
-      if (purchase == null
-        || !purchase.InputLocked
-        || purchase.Phase == BarShopPurchasePhase.Rejected
-        || art?.AmmoPouchHandCover == null) return;
-      var duration = GameRules.BarShopPouchCoverMicroseconds;
-      var elapsed = purchase.ElapsedMicroseconds;
-      if (elapsed >= duration * 2) return;
-      var offset = elapsed < duration
-        ? Mathf.Lerp(180f, 0f, elapsed / (float)duration)
-        : Mathf.Lerp(0f, 180f, (elapsed - duration) / (float)duration);
-      var handRect = new Rect(
-        pouchRect.x - 20f,
-        pouchRect.y - 15f + offset,
-        220f,
-        180f);
-      GUI.DrawTexture(handRect, art.AmmoPouchHandCover, ScaleMode.ScaleToFit, true);
     }
 
     private static void DrawCoinFlipPayment(int price, float progress, BarShopUiArtSet art)

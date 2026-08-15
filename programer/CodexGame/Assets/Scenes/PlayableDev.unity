@@ -1392,13 +1392,13 @@ MonoBehaviour:
     _continuePressed: {fileID: 2800000, guid: 70548f1bc049fc16bc3f0f4bf0f79636, type: 3}
     _bulletPanel: {fileID: 2800000, guid: c6f4b89d92a14e188cf5f1c1ae903001, type: 3}
     _healthPanel: {fileID: 2800000, guid: c6f4b89d92a14e188cf5f1c1ae90300c, type: 3}
-    _ammoPouch: {fileID: 2800000, guid: 951191a13cee582449253d3715c13cb6, type: 3}
+    _ammoPouch: {fileID: 2800000, guid: b0380000000000000000000000000008, type: 3}
     _bulletTossSheet: {fileID: 2800000, guid: b8e6727c35a34ee6cff5bcde928faa57, type: 3}
     _bulletTossFrames: []
     _brassSpark: {fileID: 0}
-    _ammoPouchEmpty: {fileID: 2800000, guid: b0380000000000000000000000000003, type: 3}
+    _ammoPouchEmpty: {fileID: 0}
     _ammoPouchBullet: {fileID: 2800000, guid: b0380000000000000000000000000002, type: 3}
-    _ammoPouchHandCover: {fileID: 2800000, guid: b0380000000000000000000000000004, type: 3}
+    _ammoPouchHandCover: {fileID: 0}
     _bulletCoinFlipSheet: {fileID: 2800000, guid: b0380000000000000000000000000005, type: 3}
     _bulletPourSheet: {fileID: 2800000, guid: b0380000000000000000000000000006, type: 3}
     _productIcons:
@@ -1414,6 +1414,8 @@ MonoBehaviour:
       _texture: {fileID: 2800000, guid: c6f4b89d92a14e188cf5f1c1ae90300a, type: 3}
     - _iconKey: bar_shop.item.dummy_06
       _texture: {fileID: 2800000, guid: c6f4b89d92a14e188cf5f1c1ae90300b, type: 3}
+    - _iconKey: item.ammo_pouch.loose_rounds
+      _texture: {fileID: 2800000, guid: b0380000000000000000000000000008, type: 3}
   _stageTransitionUiArtSet:
     _exitClosedBackground: {fileID: 2800000, guid: ec853447d58364e46a23d382e1b18e10, type: 3}
     _exitOpenBackground: {fileID: 2800000, guid: 323fd71d4c92d904f9ba9d5496cd05b8, type: 3}
