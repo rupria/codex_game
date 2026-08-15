@@ -187,11 +187,8 @@ local function skipButton(state)
   local image = canvas(120, 44)
   local border = state == "hover" and goldHi or gold
   drawIronPanel(image, 2, 4, 116, 36, state == "pressed" and brassDark or border)
-  for i = 0, 1 do
-    local ox = 43 + i * 19
-    drawLine(image, ox, 13, ox + 11, 22, cream, 2)
-    drawLine(image, ox + 11, 22, ox, 31, cream, 2)
-  end
+  -- Keep the center empty. Localized "건너뛰기" text is rendered by Unity;
+  -- baked chevrons overlapped the label and are intentionally removed.
   return image
 end
 

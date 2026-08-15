@@ -26,6 +26,8 @@
       "entryLabelFrame": "phase_entry_label_frame_288x80_0_1_2_4.png"
     },
     "stageEntry": {
+      "skipButtonBakedGlyph": null,
+      "skipButtonLabelRule": "Render localized text in Unity only. Do not add chevrons or icons to the PNG.",
       "skipButtons": [
         "stage_entry_skip_button_idle_120x44_0_1_2_4.png",
         "stage_entry_skip_button_hover_120x44_0_1_2_4.png",
