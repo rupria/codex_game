@@ -22,6 +22,7 @@ namespace CodexGame.Editor
     private const string HalliUi021ArtRoot = UiArtRoot + "Halli_0_2_1/";
     private const string HalliUi034ArtRoot = UiArtRoot + "Halli_0_3_4/";
     private const string HalliUi037ArtRoot = UiArtRoot + "Halli_0_3_7/";
+    private const string HalliUi039ArtRoot = UiArtRoot + "Halli_0_3_9/";
     private const string PokerUiArtRoot = UiArtRoot + "Poker_0_2_2/";
     private const string PokerUi034ArtRoot = UiArtRoot + "Poker_0_3_4/";
     private const string PokerUi036ArtRoot = UiArtRoot + "Poker_0_3_6/";
@@ -78,6 +79,12 @@ namespace CodexGame.Editor
         LoadTexture(HalliUi021ArtRoot + "round_win_pip_player_filled_32_0_2_1.png"),
         LoadTexture(HalliUi021ArtRoot + "round_win_pip_ai_empty_32_0_2_1.png"),
         LoadTexture(HalliUi021ArtRoot + "round_win_pip_ai_filled_32_0_2_1.png"),
+        ropeBody: LoadTexture(
+          HalliUi039ArtRoot + "halli_rope_braided_body_258x16_0_3_9.png"),
+        ropeFlame: LoadTexture(
+          HalliUi039ArtRoot + "halli_rope_burn_flame_32x32_0_3_9.png"),
+        ropeExplosion: LoadTexture(
+          HalliUi039ArtRoot + "halli_rope_timeout_burst_64x64_0_3_9.png"),
         sharedPileRailIdle: LoadTexture(
           HalliUi037ArtRoot + "halli_shared_pile_rail_idle_140x136_0_3_7.png"),
         sharedPileRailPlayerActive: LoadTexture(

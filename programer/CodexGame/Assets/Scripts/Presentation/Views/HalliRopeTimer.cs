@@ -39,7 +39,7 @@ namespace CodexGame.Presentation.Views
         return;
       }
 
-      var ropeRect = new Rect(332f, 147f, 258f, 10f);
+      var ropeRect = new Rect(332f, 144f, 258f, 16f);
       var filledRect = new Rect(ropeRect.x, ropeRect.y, ropeRect.width * state.RemainingRatio, ropeRect.height);
       var previousColor = GUI.color;
       GUI.color = new Color(0.11f, 0.075f, 0.04f, 0.92f);
@@ -47,26 +47,34 @@ namespace CodexGame.Presentation.Views
       var pulse = state.Mode == RopeTimerMode.Urgent
         ? 0.78f + Mathf.Sin(Time.unscaledTime * 13f) * 0.2f
         : 1f;
-      GUI.color = state.Mode == RopeTimerMode.Urgent
-        ? new Color(0.95f, 0.3f * pulse, 0.08f, 1f)
-        : new Color(0.68f, 0.43f, 0.18f, 1f);
-      GUI.DrawTexture(
-        filledRect,
-        art?.RopeBody != null ? art.RopeBody : Texture2D.whiteTexture,
-        ScaleMode.StretchToFill,
-        true);
-      if (art?.RopeBody == null) DrawKnots(ropeRect, state.RemainingRatio);
+      if (art?.RopeBody != null)
+      {
+        GUI.color = Color.white;
+        GUI.DrawTextureWithTexCoords(
+          filledRect,
+          art.RopeBody,
+          new Rect(0f, 0f, state.RemainingRatio, 1f),
+          true);
+      }
+      else
+      {
+        GUI.color = state.Mode == RopeTimerMode.Urgent
+          ? new Color(0.95f, 0.3f * pulse, 0.08f, 1f)
+          : new Color(0.68f, 0.43f, 0.18f, 1f);
+        GUI.DrawTexture(filledRect, Texture2D.whiteTexture, ScaleMode.StretchToFill, true);
+        DrawKnots(ropeRect, state.RemainingRatio);
+      }
       GUI.color = state.Mode == RopeTimerMode.Urgent
         ? new Color(1f, 0.7f, 0.1f, pulse)
-        : new Color(1f, 0.52f, 0.08f, 1f);
-      var flameSize = state.Mode == RopeTimerMode.Urgent ? 24f + 5f * pulse : 18f;
+        : Color.white;
+      var flameSize = state.Mode == RopeTimerMode.Urgent ? 27f + 5f * pulse : 24f;
       GUI.DrawTexture(
         new Rect(filledRect.xMax - flameSize * 0.5f, ropeRect.center.y - flameSize * 0.5f, flameSize, flameSize),
         art?.RopeFlame != null ? art.RopeFlame : Texture2D.whiteTexture,
         ScaleMode.ScaleToFit,
         true);
       GUI.color = previousColor;
-      GUI.Label(new Rect(596f, 140f, 58f, 24f), state.DisplayedSeconds + "s", styles.Small);
+      GUI.Label(new Rect(596f, 141f, 58f, 24f), state.DisplayedSeconds + "s", styles.Small);
     }
 
     private static void DrawKnots(Rect ropeRect, float remainingRatio)
@@ -92,7 +100,7 @@ namespace CodexGame.Presentation.Views
       var alpha = 1f - elapsed;
       var center = new Vector2(480f, 154f);
       var previousColor = GUI.color;
-      GUI.color = new Color(1f, 0.32f, 0.04f, alpha);
+      GUI.color = new Color(1f, 1f, 1f, alpha);
       GUI.DrawTexture(
         new Rect(center.x - radius, center.y - radius, radius * 2f, radius * 2f),
         explosionTexture != null ? explosionTexture : Texture2D.whiteTexture,
