@@ -1,0 +1,48 @@
+{
+  "artSetId": "ammo_pouch_loose_rounds_0_1_0",
+  "version": "0.1.0",
+  "status": "approved",
+  "approvalDate": "2026-08-15",
+  "changePolicy": "Do not edit approved files in place. Create a new versioned art set for every revision.",
+  "assetKey": "item.ammo_pouch.loose_rounds",
+  "source": {
+    "file": "source/ammo_pouch_loose_rounds_1254_source_magenta_0_1_0.png",
+    "size": [1254, 1254],
+    "role": "approved generated source; preserve unchanged",
+    "background": "flat magenta chroma key"
+  },
+  "sprites": [
+    {
+      "file": "final/ammo_pouch_loose_rounds_1254_0_1_0.png",
+      "size": [1254, 1254],
+      "role": "transparent master"
+    },
+    {
+      "file": "final/ammo_pouch_loose_rounds_256_0_1_0.png",
+      "size": [256, 256],
+      "role": "large UI sprite"
+    },
+    {
+      "file": "final/ammo_pouch_loose_rounds_64_0_1_0.png",
+      "size": [64, 64],
+      "role": "inventory and shop icon"
+    }
+  ],
+  "importSettings": {
+    "textureType": "Sprite (2D and UI)",
+    "spriteMode": "Single",
+    "alphaIsTransparency": true,
+    "filterMode": "Point",
+    "compression": "None",
+    "generateMipMaps": false,
+    "preserveAspect": true
+  },
+  "visualLock": {
+    "cartridgeCount": 5,
+    "cartridgesLoose": true,
+    "fixedSlots": false,
+    "internalDividers": false,
+    "individualLoops": false,
+    "pouchType": "soft open leather pouch with flap"
+  }
+}

@@ -4,8 +4,9 @@
   "currencySource": null,
   "pouch": {
     "displayMode": "single_static_image",
-    "canonicalImage": "bar_shop_ammo_pouch_static_5_180x150_0_3_8.png",
-    "compatibilityAlias": "bar_shop_ammo_pouch_pile_5_180x150_0_3_8.png",
+    "assetKey": "item.ammo_pouch.loose_rounds",
+    "canonicalImage": "ammo_pouch_loose_rounds_64_0_1_0.png",
+    "displaySize": [64, 64],
     "fixedVisualRoundCount": 5,
     "dynamicBulletChildren": false,
     "readBulletCount": false,
@@ -20,6 +21,8 @@
   },
   "legacyReferenceOnly": {
     "bindAtRuntime": false,
+    "previousStaticImage": "bar_shop_ammo_pouch_static_5_180x150_0_3_8.png",
+    "previousCompatibilityImage": "bar_shop_ammo_pouch_pile_5_180x150_0_3_8.png",
     "emptyBase": "bar_shop_ammo_pouch_empty_180x150_0_3_8.png",
     "bullet": "bar_shop_ammo_pouch_bullet_24x40_0_3_8.png",
     "handCover": "bar_shop_ammo_pouch_hand_cover_220x180_0_3_8.png",
