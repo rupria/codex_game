@@ -39,6 +39,18 @@ local function stroke(img,x,y,w,h,c,t)
 end
 
 local function hline(img,x0,x1,y,c) fill(img,x0,y,x1-x0+1,1,c) end
+local function line(img,x0,y0,x1,y1,c)
+  local dx=math.abs(x1-x0); local sx=x0<x1 and 1 or -1
+  local dy=-math.abs(y1-y0); local sy=y0<y1 and 1 or -1
+  local err=dx+dy
+  while true do
+    img:drawPixel(x0,y0,c)
+    if x0==x1 and y0==y1 then break end
+    local e2=2*err
+    if e2>=dy then err=err+dy; x0=x0+sx end
+    if e2<=dx then err=err+dx; y0=y0+sy end
+  end
+end
 local function diamond(img,cx,cy,r,c)
   for yy=-r,r do local s=r-math.abs(yy); hline(img,cx-s,cx+s,cy+yy,c) end
 end
@@ -112,15 +124,13 @@ local function makeEmptyPouch(src)
       dst:drawPixel(x,y,app.pixelColor.rgba(shade,math.floor(shade*0.52),math.floor(shade*0.30),255))
     end
   end end
+  -- Open leather cavity only. Do not redraw rigid cartridge slots or a UI box.
   fill(dst,39,30,91,4,Color{r=111,g=56,b=28,a=255})
   fill(dst,39,96,91,5,Color{r=31,g=16,b=11,a=255})
-  local anchors={43,60,77,94,111}
-  for _,x in ipairs(anchors) do
-    fill(dst,x,53,13,44,Color{r=26,g=13,b=9,a=255})
-    stroke(dst,x,53,13,44,Color{r=94,g=44,b=23,a=255},2)
-    fill(dst,x+3,58,7,32,Color{r=54,g=26,b=16,a=255})
-    fill(dst,x+3,91,7,3,Color{r=137,g=70,b=31,a=255})
-  end
+  fill(dst,43,40,83,50,Color{r=31,g=16,b=11,a=255})
+  fill(dst,47,43,75,3,Color{r=68,g=34,b=20,a=255})
+  line(dst,45,88,124,83,Color{r=78,g=39,b=22,a=255})
+  line(dst,48,91,121,87,Color{r=24,g=13,b=10,a=255})
   return dst
 end
 
@@ -172,38 +182,49 @@ local pouch=resize(emptyPouch,112,92)
 
 local function drawPouchCount(img,x,y,count)
   img:drawImage(emptyPouch,Point(x,y))
+  -- Loose pile: rounds overlap at different angles and heights instead of
+  -- standing in five rigid holder slots. The number of children still equals
+  -- the authoritative BulletCount.
   if count<=5 then
-    local anchors={43,60,77,94,111}
-    for i=1,count do img:drawImage(bullet,Point(x+anchors[i],y+34)) end
+    local pile={
+      {45,45,-0.30},{65,39,0.18},{85,49,-0.12},{103,40,0.28},{73,59,1.04}
+    }
+    for i=1,count do
+      local v=pile[i]; local rb=rotate(bullet,v[3],44)
+      img:drawImage(rb,Point(x+v[1],y+v[2]))
+    end
   else
-    -- Exact visual count up to the current-run theoretical maximum (30).
-    -- Six columns by five rows keep every round data-driven rather than baked.
+    -- Exact visual count up to 30 using staggered rows, never a rigid grid.
     local small=resize(bullet,10,18)
+    local shifts={0,5,-3,4,-5,2}
     for i=1,math.min(count,30) do
       local col=(i-1)%6; local row=math.floor((i-1)/6)
-      img:drawImage(small,Point(x+44+col*13,y+31+row*13))
+      local rb=rotate(small,((i%5)-2)*0.16,22)
+      img:drawImage(rb,Point(x+38+col*14+shifts[(row%6)+1],y+35+row*12+(col%2)*3))
     end
   end
 end
 
+local pileFive=Image(180,150,ColorMode.RGB); pileFive:clear(C.transparent)
+drawPouchCount(pileFive,0,0,5)
+saveRuntime(pileFive,"bar_shop_ammo_pouch_pile_5_180x150_0_3_8.png")
+
 local countStates=Image(880,180,ColorMode.RGB); countStates:clear(C.ink)
 for state=1,4 do
   local cell=Image(220,180,ColorMode.RGB); cell:clear(C.transparent)
-  drawPouchCount(cell,20,15,state<=2 and 5 or 2)
-  if state==2 or state==3 then cell:drawImage(handCover,Point(0,0)) end
-  if state==3 then glint(cell,112,70,false) end
+  drawPouchCount(cell,20,15,6-state)
+  if state==2 then glint(cell,132,74,false) end
   countStates:drawImage(cell,Point((state-1)*220,0))
 end
 save(countStates,previewDir.."/bar_shop_pouch_count_change_states_880x180_0_3_8.png")
 save(countStates,outputDir.."/bar_shop_pouch_count_change_states_880x180_0_3_8.png")
 
 local countSource=Sprite(220,180,ColorMode.RGB)
-countSource.layers[1].name="count_before_hand_hidden_after"
+countSource.layers[1].name="loose_pile_count_decrease_no_hand"
 for state=1,4 do
   local cell=Image(220,180,ColorMode.RGB); cell:clear(C.transparent)
-  drawPouchCount(cell,20,15,state<=2 and 5 or 2)
-  if state==2 or state==3 then cell:drawImage(handCover,Point(0,0)) end
-  if state==3 then glint(cell,112,70,false) end
+  drawPouchCount(cell,20,15,6-state)
+  if state==2 then glint(cell,132,74,false) end
   if state==1 then setImage(countSource,cell); countSource.frames[1].duration=0.12
   else
     local f=countSource:newEmptyFrame(); countSource:newCel(countSource.layers[1],f,cell,Point(0,0)); f.duration=0.12

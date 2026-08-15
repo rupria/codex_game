@@ -287,25 +287,31 @@ setImage(charSource,charCap); charSource:saveAs(sourceDir.."/halli_rope_burn_cha
 
 local function makeFlame(frame)
   local img=Image(32,32,ColorMode.RGB); img:clear(C.transparent)
-  local sway={-2,1,3,0,-3,-1}; local tipY={8,6,9,5,8,7}
-  local sx=sway[frame]; local ty=tipY[frame]
-  disk(img,16,24,7,Color{r=255,g=74,b=8,a=55})
-  triangle(img,9,28,24,28,16+sx,ty,C.ember)
-  disk(img,12+(frame%2),23,4,C.orange); disk(img,20-((frame+1)%2),24,4,C.orange)
-  triangle(img,12,28,21,28,16-math.floor(sx/2),13,C.yellow)
-  triangle(img,14,28,19,28,16+math.floor(sx/3),19,C.cream)
-  diamond(img,7+(frame*3)%19,25-(frame%3),1,C.brassHi)
-  diamond(img,25-((frame*2)%8),20+(frame%2)*3,1,C.ember)
-  -- Thin smoke curl keeps the flame tied to a physical fuse.
-  fill(img,17+sx,5+(frame%2),2,2,C.smoke)
-  fill(img,20+sx,2+(frame%3),2,2,C.smokeDark)
-  line(img,18+sx,7,22+sx,4,C.smoke)
+  -- The runtime centers this sprite on the shrinking rope end. Keep the
+  -- blackened contact point at (16,16), then lick the flame back over the rope.
+  local tipX={5,7,4,8,3,6}; local tipY={8,5,10,7,6,4}
+  local lobeX={9,11,7,12,8,10}; local lobeY={13,10,14,12,11,9}
+  disk(img,16,16,8,Color{r=255,g=73,b=8,a=42})
+  disk(img,14,17,6,C.smokeDark); disk(img,17,16,4,C.ink)
+  line(img,7,17,18,17,C.ropeShadow); line(img,9,15,17,15,C.ropeDark)
+  triangle(img,18,11,19,22,tipX[frame],tipY[frame],C.ember)
+  triangle(img,17,12,19,20,lobeX[frame],lobeY[frame],C.orange)
+  disk(img,14+(frame%2),16,4,C.orange)
+  triangle(img,17,13,18,20,11+(frame%3),11,C.yellow)
+  diamond(img,17,16,2,C.cream); diamond(img,18,15,1,Color{r=255,g=255,b=226,a=255})
+  -- Uneven sparks and a short smoke curl avoid the old candle-icon silhouette.
+  diamond(img,5+(frame*3)%11,5+(frame%4),1,(frame%2==0) and C.brassHi or C.ember)
+  diamond(img,21+(frame%3)*2,13-(frame%3),1,C.orange)
+  if frame==2 or frame==5 then diamond(img,26,8,1,C.brassHi) end
+  line(img,19,11,22+(frame%2),8,C.smoke)
+  line(img,22+(frame%2),8,20+(frame%3),5,C.smokeDark)
+  fill(img,20+(frame%3),3,2,2,Color{r=76,g=61,b=49,a=190})
   return img
 end
 
 local flameFrames={}; local flameSheet=Image(192,32,ColorMode.RGB); flameSheet:clear(C.transparent)
 for i=1,6 do flameFrames[i]=makeFlame(i); flameSheet:drawImage(flameFrames[i],Point((i-1)*32,0)) end
-saveHalli(flameFrames[3],"halli_rope_burn_flame_32x32_0_3_9.png")
+saveHalli(flameFrames[5],"halli_rope_burn_flame_32x32_0_3_9.png")
 saveHalli(flameSheet,"halli_rope_burn_flame_6f_192x32_0_3_9.png")
 local flameSource=Sprite(32,32,ColorMode.RGB); flameSource.layers[1].name="burn_tip_flame_smoke_6f"
 setImage(flameSource,flameFrames[1]); flameSource.frames[1].duration=0.08
