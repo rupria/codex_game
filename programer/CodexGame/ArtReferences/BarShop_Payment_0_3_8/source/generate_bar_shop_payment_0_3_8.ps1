@@ -19,6 +19,7 @@ $arguments = @(
   '--script-param', "bullet=$(Join-Path $uiRoot 'BarShop_0_3_3\bar_shop_bullet_realistic_24x40_0_3_3.png')",
   '--script-param', "bulletShine=$(Join-Path $uiRoot 'BarShop_0_3_3\bar_shop_bullet_realistic_shine_24x40_0_3_3.png')",
   '--script-param', "pouch=$(Join-Path $uiRoot 'BarShop_0_3_4\bar_shop_ammo_pouch_180x150_0_3_4.png')",
+  '--script-param', "staticPouch=$(Join-Path $repoRoot 'programer\CodexGame\ArtReferences\BarShop_Payment_0_3_8\source\bar_shop_ammo_pouch_static_5_hires_alpha_20260815.png')",
   '--script', (Join-Path $sourceDir 'generate_bar_shop_payment_0_3_8.lua')
 )
 
