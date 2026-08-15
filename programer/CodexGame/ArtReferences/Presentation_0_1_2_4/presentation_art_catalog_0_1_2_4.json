@@ -34,6 +34,7 @@
         "stage_entry_skip_button_pressed_120x44_0_1_2_4.png"
       ],
       "opponentIntroFrame": "stage_entry_opponent_intro_frame_360x152_0_1_2_4.png",
+      "opponentIntroFrameRevision": "Bell_UI_0_1_2_4 Western leather/brass redesign; preserve portrait rect x20 y22 w108 h108",
       "tableFocusVignette": "stage_entry_table_focus_vignette_960x540_0_1_2_4.png"
     },
     "itemPenalty": {
@@ -101,5 +102,13 @@
     "compression": "Uncompressed",
     "mipMaps": false,
     "pixelsPerUnit": 1
+  },
+  "bellUiOverride": {
+    "catalog": "../Bell_UI_0_1_2_4/bell_ui_art_catalog_0_1_2_4.json",
+    "generator": "../Bell_UI_0_1_2_4/source/generate_bell_ui_0_1_2_4.lua",
+    "overrides": [
+      "phase_three_call_icon_64_0_1_2_4.png",
+      "stage_entry_opponent_intro_frame_360x152_0_1_2_4.png"
+    ]
   }
 }
