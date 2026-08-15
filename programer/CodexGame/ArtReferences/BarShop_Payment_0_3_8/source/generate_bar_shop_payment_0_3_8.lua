@@ -115,22 +115,32 @@ local bakedPouch=resize(load(pouchPath),180,150)
 
 local function makeEmptyPouch(src)
   local dst=Image(src)
-  -- Replace the five baked rounds with a dark leather interior while keeping
-  -- the original alpha silhouette. Empty loops are redrawn as part of the base.
+  -- Restore the original leather body where the baked cartridge holder was.
+  -- The fill intentionally blends into the pouch instead of leaving a square UI frame.
   for y=27,103 do for x=34,132 do
     local px=src:getPixel(x,y)
     if app.pixelColor.rgbaA(px)>0 then
-      local shade=math.max(26,58-math.floor((y-27)*0.22))
-      dst:drawPixel(x,y,app.pixelColor.rgba(shade,math.floor(shade*0.52),math.floor(shade*0.30),255))
+      local shade=math.max(46,88-math.floor((y-27)*0.30))
+      dst:drawPixel(x,y,app.pixelColor.rgba(shade,math.floor(shade*0.48),math.floor(shade*0.28),255))
     end
   end end
-  -- Open leather cavity only. Do not redraw rigid cartridge slots or a UI box.
-  fill(dst,39,30,91,4,Color{r=111,g=56,b=28,a=255})
-  fill(dst,39,96,91,5,Color{r=31,g=16,b=11,a=255})
-  fill(dst,43,40,83,50,Color{r=31,g=16,b=11,a=255})
-  fill(dst,47,43,75,3,Color{r=68,g=34,b=20,a=255})
-  line(dst,45,88,124,83,Color{r=78,g=39,b=22,a=255})
-  line(dst,48,91,121,87,Color{r=24,g=13,b=10,a=255})
+  -- Rounded open pocket. No rectangular border, holder slots, or panel corners.
+  local cavity=Color{r=28,g=14,b=10,a=255}
+  local cavityDeep=Color{r=17,g=9,b=7,a=255}
+  fill(dst,54,50,55,39,cavity)
+  disk(dst,54,69,19,cavity); disk(dst,108,69,19,cavity)
+  fill(dst,58,56,47,29,cavityDeep)
+  disk(dst,58,70,14,cavityDeep); disk(dst,104,70,14,cavityDeep)
+  -- Curved leather lip and a soft inner seam reinforce an actual bag opening.
+  line(dst,47,56,56,49,Color{r=132,g=67,b=32,a=255})
+  line(dst,56,49,107,49,Color{r=132,g=67,b=32,a=255})
+  line(dst,107,49,119,57,Color{r=132,g=67,b=32,a=255})
+  line(dst,48,58,57,53,Color{r=72,g=34,b=20,a=255})
+  line(dst,57,53,106,53,Color{r=72,g=34,b=20,a=255})
+  line(dst,106,53,117,59,Color{r=72,g=34,b=20,a=255})
+  line(dst,51,87,61,92,Color{r=91,g=43,b=22,a=255})
+  line(dst,61,92,108,92,Color{r=91,g=43,b=22,a=255})
+  line(dst,108,92,116,87,Color{r=91,g=43,b=22,a=255})
   return dst
 end
 
@@ -183,24 +193,28 @@ local pouch=resize(emptyPouch,112,92)
 local function drawPouchCount(img,x,y,count)
   img:drawImage(emptyPouch,Point(x,y))
   -- Loose pile: rounds overlap at different angles and heights instead of
-  -- standing in five rigid holder slots. The number of children still equals
-  -- the authoritative BulletCount.
+  -- standing in holders. Every round lies horizontally inside the open pocket.
   if count<=5 then
-    local pile={
-      {45,45,-0.30},{65,39,0.18},{85,49,-0.12},{103,40,0.28},{73,59,1.04}
+    local layouts={
+      [1]={{69,52,1.45}},
+      [2]={{54,53,1.28},{80,54,-1.32}},
+      [3]={{45,53,1.18},{68,60,-1.43},{89,50,1.48}},
+      [4]={{43,51,1.15},{65,48,-1.34},{84,58,1.42},{58,64,-1.48}},
+      [5]={{42,49,1.17},{62,46,-1.36},{84,50,1.46},{52,63,-1.50},{76,64,1.24}}
     }
-    for i=1,count do
-      local v=pile[i]; local rb=rotate(bullet,v[3],44)
+    for _,v in ipairs(layouts[count] or {}) do
+      local rb=rotate(bullet,v[3],44)
       img:drawImage(rb,Point(x+v[1],y+v[2]))
     end
   else
-    -- Exact visual count up to 30 using staggered rows, never a rigid grid.
+    -- Exact visual count up to 30 in crossed horizontal layers, never a grid.
     local small=resize(bullet,10,18)
     local shifts={0,5,-3,4,-5,2}
+    local angles={1.18,-1.24,1.42,-1.36,1.06,-1.48}
     for i=1,math.min(count,30) do
       local col=(i-1)%6; local row=math.floor((i-1)/6)
-      local rb=rotate(small,((i%5)-2)*0.16,22)
-      img:drawImage(rb,Point(x+38+col*14+shifts[(row%6)+1],y+35+row*12+(col%2)*3))
+      local rb=rotate(small,angles[(i%6)+1],22)
+      img:drawImage(rb,Point(x+39+col*13+shifts[(row%6)+1],y+44+row*9+(col%2)*3))
     end
   end
 end
