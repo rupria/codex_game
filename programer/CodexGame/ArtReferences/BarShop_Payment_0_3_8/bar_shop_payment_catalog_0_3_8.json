@@ -10,9 +10,17 @@
     "deprecatedHandCoverDoNotBind": "bar_shop_ammo_pouch_hand_cover_220x180_0_3_8.png",
     "bakedBulletCount": 0,
     "childrenEqualCurrency": true,
-    "layoutStyle": "loose_overlapping_pile",
-    "largeLayout": {"min":0,"max":5,"size":[24,40],"positions":[[45,45,-0.30],[65,39,0.18],[85,49,-0.12],[103,40,0.28],[73,59,1.04]]},
-    "compactLayout": {"min":6,"max":30,"size":[10,18],"columns":6,"rows":5,"staggered":true,"uniformGrid":false}
+    "openingStyle": "rounded_open_leather_pocket_no_rectangular_frame",
+    "layoutStyle": "horizontal_loose_overlapping_pile",
+    "largeLayout": {
+      "min": 0,
+      "max": 5,
+      "size": [24, 40],
+      "positionsForFive": [[42,49,1.17],[62,46,-1.36],[84,50,1.46],[52,63,-1.50],[76,64,1.24]],
+      "rotationUnit": "radians",
+      "allRoundsLyingDown": true
+    },
+    "compactLayout": {"min":6,"max":30,"size":[10,18],"columns":6,"rows":5,"staggered":true,"uniformGrid":false,"allRoundsLyingDown":true}
   },
   "purchase": {
     "countChangeOccludedByHand": false,
