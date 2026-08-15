@@ -3,7 +3,7 @@
   "specRevision": "0.1.2.4",
   "runtimeRoot": "Assets/Art/Prototype/UI/StageOpponents_0_1_2_4",
   "sourceRoot": "ArtReferences/StageOpponents_0_1_2_4",
-  "recommendedVariant": "poster",
+  "recommendedVariant": "cutout",
   "generatedWith": [
     "OpenAI built-in image generation (project-owned character artwork)",
     "Aseprite 1.3.18.2 batch Lua (source, resize, runtime export and visual QA)"
@@ -16,7 +16,8 @@
     "filterMode": "Point",
     "compression": "Uncompressed",
     "mipMaps": false,
-    "preserveAspect": true
+    "preserveAspect": true,
+    "cutoutBackground": "transparent alpha"
   },
   "presentationBinding": {
     "frame": "Assets/Art/Prototype/UI/Presentation_0_1_2_4/stage_entry_opponent_intro_frame_360x152_0_1_2_4.png",
@@ -24,13 +25,19 @@
     "previewRectAt960x540": {"x": 320, "y": 206, "width": 108, "height": 108},
     "fallback": "Keep the baked silhouette in the frame when a portrait cannot be loaded. A bound portrait overlays it completely."
   },
+  "backgroundPolicy": {
+    "runtimeRecommendation": "Use cutout for small in-game UI so the portrait inherits the existing saloon panel background.",
+    "environmentUsage": "Use poster only for large entrance or character presentation art.",
+    "originalityGuardrail": "Environment portraits use a different location per character and only borrow broad graphic-print qualities. Do not copy a commercial cover's circle, brush halo, palette block or composition."
+  },
   "opponents": [
     {
       "stage": 1,
       "id": "bellman",
       "workingTitleKo": "종지기",
       "sourceMotif": "club jack bellman",
-      "recommended": "stage_opponent_01_bellman_poster_108_0_1_2_4.png",
+      "recommended": "stage_opponent_01_bellman_cutout_108_0_1_2_4.png",
+      "environmentPortrait": "stage_opponent_01_bellman_poster_108_0_1_2_4.png",
       "alternative": "stage_opponent_01_bellman_portrait_108_0_1_2_4.png"
     },
     {
@@ -38,7 +45,8 @@
       "id": "rose",
       "workingTitleKo": "붉은 장미",
       "sourceMotif": "heart queen saloon hostess",
-      "recommended": "stage_opponent_02_rose_poster_108_0_1_2_4.png",
+      "recommended": "stage_opponent_02_rose_cutout_108_0_1_2_4.png",
+      "environmentPortrait": "stage_opponent_02_rose_poster_108_0_1_2_4.png",
       "alternative": "stage_opponent_02_rose_portrait_108_0_1_2_4.png"
     },
     {
@@ -46,7 +54,8 @@
       "id": "prospector",
       "workingTitleKo": "붉은 광맥의 탐광꾼",
       "sourceMotif": "diamond jack prospector",
-      "recommended": "stage_opponent_03_prospector_poster_108_0_1_2_4.png",
+      "recommended": "stage_opponent_03_prospector_cutout_108_0_1_2_4.png",
+      "environmentPortrait": "stage_opponent_03_prospector_poster_108_0_1_2_4.png",
       "alternative": "stage_opponent_03_prospector_portrait_108_0_1_2_4.png"
     },
     {
@@ -54,14 +63,16 @@
       "id": "undertaker",
       "workingTitleKo": "검은장의 장의사",
       "sourceMotif": "dark club king undertaker",
-      "recommended": "stage_opponent_04_undertaker_poster_108_0_1_2_4.png",
+      "recommended": "stage_opponent_04_undertaker_cutout_108_0_1_2_4.png",
+      "environmentPortrait": "stage_opponent_04_undertaker_poster_108_0_1_2_4.png",
       "alternative": "stage_opponent_04_undertaker_portrait_108_0_1_2_4.png"
     }
   ],
   "preview": {
-    "recommendedLineup": "preview/stage_opponent_poster_lineup_960x264_0_1_2_4.png",
+    "recommendedLineup": "preview/stage_opponent_cutout_lineup_960x264_0_1_2_4.png",
+    "environmentLineup": "preview/stage_opponent_poster_lineup_960x264_0_1_2_4.png",
     "alternativeLineup": "preview/stage_opponent_portrait_lineup_960x264_0_1_2_4.png",
-    "stageEntryFrames": "preview/stage_entry_opponent_01..04_poster_preview_960x540_0_1_2_4.png"
+    "stageEntryFrames": "preview/stage_entry_opponent_01..04_cutout_preview_960x540_0_1_2_4.png"
   },
   "guardrails": [
     "Do not change Halli card creation order, sibling order or sorting order while binding these portraits.",
