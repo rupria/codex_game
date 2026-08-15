@@ -208,7 +208,6 @@ namespace CodexGame.Presentation.Views
         cards.DrawAt(HalliBoardLayout.PublicCard, snapshot.FirstPublicCard.Value);
       }
       DrawLockedPublicSlot(styles, uiArt);
-      GUI.Label(new Rect(260f, 104f, 80f, 22f), L("UI_HALLI_COMMUNITY"), styles.Small);
     }
 
     private static void DrawAiDeck(PlayableCardRenderer cards)
@@ -322,7 +321,6 @@ namespace CodexGame.Presentation.Views
         PileSide.Left,
         HalliBoardLayout.LeftBellVisual,
         HalliBoardLayout.LeftBellHit,
-        L("UI_HALLI_LEFT_BELL"),
         L("UI_HALLI_BELL"),
         canRing,
         snapshot,
@@ -332,7 +330,6 @@ namespace CodexGame.Presentation.Views
         PileSide.Right,
         HalliBoardLayout.RightBellVisual,
         HalliBoardLayout.RightBellHit,
-        L("UI_HALLI_RIGHT_BELL"),
         L("UI_HALLI_BELL"),
         canRing,
         snapshot,
@@ -361,10 +358,6 @@ namespace CodexGame.Presentation.Views
         }
         GUI.color = previousColor;
       }
-      GUI.Label(
-        new Rect(410f, 462f, 140f, 24f),
-        canFlip ? L("UI_HALLI_FLIP_ONE") : L("UI_HALLI_FLIP_LOCKED"),
-        styles.Heading);
       GUI.enabled = canFlip;
       if (GUI.Button(HalliBoardLayout.FlipHit, GUIContent.none, GUIStyle.none)) advance();
       GUI.enabled = true;

@@ -164,18 +164,17 @@ namespace CodexGame.Editor
             LoadTexture(BarShopUiArtRoot + "bar_shop_dummy_item_05_64_0_3_0.png")),
           new BarShopProductIconBinding(
             "bar_shop.item.dummy_06",
-            LoadTexture(BarShopUiArtRoot + "bar_shop_dummy_item_06_64_0_3_0.png"))
+            LoadTexture(BarShopUiArtRoot + "bar_shop_dummy_item_06_64_0_3_0.png")),
+          new BarShopProductIconBinding(
+            "item.ammo_pouch.loose_rounds",
+            LoadTexture(BarShopUi038ArtRoot + "ammo_pouch_loose_rounds_64_0_1_0.png"))
         },
         ammoPouch: LoadTexture(
-          BarShopUi034ArtRoot + "bar_shop_ammo_pouch_180x150_0_3_4.png"),
+          BarShopUi038ArtRoot + "ammo_pouch_loose_rounds_64_0_1_0.png"),
         bulletTossSheet: LoadTexture(
           BarShopUi034ArtRoot + "bar_shop_bullet_toss_spin_384x64_0_3_4.png"),
-        ammoPouchEmpty: LoadTexture(
-          BarShopUi038ArtRoot + "bar_shop_ammo_pouch_empty_180x150_0_3_8.png"),
         ammoPouchBullet: LoadTexture(
           BarShopUi038ArtRoot + "bar_shop_ammo_pouch_bullet_24x40_0_3_8.png"),
-        ammoPouchHandCover: LoadTexture(
-          BarShopUi038ArtRoot + "bar_shop_ammo_pouch_hand_cover_220x180_0_3_8.png"),
         bulletCoinFlipSheet: LoadTexture(
           BarShopUi038ArtRoot + "bar_shop_bullet_coin_flip_glint_8f_512x64_0_3_8.png"),
         bulletPourSheet: LoadTexture(

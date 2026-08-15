@@ -13,6 +13,7 @@ namespace CodexGame.Presentation.Views
     private static readonly Rect FullScreen = new Rect(0f, 0f, 960f, 540f);
     private static readonly Rect CrateRect = new Rect(760f, 326f, 128f, 128f);
     private static readonly Rect PopupRect = new Rect(160f, 102f, 640f, 336f);
+    private static readonly Rect CloseButton = new Rect(754f, 114f, 32f, 32f);
     private static readonly Rect DetailRect = new Rect(404f, 236f, 376f, 112f);
     private static readonly Rect UseButton = new Rect(410f, 372f, 172f, 44f);
     private static readonly Rect ConfirmButton = new Rect(598f, 372f, 172f, 44f);
@@ -168,6 +169,11 @@ namespace CodexGame.Presentation.Views
       if (panel != null) GUI.DrawTexture(PopupRect, panel, ScaleMode.StretchToFill, true);
       else GUI.Box(PopupRect, GUIContent.none);
       GUI.Label(new Rect(388f, 118f, 390f, 32f), localization.Get("UI_ITEM_INVENTORY"), styles.Heading);
+      if (GUI.Button(CloseButton, "X"))
+      {
+        CloseInventoryModal();
+        return;
+      }
 
       var crate = snapshot.Inventory.Count == 0 ? art?.CrateOpenEmpty : art?.CrateOpenFilled;
       if (crate != null)
@@ -204,8 +210,7 @@ namespace CodexGame.Presentation.Views
         art,
         styles.Heading))
       {
-        _inventoryOpen = false;
-        ClearSelection();
+        CloseInventoryModal();
         confirm();
       }
     }
@@ -391,6 +396,12 @@ namespace CodexGame.Presentation.Views
     {
       _selectedItem = null;
       _selectedTargetCard = null;
+    }
+
+    private void CloseInventoryModal()
+    {
+      _inventoryOpen = false;
+      ClearSelection();
     }
 
     private static void DrawBottomDealCandidates(

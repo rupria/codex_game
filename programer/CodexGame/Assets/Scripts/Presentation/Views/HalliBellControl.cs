@@ -11,7 +11,6 @@ namespace CodexGame.Presentation.Views
       PileSide side,
       Rect visualRect,
       Rect hitRect,
-      string key,
       string fallbackLabel,
       bool enabled,
       PrototypeHalliSnapshot snapshot,
@@ -29,7 +28,6 @@ namespace CodexGame.Presentation.Views
       else GUI.Box(visualRect, fallbackLabel, styles.Card);
       GUI.color = previousColor;
 
-      GUI.Label(new Rect(visualRect.x - 18f, visualRect.y + 58f, visualRect.width + 36f, 24f), key, styles.Heading);
       GUI.enabled = enabled;
       var clicked = GUI.Button(hitRect, GUIContent.none, GUIStyle.none);
       GUI.enabled = true;
