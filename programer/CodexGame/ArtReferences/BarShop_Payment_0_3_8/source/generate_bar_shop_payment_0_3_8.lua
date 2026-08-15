@@ -11,6 +11,7 @@ local backgroundPath=assert(p.background)
 local bulletPath=assert(p.bullet)
 local bulletShinePath=assert(p.bulletShine)
 local pouchPath=assert(p.pouch)
+local staticPouchPath=assert(p.staticPouch)
 
 local C={
   transparent=Color{r=0,g=0,b=0,a=0},
@@ -112,6 +113,43 @@ end
 local bullet=resize(load(bulletPath),24,40)
 local bulletShine=resize(load(bulletShinePath),24,40)
 local bakedPouch=resize(load(pouchPath),180,150)
+local staticPouchSource=load(staticPouchPath)
+
+local function trimAlpha(src)
+  local minX=src.width; local minY=src.height; local maxX=-1; local maxY=-1
+  for y=0,src.height-1 do for x=0,src.width-1 do
+    if app.pixelColor.rgbaA(src:getPixel(x,y))>8 then
+      if x<minX then minX=x end; if x>maxX then maxX=x end
+      if y<minY then minY=y end; if y>maxY then maxY=y end
+    end
+  end end
+  assert(maxX>=minX and maxY>=minY,"static pouch source has no opaque pixels")
+  local dst=Image(maxX-minX+1,maxY-minY+1,ColorMode.RGB); dst:clear(C.transparent)
+  for y=0,dst.height-1 do for x=0,dst.width-1 do
+    dst:drawPixel(x,y,src:getPixel(minX+x,minY+y))
+  end end
+  return dst
+end
+
+local function fitStaticPouch(src)
+  local cropped=trimAlpha(src)
+  local maxW=174; local maxH=144
+  local scale=math.min(maxW/cropped.width,maxH/cropped.height)
+  local w=math.max(1,math.floor(cropped.width*scale+0.5))
+  local h=math.max(1,math.floor(cropped.height*scale+0.5))
+  local dst=Image(180,150,ColorMode.RGB); dst:clear(C.transparent)
+  dst:drawImage(resize(cropped,w,h),Point(math.floor((180-w)/2),math.floor((150-h)/2)))
+  return dst
+end
+
+local staticPouch=fitStaticPouch(staticPouchSource)
+saveRuntime(staticPouch,"bar_shop_ammo_pouch_static_5_180x150_0_3_8.png")
+saveRuntime(staticPouch,"bar_shop_ammo_pouch_pile_5_180x150_0_3_8.png")
+local staticPouchAse=Sprite(180,150,ColorMode.RGB)
+staticPouchAse.layers[1].name="approved_static_five_round_pouch"
+setImage(staticPouchAse,staticPouch)
+staticPouchAse:saveAs(sourceDir.."/bar_shop_ammo_pouch_static_5_0_3_8.aseprite")
+staticPouchAse:close()
 
 local function makeEmptyPouch(src)
   local dst=Image(src)
@@ -219,9 +257,8 @@ local function drawPouchCount(img,x,y,count)
   end
 end
 
-local pileFive=Image(180,150,ColorMode.RGB); pileFive:clear(C.transparent)
-drawPouchCount(pileFive,0,0,5)
-saveRuntime(pileFive,"bar_shop_ammo_pouch_pile_5_180x150_0_3_8.png")
+-- The legacy dynamic count preview remains reproducible for reference only.
+-- Runtime must bind the approved static image above and must not add bullet children.
 
 local countStates=Image(880,180,ColorMode.RGB); countStates:clear(C.ink)
 for state=1,4 do

@@ -1,44 +1,30 @@
 {
   "version": "0.3.8",
   "runtimeRoot": "Assets/Art/Prototype/UI/BarShop_0_3_8",
-  "currencySource": "PlayableGameSnapshot.BulletCount",
+  "currencySource": null,
   "pouch": {
-    "emptyBase": "bar_shop_ammo_pouch_empty_180x150_0_3_8.png",
-    "fiveRoundCompositeFallback": "bar_shop_ammo_pouch_pile_5_180x150_0_3_8.png",
-    "bullet": "bar_shop_ammo_pouch_bullet_24x40_0_3_8.png",
-    "handCover": null,
-    "deprecatedHandCoverDoNotBind": "bar_shop_ammo_pouch_hand_cover_220x180_0_3_8.png",
-    "bakedBulletCount": 0,
-    "childrenEqualCurrency": true,
-    "openingStyle": "rounded_open_leather_pocket_no_rectangular_frame",
-    "layoutStyle": "horizontal_loose_overlapping_pile",
-    "largeLayout": {
-      "min": 0,
-      "max": 5,
-      "size": [24, 40],
-      "positionsForFive": [[42,49,1.17],[62,46,-1.36],[84,50,1.46],[52,63,-1.50],[76,64,1.24]],
-      "rotationUnit": "radians",
-      "allRoundsLyingDown": true
-    },
-    "compactLayout": {"min":6,"max":30,"size":[10,18],"columns":6,"rows":5,"staggered":true,"uniformGrid":false,"allRoundsLyingDown":true}
+    "displayMode": "single_static_image",
+    "canonicalImage": "bar_shop_ammo_pouch_static_5_180x150_0_3_8.png",
+    "compatibilityAlias": "bar_shop_ammo_pouch_pile_5_180x150_0_3_8.png",
+    "fixedVisualRoundCount": 5,
+    "dynamicBulletChildren": false,
+    "readBulletCount": false,
+    "stateTransitions": false,
+    "actions": []
   },
   "purchase": {
-    "countChangeOccludedByHand": false,
-    "handAnimationRemoved": true,
-    "oneOrTwo": {
-      "mode": "coin_flip_from_screen_bottom",
-      "sheet": "bar_shop_bullet_coin_flip_glint_8f_512x64_0_3_8.png",
-      "duration": 0.50,
-      "glintAtNormalizedTime": 0.55
-    },
-    "threeOrMore": {
-      "mode": "pour_onto_table",
-      "sheet": "bar_shop_bullet_pour_table_8f_1280x120_0_3_8.png",
-      "duration": 0.75,
-      "spawnCount": "Price",
-      "landingPattern": "irregular_scatter",
-      "uniformGrid": false,
-      "varyPositionAndRotation": true
-    }
+    "pouchAnimation": "none",
+    "handAnimation": "none",
+    "bulletThrowAnimation": "none",
+    "bulletPourAnimation": "none"
+  },
+  "legacyReferenceOnly": {
+    "bindAtRuntime": false,
+    "emptyBase": "bar_shop_ammo_pouch_empty_180x150_0_3_8.png",
+    "bullet": "bar_shop_ammo_pouch_bullet_24x40_0_3_8.png",
+    "handCover": "bar_shop_ammo_pouch_hand_cover_220x180_0_3_8.png",
+    "coinFlipSheet": "bar_shop_bullet_coin_flip_glint_8f_512x64_0_3_8.png",
+    "pourSheet": "bar_shop_bullet_pour_table_8f_1280x120_0_3_8.png",
+    "countPreview": "bar_shop_pouch_count_change_states_880x180_0_3_8.png"
   }
 }
