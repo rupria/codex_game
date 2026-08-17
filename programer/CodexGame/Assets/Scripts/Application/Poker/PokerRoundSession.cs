@@ -26,6 +26,7 @@ namespace CodexGame.Application.Poker
     private IReadOnlyList<JokerHandOption> _playerJokerOptions = Array.AsReadOnly(Array.Empty<JokerHandOption>());
     private PokerHandCategory? _playerJokerCategory;
     private PokerHandCategory? _aiJokerCategory;
+    private bool _playerDamageShield;
 
     public PokerRoundPhase Phase { get; private set; } = PokerRoundPhase.NotStarted;
     public PokerRoundResult? Result => _result;
@@ -36,7 +37,8 @@ namespace CodexGame.Application.Poker
       BattleHealth health,
       PokerRuleSet ruleSet,
       GameTimestamp now,
-      int preRevealAiCardIndex = -1)
+      int preRevealAiCardIndex = -1,
+      bool playerDamageShield = false)
     {
       if (distribution == null) throw new ArgumentNullException(nameof(distribution));
       if (ruleSet == null) throw new ArgumentNullException(nameof(ruleSet));
@@ -59,6 +61,7 @@ namespace CodexGame.Application.Poker
       _preRevealAiCardIndex = NormalizePreRevealAiCardIndex(
         _aiPrivateCards,
         preRevealAiCardIndex);
+      _playerDamageShield = playerDamageShield;
 
       // Validate all seven identities before any concealed information is presented.
       PokerComparer.Compare(_playerPrivateCards, _aiPrivateCards, _publicCards, _ruleSet);
@@ -80,6 +83,43 @@ namespace CodexGame.Application.Poker
       {
         BeginPrediction(now);
       }
+    }
+
+    public void BeginHandConfirmationTimeout(
+      Card firstPublicCard,
+      PrivateCardDistributionResult distribution,
+      BattleHealth health,
+      PokerRuleSet ruleSet,
+      GameTimestamp now,
+      int preRevealAiCardIndex = -1)
+    {
+      Begin(
+        firstPublicCard,
+        distribution,
+        health,
+        ruleSet,
+        now,
+        preRevealAiCardIndex,
+        false);
+      var evaluated = PokerComparer.Compare(
+        _playerPrivateCards,
+        _aiPrivateCards,
+        _publicCards,
+        _ruleSet);
+      var forcedLoss = new PokerComparisonResult(
+        PokerWinner.Ai,
+        evaluated.PlayerValue,
+        evaluated.AiValue);
+      var damage = DamageResolver.ApplyPokerLoss(_health, PokerWinner.Ai, false);
+      var prediction = PredictionResolver.Resolve(PredictionChoice.Skipped, PokerWinner.Ai);
+      _result = new PokerRoundResult(
+        forcedLoss,
+        damage,
+        prediction,
+        false,
+        true);
+      _resultRevealAt = Add(now, GameRules.PokerResultAnnouncementMicroseconds);
+      Phase = PokerRoundPhase.ResultPending;
     }
 
     public void Begin(
@@ -218,9 +258,10 @@ namespace CodexGame.Application.Poker
         _ruleSet,
         _playerJokerCategory,
         _aiJokerCategory);
-      var damage = DamageResolver.ApplyPokerLoss(_health, comparison.Winner);
+      var prevented = _playerDamageShield && comparison.Winner == PokerWinner.Ai;
+      var damage = DamageResolver.ApplyPokerLoss(_health, comparison.Winner, prevented);
       var prediction = PredictionResolver.Resolve(choice, comparison.Winner);
-      _result = new PokerRoundResult(comparison, damage, prediction);
+      _result = new PokerRoundResult(comparison, damage, prediction, prevented);
       _resultRevealAt = Add(now, GameRules.PokerResultAnnouncementMicroseconds);
       Phase = PokerRoundPhase.ResultPending;
     }

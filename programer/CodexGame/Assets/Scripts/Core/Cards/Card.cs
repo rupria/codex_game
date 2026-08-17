@@ -16,6 +16,7 @@ namespace CodexGame.Core.Cards
 
       Id = CardId.Create(suit, rank);
       Suit = suit;
+      EffectiveSuit = suit;
       Rank = rank;
       SkullCount = skullCount;
       JokerKind = default;
@@ -31,6 +32,7 @@ namespace CodexGame.Core.Cards
 
       Id = CardId.CreateJoker(jokerKind);
       Suit = default;
+      EffectiveSuit = default;
       Rank = default;
       SkullCount = 0;
       JokerKind = jokerKind;
@@ -40,6 +42,8 @@ namespace CodexGame.Core.Cards
     public CardId Id { get; }
 
     public CardSuit Suit { get; }
+
+    public CardSuit EffectiveSuit { get; }
 
     public CardRank Rank { get; }
 
@@ -61,11 +65,35 @@ namespace CodexGame.Core.Cards
         }
 
         return Enum.IsDefined(typeof(CardSuit), Suit)
+          && Enum.IsDefined(typeof(CardSuit), EffectiveSuit)
           && Enum.IsDefined(typeof(CardRank), Rank)
           && SkullCount >= 1
           && SkullCount <= 3
           && Id == CardId.Create(Suit, Rank);
       }
+    }
+
+    public Card WithEffectiveSuit(CardSuit effectiveSuit)
+    {
+      if (IsJoker) throw new InvalidOperationException("A Joker cannot receive a suit override.");
+      CardId.ValidateSuit(effectiveSuit);
+      return new Card(Id, Suit, effectiveSuit, Rank, SkullCount);
+    }
+
+    private Card(
+      CardId id,
+      CardSuit suit,
+      CardSuit effectiveSuit,
+      CardRank rank,
+      int skullCount)
+    {
+      Id = id;
+      Suit = suit;
+      EffectiveSuit = effectiveSuit;
+      Rank = rank;
+      SkullCount = skullCount;
+      JokerKind = default;
+      IsJoker = false;
     }
   }
 }

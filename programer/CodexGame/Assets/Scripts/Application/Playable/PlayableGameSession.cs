@@ -48,6 +48,7 @@ namespace CodexGame.Application.Playable
     private StageBulletReward _lastStageRewardDetails = StageBulletReward.None;
     private bool _inactivityReturnPending;
     private int _lastExpiredTemporaryBullets;
+    private bool _pokerPredictionRecorded;
 
     public PlayableGameSession()
       : this(new AiPrivateCardSelectionPolicy(), PokerRuleSet.Development)
@@ -75,6 +76,7 @@ namespace CodexGame.Application.Playable
       _stageItemRestriction.ResetRun();
       _itemUsePresentation.Reset();
       _predictionStreak.Reset();
+      _pokerPredictionRecorded = false;
       _cheatHistory.Reset();
       _lastStageReward = 0;
       _lastStageRewardDetails = StageBulletReward.None;
@@ -138,7 +140,7 @@ namespace CodexGame.Application.Playable
           Phase = PlayableGamePhase.RunWon;
           return;
         }
-        _barShop.Begin(nextCombatRoundSeed);
+        _barShop.Begin(nextCombatRoundSeed, _inventory, _health.Player);
         _shopPurchase.Reset();
         _shopExitGuard.Reset();
         _nextStageGate.Reset();
@@ -188,9 +190,10 @@ namespace CodexGame.Application.Playable
     {
       if (Phase != PlayableGamePhase.BarShop
         || _shopPurchase.IsInputLocked
-        || !_barShop.TryReroll(_bullets)) return false;
+        || !_barShop.TryReroll(_bullets, _inventory, _health.Player)) return false;
       _shopExitGuard.Reset();
       RecordInput(now);
+      RecordPredictionIfReady();
       return true;
     }
 
@@ -352,6 +355,81 @@ namespace CodexGame.Application.Playable
       return result;
     }
 
+    public PokerItemFailure UseWildInk(
+      CardId target,
+      CardSuit effectiveSuit,
+      GameTimestamp now)
+    {
+      if (Phase != PlayableGamePhase.PokerItems || _items == null)
+      {
+        return PokerItemFailure.WrongPhase;
+      }
+      if (_itemUsePresentation.IsActive) return PokerItemFailure.PresentationLocked;
+      var result = _items.UseWildInk(target, effectiveSuit);
+      if (result == PokerItemFailure.None)
+      {
+        _itemUsePresentation.Begin(GameItemId.WildInk, now);
+        RecordInput(now);
+      }
+      CompleteItemWindowIfReady(now);
+      return result;
+    }
+
+    public PokerItemFailure UseBarrel(GameTimestamp now)
+    {
+      if (Phase != PlayableGamePhase.PokerItems || _items == null)
+      {
+        return PokerItemFailure.WrongPhase;
+      }
+      if (_itemUsePresentation.IsActive) return PokerItemFailure.PresentationLocked;
+      var result = _items.UseBarrel();
+      if (result == PokerItemFailure.None)
+      {
+        _itemUsePresentation.Begin(GameItemId.Barrel, now);
+        RecordInput(now);
+      }
+      CompleteItemWindowIfReady(now);
+      return result;
+    }
+
+    public PokerItemFailure UsePredictionInsurance(GameTimestamp now)
+    {
+      if (Phase != PlayableGamePhase.PokerItems || _items == null)
+      {
+        return PokerItemFailure.WrongPhase;
+      }
+      if (_itemUsePresentation.IsActive) return PokerItemFailure.PresentationLocked;
+      var result = _items.UsePredictionInsurance(_predictionStreak.CanActivateInsurance);
+      if (result == PokerItemFailure.None)
+      {
+        if (!_predictionStreak.ActivateInsurance())
+        {
+          throw new InvalidOperationException("A validated insurance item did not activate.");
+        }
+        _itemUsePresentation.Begin(GameItemId.PredictionInsurance, now);
+        RecordInput(now);
+      }
+      CompleteItemWindowIfReady(now);
+      return result;
+    }
+
+    public PokerItemFailure UseMercenary(CardId target, GameTimestamp now)
+    {
+      if (Phase != PlayableGamePhase.PokerItems || _items == null)
+      {
+        return PokerItemFailure.WrongPhase;
+      }
+      if (_itemUsePresentation.IsActive) return PokerItemFailure.PresentationLocked;
+      var result = _items.UseMercenary(target);
+      if (result == PokerItemFailure.None)
+      {
+        _itemUsePresentation.Begin(GameItemId.Mercenary, now);
+        RecordInput(now);
+      }
+      CompleteItemWindowIfReady(now);
+      return result;
+    }
+
     public bool ConfirmItems(GameTimestamp now)
     {
       if (Phase != PlayableGamePhase.PokerItems
@@ -444,11 +522,11 @@ namespace CodexGame.Application.Playable
         _itemUsePresentation.Tick(now);
         CompleteItemWindowIfReady(now);
       }
-      else if (Phase == PlayableGamePhase.PokerPrediction
-        && _poker != null
-        && _poker.Tick(now))
+      else if (Phase == PlayableGamePhase.PokerPrediction && _poker != null)
       {
-        CompletePokerRound();
+        var completed = _poker.Tick(now);
+        RecordPredictionIfReady();
+        if (completed) CompletePokerRound();
       }
       else if (Phase == PlayableGamePhase.BarShop)
       {
@@ -480,6 +558,7 @@ namespace CodexGame.Application.Playable
         _lastStageRewardDetails.BaseBullets,
         _lastStageRewardDetails.BonusBullets,
         _predictionStreak.SuccessCount,
+        _predictionStreak.GetSnapshot(),
         _inventory.Snapshot(),
         _cheatHistory.CheatUsed,
         _cheatHistory.Snapshot(),
@@ -526,6 +605,7 @@ namespace CodexGame.Application.Playable
       _items = null;
       _itemUsePresentation.Reset();
       _poker = null;
+      _pokerPredictionRecorded = false;
       _firstPublicCard = null;
       _halli.StartNew(now, combatRoundSeed, _combatRoundNumber, true);
       if (includeStageEntry)
@@ -617,7 +697,8 @@ namespace CodexGame.Application.Playable
         _inventory,
         _halli.GetSnapshot(now).CombatRoundSeed,
         now,
-        _stageItemRestriction);
+        _stageItemRestriction,
+        _health.Player < GameRules.StartingHealth);
       Phase = PlayableGamePhase.PokerItems;
     }
 
@@ -629,7 +710,6 @@ namespace CodexGame.Application.Playable
       }
 
       _health = _poker.Result.Damage.After;
-      _predictionStreak.Record(_poker.Result.Prediction);
       if (_health.Ai == 0) SettleStageVictory();
       else
       {
@@ -649,6 +729,7 @@ namespace CodexGame.Application.Playable
       _stageNumber++;
       _combatRoundNumber = 1;
       _health = NextStageHealthResolver.RestoreAfterVictory(_health);
+      _predictionStreak.ResetStage();
       _lastStageReward = 0;
       _lastStageRewardDetails = StageBulletReward.None;
       _lastExpiredTemporaryBullets = 0;
@@ -696,22 +777,39 @@ namespace CodexGame.Application.Playable
         && _items.Phase == PokerItemPhase.Completed
         && !_itemUsePresentation.IsActive)
       {
-        BeginPokerFromItems(now);
+        BeginPokerFromItems(now, _items.HandConfirmationTimedOut);
       }
     }
 
-    private void BeginPokerFromItems(GameTimestamp now)
+    private void BeginPokerFromItems(
+      GameTimestamp now,
+      bool handConfirmationTimedOut = false)
     {
       if (_items == null || !_firstPublicCard.HasValue) return;
       var itemResult = _items.GetResult();
       _poker = new PokerRoundSession();
-      _poker.Begin(
-        _firstPublicCard.Value,
-        itemResult,
-        _health,
-        _pokerRuleSet,
-        now,
-        _items.VisibleAiCardIndex);
+      if (handConfirmationTimedOut)
+      {
+        _poker.BeginHandConfirmationTimeout(
+          _firstPublicCard.Value,
+          itemResult,
+          _health,
+          _pokerRuleSet,
+          now,
+          _items.VisibleAiCardIndex);
+      }
+      else
+      {
+        _poker.Begin(
+          _firstPublicCard.Value,
+          itemResult,
+          _health,
+          _pokerRuleSet,
+          now,
+          _items.VisibleAiCardIndex,
+          _items.BarrelDefenseArmed);
+      }
+      _pokerPredictionRecorded = false;
       Phase = PlayableGamePhase.PokerPrediction;
     }
 
@@ -722,6 +820,7 @@ namespace CodexGame.Application.Playable
       _stageItemRestriction.ResetRun();
       _itemUsePresentation.Reset();
       _predictionStreak.Reset();
+      _pokerPredictionRecorded = false;
       _cheatHistory.Reset();
       _shopExitGuard.Reset();
       _lastStageReward = 0;
@@ -733,8 +832,18 @@ namespace CodexGame.Application.Playable
       _lastStageRewardDetails = _bullets.SettleStageVictory(
         _stageNumber,
         _health.Player,
-        _predictionStreak.SuccessCount);
+        _predictionStreak.RewardSuccessCount);
       _lastStageReward = _lastStageRewardDetails.TotalBullets;
+    }
+
+    private void RecordPredictionIfReady()
+    {
+      if (_pokerPredictionRecorded || _poker?.Result == null) return;
+      if (_poker.Result.PredictionEligibleForInsurance)
+      {
+        _predictionStreak.Record(_poker.Result.Prediction);
+      }
+      _pokerPredictionRecorded = true;
     }
 
 #if UNITY_EDITOR || ENABLE_GAMEPLAY_CHEATS

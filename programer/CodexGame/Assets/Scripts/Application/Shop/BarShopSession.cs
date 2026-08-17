@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using CodexGame.Core.Cards;
+using CodexGame.Core.Items;
 using CodexGame.Core.Rewards;
 using CodexGame.Core.Shared;
 using CodexGame.Core.Shop;
@@ -18,10 +19,9 @@ namespace CodexGame.Application.Shop
 
     private readonly IReadOnlyList<BarShopProductDefinition> _catalog;
     private IReadOnlyList<BarShopProductDefinition> _slots = Empty;
-    private readonly List<IReadOnlyList<BarShopProductDefinition>> _visitSlots =
-      new List<IReadOnlyList<BarShopProductDefinition>>();
     private bool _isOpen;
     private int _rerollCount;
+    private long _visitSeed;
 
     public BarShopSession(IReadOnlyList<BarShopProductDefinition> catalog)
     {
@@ -37,56 +37,33 @@ namespace CodexGame.Application.Shop
 
     public void Begin(long visitSeed)
     {
-      var visible = new List<BarShopProductDefinition>();
-      for (var index = 0; index < _catalog.Count; index++)
-      {
-        if (_catalog[index].DisplayState == BarShopProductDisplayState.VisiblePreview)
-        {
-          visible.Add(_catalog[index]);
-        }
-      }
-      if (visible.Count < SlotCount)
-      {
-        throw new InvalidOperationException("The visible shop pool must fill all four slots.");
-      }
+      Begin(visitSeed, null, -1);
+    }
 
-      var random = DeterministicRandomFactory.Create(visitSeed, RandomChannel.BarShop);
-      for (var index = visible.Count - 1; index > 0; index--)
-      {
-        var swapIndex = random.NextInt(index + 1);
-        var value = visible[index];
-        visible[index] = visible[swapIndex];
-        visible[swapIndex] = value;
-      }
-
-      _visitSlots.Clear();
-      _visitSlots.Add(Take(visible, 0));
-      for (var reroll = 0; reroll < GameRules.BarShopMaximumRerolls; reroll++)
-      {
-        // Each visit gets two deterministic reroll snapshots. With the current
-        // four-product catalog this changes ordering without inventing products.
-        for (var index = visible.Count - 1; index > 0; index--)
-        {
-          var swapIndex = random.NextInt(index + 1);
-          var value = visible[index];
-          visible[index] = visible[swapIndex];
-          visible[swapIndex] = value;
-        }
-        _visitSlots.Add(Take(visible, 0));
-      }
-      _slots = _visitSlots[0];
+    public void Begin(long visitSeed, RunInventory? inventory, int currentHealth)
+    {
+      _visitSeed = visitSeed;
       _rerollCount = 0;
+      _slots = BuildSlots(_rerollCount, inventory, currentHealth);
       _isOpen = true;
     }
 
     public bool TryReroll(BulletLedger bullets)
+    {
+      return TryReroll(bullets, null, -1);
+    }
+
+    public bool TryReroll(
+      BulletLedger bullets,
+      RunInventory? inventory,
+      int currentHealth)
     {
       if (bullets == null) throw new ArgumentNullException(nameof(bullets));
       if (!_isOpen
         || _rerollCount >= GameRules.BarShopMaximumRerolls
         || !bullets.TrySpend(RerollCost)) return false;
       _rerollCount++;
-      _slots = _visitSlots[_rerollCount];
+      _slots = BuildSlots(_rerollCount, inventory, currentHealth);
       return true;
     }
 
@@ -122,18 +99,52 @@ namespace CodexGame.Application.Shop
     public void Close()
     {
       _slots = Empty;
-      _visitSlots.Clear();
       _isOpen = false;
       _rerollCount = 0;
+      _visitSeed = 0;
     }
 
-    private static IReadOnlyList<BarShopProductDefinition> Take(
-      IReadOnlyList<BarShopProductDefinition> source,
-      int start)
+    private IReadOnlyList<BarShopProductDefinition> BuildSlots(
+      int rerollSequence,
+      RunInventory? inventory,
+      int currentHealth)
     {
-      var result = new BarShopProductDefinition[SlotCount];
-      for (var index = 0; index < result.Length; index++) result[index] = source[start + index];
+      var eligible = new List<BarShopProductDefinition>();
+      for (var index = 0; index < _catalog.Count; index++)
+      {
+        var product = _catalog[index];
+        if (product.DisplayState != BarShopProductDisplayState.VisiblePreview) continue;
+        if (product.ItemId.HasValue
+          && inventory != null
+          && inventory.Contains(product.ItemId.Value)) continue;
+        if (product.ItemId == GameItemId.HealthRecovery
+          && currentHealth >= GameRules.StartingHealth) continue;
+        eligible.Add(product);
+      }
+
+      var random = DeterministicRandomFactory.Create(
+        MixSeed(_visitSeed, rerollSequence),
+        RandomChannel.BarShop);
+      for (var index = eligible.Count - 1; index > 0; index--)
+      {
+        var swapIndex = random.NextInt(index + 1);
+        var value = eligible[index];
+        eligible[index] = eligible[swapIndex];
+        eligible[swapIndex] = value;
+      }
+
+      var count = Math.Min(SlotCount, eligible.Count);
+      var result = new BarShopProductDefinition[count];
+      for (var index = 0; index < result.Length; index++) result[index] = eligible[index];
       return Array.AsReadOnly(result);
+    }
+
+    private static long MixSeed(long visitSeed, int rerollSequence)
+    {
+      unchecked
+      {
+        return visitSeed ^ (0x5DEECE66DL * (rerollSequence + 1));
+      }
     }
 
     private static IReadOnlyList<BarShopProductDefinition> Copy(

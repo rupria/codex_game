@@ -24,6 +24,7 @@ namespace CodexGame.Application.Playable
       int lastStageBaseReward,
       int lastStageBonusReward,
       int predictionSuccessCount,
+      PredictionRewardSnapshot predictionReward,
       IReadOnlyList<GameItemId> inventory,
       bool cheatUsed,
       IReadOnlyList<CheatCommandEntry> cheatHistory,
@@ -54,6 +55,8 @@ namespace CodexGame.Application.Playable
       LastStageBaseReward = lastStageBaseReward;
       LastStageBonusReward = lastStageBonusReward;
       PredictionSuccessCount = predictionSuccessCount;
+      PredictionReward = predictionReward
+        ?? throw new ArgumentNullException(nameof(predictionReward));
       Inventory = Copy(inventory);
       CheatUsed = cheatUsed;
       CheatHistory = Copy(cheatHistory);
@@ -82,6 +85,7 @@ namespace CodexGame.Application.Playable
     public int LastStageBaseReward { get; }
     public int LastStageBonusReward { get; }
     public int PredictionSuccessCount { get; }
+    public PredictionRewardSnapshot PredictionReward { get; }
     public IReadOnlyList<GameItemId> Inventory { get; }
     public bool CheatUsed { get; }
     public IReadOnlyList<CheatCommandEntry> CheatHistory { get; }

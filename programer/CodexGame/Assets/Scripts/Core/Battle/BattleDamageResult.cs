@@ -16,7 +16,7 @@ namespace CodexGame.Core.Battle
         throw new ArgumentOutOfRangeException(nameof(pokerWinner));
       }
 
-      if (damage < 1)
+      if (damage < 0)
       {
         throw new ArgumentOutOfRangeException(nameof(damage));
       }
