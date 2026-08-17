@@ -1,0 +1,26 @@
+{
+  "version":"0.5.1",
+  "baseDevCommit":"00b389c36610b1669b1f2415cbb81229b6df787c",
+  "status":"dev_shared_art_unconnected",
+  "authoringTool":"Aseprite",
+  "runtimeRoot":"Assets/Art/Prototype/UI/IconOverhaul_0_5_1",
+  "displayContracts": {
+    "inventorySlot": {"drawRect":[56,56],"assetSize":[64,64]},
+    "popupDetail": {"drawRect":[80,80],"assetSize":[80,80]},
+    "reuseOneTextureForBoth": false,
+    "filterMode":"Point",
+    "mipmaps":false
+  },
+  "items":[
+    {"itemId":"IT-01","inventoryIcon":"item_reload_inventory_64_0_5_1.png","popupIcon":"item_reload_popup_80_0_5_1.png"},
+    {"itemId":"IT-02","inventoryIcon":"item_bottom_deal_inventory_64_0_5_1.png","popupIcon":"item_bottom_deal_popup_80_0_5_1.png"},
+    {"itemId":"IT-03","inventoryIcon":"item_hype_man_inventory_64_0_5_1.png","popupIcon":"item_hype_man_popup_80_0_5_1.png"},
+    {"itemId":"IT-HP-01","inventoryIcon":"item_heal_tonic_inventory_64_0_5_1.png","popupIcon":"item_heal_tonic_popup_80_0_5_1.png"}
+  ],
+  "visualSubjects": {
+    "IT-01":"steel revolver cylinder, engraved skull hub, ejector rod and loose cartridges",
+    "IT-02":"worn card deck, exposed bottom card and articulated leather glove",
+    "IT-03":"modern red-and-ivory handheld megaphone with brass lip, seam, pivot and fasteners plus a wide-brimmed cowboy hat resting on top",
+    "IT-HP-01":"amber tonic bottle, medicine label, wax detail and tied herbs"
+  }
+}
