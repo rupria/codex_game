@@ -28,6 +28,8 @@ namespace CodexGame.Application.Playable
       bool cheatUsed,
       IReadOnlyList<CheatCommandEntry> cheatHistory,
       long inactivityRemainingMicroseconds,
+      bool inactivityReturnPending,
+      StageItemRestrictionSnapshot stageItemRestriction,
       PlayableTransitionSnapshot transition,
       NextStageTransitionSnapshot? nextStageTransition,
       PrototypeHalliSnapshot? halli,
@@ -55,6 +57,9 @@ namespace CodexGame.Application.Playable
       CheatUsed = cheatUsed;
       CheatHistory = Copy(cheatHistory);
       InactivityRemainingMicroseconds = inactivityRemainingMicroseconds;
+      InactivityReturnPending = inactivityReturnPending;
+      StageItemRestriction = stageItemRestriction
+        ?? throw new ArgumentNullException(nameof(stageItemRestriction));
       Transition = transition;
       NextStageTransition = nextStageTransition;
       Halli = halli;
@@ -79,6 +84,8 @@ namespace CodexGame.Application.Playable
     public bool CheatUsed { get; }
     public IReadOnlyList<CheatCommandEntry> CheatHistory { get; }
     public long InactivityRemainingMicroseconds { get; }
+    public bool InactivityReturnPending { get; }
+    public StageItemRestrictionSnapshot StageItemRestriction { get; }
     public PlayableTransitionSnapshot Transition { get; }
     public NextStageTransitionSnapshot? NextStageTransition { get; }
     public PrototypeHalliSnapshot? Halli { get; }

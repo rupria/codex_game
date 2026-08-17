@@ -11,7 +11,7 @@ namespace CodexGame.Presentation.Localization
   {
     public const string DefaultLanguage = "ko";
     public const string FallbackLanguage = "en";
-    public const int RequiredKeyCount = 164;
+    public const int RequiredKeyCount = 176;
 
     private static readonly string[] RequiredJokerKeys =
     {
@@ -49,6 +49,26 @@ namespace CodexGame.Presentation.Localization
       "UI_TRANSITION_SIT_START",
       "UI_TRANSITION_APPROACHING_TAVERN",
       "UI_TRANSITION_OPEN_SALOON_DOOR"
+    };
+
+    private static readonly string[] RequiredPresentation0124Keys =
+    {
+      "UI_STAGE_ENTRY",
+      "UI_STAGE_ENTRY_SKIP",
+      "UI_THREE_CALL_ENTRY",
+      "UI_SHOWDOWN_ENTRY",
+      "UI_ITEM_LIMIT_ACTIVE",
+      "UI_ITEM_LIMIT_REMAINING"
+    };
+
+    private static readonly string[] RequiredPresentation0125Keys =
+    {
+      "UI_GUIDE_TUTORIAL_SKIP",
+      "UI_INACTIVITY_RETURN_MESSAGE",
+      "UI_COMMON_CONFIRM",
+      "UI_RUN_COMPLETE",
+      "UI_ITEM_USING",
+      "UI_THREE_CALL_FLIP_READY"
     };
 
     private static readonly string[] RequiredBarShopKeys =
@@ -145,6 +165,24 @@ namespace CodexGame.Presentation.Localization
         {
           throw new FormatException(
             "Missing required stage-flow localization key: " + RequiredStageFlowKeys[index]);
+        }
+      }
+      for (var index = 0; index < RequiredPresentation0124Keys.Length; index++)
+      {
+        if (!entries.ContainsKey(RequiredPresentation0124Keys[index]))
+        {
+          throw new FormatException(
+            "Missing required 0.1.2.4 presentation localization key: "
+              + RequiredPresentation0124Keys[index]);
+        }
+      }
+      for (var index = 0; index < RequiredPresentation0125Keys.Length; index++)
+      {
+        if (!entries.ContainsKey(RequiredPresentation0125Keys[index]))
+        {
+          throw new FormatException(
+            "Missing required 0.1.2.5 presentation localization key: "
+              + RequiredPresentation0125Keys[index]);
         }
       }
       for (var index = 0; index < RequiredBarShopKeys.Length; index++)

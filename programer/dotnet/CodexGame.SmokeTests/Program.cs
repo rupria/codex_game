@@ -39,6 +39,10 @@ BarShopSessionTests.Run(tests);
 NextStageTransitionGateTests.Run(tests);
 RunInventoryTests.Run(tests);
 PokerItemSessionTests.Run(tests);
+ItemUsePresentationSessionTests.Run(tests);
+StageItemRestrictionSessionTests.Run(tests);
+PresentationFlow0124Tests.Run(tests);
+FirstStartTutorialSessionTests.Run(tests);
 StageRewardTests.Run(tests);
 DevelopmentCheatTests.Run(tests);
 

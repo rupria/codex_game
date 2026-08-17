@@ -22,7 +22,6 @@ namespace CodexGame.Presentation.Views
       var playerOnly = uiArt != null && uiArt.UsesPlayerOnlyLowerHud;
       DrawPlayerTray(snapshot, styles, cards, uiArt, localization, playerOnly);
       if (!playerOnly) DrawLegacyAiAcquired(snapshot, styles, cards, uiArt, localization);
-      DrawAiDecision(snapshot, styles, localization);
     }
 
     public void DrawAcquisitionMotion(
@@ -117,19 +116,6 @@ namespace CodexGame.Presentation.Views
           HalliBoardLayout.AiAcquiredCard(index, snapshot.AiAcquiredCards.Count),
           180f);
       }
-    }
-
-    private static void DrawAiDecision(
-      PrototypeHalliSnapshot snapshot,
-      PlayableDevStyles styles,
-      LocalizationRuntime localization)
-    {
-      GUI.Box(HalliBoardLayout.AiStatus, GUIContent.none);
-      var state = snapshot.LeadActor == HalliActor.Ai
-        ? localization.Get("UI_HALLI_AI_STARTS_NEXT")
-        : localization.Get("UI_HALLI_AI_WATCHING");
-      if (snapshot.CanRing) state = localization.Get("UI_HALLI_AI_JUDGING");
-      GUI.Label(HalliBoardLayout.AiStatus, state, styles.Small);
     }
 
     private static Rect PlayerCardRect(

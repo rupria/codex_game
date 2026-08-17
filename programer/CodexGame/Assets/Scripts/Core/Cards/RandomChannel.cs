@@ -13,6 +13,7 @@ namespace CodexGame.Core.Cards
     AiJokerAward = 10,
     PlayerPokerBalance = 11,
     AiPokerBalance = 12,
-    ItemUse = 13
+    ItemUse = 13,
+    StageItemRestriction = 14
   }
 }

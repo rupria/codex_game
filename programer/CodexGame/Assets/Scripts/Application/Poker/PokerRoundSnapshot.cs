@@ -6,6 +6,14 @@ using CodexGame.Core.Poker;
 
 namespace CodexGame.Application.Poker
 {
+  public enum PokerResultPresentationStep
+  {
+    None = 0,
+    Cards = 1,
+    Outcome = 2,
+    Complete = 3
+  }
+
   public sealed class PokerRoundSnapshot
   {
     public PokerRoundSnapshot(
@@ -17,7 +25,8 @@ namespace CodexGame.Application.Poker
       long remainingMicroseconds,
       PokerRoundResult? result,
       IReadOnlyList<JokerHandOption>? legalPlayerJokerOptions = null,
-      PokerHandCategory? selectedPlayerJokerCategory = null)
+      PokerHandCategory? selectedPlayerJokerCategory = null,
+      PokerResultPresentationStep resultPresentationStep = PokerResultPresentationStep.None)
     {
       Phase = phase;
       PlayerPrivateCards = Copy(playerPrivateCards, nameof(playerPrivateCards));
@@ -28,6 +37,7 @@ namespace CodexGame.Application.Poker
       Result = result;
       LegalPlayerJokerOptions = CopyOptions(legalPlayerJokerOptions);
       SelectedPlayerJokerCategory = selectedPlayerJokerCategory;
+      ResultPresentationStep = resultPresentationStep;
     }
 
     public PokerRoundPhase Phase { get; }
@@ -39,6 +49,7 @@ namespace CodexGame.Application.Poker
     public PokerRoundResult? Result { get; }
     public IReadOnlyList<JokerHandOption> LegalPlayerJokerOptions { get; }
     public PokerHandCategory? SelectedPlayerJokerCategory { get; }
+    public PokerResultPresentationStep ResultPresentationStep { get; }
 
     private static IReadOnlyList<Card> Copy(IReadOnlyList<Card> cards, string parameterName)
     {

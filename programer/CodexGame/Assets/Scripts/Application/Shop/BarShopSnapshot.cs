@@ -12,12 +12,16 @@ namespace CodexGame.Application.Shop
       bool canReroll,
       int rerollCost,
       BarShopPurchaseSnapshot? purchase = null,
-      bool exitWarningArmed = false)
+      bool exitWarningArmed = false,
+      int rerollsUsed = 0,
+      int maximumRerolls = 0)
     {
       if (slots == null) throw new ArgumentNullException(nameof(slots));
       Slots = Array.AsReadOnly(Copy(slots));
       CanReroll = canReroll;
       RerollCost = rerollCost;
+      RerollsUsed = rerollsUsed;
+      MaximumRerolls = maximumRerolls;
       Purchase = purchase;
       ExitWarningArmed = exitWarningArmed;
     }
@@ -25,6 +29,9 @@ namespace CodexGame.Application.Shop
     public IReadOnlyList<BarShopProductDefinition> Slots { get; }
     public bool CanReroll { get; }
     public int RerollCost { get; }
+    public int RerollsUsed { get; }
+    public int MaximumRerolls { get; }
+    public int RemainingRerolls => Math.Max(0, MaximumRerolls - RerollsUsed);
     public BarShopPurchaseSnapshot? Purchase { get; }
     public bool ExitWarningArmed { get; }
 

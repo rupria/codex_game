@@ -287,6 +287,8 @@ namespace CodexGame.Presentation.Views
       {
         case PlayableGamePhase.Intro:
           return new PhasePresentation(56f, 0f, 1.1f, 58f);
+        case PlayableGamePhase.StageEntry:
+          return new PhasePresentation(54f, 0.05f, 1.25f, 58f);
         case PlayableGamePhase.HalliOpening:
           return new PhasePresentation(48f, 0.18f, 1.55f, 52f);
         case PlayableGamePhase.Halli:

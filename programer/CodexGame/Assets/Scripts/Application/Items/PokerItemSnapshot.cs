@@ -14,7 +14,11 @@ namespace CodexGame.Application.Items
       IReadOnlyList<Card> visibleAiPrivateCards,
       IReadOnlyList<Card> publicCards,
       IReadOnlyList<Card> bottomDealCandidates,
-      PokerItemFailure lastFailure)
+      PokerItemFailure lastFailure,
+      StageItemRestrictionSnapshot? stageRestriction = null,
+      Card? revealingSecondPublicCard = null,
+      float secondPublicRevealProgress = 1f,
+      ItemUsePresentationSnapshot? usePresentation = null)
     {
       Phase = phase;
       Inventory = Copy(inventory);
@@ -23,6 +27,10 @@ namespace CodexGame.Application.Items
       PublicCards = Copy(publicCards);
       BottomDealCandidates = Copy(bottomDealCandidates);
       LastFailure = lastFailure;
+      StageRestriction = stageRestriction;
+      RevealingSecondPublicCard = revealingSecondPublicCard;
+      SecondPublicRevealProgress = secondPublicRevealProgress;
+      UsePresentation = usePresentation ?? ItemUsePresentationSnapshot.Inactive;
     }
 
     public PokerItemPhase Phase { get; }
@@ -32,6 +40,10 @@ namespace CodexGame.Application.Items
     public IReadOnlyList<Card> PublicCards { get; }
     public IReadOnlyList<Card> BottomDealCandidates { get; }
     public PokerItemFailure LastFailure { get; }
+    public StageItemRestrictionSnapshot? StageRestriction { get; }
+    public Card? RevealingSecondPublicCard { get; }
+    public float SecondPublicRevealProgress { get; }
+    public ItemUsePresentationSnapshot UsePresentation { get; }
 
     private static IReadOnlyList<T> Copy<T>(IReadOnlyList<T> source)
     {

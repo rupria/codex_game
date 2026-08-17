@@ -5,6 +5,7 @@ namespace CodexGame.Application.Items
     NotStarted = 0,
     AwaitingActions = 1,
     AwaitingBottomDealChoice = 2,
-    Completed = 3
+    Completed = 3,
+    RevealingSecondPublic = 4
   }
 }

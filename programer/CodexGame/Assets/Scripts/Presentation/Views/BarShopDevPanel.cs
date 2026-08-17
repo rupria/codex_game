@@ -88,8 +88,12 @@ namespace CodexGame.Presentation.Views
         }
       }
 
-      var rerollLabel = localization.Get(
-        shop.CanReroll ? "UI_BAR_REROLL_FREE" : "UI_BAR_REROLL_USED");
+      var rerollLabel = shop.CanReroll
+        ? localization.Get(
+          "UI_BAR_REROLL_FREE",
+          new LocalizationArgument("remaining", shop.RemainingRerolls),
+          new LocalizationArgument("cost", shop.RerollCost))
+        : localization.Get("UI_BAR_REROLL_USED");
       if (DrawButton(
         RerollButton,
         rerollLabel,

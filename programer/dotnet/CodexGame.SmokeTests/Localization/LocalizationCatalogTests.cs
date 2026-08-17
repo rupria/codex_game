@@ -15,7 +15,7 @@ namespace CodexGame.SmokeTests.Localization
       var catalog = LocalizationCatalog.Parse(File.ReadAllText(csvPath), warnings.Add);
       tests.Check(
         catalog.Count == LocalizationCatalog.RequiredKeyCount,
-        "The runtime localization catalog must validate all 148 keys.");
+        "The runtime localization catalog must validate the full 0.1.2.5 key set.");
       tests.Check(
         catalog.Get("UI_MAIN_START", "ko") == "시작"
           && catalog.Get("UI_MAIN_START", "en") == "START",
@@ -42,12 +42,16 @@ namespace CodexGame.SmokeTests.Localization
             == "PUSHING THROUGH THE SALOON DOORS",
         "Bar and tavern-transition strings must load from the runtime catalog.");
       tests.Check(
-        catalog.Get("UI_BAR_REROLL_FREE", "ko") == "무료 리롤"
-          && catalog.Get("UI_BAR_REROLL_USED", "en") == "REROLL USED"
+        catalog.Get(
+          "UI_BAR_REROLL_FREE",
+          "ko",
+          new LocalizationArgument("remaining", 2),
+          new LocalizationArgument("cost", 1)) == "재추첨 2/2 · 1"
+          && catalog.Get("UI_BAR_REROLL_USED", "en") == "REROLL COMPLETE"
           && catalog.Get("UI_BAR_DUMMY_ITEM_06", "ko") == "진열 상품 F"
           && !catalog.Get("UI_BAR_DUMMY_ITEM_01", "ko").Contains("미확정")
           && !catalog.Get("UI_BAR_DUMMY_ITEM_01", "ko").Contains("개발 중"),
-        "The bar shop must localize its public reroll and six preview-product labels without internal wording.");
+        "The bar shop must localize its paid two-use reroll and preview-product labels without internal wording.");
       tests.Check(
         catalog.Get("UI_GUIDE_PAGE_FLOW_TITLE", "ko") == "목표와 게임 흐름"
           && catalog.Get("UI_GUIDE_PAGE_RESULT_TITLE", "en") == "PREDICTION & VICTORY"

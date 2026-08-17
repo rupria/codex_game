@@ -52,10 +52,10 @@ namespace CodexGame.Presentation.Views
       }
       else if (snapshot.Phase == PokerRoundPhase.ResultPending)
       {
-        GUI.Label(
-          new Rect(300f, 18f, 360f, 44f),
-          localization.Get("UI_POKER_RESULT_PENDING"),
-          styles.Status);
+        if (snapshot.ResultPresentationStep == PokerResultPresentationStep.Outcome)
+        {
+          DrawResult(snapshot, styles, localization);
+        }
       }
       else
       {
@@ -66,16 +66,16 @@ namespace CodexGame.Presentation.Views
       if (DrawPredictionButton(
         PokerTableLayout.WinVisual,
         PokerTableLayout.WinHit,
-        pokerArt?.WinIdle,
-        pokerArt?.WinHover,
+        pokerArt?.PlayerPredictionIdle,
+        pokerArt?.PlayerPredictionHover,
         localization.Get("UI_POKER_PLAYER_WINS"),
         canPredict,
         styles)) predict(PredictionChoice.PlayerWins);
       if (DrawPredictionButton(
         PokerTableLayout.LoseVisual,
         PokerTableLayout.LoseHit,
-        pokerArt?.LoseIdle,
-        pokerArt?.LoseHover,
+        pokerArt?.AiPredictionIdle,
+        pokerArt?.AiPredictionHover,
         localization.Get("UI_POKER_PLAYER_LOSES"),
         canPredict,
         styles)) predict(PredictionChoice.PlayerLoses);
@@ -345,16 +345,8 @@ namespace CodexGame.Presentation.Views
       if (texture != null) GUI.DrawTexture(drawRect, texture, ScaleMode.ScaleToFit, true);
       else GUI.Box(drawRect, GUIContent.none);
       GUI.color = previousColor;
-      var labelBackground = new Rect(drawRect.x + 7f, drawRect.y + 38f, drawRect.width - 14f, 17f);
-      GUI.color = new Color(0.04f, 0.025f, 0.02f, 0.82f);
-      GUI.DrawTexture(labelBackground, Texture2D.whiteTexture, ScaleMode.StretchToFill, true);
-      GUI.color = previousColor;
-      GUI.Label(
-        labelBackground,
-        label,
-        styles.Small);
       GUI.enabled = enabled;
-      var clicked = GUI.Button(hitRect, GUIContent.none, GUIStyle.none);
+      var clicked = GUI.Button(hitRect, new GUIContent(string.Empty, label), GUIStyle.none);
       GUI.enabled = true;
       return clicked;
     }
@@ -368,34 +360,23 @@ namespace CodexGame.Presentation.Views
       var comparison = snapshot.Result.Comparison;
       var winner = localization.Get(
         comparison.Winner == PokerWinner.Player ? "UI_ACTOR_PLAYER" : "UI_ACTOR_AI");
-      var overlayState = PokerResultOverlayState.FromElapsedSeconds(
-        Time.unscaledTime - _resultOverlayStartedAt);
-      string message;
       var predictionSucceeded = snapshot.Result.Prediction.IsCorrect;
-      if (overlayState.Step == PokerResultOverlayStep.Result)
-      {
-        message = localization.Get(
-          "UI_POKER_RESULT_SUMMARY",
-          new LocalizationArgument("winner", winner),
-          new LocalizationArgument("playerHand", CategoryName(comparison.PlayerValue.Category, localization)),
-          new LocalizationArgument("aiHand", CategoryName(comparison.AiValue.Category, localization)),
-          new LocalizationArgument("prediction", string.Empty),
-          new LocalizationArgument("playerHp", snapshot.Health.Player),
-          new LocalizationArgument("aiHp", snapshot.Health.Ai));
-      }
-      else
-      {
-        message = snapshot.Result.Prediction.Choice == PredictionChoice.Skipped
-          ? localization.Get("UI_PREDICTION_SKIPPED")
-          : localization.Get(predictionSucceeded
-            ? "UI_PREDICTION_CORRECT"
-            : "UI_PREDICTION_WRONG");
-      }
+      var prediction = snapshot.Result.Prediction.Choice == PredictionChoice.Skipped
+        ? localization.Get("UI_PREDICTION_SKIPPED")
+        : localization.Get(predictionSucceeded ? "UI_PREDICTION_CORRECT" : "UI_PREDICTION_WRONG");
+      var message = localization.Get(
+        "UI_POKER_RESULT_SUMMARY",
+        new LocalizationArgument("winner", winner),
+        new LocalizationArgument("playerHand", CategoryName(comparison.PlayerValue.Category, localization)),
+        new LocalizationArgument("aiHand", CategoryName(comparison.AiValue.Category, localization)),
+        new LocalizationArgument("prediction", prediction),
+        new LocalizationArgument("playerHp", snapshot.Health.Player),
+        new LocalizationArgument("aiHp", snapshot.Health.Ai));
 
       PokerResultOverlayRenderer.Draw(
         new Rect(86f, 204f, 788f, 92f),
         message,
-        overlayState.Step == PokerResultOverlayStep.Prediction,
+        true,
         predictionSucceeded,
         styles);
     }

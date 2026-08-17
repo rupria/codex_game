@@ -41,7 +41,10 @@ namespace CodexGame.Presentation.Views
       GUI.Label(new Rect(56f, 24f, 848f, 38f), localization.Get("UI_ITEM_WINDOW_TITLE"), styles.Title);
       DrawTableCards(snapshot, cards, styles, localization);
 
-      var canAct = snapshot.Phase == PokerItemPhase.AwaitingActions;
+      var stageLimitExhausted = snapshot.StageRestriction?.IsExhausted == true;
+      var canAct = snapshot.Phase == PokerItemPhase.AwaitingActions
+        && !stageLimitExhausted
+        && !snapshot.UsePresentation.IsActive;
       DrawClosedCrate(
         snapshot.Inventory.Count,
         canAct && !_inventoryOpen,
@@ -76,6 +79,11 @@ namespace CodexGame.Presentation.Views
           hypeMan,
           healthRecovery,
           confirm);
+      }
+
+      if (snapshot.UsePresentation.IsActive)
+      {
+        DrawItemUsePresentation(snapshot.UsePresentation, art, styles, localization);
       }
 
       if (snapshot.LastFailure != PokerItemFailure.None)
@@ -138,6 +146,16 @@ namespace CodexGame.Presentation.Views
       {
         cards.DrawAt(new Rect(416f + index * 66f, 188f, 56f, 78f), snapshot.PublicCards[index]);
       }
+      if (snapshot.RevealingSecondPublicCard.HasValue)
+      {
+        CardFlipMotion.Draw(
+          cards,
+          snapshot.RevealingSecondPublicCard.Value,
+          new Rect(448f, 98f, 56f, 78f),
+          new Rect(482f, 188f, 56f, 78f),
+          snapshot.SecondPublicRevealProgress,
+          false);
+      }
 
       GUI.Label(new Rect(56f, 346f, 220f, 26f), localization.Get("UI_POKER_PLAYER_PRIVATE"), styles.Heading);
       for (var index = 0; index < snapshot.PlayerPrivateCards.Count; index++)
@@ -193,7 +211,10 @@ namespace CodexGame.Presentation.Views
       }
 
       DrawItemDetail(snapshot, cards, art, styles, localization);
-      var canUse = CanUseSelected();
+      var stageLimitExhausted = snapshot.StageRestriction?.IsExhausted == true;
+      var canUse = !stageLimitExhausted
+        && !snapshot.UsePresentation.IsActive
+        && CanUseSelected();
       if (DrawActionButton(
         UseButton,
         localization.Get("UI_COMMON_SELECT"),
@@ -426,6 +447,35 @@ namespace CodexGame.Presentation.Views
           chooseBottomDeal(snapshot.BottomDealCandidates[index].Id);
         }
       }
+    }
+
+    private static void DrawItemUsePresentation(
+      ItemUsePresentationSnapshot presentation,
+      PokerItemUiArtSet art,
+      PlayableDevStyles styles,
+      LocalizationRuntime localization)
+    {
+      if (!presentation.IsActive || !presentation.ItemId.HasValue) return;
+      var previous = GUI.color;
+      GUI.color = new Color(0f, 0f, 0f, 0.58f);
+      GUI.DrawTexture(FullScreen, Texture2D.whiteTexture, ScaleMode.StretchToFill, true);
+      GUI.color = previous;
+
+      var pulse = 1f + Mathf.Sin(presentation.Progress * Mathf.PI) * 0.16f;
+      var size = 96f * pulse;
+      var icon = art?.FindItemIcon(presentation.ItemId.Value);
+      if (icon != null)
+      {
+        GUI.DrawTexture(
+          new Rect(480f - size * 0.5f, 244f - size * 0.5f, size, size),
+          icon,
+          ScaleMode.ScaleToFit,
+          true);
+      }
+      GUI.Label(
+        new Rect(300f, 318f, 360f, 42f),
+        localization.Get("UI_ITEM_USING"),
+        styles.Status);
     }
   }
 }

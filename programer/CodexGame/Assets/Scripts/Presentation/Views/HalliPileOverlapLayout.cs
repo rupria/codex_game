@@ -9,10 +9,10 @@ namespace CodexGame.Presentation.Views
     public const float CardWidth = 64f;
     public const float CardHeight = 90f;
     public const float PreviousCardOffsetX = -42f;
-    public const float PreviousCardOffsetY = 22f;
+    public const float PreviousCardOffsetY = -22f;
     public const float LeftNewestX = 296f;
     public const float RightNewestX = 656f;
-    public const float NewestY = 190f;
+    public const float NewestY = 212f;
     public const int MaximumPileCards = 2;
 
     public static PileSide PhysicalPile(HalliActor actor, HalliRelativeSide side)

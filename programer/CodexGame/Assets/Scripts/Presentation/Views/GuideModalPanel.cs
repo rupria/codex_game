@@ -27,6 +27,7 @@ namespace CodexGame.Presentation.Views
     private static readonly Rect PreviousButton = new Rect(299f, 451f, 56f, 58f);
     private static readonly Rect NextButton = new Rect(602f, 451f, 56f, 58f);
     private static readonly Rect CloseButton = new Rect(800f, 451f, 56f, 58f);
+    private static readonly Rect TutorialSkipButton = new Rect(762f, 452f, 158f, 52f);
 
     public void Draw(
       GuideModalState state,
@@ -35,7 +36,9 @@ namespace CodexGame.Presentation.Views
       LocalizationRuntime localization,
       Action previous,
       Action next,
-      Action close)
+      Action close,
+      Action completeTutorial,
+      Action skipTutorial)
     {
       DrawOpaqueBackground(art);
       if (art != null && art.IsComplete)
@@ -60,8 +63,18 @@ namespace CodexGame.Presentation.Views
       // Keep a single transparent hit target on each icon instead of drawing a second
       // grey text button over it.
       if (DrawIconHitTarget(PreviousButton, state.CanMovePrevious)) previous();
-      if (DrawIconHitTarget(NextButton, state.CanMoveNext)) next();
-      if (DrawIconHitTarget(CloseButton, true)) close();
+      var canAdvance = state.CanMoveNext || state.IsFirstStartTutorial;
+      if (DrawIconHitTarget(NextButton, canAdvance))
+      {
+        if (state.CanMoveNext) next();
+        else completeTutorial();
+      }
+      if (state.IsFirstStartTutorial)
+      {
+        GUI.Label(TutorialSkipButton, localization.Get("UI_GUIDE_TUTORIAL_SKIP"), styles.Heading);
+        if (GUI.Button(TutorialSkipButton, GUIContent.none, GUIStyle.none)) skipTutorial();
+      }
+      else if (DrawIconHitTarget(CloseButton, true)) close();
     }
 
     private static void DrawOpaqueBackground(GuideUiArtSet art)

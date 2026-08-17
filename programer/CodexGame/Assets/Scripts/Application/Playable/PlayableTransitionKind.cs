@@ -5,6 +5,9 @@ namespace CodexGame.Application.Playable
     None = 0,
     HalliOpening = 1,
     HalliToPoker = 2,
-    NextStage = 3
+    NextStage = 3,
+    StageEntry = 4,
+    ThreeCallEntry = 5,
+    ThreeCallToSelection = 6
   }
 }

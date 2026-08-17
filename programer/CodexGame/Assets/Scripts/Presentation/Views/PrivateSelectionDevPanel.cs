@@ -1,6 +1,7 @@
 using System;
 using CodexGame.Application.Distribution;
 using CodexGame.Core.Cards;
+using CodexGame.Presentation.Art;
 using CodexGame.Presentation.Localization;
 using UnityEngine;
 
@@ -13,6 +14,7 @@ namespace CodexGame.Presentation.Views
       int focusedIndex,
       PlayableDevStyles styles,
       PlayableCardRenderer cards,
+      PresentationUiArtSet presentationArt,
       LocalizationRuntime localization,
       Action<int> focus,
       Action<CardId> toggle,
@@ -50,7 +52,21 @@ namespace CodexGame.Presentation.Views
           GUILayout.BeginVertical(GUILayout.Width(105f));
           GUILayout.Label(index == focusedIndex ? localization.Get("UI_COMMON_FOCUS") : " ", styles.Small);
           var cardRect = cards.Draw(card, 96f, 130f, selected);
-          if (cardRect.Contains(Event.current.mousePosition) && index != focusedIndex)
+          var hovered = cardRect.Contains(Event.current.mousePosition);
+          var frame = selected
+            ? presentationArt?.CandidateSelected
+            : hovered
+              ? presentationArt?.CandidateHover
+              : presentationArt?.CandidateIdle;
+          if (frame != null)
+          {
+            GUI.DrawTexture(
+              new Rect(cardRect.x - 14f, cardRect.y - 20f, 124f, 172f),
+              frame,
+              ScaleMode.StretchToFill,
+              true);
+          }
+          if (hovered && index != focusedIndex)
           {
             focus(index);
           }
