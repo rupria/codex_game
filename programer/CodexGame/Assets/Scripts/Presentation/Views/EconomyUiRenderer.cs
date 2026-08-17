@@ -100,11 +100,51 @@ namespace CodexGame.Presentation.Views
 
     public static void DrawExitWarning(Rect rect, EconomyUiArtSet art, GUIStyle style)
     {
+      if (art?.ExitWarningPulseSheet != null)
+      {
+        const int frameCount = 6;
+        var frame = Mathf.FloorToInt(Time.unscaledTime / 0.1f) % frameCount;
+        GUI.DrawTextureWithTexCoords(
+          rect,
+          art.ExitWarningPulseSheet,
+          new Rect((float)frame / frameCount, 0f, 1f / frameCount, 1f),
+          true);
+        return;
+      }
       var previous = GUI.color;
       var pulse = 0.72f + Mathf.PingPong(Time.unscaledTime * 1.8f, 0.28f);
       GUI.color = new Color(1f, 1f, 1f, pulse);
       DrawIcon(rect, art?.ExitWarningIcon, new Color(0.82f, 0.25f, 0.12f, 0.96f), "!", style);
       GUI.color = previous;
+    }
+
+    public static void DrawTemporaryExpiration(
+      Rect rect,
+      int expiredCount,
+      EconomyUiArtSet art,
+      GUIStyle style)
+    {
+      if (expiredCount <= 0) return;
+      if (art?.TemporaryExpireSheet != null)
+      {
+        const int frameCount = 8;
+        var frame = Mathf.FloorToInt(Time.unscaledTime / 0.08f) % frameCount;
+        GUI.DrawTextureWithTexCoords(
+          new Rect(rect.x, rect.y, 40f, 40f),
+          art.TemporaryExpireSheet,
+          new Rect((float)frame / frameCount, 0f, 1f / frameCount, 1f),
+          true);
+      }
+      else
+      {
+        DrawIcon(
+          new Rect(rect.x, rect.y, 40f, 40f),
+          art?.TemporaryCurrencyIcon,
+          TemporaryFallback,
+          "×",
+          style);
+      }
+      GUI.Label(new Rect(rect.x + 44f, rect.y, rect.width - 44f, 40f), "-" + expiredCount, style);
     }
 
     private static void DrawBalance(

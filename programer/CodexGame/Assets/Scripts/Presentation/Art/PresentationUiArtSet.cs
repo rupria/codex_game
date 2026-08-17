@@ -45,7 +45,15 @@ namespace CodexGame.Presentation.Art
     public PresentationUiArtSet(
       Func<string, Texture2D> load,
       Texture2D[] opponentCutouts = null,
-      Texture2D[] opponentPortraits = null)
+      Texture2D[] opponentPortraits = null,
+      Texture2D threeCallIcon = null,
+      Texture2D showdownIcon = null,
+      Texture2D limitOne = null,
+      Texture2D limitTwo = null,
+      Texture2D usedOne = null,
+      Texture2D limitExhausted = null,
+      Texture2D inventoryRestricted = null,
+      Texture2D cardRestricted = null)
     {
       if (load == null) throw new ArgumentNullException(nameof(load));
       _threeCallIcon = Require(load, "phase_three_call_icon_64_0_1_2_4.png");
@@ -83,6 +91,14 @@ namespace CodexGame.Presentation.Art
       _aiDamageFlash = Require(load, "hp_damage_flash_ai_96_0_1_2_4.png");
       _opponentCutouts = opponentCutouts ?? Array.Empty<Texture2D>();
       _opponentPortraits = opponentPortraits ?? Array.Empty<Texture2D>();
+      _threeCallIcon = threeCallIcon ?? _threeCallIcon;
+      _showdownIcon = showdownIcon ?? _showdownIcon;
+      _limitOne = limitOne ?? _limitOne;
+      _limitTwo = limitTwo ?? _limitTwo;
+      _usedOne = usedOne ?? _usedOne;
+      _limitExhausted = limitExhausted ?? _limitExhausted;
+      _inventoryRestricted = inventoryRestricted ?? _inventoryRestricted;
+      _cardRestricted = cardRestricted ?? _cardRestricted;
     }
 
     public Texture2D ThreeCallIcon => _threeCallIcon;

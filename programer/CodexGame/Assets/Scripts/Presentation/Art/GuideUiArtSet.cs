@@ -15,6 +15,9 @@ namespace CodexGame.Presentation.Art
     [SerializeField] private Texture2D _navHover;
     [SerializeField] private Texture2D _navDisabled;
     [SerializeField] private Texture2D _pageIndicatorPlate;
+    [SerializeField] private Texture2D _previousIcon;
+    [SerializeField] private Texture2D _nextIcon;
+    [SerializeField] private Texture2D _closeIcon;
 
     public GuideUiArtSet(
       Texture2D modalBackground,
@@ -25,7 +28,10 @@ namespace CodexGame.Presentation.Art
       Texture2D navIdle,
       Texture2D navHover,
       Texture2D navDisabled,
-      Texture2D pageIndicatorPlate)
+      Texture2D pageIndicatorPlate,
+      Texture2D previousIcon = null,
+      Texture2D nextIcon = null,
+      Texture2D closeIcon = null)
     {
       _modalBackground = modalBackground ?? throw new ArgumentNullException(nameof(modalBackground));
       _flowPage = flowPage ?? throw new ArgumentNullException(nameof(flowPage));
@@ -37,6 +43,9 @@ namespace CodexGame.Presentation.Art
       _navDisabled = navDisabled ?? throw new ArgumentNullException(nameof(navDisabled));
       _pageIndicatorPlate = pageIndicatorPlate
         ?? throw new ArgumentNullException(nameof(pageIndicatorPlate));
+      _previousIcon = previousIcon;
+      _nextIcon = nextIcon;
+      _closeIcon = closeIcon;
     }
 
     public Texture2D ModalBackground => _modalBackground;
@@ -44,6 +53,9 @@ namespace CodexGame.Presentation.Art
     public Texture2D NavHover => _navHover;
     public Texture2D NavDisabled => _navDisabled;
     public Texture2D PageIndicatorPlate => _pageIndicatorPlate;
+    public Texture2D PreviousIcon => _previousIcon;
+    public Texture2D NextIcon => _nextIcon;
+    public Texture2D CloseIcon => _closeIcon;
 
     public Texture2D GetPageArt(int pageIndex)
     {

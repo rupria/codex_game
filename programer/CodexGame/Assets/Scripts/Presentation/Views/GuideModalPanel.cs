@@ -62,9 +62,9 @@ namespace CodexGame.Presentation.Views
       // The visible arrow and close icons are already part of the approved 960x540 art.
       // Keep a single transparent hit target on each icon instead of drawing a second
       // grey text button over it.
-      if (DrawIconHitTarget(PreviousButton, state.CanMovePrevious)) previous();
+      if (DrawIconHitTarget(PreviousButton, state.CanMovePrevious, art?.PreviousIcon)) previous();
       var canAdvance = state.CanMoveNext || state.IsFirstStartTutorial;
-      if (DrawIconHitTarget(NextButton, canAdvance))
+      if (DrawIconHitTarget(NextButton, canAdvance, art?.NextIcon))
       {
         if (state.CanMoveNext) next();
         else completeTutorial();
@@ -74,7 +74,7 @@ namespace CodexGame.Presentation.Views
         GUI.Label(TutorialSkipButton, localization.Get("UI_GUIDE_TUTORIAL_SKIP"), styles.Heading);
         if (GUI.Button(TutorialSkipButton, GUIContent.none, GUIStyle.none)) skipTutorial();
       }
-      else if (DrawIconHitTarget(CloseButton, true)) close();
+      else if (DrawIconHitTarget(CloseButton, true, art?.CloseIcon)) close();
     }
 
     private static void DrawOpaqueBackground(GuideUiArtSet art)
@@ -99,9 +99,13 @@ namespace CodexGame.Presentation.Views
       GUI.color = previousColor;
     }
 
-    private static bool DrawIconHitTarget(Rect rect, bool enabled)
+    private static bool DrawIconHitTarget(Rect rect, bool enabled, Texture2D icon)
     {
       var previousColor = GUI.color;
+      if (icon != null)
+      {
+        GUI.DrawTexture(rect, icon, ScaleMode.ScaleToFit, true);
+      }
       if (!enabled)
       {
         GUI.color = new Color(0.02f, 0.02f, 0.025f, 0.62f);

@@ -82,6 +82,8 @@ namespace CodexGame.Presentation.Views
     private PlayableCardRenderer _pokerCards;
     private int _selectionFocus;
     private LocalizationRuntime _localization;
+    private float _playerDamageUntil = float.NegativeInfinity;
+    private float _aiDamageUntil = float.NegativeInfinity;
 
     public event Action StartRequested;
     public event Action StageEntrySkipRequested;
@@ -176,6 +178,17 @@ namespace CodexGame.Presentation.Views
 
     public void Present(PlayableGameSnapshot snapshot)
     {
+      if (_snapshot != null)
+      {
+        if (snapshot.Health.Player < _snapshot.Health.Player)
+        {
+          _playerDamageUntil = Time.unscaledTime + 0.35f;
+        }
+        if (snapshot.Health.Ai < _snapshot.Health.Ai)
+        {
+          _aiDamageUntil = Time.unscaledTime + 0.35f;
+        }
+      }
       if (_snapshot == null || _snapshot.Phase != snapshot.Phase)
       {
         _selectionFocus = 0;
@@ -359,6 +372,8 @@ namespace CodexGame.Presentation.Views
           _snapshot.Transition,
           _snapshot.Health.Player,
           _snapshot.Health.Ai,
+          Time.unscaledTime < _playerDamageUntil,
+          Time.unscaledTime < _aiDamageUntil,
           _styles,
           _halliCards,
           _halliUiArtSet,
@@ -401,6 +416,8 @@ namespace CodexGame.Presentation.Views
           _pokerUiArtSet,
           _pokerItemUiArtSet,
           _localization,
+          Time.unscaledTime < _playerDamageUntil,
+          Time.unscaledTime < _aiDamageUntil,
           category => JokerHandRequested?.Invoke(category),
           prediction => PredictionRequested?.Invoke(prediction),
           () => AdvanceRequested?.Invoke());
@@ -460,6 +477,11 @@ namespace CodexGame.Presentation.Views
           _snapshot.NextStageTransition,
           _stageTransitionUiArtSet,
           _barShopUiArtSet);
+        EconomyUiRenderer.DrawTemporaryExpiration(
+          new Rect(790f, 472f, 140f, 40f),
+          _snapshot.LastExpiredTemporaryBullets,
+          _economyUiArtSet,
+          _styles.Status);
         return;
       }
 
@@ -716,17 +738,17 @@ namespace CodexGame.Presentation.Views
     {
       var halli = _snapshot.Halli;
       if (halli == null) return;
-      if (halli.CanRing && (Input.GetKeyDown(KeyCode.Q) || Input.GetKeyDown(KeyCode.LeftArrow)))
+      if (halli.CanRing && Input.GetKeyDown(KeyCode.LeftArrow))
       {
         LeftBellRequested?.Invoke();
       }
       else if (halli.CanRing
-        && (Input.GetKeyDown(KeyCode.E) || Input.GetKeyDown(KeyCode.RightArrow)))
+        && Input.GetKeyDown(KeyCode.RightArrow))
       {
         RightBellRequested?.Invoke();
       }
       else if (halli.CanFlip
-        && (Input.GetKeyDown(KeyCode.W) || Pressed(KeyCode.UpArrow, KeyCode.Space)))
+        && Pressed(KeyCode.UpArrow, KeyCode.Space))
       {
         AdvanceRequested?.Invoke();
       }
@@ -736,16 +758,16 @@ namespace CodexGame.Presentation.Views
     {
       var selection = _snapshot.Selection;
       if (selection == null || selection.WinnerCandidates.Count == 0) return;
-      if (Pressed(KeyCode.LeftArrow, KeyCode.Q))
+      if (Input.GetKeyDown(KeyCode.LeftArrow))
       {
         _selectionFocus = (_selectionFocus - 1 + selection.WinnerCandidates.Count)
           % selection.WinnerCandidates.Count;
       }
-      else if (Pressed(KeyCode.RightArrow, KeyCode.E))
+      else if (Input.GetKeyDown(KeyCode.RightArrow))
       {
         _selectionFocus = (_selectionFocus + 1) % selection.WinnerCandidates.Count;
       }
-      else if (Pressed(KeyCode.UpArrow, KeyCode.W))
+      else if (Input.GetKeyDown(KeyCode.UpArrow))
       {
         PrivateCardToggleRequested?.Invoke(selection.WinnerCandidates[_selectionFocus].Id);
       }

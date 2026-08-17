@@ -119,7 +119,7 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
---- !u!1 &797427531
+--- !u!1 &880856449
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -127,8 +127,8 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 797427533}
-  - component: {fileID: 797427532}
+  - component: {fileID: 880856451}
+  - component: {fileID: 880856450}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -136,13 +136,13 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!20 &797427532
+--- !u!20 &880856450
 Camera:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 797427531}
+  m_GameObject: {fileID: 880856449}
   m_Enabled: 1
   serializedVersion: 2
   m_ClearFlags: 2
@@ -187,13 +187,13 @@ Camera:
   m_OcclusionCulling: 1
   m_StereoConvergence: 10
   m_StereoSeparation: 0.022
---- !u!4 &797427533
+--- !u!4 &880856451
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 797427531}
+  m_GameObject: {fileID: 880856449}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: -10}
@@ -202,7 +202,7 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &1397293663
+--- !u!1 &1050410153
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -210,10 +210,10 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 1397293667}
-  - component: {fileID: 1397293666}
-  - component: {fileID: 1397293665}
-  - component: {fileID: 1397293664}
+  - component: {fileID: 1050410157}
+  - component: {fileID: 1050410156}
+  - component: {fileID: 1050410155}
+  - component: {fileID: 1050410154}
   m_Layer: 0
   m_Name: CodexGame.PlayableDev
   m_TagString: Untagged
@@ -221,43 +221,43 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &1397293664
+--- !u!114 &1050410154
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1397293663}
+  m_GameObject: {fileID: 1050410153}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: e01485696a2a0564f8908e12ee526b34, type: 3}
   m_Name: 
   m_EditorClassIdentifier: CodexGame.Bootstrap::CodexGame.Bootstrap.PlayableDevGameController
---- !u!114 &1397293665
+--- !u!114 &1050410155
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1397293663}
+  m_GameObject: {fileID: 1050410153}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 63fa6614e8e1444eb69d2c8ca6814cb3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: CodexGame.Presentation::CodexGame.Presentation.Views.TableScenePresentationRig
-  _sceneCamera: {fileID: 797427532}
-  _view: {fileID: 1397293666}
+  _sceneCamera: {fileID: 880856450}
+  _view: {fileID: 1050410156}
   _battleBackdrop: {fileID: 2800000, guid: 263d2d00d83c60947acaa998c8961e7a, type: 3}
   _introBackdrop: {fileID: 2800000, guid: 4fffdd8f5e45fa4cd921945ef9042957, type: 3}
   _barShopBackdrop: {fileID: 2800000, guid: c6f4b89d92a14e188cf5f1c1ae903002, type: 3}
   _backdropShader: {fileID: 4800000, guid: 9b3acbe23ca64a43b7c17fce4b297763, type: 3}
---- !u!114 &1397293666
+--- !u!114 &1050410156
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1397293663}
+  m_GameObject: {fileID: 1050410153}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: bdb4d81e9bb4ec94681bf2457196d90b, type: 3}
@@ -1321,7 +1321,7 @@ MonoBehaviour:
     _bellWrong: {fileID: 2800000, guid: 8dd04f7ebd994abfa4f56badb6f2150d, type: 3}
     _bellCorrect: {fileID: 2800000, guid: bfcbfdc7c949dca5d20e5914a1d95d8a, type: 3}
     _bellDisabled: {fileID: 2800000, guid: 1662941af12af33da2b0a25ce0f89de3, type: 3}
-    _publicCardLockedSlot: {fileID: 2800000, guid: 99ad1a73019d47e5a642ac8ac17502b1, type: 3}
+    _publicCardLockedSlot: {fileID: 2800000, guid: 6bd5fe5092083b4a10b3bbe2a13a2f97, type: 3}
     _flipTimer: {fileID: 2800000, guid: 313d4aa9ef7b485fa48b166171689679, type: 3}
     _flipDeckIdle: {fileID: 2800000, guid: 0c865ef312a62d88ac060d4efb72a575, type: 3}
     _flipDeckHover: {fileID: 2800000, guid: 45394b4b97d23c7cf5e2558db90ec81e, type: 3}
@@ -1329,16 +1329,18 @@ MonoBehaviour:
     _flipDeckDisabled: {fileID: 2800000, guid: 2d492b3818d8b4b324fc77f8d4e7efa2, type: 3}
     _playerAcquiredTray: {fileID: 2800000, guid: 9fd29dd390fd29735b91916ab58c0db0, type: 3}
     _aiAcquiredStatusPanel: {fileID: 2800000, guid: 0a7083aafd8272ecfc1e260259d0ffd4, type: 3}
-    _playerWinPipEmpty: {fileID: 2800000, guid: e6246ad4d7f382549bc080ea4c0a4eaa, type: 3}
-    _playerWinPipFilled: {fileID: 2800000, guid: 2244d31223af1474fac2de8131c08fd9, type: 3}
-    _aiWinPipEmpty: {fileID: 2800000, guid: dd29d7e053310ac4980eff4932e35be0, type: 3}
-    _aiWinPipFilled: {fileID: 2800000, guid: 917384efef74fec4794d40e050965a8f, type: 3}
-    _ropeBody: {fileID: 0}
-    _ropeFlame: {fileID: 0}
-    _ropeExplosion: {fileID: 0}
+    _playerWinPipEmpty: {fileID: 2800000, guid: 31b4196b16c26cc33766225c1a683006, type: 3}
+    _playerWinPipFilled: {fileID: 2800000, guid: 5955f778f2fcf1273b9f5a576f682bce, type: 3}
+    _aiWinPipEmpty: {fileID: 2800000, guid: ddaa199e4550e40805842acc24e824d0, type: 3}
+    _aiWinPipFilled: {fileID: 2800000, guid: a549288ce1bf50299a3dc1a12b96c4c8, type: 3}
+    _ropeBody: {fileID: 2800000, guid: afe7dce189489ff1cac8d166e6ddb59a, type: 3}
+    _ropeFlame: {fileID: 2800000, guid: d6cf4f4ae193ce75a9b58a54e5159f14, type: 3}
+    _ropeExplosion: {fileID: 2800000, guid: abd5cc81431bc6faddc99e2d74bc7053, type: 3}
     _sharedPileRailIdle: {fileID: 2800000, guid: a0370000000000000000000000000003, type: 3}
     _sharedPileRailPlayerActive: {fileID: 2800000, guid: a0370000000000000000000000000004, type: 3}
     _sharedPileRailAiActive: {fileID: 2800000, guid: a0370000000000000000000000000005, type: 3}
+    _playerOnlyAcquiredTray: {fileID: 2800000, guid: 95870201bb7db31c45cc307dbea94b9f, type: 3}
+    _aiThinkingSheet: {fileID: 2800000, guid: 521ff88ce8ba81a623003ab7d0d5e98f, type: 3}
   _guideUiArtSet:
     _modalBackground: {fileID: 2800000, guid: a1dd36a3860feff372a4fee980af0e30, type: 3}
     _flowPage: {fileID: 2800000, guid: 67c3f94b97e10cda3a68af17fc8ed386, type: 3}
@@ -1349,18 +1351,31 @@ MonoBehaviour:
     _navHover: {fileID: 2800000, guid: e8cd52738cdd0b74445f8a0e0b35ae0d, type: 3}
     _navDisabled: {fileID: 2800000, guid: 19fda25af443b2fb0607898ce8dac0e4, type: 3}
     _pageIndicatorPlate: {fileID: 2800000, guid: 8f6aff2d0203f6d0a759794a9fc979d9, type: 3}
+    _previousIcon: {fileID: 2800000, guid: 7ddf9f68819a0c6eca56e09889039140, type: 3}
+    _nextIcon: {fileID: 2800000, guid: 287df1531cf676101a92aa87fcf032bc, type: 3}
+    _closeIcon: {fileID: 2800000, guid: c6ca647947ccaff9ab7a21025e4e695e, type: 3}
   _introTexture: {fileID: 2800000, guid: 4fffdd8f5e45fa4cd921945ef9042957, type: 3}
   _healthUiArtSet:
-    _playerFilled: {fileID: 2800000, guid: 533a2f7af1a86944081856c0b75668b0, type: 3}
-    _playerEmpty: {fileID: 2800000, guid: 7fad81c575f9fa14fbb4122abd410622, type: 3}
-    _aiFilled: {fileID: 2800000, guid: 7326e738fd76e4e47a616eb56b386326, type: 3}
-    _aiEmpty: {fileID: 2800000, guid: 757cb64ab31bd16428a230bb5ee1eca5, type: 3}
+    _playerFilled: {fileID: 2800000, guid: b34aa310633a40255fdff9250399da23, type: 3}
+    _playerEmpty: {fileID: 2800000, guid: bb7ea2e37a02023612150466f5ea0399, type: 3}
+    _aiFilled: {fileID: 2800000, guid: 43e91e454ae181f13a5ac1acd150a590, type: 3}
+    _aiEmpty: {fileID: 2800000, guid: 1095793f3435947b15faec4c2980b7fa, type: 3}
+    _playerDamage: {fileID: 2800000, guid: 23f52c880faf67e47708be192b4102e6, type: 3}
+    _aiDamage: {fileID: 2800000, guid: 3e9377ae1bb56149962fd237f70b73c2, type: 3}
   _pokerUiArtSet:
     _winIdle: {fileID: 2800000, guid: 8e6a09010529cee4ebcbb599a5dec4e3, type: 3}
     _winHover: {fileID: 2800000, guid: edc294827ec830b489aa947875b8891d, type: 3}
     _loseIdle: {fileID: 2800000, guid: 5c499eaf1bdfdd34286628c15e6488a8, type: 3}
     _loseHover: {fileID: 2800000, guid: f3803198dc1460c46802143fd11ff707, type: 3}
     _itemSlot: {fileID: 2800000, guid: e354f1f5eed544668d5546ce72fde6e4, type: 3}
+    _playerPredictionIdle: {fileID: 2800000, guid: ecd71f2537f695c8406f5b775ba39f5b, type: 3}
+    _playerPredictionHover: {fileID: 2800000, guid: 76ef2520f6650add4dbe9949edcdf5a9, type: 3}
+    _playerPredictionSelected: {fileID: 2800000, guid: 8cd9abecc484cd45240259eb98c14744, type: 3}
+    _aiPredictionIdle: {fileID: 2800000, guid: 7b9675a04f8ba0addb2fc6b5636b9076, type: 3}
+    _aiPredictionHover: {fileID: 2800000, guid: 6a71144a6bb4a615b8c1ce0e283f6796, type: 3}
+    _aiPredictionSelected: {fileID: 2800000, guid: 2400eeaa24e0013f0f39c8cc871c99b7, type: 3}
+    _predictionResultEmpty: {fileID: 2800000, guid: 257b809a355e0d8f50b5e2e494b993be, type: 3}
+    _predictionResultFilled: {fileID: 2800000, guid: 7f4a1c327b290cf1ce16d31987a80351, type: 3}
   _pokerItemUiArtSet:
     _crateClosed: {fileID: 2800000, guid: 5ff898e9500227ffc6515efef3c86956, type: 3}
     _crateOpenEmpty: {fileID: 2800000, guid: ed2010af0d3a3b85accbe94fd0f38bfc, type: 3}
@@ -1371,15 +1386,22 @@ MonoBehaviour:
     _slotHover: {fileID: 2800000, guid: 8df8e19607bbe12ea906a2911e8c156f, type: 3}
     _slotSelected: {fileID: 2800000, guid: 67280ff035c4caa6a7b58e9cb8211f65, type: 3}
     _slotDisabled: {fileID: 2800000, guid: 033f83855cf63c78e9675c141fef44c1, type: 3}
-    _reloadIcon: {fileID: 2800000, guid: f2270a94b12818401cde1fc5ea31ca92, type: 3}
-    _bottomDealIcon: {fileID: 2800000, guid: c86e6b7fc17e443472fca48da58a93f9, type: 3}
-    _hypeManIcon: {fileID: 2800000, guid: 45da111fef6a4dfcbc63e3dcefabcdb5, type: 3}
-    _healthRecoveryIcon: {fileID: 2800000, guid: 42090d0b924676d598be422ef3676cb8, type: 3}
+    _reloadIcon: {fileID: 2800000, guid: 15ff8f28c85bab64297f8e6a02481d26, type: 3}
+    _bottomDealIcon: {fileID: 2800000, guid: 30ed9a2e8899285f68c9f2e35191dda5, type: 3}
+    _hypeManIcon: {fileID: 2800000, guid: 32c9b6f83230839550fb37746d3a5dae, type: 3}
+    _healthRecoveryIcon: {fileID: 2800000, guid: c1ab5e9d95ca7c6d1356a5b7d74b7ec9, type: 3}
     _selectionPanel: {fileID: 2800000, guid: a0370000000000000000000000000006, type: 3}
     _detailPanel: {fileID: 2800000, guid: a0370000000000000000000000000007, type: 3}
     _actionButtonIdle: {fileID: 2800000, guid: a0370000000000000000000000000008, type: 3}
     _actionButtonHover: {fileID: 2800000, guid: a0370000000000000000000000000009, type: 3}
     _actionButtonDisabled: {fileID: 2800000, guid: a037000000000000000000000000000a, type: 3}
+    _reloadPopupIcon: {fileID: 2800000, guid: 71094dd0c3fe1b1dfe7ed36a4304135c, type: 3}
+    _bottomDealPopupIcon: {fileID: 2800000, guid: e19acfe624cdb4006ae52c64e030e7af, type: 3}
+    _hypeManPopupIcon: {fileID: 2800000, guid: 0898d97caba226716f3524b2ba0b67db, type: 3}
+    _healthRecoveryPopupIcon: {fileID: 2800000, guid: f5b0534ad168b2df72a927f1238eb0b7, type: 3}
+    _communityLocked: {fileID: 2800000, guid: 6bd5fe5092083b4a10b3bbe2a13a2f97, type: 3}
+    _communityReveal: {fileID: 2800000, guid: e341d24dffacaa9373c841d3fbf91e8b, type: 3}
+    _communityOpen: {fileID: 2800000, guid: 5c0549a67df2f91857200d1a69a19f40, type: 3}
   _barShopUiArtSet:
     _background: {fileID: 2800000, guid: c6f4b89d92a14e188cf5f1c1ae903002, type: 3}
     _slotFrame: {fileID: 2800000, guid: c6f4b89d92a14e188cf5f1c1ae90300d, type: 3}
@@ -1402,18 +1424,14 @@ MonoBehaviour:
     _bulletCoinFlipSheet: {fileID: 2800000, guid: b0380000000000000000000000000005, type: 3}
     _bulletPourSheet: {fileID: 2800000, guid: b0380000000000000000000000000006, type: 3}
     _productIcons:
-    - _iconKey: bar_shop.item.dummy_01
-      _texture: {fileID: 2800000, guid: c6f4b89d92a14e188cf5f1c1ae903006, type: 3}
-    - _iconKey: bar_shop.item.dummy_02
-      _texture: {fileID: 2800000, guid: c6f4b89d92a14e188cf5f1c1ae903007, type: 3}
-    - _iconKey: bar_shop.item.dummy_03
-      _texture: {fileID: 2800000, guid: c6f4b89d92a14e188cf5f1c1ae903008, type: 3}
-    - _iconKey: bar_shop.item.dummy_04
-      _texture: {fileID: 2800000, guid: c6f4b89d92a14e188cf5f1c1ae903009, type: 3}
-    - _iconKey: bar_shop.item.dummy_05
-      _texture: {fileID: 2800000, guid: c6f4b89d92a14e188cf5f1c1ae90300a, type: 3}
-    - _iconKey: bar_shop.item.dummy_06
-      _texture: {fileID: 2800000, guid: c6f4b89d92a14e188cf5f1c1ae90300b, type: 3}
+    - _iconKey: bar_shop.item.reload
+      _texture: {fileID: 2800000, guid: d392ecb6fdf5caa3095266430e05786e, type: 3}
+    - _iconKey: bar_shop.item.bottom_deal
+      _texture: {fileID: 2800000, guid: b7e2f8643e2d26c83b1622c8931e7096, type: 3}
+    - _iconKey: bar_shop.item.hype_man
+      _texture: {fileID: 2800000, guid: eb9de234e341c088cd7c31d04e5a3194, type: 3}
+    - _iconKey: bar_shop.item.health_recovery
+      _texture: {fileID: 2800000, guid: c0847953be7032b699be76db5140fff2, type: 3}
     - _iconKey: item.ammo_pouch.loose_rounds
       _texture: {fileID: 2800000, guid: b0380000000000000000000000000008, type: 3}
   _stageTransitionUiArtSet:
@@ -1445,15 +1463,70 @@ MonoBehaviour:
     - {fileID: 2800000, guid: ef185db63d5df0c41ae9f7d67acc79fb, type: 3}
     - {fileID: 2800000, guid: 33705d6ad662ee44e9108e0f081e656c, type: 3}
     - {fileID: 2800000, guid: d29e3b1a331bb8a45b49fc64c6c1d93c, type: 3}
+  _economyUiArtSet:
+    _baseCurrencyIcon: {fileID: 2800000, guid: 51740208a8bdc4da3b172ed8a2ebf075, type: 3}
+    _temporaryCurrencyIcon: {fileID: 2800000, guid: 613fe1b1e0d5fd1b7c0fe9e35209fe66, type: 3}
+    _priceIcon: {fileID: 2800000, guid: ea2aa3cd99b5a05bcf6314051fd601d5, type: 3}
+    _baseBalanceFrame: {fileID: 2800000, guid: 32c33f211b3acd4d1f3c859a5c7b9319, type: 3}
+    _temporaryBalanceFrame: {fileID: 2800000, guid: a11d11d7088e33f9e32ddbd554f9e254, type: 3}
+    _baseRewardFrame: {fileID: 2800000, guid: 1f21ebcd1bdd76dcd56b11b60064cb36, type: 3}
+    _temporaryRewardFrame: {fileID: 2800000, guid: 3c22e1de22f5ab6ca8a3c1679b701072, type: 3}
+    _exitWarningIcon: {fileID: 2800000, guid: 05e93088c660ff3fd7de6314579178c1, type: 3}
+    _temporaryExpireSheet: {fileID: 2800000, guid: 3af2ef6413231e47178a1a2786904f7e, type: 3}
+    _exitWarningPulseSheet: {fileID: 2800000, guid: ece6aa18e0b9e9739ad5d95481db5a92, type: 3}
+  _presentationUiArtSet:
+    _threeCallIcon: {fileID: 2800000, guid: 3e9538adadcfe2329798ca5b8a85af98, type: 3}
+    _showdownIcon: {fileID: 2800000, guid: 4e6ee9d615ec9a48070169cda89a468d, type: 3}
+    _entryLabelFrame: {fileID: 2800000, guid: 40a330f9ab19434388767e5be16ffaf3, type: 3}
+    _skipIdle: {fileID: 2800000, guid: a9ebeb97a49148d0ab8bbd0b03e5b76b, type: 3}
+    _skipHover: {fileID: 2800000, guid: 65a0c1a6253f4a0b9a67b55eb30818d8, type: 3}
+    _skipPressed: {fileID: 2800000, guid: 39e69571c4ee49fba70e71992db6b9eb, type: 3}
+    _opponentIntroFrame: {fileID: 2800000, guid: 91aceb7c05214cc484374b2da424e05c, type: 3}
+    _tableFocusVignette: {fileID: 2800000, guid: 71a022eaf9dd4231a3a16d42981a6605, type: 3}
+    _limitOne: {fileID: 2800000, guid: 47caa74c8bfd2cfd91025b9438f9cfc1, type: 3}
+    _limitTwo: {fileID: 2800000, guid: 6c23b70b7a40ad5a17d074a973a3b9d1, type: 3}
+    _usedOne: {fileID: 2800000, guid: 08f07e72c1fe3c37360aa5d97feb61eb, type: 3}
+    _limitExhausted: {fileID: 2800000, guid: 1d3bfaaaa5e4f845af3824f4484681f4, type: 3}
+    _inventoryRestricted: {fileID: 2800000, guid: 9f84437abc6dc3a327519356d46340d3, type: 3}
+    _cardRestricted: {fileID: 2800000, guid: 9793f2ace06af54cc5248bc4009d1c1d, type: 3}
+    _penaltyLabelFrame: {fileID: 2800000, guid: 8aa01f9f37a2464abec967fba2dc435c, type: 3}
+    _desaturateOverlay: {fileID: 2800000, guid: d067c22ad79d49d68d9fb758fc1ae296, type: 3}
+    _focusMask: {fileID: 2800000, guid: 5de8a284ab6c48c9a13ce36daa12c926, type: 3}
+    _playerAcquireTrail: {fileID: 2800000, guid: 51a6256638e44cd988ba0e0681a176ab, type: 3}
+    _aiAcquireTrail: {fileID: 2800000, guid: be22ef2ca0b842b38299bf52f504c6fc, type: 3}
+    _candidateIdle: {fileID: 2800000, guid: c72111a290e948b9a1741c4ecf0df67e, type: 3}
+    _candidateHover: {fileID: 2800000, guid: 581ac7a7120d4a088f7f75065cf32fa5, type: 3}
+    _candidateSelected: {fileID: 2800000, guid: 7da7383fbdb64ac9a5ff095a23909389, type: 3}
+    _candidateConfirmed: {fileID: 2800000, guid: 5e4d615f787e493bba0312bf6fca49da, type: 3}
+    _candidateDisabled: {fileID: 2800000, guid: 5d253c07666449ac814813904dc59bec, type: 3}
+    _correctBellSheet: {fileID: 2800000, guid: a0ed8bb174c349d0934294b58104f243, type: 3}
+    _wrongBellSheet: {fileID: 2800000, guid: 7341bf8e27254893a2b3315f528c592d, type: 3}
+    _showdownWideFrame: {fileID: 2800000, guid: 221996b578914b2cb0f43017cac85b20, type: 3}
+    _showdownHandLockedFrame: {fileID: 2800000, guid: 971f822388a04bde9ccc9f6e93da81af, type: 3}
+    _bestHandHighlight: {fileID: 2800000, guid: ce855459313a4775bd5179be075b97f8, type: 3}
+    _resultSummaryFrame: {fileID: 2800000, guid: 267575ac46a84686b7efbe4da9a4e57b, type: 3}
+    _stageClearFrame: {fileID: 2800000, guid: 89fe8b78547b4550ba0a50eef9fea0e8, type: 3}
+    _playerDamageFlash: {fileID: 2800000, guid: 67cd5b44715d4e279a53eac7e6f3358d, type: 3}
+    _aiDamageFlash: {fileID: 2800000, guid: aeda312bb21a44c5b1dd0fb164c8346b, type: 3}
+    _opponentCutouts:
+    - {fileID: 2800000, guid: 12d4a963a9e74b47aa067f74bdca0301, type: 3}
+    - {fileID: 2800000, guid: 12d4a963a9e74b47aa067f74bdca0302, type: 3}
+    - {fileID: 2800000, guid: 12d4a963a9e74b47aa067f74bdca0303, type: 3}
+    - {fileID: 2800000, guid: 12d4a963a9e74b47aa067f74bdca0304, type: 3}
+    _opponentPortraits:
+    - {fileID: 2800000, guid: 12d4a963a9e74b47aa067f74bdca0101, type: 3}
+    - {fileID: 2800000, guid: 12d4a963a9e74b47aa067f74bdca0102, type: 3}
+    - {fileID: 2800000, guid: 12d4a963a9e74b47aa067f74bdca0103, type: 3}
+    - {fileID: 2800000, guid: 12d4a963a9e74b47aa067f74bdca0104, type: 3}
   _useSceneBackdrop: 1
   _useIntroArtLayout: 1
---- !u!4 &1397293667
+--- !u!4 &1050410157
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1397293663}
+  m_GameObject: {fileID: 1050410153}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
@@ -1466,5 +1539,5 @@ Transform:
 SceneRoots:
   m_ObjectHideFlags: 0
   m_Roots:
-  - {fileID: 797427533}
-  - {fileID: 1397293667}
+  - {fileID: 880856451}
+  - {fileID: 1050410157}

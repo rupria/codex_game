@@ -27,6 +27,8 @@ namespace CodexGame.Presentation.Views
       PokerUiArtSet pokerArt,
       PokerItemUiArtSet pokerItemArt,
       LocalizationRuntime localization,
+      bool playerDamage,
+      bool aiDamage,
       Action<PokerHandCategory> chooseJokerHand,
       Action<PredictionChoice> predict,
       Action advance)
@@ -34,7 +36,7 @@ namespace CodexGame.Presentation.Views
       UpdateRevealState(snapshot);
       UpdateResultOverlayState(snapshot);
       DrawGroupLabels(styles, localization);
-      DrawHealth(snapshot, styles, healthArt, localization);
+      DrawHealth(snapshot, styles, healthArt, localization, playerDamage, aiDamage);
       DrawItems(pokerItemArt);
       DrawCards(snapshot, cards);
 
@@ -54,12 +56,12 @@ namespace CodexGame.Presentation.Views
       {
         if (snapshot.ResultPresentationStep == PokerResultPresentationStep.Outcome)
         {
-          DrawResult(snapshot, styles, localization);
+          DrawResult(snapshot, pokerArt, styles, localization);
         }
       }
       else
       {
-        DrawResult(snapshot, styles, localization);
+        DrawResult(snapshot, pokerArt, styles, localization);
       }
 
       var canPredict = snapshot.Phase == PokerRoundPhase.AwaitingPrediction;
@@ -117,7 +119,9 @@ namespace CodexGame.Presentation.Views
       PokerRoundSnapshot snapshot,
       PlayableDevStyles styles,
       HealthUiArtSet healthArt,
-      LocalizationRuntime localization)
+      LocalizationRuntime localization,
+      bool playerDamage,
+      bool aiDamage)
     {
       GUI.Box(PokerTableLayout.AiHealth, GUIContent.none);
       GUI.Label(
@@ -129,7 +133,8 @@ namespace CodexGame.Presentation.Views
         snapshot.Health.Ai,
         GameRules.StartingHealth,
         true,
-        healthArt);
+        healthArt,
+        aiDamage);
 
       GUI.Box(PokerTableLayout.PlayerHealth, GUIContent.none);
       GUI.Label(
@@ -141,7 +146,8 @@ namespace CodexGame.Presentation.Views
         snapshot.Health.Player,
         GameRules.StartingHealth,
         false,
-        healthArt);
+        healthArt,
+        playerDamage);
     }
 
     private static void DrawItems(PokerItemUiArtSet pokerItemArt)
@@ -353,6 +359,7 @@ namespace CodexGame.Presentation.Views
 
     private void DrawResult(
       PokerRoundSnapshot snapshot,
+      PokerUiArtSet pokerArt,
       PlayableDevStyles styles,
       LocalizationRuntime localization)
     {
@@ -379,6 +386,13 @@ namespace CodexGame.Presentation.Views
         true,
         predictionSucceeded,
         styles);
+      var predictionBadge = predictionSucceeded
+        ? pokerArt?.PredictionResultFilled
+        : pokerArt?.PredictionResultEmpty;
+      if (predictionBadge != null)
+      {
+        GUI.DrawTexture(new Rect(102f, 236f, 28f, 28f), predictionBadge, ScaleMode.ScaleToFit, true);
+      }
     }
 
     private static string CategoryName(PokerHandCategory category, LocalizationRuntime localization)

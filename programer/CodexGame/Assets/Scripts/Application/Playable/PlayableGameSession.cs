@@ -47,6 +47,7 @@ namespace CodexGame.Application.Playable
     private int _lastStageReward;
     private StageBulletReward _lastStageRewardDetails = StageBulletReward.None;
     private bool _inactivityReturnPending;
+    private int _lastExpiredTemporaryBullets;
 
     public PlayableGameSession()
       : this(new AiPrivateCardSelectionPolicy(), PokerRuleSet.Development)
@@ -77,6 +78,7 @@ namespace CodexGame.Application.Playable
       _cheatHistory.Reset();
       _lastStageReward = 0;
       _lastStageRewardDetails = StageBulletReward.None;
+      _lastExpiredTemporaryBullets = 0;
       _barShop.Close();
       _shopPurchase.Reset();
       _shopExitGuard.Reset();
@@ -154,7 +156,7 @@ namespace CodexGame.Application.Playable
           return;
         }
         if (!_nextStageGate.TryRequest(nextCombatRoundSeed, now)) return;
-        _bullets.ExpireTemporary();
+        _lastExpiredTemporaryBullets = _bullets.ExpireTemporary();
         _transition.Begin(
           PlayableTransitionKind.NextStage,
           now,
@@ -510,7 +512,8 @@ namespace CodexGame.Application.Playable
             _shopPurchase.GetSnapshot(now),
             _shopExitGuard.WarningArmed,
             _bullets.Balance)
-          : null);
+          : null,
+        _lastExpiredTemporaryBullets);
     }
 
     private void StartCombatRound(
@@ -648,6 +651,7 @@ namespace CodexGame.Application.Playable
       _health = NextStageHealthResolver.RestoreAfterVictory(_health);
       _lastStageReward = 0;
       _lastStageRewardDetails = StageBulletReward.None;
+      _lastExpiredTemporaryBullets = 0;
       StartCombatRound(now, nextStageSeed, true);
     }
 

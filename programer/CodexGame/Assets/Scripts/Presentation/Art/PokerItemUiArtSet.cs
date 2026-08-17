@@ -25,6 +25,13 @@ namespace CodexGame.Presentation.Art
     [SerializeField] private Texture2D _actionButtonIdle;
     [SerializeField] private Texture2D _actionButtonHover;
     [SerializeField] private Texture2D _actionButtonDisabled;
+    [SerializeField] private Texture2D _reloadPopupIcon;
+    [SerializeField] private Texture2D _bottomDealPopupIcon;
+    [SerializeField] private Texture2D _hypeManPopupIcon;
+    [SerializeField] private Texture2D _healthRecoveryPopupIcon;
+    [SerializeField] private Texture2D _communityLocked;
+    [SerializeField] private Texture2D _communityReveal;
+    [SerializeField] private Texture2D _communityOpen;
 
     public PokerItemUiArtSet(
       Texture2D crateClosed,
@@ -44,7 +51,14 @@ namespace CodexGame.Presentation.Art
       Texture2D detailPanel = null,
       Texture2D actionButtonIdle = null,
       Texture2D actionButtonHover = null,
-      Texture2D actionButtonDisabled = null)
+      Texture2D actionButtonDisabled = null,
+      Texture2D reloadPopupIcon = null,
+      Texture2D bottomDealPopupIcon = null,
+      Texture2D hypeManPopupIcon = null,
+      Texture2D healthRecoveryPopupIcon = null,
+      Texture2D communityLocked = null,
+      Texture2D communityReveal = null,
+      Texture2D communityOpen = null)
     {
       _crateClosed = Require(crateClosed, nameof(crateClosed));
       _crateOpenEmpty = Require(crateOpenEmpty, nameof(crateOpenEmpty));
@@ -64,6 +78,13 @@ namespace CodexGame.Presentation.Art
       _actionButtonIdle = actionButtonIdle;
       _actionButtonHover = actionButtonHover;
       _actionButtonDisabled = actionButtonDisabled;
+      _reloadPopupIcon = reloadPopupIcon;
+      _bottomDealPopupIcon = bottomDealPopupIcon;
+      _hypeManPopupIcon = hypeManPopupIcon;
+      _healthRecoveryPopupIcon = healthRecoveryPopupIcon;
+      _communityLocked = communityLocked;
+      _communityReveal = communityReveal;
+      _communityOpen = communityOpen;
     }
 
     public Texture2D CrateClosed => _crateClosed;
@@ -80,6 +101,9 @@ namespace CodexGame.Presentation.Art
     public Texture2D ActionButtonIdle => _actionButtonIdle;
     public Texture2D ActionButtonHover => _actionButtonHover;
     public Texture2D ActionButtonDisabled => _actionButtonDisabled;
+    public Texture2D CommunityLocked => _communityLocked;
+    public Texture2D CommunityReveal => _communityReveal;
+    public Texture2D CommunityOpen => _communityOpen;
 
     public Texture2D FindItemIcon(GameItemId itemId)
     {
@@ -89,6 +113,18 @@ namespace CodexGame.Presentation.Art
         case GameItemId.BottomDeal: return _bottomDealIcon;
         case GameItemId.HypeMan: return _hypeManIcon;
         case GameItemId.HealthRecovery: return _healthRecoveryIcon;
+        default: return null;
+      }
+    }
+
+    public Texture2D FindPopupIcon(GameItemId itemId)
+    {
+      switch (itemId)
+      {
+        case GameItemId.Reload: return _reloadPopupIcon ?? _reloadIcon;
+        case GameItemId.BottomDeal: return _bottomDealPopupIcon ?? _bottomDealIcon;
+        case GameItemId.HypeMan: return _hypeManPopupIcon ?? _hypeManIcon;
+        case GameItemId.HealthRecovery: return _healthRecoveryPopupIcon ?? _healthRecoveryIcon;
         default: return null;
       }
     }

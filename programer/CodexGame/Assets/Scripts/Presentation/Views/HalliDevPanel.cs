@@ -28,6 +28,8 @@ namespace CodexGame.Presentation.Views
       PlayableTransitionSnapshot transition,
       int playerHealth,
       int aiHealth,
+      bool playerDamage,
+      bool aiDamage,
       PlayableDevStyles styles,
       PlayableCardRenderer cards,
       HalliUiArtSet uiArt,
@@ -46,6 +48,8 @@ namespace CodexGame.Presentation.Views
           transition.Progress,
           playerHealth,
           aiHealth,
+          playerDamage,
+          aiDamage,
           styles,
           cards,
           uiArt,
@@ -59,7 +63,14 @@ namespace CodexGame.Presentation.Views
         GUI.color = new Color(1f, 1f, 1f, Mathf.Lerp(1f, 0.35f, transition.Progress));
       }
 
-      DrawScoreboard(snapshot, playerHealth, aiHealth, styles, healthArt);
+      DrawScoreboard(
+        snapshot,
+        playerHealth,
+        aiHealth,
+        playerDamage,
+        aiDamage,
+        styles,
+        healthArt);
       DrawPublic(snapshot, styles, cards, uiArt);
       DrawAiDeck(cards);
       DrawRevealHistories(snapshot, cards, uiArt);
@@ -79,6 +90,7 @@ namespace CodexGame.Presentation.Views
         rightBell);
 
       DrawRevealMotion(snapshot, cards);
+      DrawAiThinking(snapshot, uiArt);
       _lowerHud.DrawAcquisitionMotion(snapshot, cards, uiArt);
       GUI.color = previousColor;
     }
@@ -88,12 +100,21 @@ namespace CodexGame.Presentation.Views
       float progress,
       int playerHealth,
       int aiHealth,
+      bool playerDamage,
+      bool aiDamage,
       PlayableDevStyles styles,
       PlayableCardRenderer cards,
       HalliUiArtSet uiArt,
       HealthUiArtSet healthArt)
     {
-      DrawScoreboard(snapshot, playerHealth, aiHealth, styles, healthArt);
+      DrawScoreboard(
+        snapshot,
+        playerHealth,
+        aiHealth,
+        playerDamage,
+        aiDamage,
+        styles,
+        healthArt);
       var cardProgress = Mathf.Clamp01(progress / 0.55f);
       var start = new Rect(432f, 214f, 96f, 135f);
       var destination = HalliBoardLayout.PublicCard;
@@ -113,6 +134,8 @@ namespace CodexGame.Presentation.Views
       PrototypeHalliSnapshot snapshot,
       int playerHealth,
       int aiHealth,
+      bool playerDamage,
+      bool aiDamage,
       PlayableDevStyles styles,
       HealthUiArtSet healthArt)
     {
@@ -126,7 +149,8 @@ namespace CodexGame.Presentation.Views
         playerHealth,
         GameRules.StartingHealth,
         false,
-        healthArt);
+        healthArt,
+        playerDamage);
       GUI.Box(HalliBoardLayout.AiScore, GUIContent.none);
       GUI.Label(
         new Rect(674f, 24f, 250f, 26f),
@@ -137,7 +161,8 @@ namespace CodexGame.Presentation.Views
         aiHealth,
         GameRules.StartingHealth,
         true,
-        healthArt);
+        healthArt,
+        aiDamage);
       GUI.Label(
         new Rect(350f, 12f, 260f, 24f),
         snapshot.FlipCount + "/" + GameRules.HalliDistributionLimit
@@ -399,6 +424,21 @@ namespace CodexGame.Presentation.Views
         target,
         snapshot.RevealProgress,
         snapshot.RevealingActor == HalliActor.Ai);
+    }
+
+    private static void DrawAiThinking(PrototypeHalliSnapshot snapshot, HalliUiArtSet uiArt)
+    {
+      if (uiArt?.AiThinkingSheet == null
+        || snapshot.Phase != PrototypeSessionPhase.SequentialReveal
+        || snapshot.RevealingActor != HalliActor.Ai
+        || snapshot.RevealProgress >= 1f) return;
+      const int frameCount = 8;
+      var frame = Mathf.FloorToInt(Time.unscaledTime / 0.08f) % frameCount;
+      GUI.DrawTextureWithTexCoords(
+        new Rect(456f, 92f, 48f, 48f),
+        uiArt.AiThinkingSheet,
+        new Rect((float)frame / frameCount, 0f, 1f / frameCount, 1f),
+        true);
     }
 
     private void UpdateRevealHistory(PrototypeHalliSnapshot snapshot)
