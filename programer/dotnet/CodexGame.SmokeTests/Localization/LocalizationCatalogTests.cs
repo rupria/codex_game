@@ -45,13 +45,23 @@ namespace CodexGame.SmokeTests.Localization
         catalog.Get(
           "UI_BAR_REROLL_FREE",
           "ko",
-          new LocalizationArgument("remaining", 2),
-          new LocalizationArgument("cost", 1)) == "재추첨 2/2 · 1"
+          new LocalizationArgument("remaining", 1),
+          new LocalizationArgument("cost", 0)) == "무료 재추첨 1/1"
           && catalog.Get("UI_BAR_REROLL_USED", "en") == "REROLL COMPLETE"
           && catalog.Get("UI_BAR_DUMMY_ITEM_06", "ko") == "진열 상품 F"
           && !catalog.Get("UI_BAR_DUMMY_ITEM_01", "ko").Contains("미확정")
           && !catalog.Get("UI_BAR_DUMMY_ITEM_01", "ko").Contains("개발 중"),
-        "The bar shop must localize its paid two-use reroll and preview-product labels without internal wording.");
+        "The bar shop must localize its one free reroll and preview-product labels without internal wording.");
+      tests.Check(
+        catalog.Get("UI_ITEM_WILD_INK", "ko") == "와일드 잉크"
+          && catalog.Get("UI_ITEM_BARREL", "en") == "BARREL"
+          && catalog.Get("UI_ITEM_PREDICTION_INSURANCE", "ko") == "예측 보험"
+          && catalog.Get("UI_ITEM_MERCENARY", "en") == "MERCENARIES"
+          && catalog.Get(
+            "UI_ITEM_CONFIRM_TIMER",
+            "ko",
+            new LocalizationArgument("seconds", 120)) == "패 확정 120초",
+        "The 0.1.2.5 item names, descriptions, and hand-confirm timer must be runtime-localized.");
       tests.Check(
         catalog.Get("UI_GUIDE_PAGE_FLOW_TITLE", "ko") == "목표와 게임 흐름"
           && catalog.Get("UI_GUIDE_PAGE_RESULT_TITLE", "en") == "PREDICTION & VICTORY"

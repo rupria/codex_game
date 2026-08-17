@@ -40,6 +40,10 @@ namespace CodexGame.Bootstrap
       _view.BottomDealChoiceRequested += ChooseBottomDeal;
       _view.HypeManItemRequested += UseHypeMan;
       _view.HealthRecoveryItemRequested += UseHealthRecovery;
+      _view.WildInkItemRequested += UseWildInk;
+      _view.BarrelItemRequested += UseBarrel;
+      _view.PredictionInsuranceItemRequested += UsePredictionInsurance;
+      _view.MercenaryItemRequested += UseMercenary;
       _view.ItemsConfirmRequested += ConfirmItems;
       _view.BarShopRerollRequested += RerollBarShop;
       _view.BarShopPurchaseRequested += PurchaseBarShop;
@@ -86,6 +90,10 @@ namespace CodexGame.Bootstrap
       _view.BottomDealChoiceRequested -= ChooseBottomDeal;
       _view.HypeManItemRequested -= UseHypeMan;
       _view.HealthRecoveryItemRequested -= UseHealthRecovery;
+      _view.WildInkItemRequested -= UseWildInk;
+      _view.BarrelItemRequested -= UseBarrel;
+      _view.PredictionInsuranceItemRequested -= UsePredictionInsurance;
+      _view.MercenaryItemRequested -= UseMercenary;
       _view.ItemsConfirmRequested -= ConfirmItems;
       _view.BarShopRerollRequested -= RerollBarShop;
       _view.BarShopPurchaseRequested -= PurchaseBarShop;
@@ -191,6 +199,30 @@ namespace CodexGame.Bootstrap
     private void UseHealthRecovery()
     {
       _session.UseHealthRecovery(Now());
+      Present();
+    }
+
+    private void UseWildInk(CardId target, CardSuit effectiveSuit)
+    {
+      _session.UseWildInk(target, effectiveSuit, Now());
+      Present();
+    }
+
+    private void UseBarrel()
+    {
+      _session.UseBarrel(Now());
+      Present();
+    }
+
+    private void UsePredictionInsurance()
+    {
+      _session.UsePredictionInsurance(Now());
+      Present();
+    }
+
+    private void UseMercenary(CardId target)
+    {
+      _session.UseMercenary(target, Now());
       Present();
     }
 

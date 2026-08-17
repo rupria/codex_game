@@ -68,11 +68,15 @@ namespace CodexGame.Presentation.Views
           new LocalizationArgument("current", playerHealth),
           new LocalizationArgument("max", maximumHealth)),
         styles.Small);
-      for (var index = 0; index < shop.Slots.Count; index++)
+      for (var index = 0; index < SlotXPositions.Length; index++)
       {
-        var slot = shop.Slots[index];
-        if (index >= SlotXPositions.Length) break;
         var slotRect = new Rect(SlotXPositions[index], 146f, 190f, 174f);
+        if (index >= shop.Slots.Count)
+        {
+          DrawEmptySlot(slotRect, art, styles, localization);
+          continue;
+        }
+        var slot = shop.Slots[index];
         if (DrawSlot(
           slotRect,
           slot.IconKey,
@@ -129,6 +133,23 @@ namespace CodexGame.Presentation.Views
 
       DrawPurchaseMotion(shop.Purchase, art);
       DrawPurchaseFailure(shop.Purchase, styles, localization);
+    }
+
+    private static void DrawEmptySlot(
+      Rect rect,
+      BarShopUiArtSet art,
+      PlayableDevStyles styles,
+      LocalizationRuntime localization)
+    {
+      var previous = GUI.color;
+      GUI.color = new Color(0.42f, 0.42f, 0.42f, 0.72f);
+      if (art?.SlotFrame != null)
+      {
+        GUI.DrawTexture(rect, art.SlotFrame, ScaleMode.StretchToFill, true);
+      }
+      else GUI.Box(rect, GUIContent.none);
+      GUI.color = previous;
+      GUI.Label(rect, localization.Get("UI_ITEM_EMPTY_SLOT"), styles.Small);
     }
 
     private static bool DrawSlot(

@@ -20,6 +20,7 @@ namespace CodexGame.Presentation.Views
 
     private GameItemId? _selectedItem;
     private CardId? _selectedTargetCard;
+    private CardSuit? _selectedSuit;
     private bool _inventoryOpen;
 
     public void Draw(
@@ -33,13 +34,28 @@ namespace CodexGame.Presentation.Views
       Action<CardId> chooseBottomDeal,
       Action hypeMan,
       Action healthRecovery,
+      Action<CardId, CardSuit> wildInk,
+      Action barrel,
+      Action predictionInsurance,
+      Action<CardId> mercenary,
       Action confirm)
     {
       if (snapshot == null) throw new ArgumentNullException(nameof(snapshot));
       SyncSelection(snapshot);
 
       GUI.Label(new Rect(56f, 24f, 848f, 38f), localization.Get("UI_ITEM_WINDOW_TITLE"), styles.Title);
+      if (snapshot.Phase == PokerItemPhase.AwaitingActions)
+      {
+        var seconds = Math.Ceiling(snapshot.HandConfirmationRemainingMicroseconds / 1_000_000d);
+        GUI.Label(
+          new Rect(700f, 70f, 210f, 26f),
+          localization.Get(
+            "UI_ITEM_CONFIRM_TIMER",
+            new LocalizationArgument("seconds", seconds.ToString("0"))),
+          styles.Small);
+      }
       DrawTableCards(snapshot, cards, art, styles, localization);
+      DrawPreparedEffects(snapshot, art, styles, localization);
 
       var stageLimitExhausted = snapshot.StageRestriction?.IsExhausted == true;
       var canAct = snapshot.Phase == PokerItemPhase.AwaitingActions
@@ -78,6 +94,10 @@ namespace CodexGame.Presentation.Views
           beginBottomDeal,
           hypeMan,
           healthRecovery,
+          wildInk,
+          barrel,
+          predictionInsurance,
+          mercenary,
           confirm);
       }
 
@@ -90,9 +110,51 @@ namespace CodexGame.Presentation.Views
       {
         GUI.Label(
           new Rect(155f, 468f, 540f, 28f),
-          localization.Get("UI_ITEM_ACTION_FAILED") + ": " + snapshot.LastFailure,
+          FailureMessage(snapshot.LastFailure, localization),
           styles.Small);
       }
+    }
+
+    private static void DrawPreparedEffects(
+      PokerItemSnapshot snapshot,
+      PokerItemUiArtSet art,
+      PlayableDevStyles styles,
+      LocalizationRuntime localization)
+    {
+      if (snapshot.BarrelDefenseArmed && art?.BarrelDefenseReady != null)
+      {
+        GUI.DrawTexture(
+          new Rect(796f, 250f, 64f, 64f),
+          art.BarrelDefenseReady,
+          ScaleMode.ScaleToFit,
+          true);
+      }
+      if (snapshot.InsuranceActivated)
+      {
+        var marker = art?.FindInsuranceCharges(2);
+        if (marker != null)
+        {
+          GUI.DrawTexture(new Rect(866f, 266f, 32f, 32f), marker, ScaleMode.ScaleToFit, true);
+        }
+        GUI.Label(
+          new Rect(708f, 302f, 190f, 22f),
+          localization.Get("UI_ITEM_INSURANCE_APPLIED"),
+          styles.Small);
+      }
+    }
+
+    private static string FailureMessage(
+      PokerItemFailure failure,
+      LocalizationRuntime localization)
+    {
+      var key = failure == PokerItemFailure.CardExchangeLocked
+        ? "UI_ITEM_EXCHANGE_LOCK_AFTER_INK"
+        : failure == PokerItemFailure.NoValidReplacementPair
+          ? "UI_ITEM_NO_VALID_REPLACEMENT_PAIR"
+          : failure == PokerItemFailure.EffectAlreadyActive
+            ? "UI_ITEM_INSURANCE_APPLIED"
+            : "UI_ITEM_ACTION_FAILED";
+      return localization.Get(key);
     }
 
     private void DrawClosedCrate(
@@ -173,9 +235,19 @@ namespace CodexGame.Presentation.Views
       GUI.Label(new Rect(56f, 346f, 220f, 26f), localization.Get("UI_POKER_PLAYER_PRIVATE"), styles.Heading);
       for (var index = 0; index < snapshot.PlayerPrivateCards.Count; index++)
       {
-        cards.DrawAt(
-          new Rect(382f + index * 78f, 328f, 64f, 90f),
-          snapshot.PlayerPrivateCards[index]);
+        var rect = new Rect(382f + index * 78f, 328f, 64f, 90f);
+        var card = snapshot.PlayerPrivateCards[index];
+        cards.DrawAt(rect, card);
+        if (card.IsJoker || card.EffectiveSuit == card.Suit) continue;
+        var seal = art?.FindWildInkSuitSeal(card.EffectiveSuit);
+        if (seal != null)
+        {
+          GUI.DrawTexture(
+            new Rect(rect.x + rect.width - 34f, rect.y + rect.height - 34f, 30f, 30f),
+            seal,
+            ScaleMode.ScaleToFit,
+            true);
+        }
       }
     }
 
@@ -189,6 +261,10 @@ namespace CodexGame.Presentation.Views
       Action<CardId> beginBottomDeal,
       Action hypeMan,
       Action healthRecovery,
+      Action<CardId, CardSuit> wildInk,
+      Action barrel,
+      Action predictionInsurance,
+      Action<CardId> mercenary,
       Action confirm)
     {
       var previous = GUI.color;
@@ -227,7 +303,7 @@ namespace CodexGame.Presentation.Views
       var stageLimitExhausted = snapshot.StageRestriction?.IsExhausted == true;
       var canUse = !stageLimitExhausted
         && !snapshot.UsePresentation.IsActive
-        && CanUseSelected();
+        && CanUseSelected(snapshot);
       if (DrawActionButton(
         UseButton,
         localization.Get("UI_COMMON_SELECT"),
@@ -235,7 +311,15 @@ namespace CodexGame.Presentation.Views
         art,
         styles.Heading))
       {
-        UseSelectedItem(reload, beginBottomDeal, hypeMan, healthRecovery);
+        UseSelectedItem(
+          reload,
+          beginBottomDeal,
+          hypeMan,
+          healthRecovery,
+          wildInk,
+          barrel,
+          predictionInsurance,
+          mercenary);
       }
       if (DrawActionButton(
         ConfirmButton,
@@ -261,7 +345,8 @@ namespace CodexGame.Presentation.Views
       var itemId = occupied ? snapshot.Inventory[index] : default;
       var selected = occupied && _selectedItem == itemId;
       var hovered = occupied && rect.Contains(Event.current.mousePosition);
-      var texture = !occupied
+      var itemDisabled = occupied && IsItemDisabled(snapshot, itemId);
+      var texture = !occupied || itemDisabled
         ? art?.SlotDisabled
         : selected
           ? art?.SlotSelected
@@ -272,7 +357,14 @@ namespace CodexGame.Presentation.Views
       else GUI.Box(rect, GUIContent.none);
       if (!occupied) return;
 
-      var icon = art?.FindItemIcon(itemId);
+      var iconState = itemDisabled
+        ? PokerItemIconState.Disabled
+        : selected
+          ? PokerItemIconState.Selected
+          : hovered
+            ? PokerItemIconState.Hover
+            : PokerItemIconState.Default;
+      var icon = art?.FindItemIcon(itemId, iconState);
       if (icon != null)
       {
         GUI.DrawTexture(
@@ -281,11 +373,14 @@ namespace CodexGame.Presentation.Views
           ScaleMode.ScaleToFit,
           true);
       }
+      GUI.enabled = !itemDisabled;
       if (GUI.Button(rect, GUIContent.none, GUIStyle.none))
       {
         _selectedItem = itemId;
         _selectedTargetCard = null;
+        _selectedSuit = null;
       }
+      GUI.enabled = true;
 
       if (GameItemCatalog.TryGet(itemId, out var definition) && definition != null)
       {
@@ -321,7 +416,11 @@ namespace CodexGame.Presentation.Views
         {
           var card = snapshot.PlayerPrivateCards[index];
           var rect = new Rect(438f + index * 92f, 252f, 56f, 78f);
+          var targetEnabled = IsTargetEnabled(snapshot, _selectedItem.Value, card);
+          var previousCardColor = GUI.color;
+          if (!targetEnabled) GUI.color = new Color(0.45f, 0.45f, 0.45f, 0.78f);
           cards.DrawAt(rect, card);
+          GUI.color = previousCardColor;
           if (_selectedTargetCard.HasValue && _selectedTargetCard.Value == card.Id)
           {
             var color = GUI.color;
@@ -333,7 +432,13 @@ namespace CodexGame.Presentation.Views
               true);
             GUI.color = color;
           }
+          GUI.enabled = targetEnabled;
           if (GUI.Button(rect, GUIContent.none, GUIStyle.none)) _selectedTargetCard = card.Id;
+          GUI.enabled = true;
+        }
+        if (_selectedItem.Value == GameItemId.WildInk)
+        {
+          DrawSuitChoices(snapshot, art);
         }
         return;
       }
@@ -351,22 +456,41 @@ namespace CodexGame.Presentation.Views
           styles.Heading);
         GUI.Label(
           new Rect(510f, 292f, 250f, 34f),
-          localization.Get("UI_ITEM_WINDOW_TITLE"),
+          localization.Get(definition.LocalizationDescriptionKey),
           styles.Small);
       }
     }
 
-    private bool CanUseSelected()
+    private bool CanUseSelected(PokerItemSnapshot snapshot)
     {
       if (!_selectedItem.HasValue) return false;
-      return !RequiresTarget(_selectedItem.Value) || _selectedTargetCard.HasValue;
+      if (IsItemDisabled(snapshot, _selectedItem.Value)) return false;
+      if (RequiresTarget(_selectedItem.Value) && !_selectedTargetCard.HasValue) return false;
+      if (_selectedTargetCard.HasValue)
+      {
+        var targetIndex = FindCard(snapshot.PlayerPrivateCards, _selectedTargetCard.Value);
+        if (targetIndex < 0
+          || !IsTargetEnabled(snapshot, _selectedItem.Value, snapshot.PlayerPrivateCards[targetIndex]))
+        {
+          return false;
+        }
+      }
+      if (_selectedItem.Value != GameItemId.WildInk) return true;
+      if (!_selectedSuit.HasValue || !_selectedTargetCard.HasValue) return false;
+      var wildTargetIndex = FindCard(snapshot.PlayerPrivateCards, _selectedTargetCard.Value);
+      return wildTargetIndex >= 0
+        && snapshot.PlayerPrivateCards[wildTargetIndex].EffectiveSuit != _selectedSuit.Value;
     }
 
     private void UseSelectedItem(
       Action<CardId> reload,
       Action<CardId> beginBottomDeal,
       Action hypeMan,
-      Action healthRecovery)
+      Action healthRecovery,
+      Action<CardId, CardSuit> wildInk,
+      Action barrel,
+      Action predictionInsurance,
+      Action<CardId> mercenary)
     {
       if (!_selectedItem.HasValue) return;
       var item = _selectedItem.Value;
@@ -381,12 +505,65 @@ namespace CodexGame.Presentation.Views
       }
       else if (item == GameItemId.HypeMan) hypeMan();
       else if (item == GameItemId.HealthRecovery) healthRecovery();
+      else if (item == GameItemId.WildInk
+        && _selectedTargetCard.HasValue
+        && _selectedSuit.HasValue)
+      {
+        wildInk(_selectedTargetCard.Value, _selectedSuit.Value);
+      }
+      else if (item == GameItemId.Barrel) barrel();
+      else if (item == GameItemId.PredictionInsurance) predictionInsurance();
+      else if (item == GameItemId.Mercenary && _selectedTargetCard.HasValue)
+      {
+        mercenary(_selectedTargetCard.Value);
+      }
       ClearSelection();
     }
 
     private static bool RequiresTarget(GameItemId itemId)
     {
-      return itemId == GameItemId.Reload || itemId == GameItemId.BottomDeal;
+      return itemId == GameItemId.Reload
+        || itemId == GameItemId.BottomDeal
+        || itemId == GameItemId.WildInk
+        || itemId == GameItemId.Mercenary;
+    }
+
+    private static bool IsItemDisabled(PokerItemSnapshot snapshot, GameItemId itemId)
+    {
+      if (snapshot.StageRestriction?.IsExhausted == true) return true;
+      if (itemId == GameItemId.HealthRecovery && !snapshot.CanRecoverHealth) return true;
+      if (snapshot.WildInkCardId.HasValue
+        && (itemId == GameItemId.Reload
+          || itemId == GameItemId.BottomDeal
+          || itemId == GameItemId.Mercenary)) return true;
+      return itemId == GameItemId.Mercenary
+        && snapshot.MercenaryEligibleTargets.Count == 0;
+    }
+
+    private static bool IsTargetEnabled(
+      PokerItemSnapshot snapshot,
+      GameItemId itemId,
+      Card card)
+    {
+      if ((itemId == GameItemId.WildInk || itemId == GameItemId.Mercenary) && card.IsJoker)
+      {
+        return false;
+      }
+      if (itemId != GameItemId.Mercenary) return true;
+      for (var index = 0; index < snapshot.MercenaryEligibleTargets.Count; index++)
+      {
+        if (snapshot.MercenaryEligibleTargets[index] == card.Id) return true;
+      }
+      return false;
+    }
+
+    private static int FindCard(System.Collections.Generic.IReadOnlyList<Card> cards, CardId id)
+    {
+      for (var index = 0; index < cards.Count; index++)
+      {
+        if (cards[index].Id == id) return index;
+      }
+      return -1;
     }
 
     private static bool DrawActionButton(
@@ -430,6 +607,7 @@ namespace CodexGame.Presentation.Views
     {
       _selectedItem = null;
       _selectedTargetCard = null;
+      _selectedSuit = null;
     }
 
     private void CloseInventoryModal()
@@ -476,19 +654,76 @@ namespace CodexGame.Presentation.Views
 
       var pulse = 1f + Mathf.Sin(presentation.Progress * Mathf.PI) * 0.16f;
       var size = 96f * pulse;
-      var icon = art?.FindPopupIcon(presentation.ItemId.Value);
-      if (icon != null)
+      var sheet = art?.FindUseAnimationSheet(presentation.ItemId.Value);
+      var frameCount = art?.FindUseAnimationFrameCount(presentation.ItemId.Value) ?? 0;
+      if (sheet != null && frameCount > 0)
       {
-        GUI.DrawTexture(
-          new Rect(480f - size * 0.5f, 244f - size * 0.5f, size, size),
-          icon,
-          ScaleMode.ScaleToFit,
+        var frameIndex = Mathf.Min(
+          frameCount - 1,
+          Mathf.FloorToInt(presentation.Progress * frameCount));
+        GUI.DrawTextureWithTexCoords(
+          new Rect(416f, 198f, 128f, 128f),
+          sheet,
+          new Rect(frameIndex / (float)frameCount, 0f, 1f / frameCount, 1f),
           true);
+      }
+      else
+      {
+        var icon = art?.FindPopupIcon(presentation.ItemId.Value);
+        if (icon != null)
+        {
+          GUI.DrawTexture(
+            new Rect(480f - size * 0.5f, 244f - size * 0.5f, size, size),
+            icon,
+            ScaleMode.ScaleToFit,
+            true);
+        }
       }
       GUI.Label(
         new Rect(300f, 318f, 360f, 42f),
         localization.Get("UI_ITEM_USING"),
         styles.Status);
+    }
+
+    private void DrawSuitChoices(PokerItemSnapshot snapshot, PokerItemUiArtSet art)
+    {
+      var suits = new[]
+      {
+        CardSuit.Spades,
+        CardSuit.Diamonds,
+        CardSuit.Hearts,
+        CardSuit.Clubs
+      };
+      for (var index = 0; index < suits.Length; index++)
+      {
+        var rect = new Rect(510f + index * 42f, 310f, 32f, 32f);
+        var texture = art?.FindWildInkSuitSeal(suits[index]);
+        var currentSuit = false;
+        if (_selectedTargetCard.HasValue)
+        {
+          var targetIndex = FindCard(snapshot.PlayerPrivateCards, _selectedTargetCard.Value);
+          currentSuit = targetIndex >= 0
+            && snapshot.PlayerPrivateCards[targetIndex].EffectiveSuit == suits[index];
+        }
+        if (_selectedSuit == suits[index])
+        {
+          var previous = GUI.color;
+          GUI.color = new Color(0.08f, 0.9f, 0.9f, 0.45f);
+          GUI.DrawTexture(
+            new Rect(rect.x - 3f, rect.y - 3f, rect.width + 6f, rect.height + 6f),
+            Texture2D.whiteTexture,
+            ScaleMode.StretchToFill,
+            true);
+          GUI.color = previous;
+        }
+        var previousColor = GUI.color;
+        if (currentSuit) GUI.color = new Color(0.45f, 0.45f, 0.45f, 0.78f);
+        if (texture != null) GUI.DrawTexture(rect, texture, ScaleMode.ScaleToFit, true);
+        GUI.color = previousColor;
+        GUI.enabled = !currentSuit;
+        if (GUI.Button(rect, GUIContent.none, GUIStyle.none)) _selectedSuit = suits[index];
+        GUI.enabled = true;
+      }
     }
   }
 }
