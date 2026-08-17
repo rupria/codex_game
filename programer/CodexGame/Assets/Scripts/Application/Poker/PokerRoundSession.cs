@@ -165,7 +165,8 @@ namespace CodexGame.Application.Poker
 
     public PokerRoundSnapshot GetSnapshot(GameTimestamp now)
     {
-      var visibleAiCards = Phase == PokerRoundPhase.Resolved
+      var visibleAiCards = Phase == PokerRoundPhase.ResultPending
+          || Phase == PokerRoundPhase.Resolved
         ? _aiPrivateCards
         : _preRevealAiCardIndex >= 0
           ? Array.AsReadOnly(new[] { _aiPrivateCards[_preRevealAiCardIndex] })
@@ -187,11 +188,14 @@ namespace CodexGame.Application.Poker
         _publicCards,
         health,
         remaining,
-        Phase == PokerRoundPhase.Resolved ? _result : null,
+        Phase == PokerRoundPhase.ResultPending || Phase == PokerRoundPhase.Resolved
+          ? _result
+          : null,
         Phase == PokerRoundPhase.AwaitingPlayerJokerChoice
           ? _playerJokerOptions
           : Array.AsReadOnly(Array.Empty<JokerHandOption>()),
-        _playerJokerCategory);
+        _playerJokerCategory,
+        GetResultPresentationStep(now));
     }
 
     public PokerRoundSnapshot GetSnapshot()
@@ -219,6 +223,17 @@ namespace CodexGame.Application.Poker
       _result = new PokerRoundResult(comparison, damage, prediction);
       _resultRevealAt = Add(now, GameRules.PokerResultAnnouncementMicroseconds);
       Phase = PokerRoundPhase.ResultPending;
+    }
+
+    private PokerResultPresentationStep GetResultPresentationStep(GameTimestamp now)
+    {
+      if (Phase == PokerRoundPhase.Resolved) return PokerResultPresentationStep.Complete;
+      if (Phase != PokerRoundPhase.ResultPending) return PokerResultPresentationStep.None;
+      var startedAt = _resultRevealAt.Microseconds - GameRules.PokerResultAnnouncementMicroseconds;
+      var elapsed = Math.Max(0, now.Microseconds - startedAt);
+      return elapsed < GameRules.PokerResultCardRevealMicroseconds
+        ? PokerResultPresentationStep.Cards
+        : PokerResultPresentationStep.Outcome;
     }
 
     private static IReadOnlyList<Card> Copy(IReadOnlyList<Card> cards)

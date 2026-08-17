@@ -9,6 +9,8 @@ namespace CodexGame.Application.Playable
     private long _durationMicroseconds;
 
     public PlayableTransitionKind Kind { get; private set; }
+    public GameTimestamp EndsAt => new GameTimestamp(
+      _startedAt.Microseconds + _durationMicroseconds);
 
     public void Begin(
       PlayableTransitionKind kind,

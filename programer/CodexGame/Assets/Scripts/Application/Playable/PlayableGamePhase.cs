@@ -13,6 +13,8 @@ namespace CodexGame.Application.Playable
     StageWon = 8,
     BattleFinished = 9,
     BarShop = 10,
-    NextStageTransition = 11
+    NextStageTransition = 11,
+    StageEntry = 12,
+    RunWon = 13
   }
 }

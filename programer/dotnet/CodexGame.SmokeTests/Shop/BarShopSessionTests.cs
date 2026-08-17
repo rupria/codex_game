@@ -23,23 +23,36 @@ namespace CodexGame.SmokeTests.Shop
     private static void CheckVisitAndReroll(TestHarness tests)
     {
       var first = new BarShopSession(BarShopCatalog.All);
+      var bullets = FundedLedger();
       first.Begin(20260809);
       var initial = first.GetSnapshot();
       tests.Check(
         initial.Slots.Count == 4
           && initial.CanReroll
-          && initial.RerollCost == 0
+          && initial.RerollCost == 1
+          && initial.RemainingRerolls == 2
           && UniqueCount(initial.Slots) == 4,
-        "A bar visit must open four unique product slots with one free reroll.");
+        "A bar visit must open four unique product slots with two one-bullet rerolls.");
 
-      tests.Check(first.TryReroll(), "The first reroll during a bar visit must succeed.");
-      var rerolled = first.GetSnapshot();
+      tests.Check(first.TryReroll(bullets), "The first paid reroll during a bar visit must succeed.");
+      var rerolled = first.GetSnapshot(availableBullets: bullets.Balance);
       tests.Check(
-        rerolled.Slots.Count == 4 && !rerolled.CanReroll,
-        "The free reroll must replace the four slots and then disable itself.");
+        rerolled.Slots.Count == 4
+          && rerolled.CanReroll
+          && rerolled.RemainingRerolls == 1
+          && bullets.Balance == 2,
+        "The first reroll must spend one bullet and leave one reroll available.");
       tests.Check(
-        !first.TryReroll() && SameIds(rerolled.Slots, first.GetSnapshot().Slots),
-        "A second reroll in the same visit must not mutate the shop.");
+        first.TryReroll(bullets) && bullets.Balance == 1,
+        "The second paid reroll during the same visit must succeed.");
+      var final = first.GetSnapshot(availableBullets: bullets.Balance);
+      tests.Check(
+        final.RemainingRerolls == 0
+          && !final.CanReroll
+          && !first.TryReroll(bullets)
+          && bullets.Balance == 1
+          && SameIds(final.Slots, first.GetSnapshot().Slots),
+        "A third reroll must be rejected without spending bullets or mutating the shop.");
 
       var replay = new BarShopSession(BarShopCatalog.All);
       replay.Begin(20260809);

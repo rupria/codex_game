@@ -63,7 +63,7 @@ namespace CodexGame.Presentation.Views
       DrawPublic(snapshot, styles, cards, uiArt);
       DrawAiDeck(cards);
       DrawRevealHistories(snapshot, cards, uiArt);
-      DrawStatus(snapshot, styles);
+      DrawFlipReady(snapshot, gamePhase, styles);
       _lowerHud.Draw(snapshot, styles, cards, uiArt, _localization);
       DrawRoundWins(snapshot, uiArt);
       _ropeTimer.Draw(snapshot, styles, uiArt);
@@ -107,11 +107,6 @@ namespace CodexGame.Presentation.Views
       {
         DrawLockedPublicSlot(styles, uiArt);
       }
-      GUI.Label(
-        new Rect(270f, 370f, 420f, 52f),
-        progress < 0.55f ? L("UI_HALLI_DEALER_FIRST") : L("UI_HALLI_TABLE_READY"),
-        styles.Status);
-      GUI.Label(new Rect(330f, 430f, 300f, 28f), L("UI_HALLI_INPUT_AFTER_CAMERA"), styles.Small);
     }
 
     private void DrawScoreboard(
@@ -145,10 +140,8 @@ namespace CodexGame.Presentation.Views
         healthArt);
       GUI.Label(
         new Rect(350f, 12f, 260f, 24f),
-        L(
-          "UI_HALLI_DISTRIBUTION_DECK",
-          new LocalizationArgument("count", snapshot.FlipCount),
-          new LocalizationArgument("remaining", snapshot.RemainingDeckCards)),
+        snapshot.FlipCount + "/" + GameRules.HalliDistributionLimit
+          + "  ·  " + snapshot.RemainingDeckCards,
         styles.Small);
     }
 
@@ -297,13 +290,18 @@ namespace CodexGame.Presentation.Views
         : uiArt.SharedPileRailAiActive;
     }
 
-    private void DrawStatus(PrototypeHalliSnapshot snapshot, PlayableDevStyles styles)
+    private void DrawFlipReady(
+      PrototypeHalliSnapshot snapshot,
+      PlayableGamePhase gamePhase,
+      PlayableDevStyles styles)
     {
-      GUI.Box(HalliBoardLayout.Status, GUIContent.none);
+      if (gamePhase != PlayableGamePhase.Halli
+        || snapshot.Phase != PrototypeSessionPhase.ReadyToFlip
+        || snapshot.FlipCount != 0) return;
       GUI.Label(
-        new Rect(306f, 158f, 348f, 24f),
-        _localization.Catalog.Get(snapshot.Status, _localization.Language),
-        styles.Small);
+        new Rect(350f, 148f, 260f, 44f),
+        _localization.Get("UI_THREE_CALL_FLIP_READY"),
+        styles.Status);
     }
 
     private void DrawControls(

@@ -50,6 +50,9 @@ namespace CodexGame.Presentation.Views
     private EconomyUiArtSet _economyUiArtSet;
 
     [SerializeField]
+    private PresentationUiArtSet _presentationUiArtSet;
+
+    [SerializeField]
     private bool _useSceneBackdrop;
 
     [SerializeField]
@@ -58,6 +61,8 @@ namespace CodexGame.Presentation.Views
     private readonly HalliDevPanel _halliPanel = new HalliDevPanel();
     private readonly GuideModalPanel _guidePanel = new GuideModalPanel();
     private readonly GuideModalState _guide = new GuideModalState();
+    private readonly FirstStartTutorialSession _firstStartTutorial =
+      new FirstStartTutorialSession();
     private readonly HalliTableLightOverlay _tableLightOverlay = new HalliTableLightOverlay();
     private readonly PrivateSelectionDevPanel _selectionPanel = new PrivateSelectionDevPanel();
     private readonly PokerDevPanel _pokerPanel = new PokerDevPanel();
@@ -65,6 +70,8 @@ namespace CodexGame.Presentation.Views
     private readonly BarShopDevPanel _barShopPanel = new BarShopDevPanel();
     private readonly StageTransitionDevPanel _stageTransitionPanel =
       new StageTransitionDevPanel();
+    private readonly Presentation0124Panel _presentation0124Panel =
+      new Presentation0124Panel();
 #if UNITY_EDITOR || ENABLE_GAMEPLAY_CHEATS
     private readonly DevelopmentCheatPanel _cheatPanel = new DevelopmentCheatPanel();
     private bool _cheatOpen;
@@ -77,6 +84,7 @@ namespace CodexGame.Presentation.Views
     private LocalizationRuntime _localization;
 
     public event Action StartRequested;
+    public event Action StageEntrySkipRequested;
     public event Action AdvanceRequested;
     public event Action LeftBellRequested;
     public event Action RightBellRequested;
@@ -93,6 +101,7 @@ namespace CodexGame.Presentation.Views
     public event Action BarShopRerollRequested;
     public event Action<int> BarShopPurchaseRequested;
     public event Action MainRequested;
+    public event Action InactivityAcknowledgedRequested;
 #if UNITY_EDITOR || ENABLE_GAMEPLAY_CHEATS
     public event Action CheatStagePassRequested;
     public event Action<GameItemId> CheatGrantItemRequested;
@@ -144,7 +153,8 @@ namespace CodexGame.Presentation.Views
       BarShopUiArtSet barShopUiArtSet = null,
       StageTransitionUiArtSet stageTransitionUiArtSet = null,
       PokerItemUiArtSet pokerItemUiArtSet = null,
-      EconomyUiArtSet economyUiArtSet = null)
+      EconomyUiArtSet economyUiArtSet = null,
+      PresentationUiArtSet presentationUiArtSet = null)
     {
       _boardTexture = boardTexture;
       _cardArtSet = cardArtSet;
@@ -157,6 +167,7 @@ namespace CodexGame.Presentation.Views
       _barShopUiArtSet = barShopUiArtSet;
       _stageTransitionUiArtSet = stageTransitionUiArtSet;
       _economyUiArtSet = economyUiArtSet;
+      _presentationUiArtSet = presentationUiArtSet;
       _useSceneBackdrop = useSceneBackdrop;
       _useIntroArtLayout = useIntroArtLayout;
       _halliCards = null;
@@ -177,11 +188,17 @@ namespace CodexGame.Presentation.Views
     {
       if (_snapshot == null || _localization == null || !_localization.IsReady) return;
 
+      if (_snapshot.InactivityReturnPending) return;
+
       if (_guide.IsOpen)
       {
-        if (Input.GetKeyDown(KeyCode.Escape)) _guide.Close();
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+          if (_guide.IsFirstStartTutorial) CompleteFirstStartTutorial();
+          else _guide.Close();
+        }
         else if (Input.GetKeyDown(KeyCode.LeftArrow)) _guide.MovePrevious();
-        else if (Input.GetKeyDown(KeyCode.RightArrow)) _guide.MoveNext();
+        else if (Input.GetKeyDown(KeyCode.RightArrow)) AdvanceGuide();
         return;
       }
 
@@ -197,10 +214,12 @@ namespace CodexGame.Presentation.Views
       switch (_snapshot.Phase)
       {
         case PlayableGamePhase.Intro:
-          if (Pressed(KeyCode.Return, KeyCode.Space)) StartRequested?.Invoke();
-          else if (Input.GetKeyDown(KeyCode.G)) _guide.Open();
+          if (Pressed(KeyCode.Return, KeyCode.Space)) RequestStart();
+          else if (Input.GetKeyDown(KeyCode.G)) _guide.OpenMainGuide();
           break;
         case PlayableGamePhase.HalliOpening:
+          break;
+        case PlayableGamePhase.StageEntry:
           break;
         case PlayableGamePhase.Halli:
           HandleHalliInput();
@@ -224,6 +243,9 @@ namespace CodexGame.Presentation.Views
           if (Pressed(KeyCode.Return, KeyCode.Space)) AdvanceRequested?.Invoke();
           break;
         case PlayableGamePhase.BattleFinished:
+          if (Pressed(KeyCode.R, KeyCode.Return)) MainRequested?.Invoke();
+          break;
+        case PlayableGamePhase.RunWon:
           if (Pressed(KeyCode.R, KeyCode.Return)) MainRequested?.Invoke();
           break;
         case PlayableGamePhase.StageWon:
@@ -270,6 +292,12 @@ namespace CodexGame.Presentation.Views
       if (_localization == null || !_localization.IsReady) return;
       EnsureRenderers();
 
+      if (_snapshot.InactivityReturnPending)
+      {
+        DrawInactivityReturnModal();
+        return;
+      }
+
 #if UNITY_EDITOR || ENABLE_GAMEPLAY_CHEATS
       if (_snapshot.CheatUsed)
       {
@@ -296,14 +324,27 @@ namespace CodexGame.Presentation.Views
           _guideUiArtSet,
           _localization,
           _guide.MovePrevious,
-          _guide.MoveNext,
-          _guide.Close);
+          AdvanceGuide,
+          _guide.Close,
+          CompleteFirstStartTutorial,
+          CompleteFirstStartTutorial);
         return;
       }
 
       if (_snapshot.Phase == PlayableGamePhase.Intro)
       {
         DrawIntro();
+        return;
+      }
+
+      if (_snapshot.Phase == PlayableGamePhase.StageEntry)
+      {
+        _presentation0124Panel.DrawStageEntry(
+          _snapshot,
+          _presentationUiArtSet,
+          _styles,
+          _localization,
+          () => StageEntrySkipRequested?.Invoke());
         return;
       }
 
@@ -326,6 +367,21 @@ namespace CodexGame.Presentation.Views
           () => AdvanceRequested?.Invoke(),
           () => LeftBellRequested?.Invoke(),
           () => RightBellRequested?.Invoke());
+        DrawOpponentPortrait();
+        if (_snapshot.Phase == PlayableGamePhase.HalliOpening)
+        {
+          _presentation0124Panel.DrawThreeCallEntry(
+            _presentationUiArtSet,
+            _styles,
+            _localization);
+        }
+        else if (_snapshot.Phase == PlayableGamePhase.HalliTransition)
+        {
+          _presentation0124Panel.DrawThreeCallToSelection(
+            _presentationUiArtSet,
+            _styles,
+            _localization);
+        }
         DrawBattleEconomyHud();
         return;
       }
@@ -334,6 +390,9 @@ namespace CodexGame.Presentation.Views
           || _snapshot.Phase == PlayableGamePhase.PokerResult)
         && _snapshot.Poker != null)
       {
+        _presentation0124Panel.DrawShowdownFrame(
+          _snapshot.Phase == PlayableGamePhase.PokerResult,
+          _presentationUiArtSet);
         _pokerPanel.Draw(
           _snapshot.Poker,
           _styles,
@@ -345,6 +404,7 @@ namespace CodexGame.Presentation.Views
           category => JokerHandRequested?.Invoke(category),
           prediction => PredictionRequested?.Invoke(prediction),
           () => AdvanceRequested?.Invoke());
+        DrawOpponentPortrait();
         DrawBattleEconomyHud();
         return;
       }
@@ -363,6 +423,12 @@ namespace CodexGame.Presentation.Views
           () => HypeManItemRequested?.Invoke(),
           () => HealthRecoveryItemRequested?.Invoke(),
           () => ItemsConfirmRequested?.Invoke());
+        DrawOpponentPortrait();
+        _presentation0124Panel.DrawItemRestriction(
+          _snapshot.StageItemRestriction,
+          _presentationUiArtSet,
+          _styles,
+          _localization);
         DrawBattleEconomyHud();
         return;
       }
@@ -397,6 +463,11 @@ namespace CodexGame.Presentation.Views
         return;
       }
 
+      if (_snapshot.Phase == PlayableGamePhase.StageWon)
+      {
+        _presentation0124Panel.DrawStageClear(_presentationUiArtSet);
+      }
+
       GUILayout.BeginArea(new Rect(48f, 28f, 864f, 484f));
       GUILayout.Label(L("UI_GAME_TITLE"), _styles.Title);
       GUILayout.BeginHorizontal();
@@ -417,6 +488,7 @@ namespace CodexGame.Presentation.Views
               _selectionFocus,
               _styles,
               _pokerCards,
+              _presentationUiArtSet,
               _localization,
               index => _selectionFocus = index,
               cardId => PrivateCardToggleRequested?.Invoke(cardId),
@@ -425,6 +497,9 @@ namespace CodexGame.Presentation.Views
           break;
         case PlayableGamePhase.BattleFinished:
           DrawBattleFinished();
+          break;
+        case PlayableGamePhase.RunWon:
+          DrawRunWon();
           break;
         case PlayableGamePhase.StageWon:
           DrawStageWon();
@@ -447,11 +522,11 @@ namespace CodexGame.Presentation.Views
       GUI.Label(new Rect(300f, 184f, 360f, 34f), L("UI_GAME_SUBTITLE"), _styles.Heading);
       if (GUI.Button(new Rect(330f, 246f, 300f, 58f), L("UI_MAIN_START")))
       {
-        StartRequested?.Invoke();
+        RequestStart();
       }
       if (GUI.Button(new Rect(330f, 318f, 300f, 58f), L("UI_MAIN_GUIDE")))
       {
-        _guide.Open();
+        _guide.OpenMainGuide();
       }
       GUI.enabled = _localization.Language != LocalizationCatalog.DefaultLanguage;
       if (GUI.Button(new Rect(330f, 390f, 145f, 38f), "한국어"))
@@ -473,14 +548,14 @@ namespace CodexGame.Presentation.Views
         L("UI_MAIN_START"),
         new Color(0.015f, 0.055f, 0.075f, 0.96f)))
       {
-        StartRequested?.Invoke();
+        RequestStart();
       }
       if (DrawIntroArtButton(
         new Rect(312f, 354f, 336f, 78f),
         L("UI_MAIN_GUIDE"),
         new Color(0.055f, 0.02f, 0.035f, 0.96f)))
       {
-        _guide.Open();
+        _guide.OpenMainGuide();
       }
 
       GUI.enabled = _localization.Language != LocalizationCatalog.DefaultLanguage;
@@ -521,6 +596,54 @@ namespace CodexGame.Presentation.Views
       return GUI.Button(rect, GUIContent.none, GUIStyle.none);
     }
 
+    private void RequestStart()
+    {
+      if (_firstStartTutorial.RequestStart() == FirstStartRequest.ShowTutorial)
+      {
+        _guide.OpenFirstStartTutorial();
+        return;
+      }
+      StartRequested?.Invoke();
+    }
+
+    private void AdvanceGuide()
+    {
+      if (_guide.CanMoveNext)
+      {
+        _guide.MoveNext();
+        return;
+      }
+      if (_guide.IsFirstStartTutorial) CompleteFirstStartTutorial();
+    }
+
+    private void CompleteFirstStartTutorial()
+    {
+      if (!_guide.IsFirstStartTutorial || !_firstStartTutorial.CompleteTutorial()) return;
+      _guide.Close();
+      StartRequested?.Invoke();
+    }
+
+    private void DrawInactivityReturnModal()
+    {
+      var previous = GUI.color;
+      GUI.color = new Color(0f, 0f, 0f, 0.82f);
+      GUI.DrawTexture(
+        new Rect(0f, 0f, PlayableViewport.Width, PlayableViewport.Height),
+        Texture2D.whiteTexture,
+        ScaleMode.StretchToFill,
+        true);
+      GUI.color = previous;
+      GUI.Box(new Rect(210f, 174f, 540f, 192f), GUIContent.none);
+      GUI.Label(
+        new Rect(250f, 204f, 460f, 74f),
+        L("UI_INACTIVITY_RETURN_MESSAGE"),
+        _styles.Status);
+      if (GUI.Button(new Rect(380f, 296f, 200f, 48f), L("UI_COMMON_CONFIRM")))
+      {
+        InactivityAcknowledgedRequested?.Invoke();
+      }
+    }
+
     private void DrawBattleFinished()
     {
       GUILayout.FlexibleSpace();
@@ -528,6 +651,17 @@ namespace CodexGame.Presentation.Views
         L("UI_BATTLE_DEFEATED"),
         _styles.Status,
         GUILayout.Height(90f));
+      if (GUILayout.Button(L("UI_RETURN_MAIN"), GUILayout.Height(62f)))
+      {
+        MainRequested?.Invoke();
+      }
+      GUILayout.FlexibleSpace();
+    }
+
+    private void DrawRunWon()
+    {
+      GUILayout.FlexibleSpace();
+      GUILayout.Label(L("UI_RUN_COMPLETE"), _styles.Status, GUILayout.Height(90f));
       if (GUILayout.Button(L("UI_RETURN_MAIN"), GUILayout.Height(62f)))
       {
         MainRequested?.Invoke();
@@ -561,6 +695,21 @@ namespace CodexGame.Presentation.Views
         _snapshot.TemporaryBulletCount,
         _economyUiArtSet,
         _styles.Small);
+    }
+
+    private void DrawOpponentPortrait()
+    {
+      var portrait = _presentationUiArtSet?.GetOpponentPortrait(_snapshot.StageNumber);
+      var rect = new Rect(872f, 10f, 72f, 72f);
+      if (portrait != null)
+      {
+        GUI.DrawTexture(rect, portrait, ScaleMode.ScaleToFit, true);
+        return;
+      }
+      var previous = GUI.color;
+      GUI.color = new Color(0.04f, 0.035f, 0.03f, 0.9f);
+      GUI.DrawTexture(rect, Texture2D.whiteTexture, ScaleMode.StretchToFill, true);
+      GUI.color = previous;
     }
 
     private void HandleHalliInput()

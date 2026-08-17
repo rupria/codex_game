@@ -24,13 +24,28 @@ namespace CodexGame.Core.Shared
     public const long CardRevealMotionRangeMicroseconds = 40_000;
     public const long CardRevealGapMinimumMicroseconds = 60_000;
     public const long CardRevealGapRangeMicroseconds = 40_000;
-    public const long HalliOpeningPresentationMicroseconds = 1_200_000;
-    public const long HalliClosingPresentationMicroseconds = 700_000;
+    public const int StageItemRestrictionActivationPercent = 20;
+    public const int StageItemRestrictionMinimumUses = 1;
+    public const int StageItemRestrictionMaximumUses = 2;
+    public const int BarShopRerollCost = 1;
+    public const int BarShopMaximumRerolls = 2;
+
+    public const long StageEntryPresentationMicroseconds = 6_000_000;
+    public const long ThreeCallEntryPresentationMicroseconds = 5_000_000;
+    public const long ThreeCallToSelectionPresentationMicroseconds = 2_000_000;
     public const long HalliResultLockMicroseconds = 2_000_000;
     public const long PrivateSelectionTimeoutMicroseconds = 60_000_000;
     public const long PredictionTimeoutMicroseconds = 120_000_000;
-    public const long PokerResultAnnouncementMicroseconds = 1_000_000;
-    public const long PlayerJokerPresentationMicroseconds = 900_000;
+    public const long SecondPublicCardRevealMicroseconds = 1_290_000;
+    public const long PokerResultCardRevealMicroseconds = 1_000_000;
+    public const long PokerResultOutcomeMicroseconds = 1_000_000;
+    public const long PokerResultAnnouncementMicroseconds =
+      PokerResultCardRevealMicroseconds + PokerResultOutcomeMicroseconds;
+    public const long PlayerJokerPresentationMicroseconds = 350_000;
+    public const long ReloadItemPresentationMicroseconds = 800_000;
+    public const long BottomDealItemPresentationMicroseconds = 1_000_000;
+    public const long HypeManItemPresentationMicroseconds = 800_000;
+    public const long HealthRecoveryItemPresentationMicroseconds = 500_000;
     public const long BarShopPouchCoverMicroseconds = 120_000;
     public const long BarShopCoinFlipDurationMicroseconds = 500_000;
     public const long BarShopBulletPourDurationMicroseconds = 750_000;

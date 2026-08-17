@@ -40,12 +40,25 @@ namespace CodexGame.SmokeTests.Poker
       tests.Check(
         session.GetSnapshot(new GameTimestamp(10)).Phase == PokerRoundPhase.ResultPending,
         "A submitted prediction must enter the bounded result-announcement phase.");
+      var cardsStep = session.GetSnapshot(new GameTimestamp(10));
+      tests.Check(
+        cardsStep.ResultPresentationStep == PokerResultPresentationStep.Cards
+          && cardsStep.VisibleAiPrivateCards.Count == 3
+          && cardsStep.Result != null
+          && cardsStep.Health.Ai == 3,
+        "The first result second must reveal all cards while keeping the pre-damage health state locked.");
+      var outcomeStepAt = new GameTimestamp(10 + GameRules.PokerResultCardRevealMicroseconds);
+      var outcomeStep = session.GetSnapshot(outcomeStepAt);
+      tests.Check(
+        outcomeStep.ResultPresentationStep == PokerResultPresentationStep.Outcome
+          && outcomeStep.Health.Ai == 3,
+        "The second result second must show the outcome before committing health damage.");
       tests.Check(
         !session.Tick(new GameTimestamp(10 + GameRules.PokerResultAnnouncementMicroseconds - 1)),
-        "Poker result must remain pending before the one-second announcement boundary.");
+        "Poker result must remain pending before the two-second reveal and outcome boundary.");
       tests.Check(
         session.Tick(new GameTimestamp(10 + GameRules.PokerResultAnnouncementMicroseconds)),
-        "Poker result must announce at the one-second boundary.");
+        "Poker result must resolve after one second of card reveal plus one second of outcome.");
 
       var revealed = session.GetSnapshot(new GameTimestamp(10 + GameRules.PokerResultAnnouncementMicroseconds));
       tests.Check(revealed.Result != null && revealed.Result.Comparison.Winner == PokerWinner.Player,

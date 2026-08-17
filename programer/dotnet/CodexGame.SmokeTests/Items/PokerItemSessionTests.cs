@@ -21,6 +21,8 @@ namespace CodexGame.SmokeTests.Items
       CheckFailedBottomDealIsAtomic(tests);
       CheckHypeManReveal(tests);
       CheckHealthRecoveryGuard(tests);
+      CheckStageUseLimit(tests);
+      CheckSecondPublicRevealOrder(tests);
     }
 
     private static void CheckReloadAndBottomDeal(TestHarness tests)
@@ -184,6 +186,75 @@ namespace CodexGame.SmokeTests.Items
         session.UseHealthRecovery(true) == PokerItemFailure.None
           && !inventory.Contains(GameItemId.HealthRecovery),
         "Health recovery must consume only after a valid heal.");
+    }
+
+    private static void CheckStageUseLimit(TestHarness tests)
+    {
+      StageItemRestrictionSession restriction = null!;
+      for (long seed = 0; seed < 10000; seed++)
+      {
+        var candidate = new StageItemRestrictionSession();
+        candidate.ResetRun();
+        candidate.EnterStage(1, seed);
+        var snapshot = candidate.EnterStage(2, seed);
+        if (snapshot.IsActive && snapshot.UseLimit == 1)
+        {
+          restriction = candidate;
+          break;
+        }
+      }
+      if (restriction == null)
+      {
+        tests.Check(false, "A deterministic one-use stage restriction seed must exist.");
+        return;
+      }
+
+      var inventory = new RunInventory();
+      inventory.TryAdd(GameItemId.Reload);
+      inventory.TryAdd(GameItemId.HypeMan);
+      var session = new PokerItemSession();
+      session.Begin(
+        C(CardSuit.Spades, CardRank.Ace),
+        Distribution(),
+        inventory,
+        1204,
+        restriction);
+      var target = session.GetSnapshot().PlayerPrivateCards[0].Id;
+      var first = session.UseReload(target);
+      var second = session.UseHypeMan();
+      tests.Check(
+        first == PokerItemFailure.None
+          && second == PokerItemFailure.StageUseLimitReached
+          && inventory.Contains(GameItemId.HypeMan)
+          && session.GetSnapshot().StageRestriction?.IsExhausted == true,
+        "Poker item actions must consume and enforce the shared stage-use allowance atomically.");
+    }
+
+    private static void CheckSecondPublicRevealOrder(TestHarness tests)
+    {
+      var inventory = new RunInventory();
+      inventory.TryAdd(GameItemId.Reload);
+      var session = new PokerItemSession();
+      var distribution = Distribution();
+      session.Begin(
+        C(CardSuit.Spades, CardRank.Ace),
+        distribution,
+        inventory,
+        1205,
+        new GameTimestamp(50));
+      var during = session.GetSnapshot(new GameTimestamp(50));
+      tests.Check(
+        during.Phase == PokerItemPhase.RevealingSecondPublic
+          && during.PublicCards.Count == 1
+          && during.RevealingSecondPublicCard.HasValue
+          && during.RevealingSecondPublicCard.Value.Id == distribution.SecondPublicCard.Id,
+        "The second public card must reveal only after private distribution and item-phase entry.");
+      tests.Check(
+        !session.Tick(new GameTimestamp(50 + GameRules.SecondPublicCardRevealMicroseconds - 1))
+          && session.Tick(new GameTimestamp(50 + GameRules.SecondPublicCardRevealMicroseconds))
+          && session.GetSnapshot().PublicCards.Count == 2
+          && session.Phase == PokerItemPhase.AwaitingActions,
+        "The second public-card flip must lock item input until its exact reveal boundary.");
     }
 
     private static PrivateCardDistributionResult Distribution()

@@ -27,6 +27,7 @@ namespace CodexGame.Bootstrap
       if (_view == null) _view = gameObject.AddComponent<PlayableDevView>();
 
       _view.StartRequested += StartNew;
+      _view.StageEntrySkipRequested += SkipStageEntry;
       _view.AdvanceRequested += Advance;
       _view.LeftBellRequested += RingLeft;
       _view.RightBellRequested += RingRight;
@@ -43,6 +44,7 @@ namespace CodexGame.Bootstrap
       _view.BarShopRerollRequested += RerollBarShop;
       _view.BarShopPurchaseRequested += PurchaseBarShop;
       _view.MainRequested += ReturnToMain;
+      _view.InactivityAcknowledgedRequested += AcknowledgeInactivityReturn;
 #if UNITY_EDITOR || ENABLE_GAMEPLAY_CHEATS
       _view.CheatStagePassRequested += CheatStagePass;
       _view.CheatGrantItemRequested += CheatGrantItem;
@@ -71,6 +73,7 @@ namespace CodexGame.Bootstrap
     {
       if (_view == null) return;
       _view.StartRequested -= StartNew;
+      _view.StageEntrySkipRequested -= SkipStageEntry;
       _view.AdvanceRequested -= Advance;
       _view.LeftBellRequested -= RingLeft;
       _view.RightBellRequested -= RingRight;
@@ -87,6 +90,7 @@ namespace CodexGame.Bootstrap
       _view.BarShopRerollRequested -= RerollBarShop;
       _view.BarShopPurchaseRequested -= PurchaseBarShop;
       _view.MainRequested -= ReturnToMain;
+      _view.InactivityAcknowledgedRequested -= AcknowledgeInactivityReturn;
 #if UNITY_EDITOR || ENABLE_GAMEPLAY_CHEATS
       _view.CheatStagePassRequested -= CheatStagePass;
       _view.CheatGrantItemRequested -= CheatGrantItem;
@@ -97,6 +101,12 @@ namespace CodexGame.Bootstrap
     private void StartNew()
     {
       _session.StartNewBattle(Now(), NextSeed());
+      Present();
+    }
+
+    private void SkipStageEntry()
+    {
+      _session.SkipStageEntry(Now());
       Present();
     }
 
@@ -193,6 +203,12 @@ namespace CodexGame.Bootstrap
     private void ReturnToMain()
     {
       _session.ReturnToMain();
+      Present();
+    }
+
+    private void AcknowledgeInactivityReturn()
+    {
+      _session.AcknowledgeInactivityReturn(Now());
       Present();
     }
 

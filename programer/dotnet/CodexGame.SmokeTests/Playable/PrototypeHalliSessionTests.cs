@@ -249,15 +249,22 @@ namespace CodexGame.SmokeTests.Playable
     {
       var game = new PlayableGameSession();
       game.StartNewBattle(new GameTimestamp(0), 123);
-      var readyAt = new GameTimestamp(GameRules.HalliOpeningPresentationMicroseconds);
+      var readyAt = new GameTimestamp(
+        GameRules.StageEntryPresentationMicroseconds
+          + GameRules.ThreeCallEntryPresentationMicroseconds);
       game.Tick(readyAt);
       var timeoutAt = new GameTimestamp(
-        GameRules.HalliOpeningPresentationMicroseconds
+        GameRules.StageEntryPresentationMicroseconds
+          + GameRules.ThreeCallEntryPresentationMicroseconds
           + GameRules.GlobalInactivityTimeoutMicroseconds);
       game.Tick(timeoutAt);
+      game.StartNewBattle(timeoutAt, 999);
       tests.Check(
-        game.GetSnapshot(timeoutAt).Phase == PlayableGamePhase.Intro,
-        "Three minutes without valid user input must return to the main screen.");
+        game.GetSnapshot(timeoutAt).Phase == PlayableGamePhase.Intro
+          && game.GetSnapshot(timeoutAt).InactivityReturnPending
+          && game.AcknowledgeInactivityReturn(timeoutAt)
+          && !game.GetSnapshot(timeoutAt).InactivityReturnPending,
+        "Three minutes without valid user input must return to main, block START, and require one modal confirmation.");
     }
 
     private static bool TryGetValidPile(PrototypeHalliSnapshot snapshot, out PileSide pile)

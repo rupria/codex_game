@@ -9,6 +9,8 @@ namespace CodexGame.Application.Items
     CandidatePoolExhausted = 4,
     DuplicateCardIdentity = 5,
     InvalidCandidate = 6,
-    HealthAlreadyFull = 7
+    HealthAlreadyFull = 7,
+    StageUseLimitReached = 8,
+    PresentationLocked = 9
   }
 }
