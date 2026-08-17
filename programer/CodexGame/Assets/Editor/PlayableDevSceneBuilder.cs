@@ -35,6 +35,8 @@ namespace CodexGame.Editor
     private const string PresentationUi0124ArtRoot = UiArtRoot + "Presentation_0_1_2_4/";
     private const string TextlessCurrencyUi040ArtRoot = UiArtRoot + "Textless_Currency_0_4_0/";
     private const string StageOpponentUi0124ArtRoot = UiArtRoot + "StageOpponents_0_1_2_4/";
+    private const string IconOverhaulUi050ArtRoot = UiArtRoot + "IconOverhaul_0_5_0/";
+    private const string IconOverhaulUi051ArtRoot = UiArtRoot + "IconOverhaul_0_5_1/";
     private const string StageTransitionUiArtRoot = UiArtRoot + "StageTransition_0_3_1/";
     private const string IntroArtPath = HalliUiArtRoot + "start_screen_background.png";
     private const string BackdropShaderPath = "Assets/Shaders/RuntimeBackdropLit.shader";
@@ -70,7 +72,7 @@ namespace CodexGame.Editor
         LoadTexture(UiArtRoot + "bell_wrong.png"),
         LoadTexture(HalliUiArtRoot + "bell_correct.png"),
         LoadTexture(HalliUiArtRoot + "bell_disabled.png"),
-        LoadTexture(UiArtRoot + "public_card_locked_slot.png"),
+        LoadTexture(IconOverhaulUi050ArtRoot + "community_lock_locked_48_0_5_0.png"),
         LoadTexture(UiArtRoot + "flip_timer.png"),
         LoadTexture(HalliUiArtRoot + "flip_deck_idle.png"),
         LoadTexture(HalliUiArtRoot + "flip_deck_hover.png"),
@@ -78,10 +80,10 @@ namespace CodexGame.Editor
         LoadTexture(HalliUiArtRoot + "flip_deck_disabled.png"),
         LoadTexture(HalliUiArtRoot + "player_acquired_tray.png"),
         LoadTexture(HalliUiArtRoot + "ai_acquired_status_panel.png"),
-        LoadTexture(HalliUi021ArtRoot + "round_win_pip_player_empty_32_0_2_1.png"),
-        LoadTexture(HalliUi021ArtRoot + "round_win_pip_player_filled_32_0_2_1.png"),
-        LoadTexture(HalliUi021ArtRoot + "round_win_pip_ai_empty_32_0_2_1.png"),
-        LoadTexture(HalliUi021ArtRoot + "round_win_pip_ai_filled_32_0_2_1.png"),
+        LoadTexture(IconOverhaulUi050ArtRoot + "round_win_badge_player_empty_32_0_5_0.png"),
+        LoadTexture(IconOverhaulUi050ArtRoot + "round_win_badge_player_filled_32_0_5_0.png"),
+        LoadTexture(IconOverhaulUi050ArtRoot + "round_win_badge_ai_empty_32_0_5_0.png"),
+        LoadTexture(IconOverhaulUi050ArtRoot + "round_win_badge_ai_filled_32_0_5_0.png"),
         ropeBody: LoadTexture(
           HalliUi039ArtRoot + "halli_rope_braided_body_258x16_0_3_9.png"),
         ropeFlame: LoadTexture(
@@ -95,7 +97,9 @@ namespace CodexGame.Editor
         sharedPileRailAiActive: LoadTexture(
           HalliUi037ArtRoot + "halli_shared_pile_rail_ai_active_140x136_0_3_7.png"),
         playerOnlyAcquiredTray: LoadTexture(
-          HalliUi034ArtRoot + "player_acquired_tray_open_378x130_0_3_4.png"));
+          HalliUi034ArtRoot + "player_acquired_tray_open_378x130_0_3_4.png"),
+        aiThinkingSheet: LoadTexture(
+          IconOverhaulUi050ArtRoot + "ai_thinking_cylinder_western_8f_384x48_0_5_0.png"));
       var guideUiArtSet = new GuideUiArtSet(
         LoadTexture(HalliUiArtRoot + "guide_modal_background.png"),
         LoadTexture(HalliUiArtRoot + "guide_page_flow_art.png"),
@@ -105,24 +109,31 @@ namespace CodexGame.Editor
         LoadTexture(HalliUiArtRoot + "guide_nav_button_idle.png"),
         LoadTexture(HalliUiArtRoot + "guide_nav_button_hover.png"),
         LoadTexture(HalliUiArtRoot + "guide_nav_button_disabled.png"),
-        LoadTexture(HalliUiArtRoot + "guide_page_indicator_plate.png"));
+        LoadTexture(HalliUiArtRoot + "guide_page_indicator_plate.png"),
+        LoadTexture(IconOverhaulUi050ArtRoot + "guide_nav_previous_western_32_0_5_0.png"),
+        LoadTexture(IconOverhaulUi050ArtRoot + "guide_nav_next_western_32_0_5_0.png"),
+        LoadTexture(IconOverhaulUi050ArtRoot + "guide_nav_close_western_32_0_5_0.png"));
       var healthUiArtSet = new HealthUiArtSet(
-        LoadTexture(PokerUiArtRoot + "hp_heart_player_filled_24_0_2_2.png"),
-        LoadTexture(PokerUiArtRoot + "hp_heart_player_empty_24_0_2_2.png"),
-        LoadTexture(PokerUiArtRoot + "hp_heart_ai_filled_24_0_2_2.png"),
-        LoadTexture(PokerUiArtRoot + "hp_heart_ai_empty_24_0_2_2.png"));
+        LoadTexture(IconOverhaulUi050ArtRoot + "hp_heart_player_filled_24_0_5_0.png"),
+        LoadTexture(IconOverhaulUi050ArtRoot + "hp_heart_player_empty_24_0_5_0.png"),
+        LoadTexture(IconOverhaulUi050ArtRoot + "hp_heart_ai_filled_24_0_5_0.png"),
+        LoadTexture(IconOverhaulUi050ArtRoot + "hp_heart_ai_empty_24_0_5_0.png"),
+        LoadTexture(IconOverhaulUi050ArtRoot + "hp_heart_player_damage_24_0_5_0.png"),
+        LoadTexture(IconOverhaulUi050ArtRoot + "hp_heart_ai_damage_24_0_5_0.png"));
       var pokerUiArtSet = new PokerUiArtSet(
         LoadTexture(PokerUiArtRoot + "poker_predict_win_idle_64_0_2_2.png"),
         LoadTexture(PokerUiArtRoot + "poker_predict_win_hover_64_0_2_2.png"),
         LoadTexture(PokerUiArtRoot + "poker_predict_lose_idle_64_0_2_2.png"),
         LoadTexture(PokerUiArtRoot + "poker_predict_lose_hover_64_0_2_2.png"),
         LoadTexture(UiArtRoot + "item_slot.png"),
-        LoadTexture(TextlessCurrencyUi040ArtRoot + "poker_predict_player_portrait_idle_88_0_4_0.png"),
-        LoadTexture(TextlessCurrencyUi040ArtRoot + "poker_predict_player_portrait_hover_88_0_4_0.png"),
-        LoadTexture(TextlessCurrencyUi040ArtRoot + "poker_predict_player_portrait_selected_88_0_4_0.png"),
-        LoadTexture(TextlessCurrencyUi040ArtRoot + "poker_predict_ai_portrait_idle_88_0_4_0.png"),
-        LoadTexture(TextlessCurrencyUi040ArtRoot + "poker_predict_ai_portrait_hover_88_0_4_0.png"),
-        LoadTexture(TextlessCurrencyUi040ArtRoot + "poker_predict_ai_portrait_selected_88_0_4_0.png"));
+        LoadTexture(IconOverhaulUi050ArtRoot + "poker_predict_player_portrait_idle_88_0_5_0.png"),
+        LoadTexture(IconOverhaulUi050ArtRoot + "poker_predict_player_portrait_hover_88_0_5_0.png"),
+        LoadTexture(IconOverhaulUi050ArtRoot + "poker_predict_player_portrait_selected_88_0_5_0.png"),
+        LoadTexture(IconOverhaulUi050ArtRoot + "poker_predict_ai_portrait_idle_88_0_5_0.png"),
+        LoadTexture(IconOverhaulUi050ArtRoot + "poker_predict_ai_portrait_hover_88_0_5_0.png"),
+        LoadTexture(IconOverhaulUi050ArtRoot + "poker_predict_ai_portrait_selected_88_0_5_0.png"),
+        LoadTexture(IconOverhaulUi050ArtRoot + "prediction_success_badge_empty_28_0_5_0.png"),
+        LoadTexture(IconOverhaulUi050ArtRoot + "prediction_success_badge_filled_28_0_5_0.png"));
       var pokerItemUiArtSet = new PokerItemUiArtSet(
         LoadTexture(PokerUi034ArtRoot + "poker_item_crate_closed_160x160_0_3_4.png"),
         LoadTexture(PokerUi034ArtRoot + "poker_item_crate_open_empty_160x160_0_3_4.png"),
@@ -133,15 +144,22 @@ namespace CodexGame.Editor
         LoadTexture(GameplayUi012ArtRoot + "inventory_slot_72_hover_0_1_2.png"),
         LoadTexture(GameplayUi012ArtRoot + "inventory_slot_72_selected_0_1_2.png"),
         LoadTexture(GameplayUi012ArtRoot + "inventory_slot_72_disabled_0_1_2.png"),
-        LoadTexture(GameplayUi012ArtRoot + "item_reload_64_0_1_2.png"),
-        LoadTexture(GameplayUi012ArtRoot + "item_bottom_deal_64_0_1_2.png"),
-        LoadTexture(GameplayUi012ArtRoot + "item_hype_man_64_0_1_2.png"),
-        LoadTexture(GameplayUi012ArtRoot + "item_heal_tonic_64_0_1_2.png"),
+        LoadTexture(IconOverhaulUi051ArtRoot + "item_reload_inventory_64_0_5_1.png"),
+        LoadTexture(IconOverhaulUi051ArtRoot + "item_bottom_deal_inventory_64_0_5_1.png"),
+        LoadTexture(IconOverhaulUi051ArtRoot + "item_hype_man_inventory_64_0_5_1.png"),
+        LoadTexture(IconOverhaulUi051ArtRoot + "item_heal_tonic_inventory_64_0_5_1.png"),
         LoadTexture(PokerUi037ArtRoot + "poker_item_select_panel_640x336_0_3_7.png"),
         LoadTexture(PokerUi037ArtRoot + "poker_item_detail_panel_376x112_0_3_7.png"),
         LoadTexture(PokerUi037ArtRoot + "poker_item_action_button_idle_172x44_0_3_7.png"),
         LoadTexture(PokerUi037ArtRoot + "poker_item_action_button_hover_172x44_0_3_7.png"),
-        LoadTexture(PokerUi037ArtRoot + "poker_item_action_button_disabled_172x44_0_3_7.png"));
+        LoadTexture(PokerUi037ArtRoot + "poker_item_action_button_disabled_172x44_0_3_7.png"),
+        reloadPopupIcon: LoadTexture(IconOverhaulUi051ArtRoot + "item_reload_popup_80_0_5_1.png"),
+        bottomDealPopupIcon: LoadTexture(IconOverhaulUi051ArtRoot + "item_bottom_deal_popup_80_0_5_1.png"),
+        hypeManPopupIcon: LoadTexture(IconOverhaulUi051ArtRoot + "item_hype_man_popup_80_0_5_1.png"),
+        healthRecoveryPopupIcon: LoadTexture(IconOverhaulUi051ArtRoot + "item_heal_tonic_popup_80_0_5_1.png"),
+        communityLocked: LoadTexture(IconOverhaulUi050ArtRoot + "community_lock_locked_48_0_5_0.png"),
+        communityReveal: LoadTexture(IconOverhaulUi050ArtRoot + "community_lock_reveal_48_0_5_0.png"),
+        communityOpen: LoadTexture(IconOverhaulUi050ArtRoot + "community_lock_open_48_0_5_0.png"));
       var barShopUiArtSet = new BarShopUiArtSet(
         LoadTexture(BarShopUiArtRoot + "bar_shop_background_unlit_960x540_0_3_0.png"),
         LoadTexture(BarShopUiArtRoot + "bar_shop_product_slot_230x210_0_3_0.png"),
@@ -158,16 +176,16 @@ namespace CodexGame.Editor
         {
           new BarShopProductIconBinding(
             "bar_shop.item.reload",
-            LoadTexture(GameplayUi012ArtRoot + "item_reload_64_0_1_2.png")),
+            LoadTexture(IconOverhaulUi050ArtRoot + "item_reload_western_64_0_5_0.png")),
           new BarShopProductIconBinding(
             "bar_shop.item.bottom_deal",
-            LoadTexture(GameplayUi012ArtRoot + "item_bottom_deal_64_0_1_2.png")),
+            LoadTexture(IconOverhaulUi050ArtRoot + "item_bottom_deal_western_64_0_5_0.png")),
           new BarShopProductIconBinding(
             "bar_shop.item.hype_man",
-            LoadTexture(GameplayUi012ArtRoot + "item_hype_man_64_0_1_2.png")),
+            LoadTexture(IconOverhaulUi050ArtRoot + "item_hype_man_western_64_0_5_0.png")),
           new BarShopProductIconBinding(
             "bar_shop.item.health_recovery",
-            LoadTexture(GameplayUi012ArtRoot + "item_heal_tonic_64_0_1_2.png")),
+            LoadTexture(IconOverhaulUi050ArtRoot + "item_heal_tonic_western_64_0_5_0.png")),
           new BarShopProductIconBinding(
             "item.ammo_pouch.loose_rounds",
             LoadTexture(BarShopUi038ArtRoot + "ammo_pouch_loose_rounds_64_0_1_0.png"))
@@ -208,14 +226,16 @@ namespace CodexGame.Editor
           "stage_transition_loading_{0:00}_64_0_3_1.png",
           8));
       var economyUiArtSet = new EconomyUiArtSet(
-        LoadOptionalTexture(TextlessCurrencyUi040ArtRoot + "currency_basic_bullet_40x40_0_4_0.png"),
-        LoadOptionalTexture(TextlessCurrencyUi040ArtRoot + "currency_temporary_cracked_hourglass_40x40_0_4_0.png"),
-        LoadOptionalTexture(TextlessCurrencyUi040ArtRoot + "shop_price_bullet_24x24_0_4_0.png"),
+        LoadOptionalTexture(IconOverhaulUi050ArtRoot + "currency_basic_bullet_western_40_0_5_0.png"),
+        LoadOptionalTexture(IconOverhaulUi050ArtRoot + "currency_temporary_cracked_round_40_0_5_0.png"),
+        LoadOptionalTexture(IconOverhaulUi050ArtRoot + "shop_price_bullet_western_24_0_5_0.png"),
         LoadOptionalTexture(TextlessCurrencyUi040ArtRoot + "battle_currency_basic_panel_112x52_0_4_0.png"),
         LoadOptionalTexture(TextlessCurrencyUi040ArtRoot + "battle_currency_temporary_panel_112x52_0_4_0.png"),
         LoadOptionalTexture(EconomyUi012ArtRoot + "stage_reward_base_frame_240x96_0_1_2.png"),
         LoadOptionalTexture(EconomyUi012ArtRoot + "stage_reward_temporary_frame_240x96_0_1_2.png"),
-        LoadOptionalTexture(TextlessCurrencyUi040ArtRoot + "shop_exit_warning_badge_24x24_0_4_0.png"));
+        LoadOptionalTexture(IconOverhaulUi050ArtRoot + "shop_exit_warning_badge_western_24_0_5_0.png"),
+        LoadOptionalTexture(IconOverhaulUi050ArtRoot + "currency_temporary_expire_western_8f_320x40_0_5_0.png"),
+        LoadOptionalTexture(IconOverhaulUi050ArtRoot + "shop_exit_warning_pulse_western_6f_144x24_0_5_0.png"));
       var presentationUiArtSet = new PresentationUiArtSet(
         fileName => LoadTexture(PresentationUi0124ArtRoot + fileName),
         new[]
@@ -231,7 +251,15 @@ namespace CodexGame.Editor
           LoadTexture(StageOpponentUi0124ArtRoot + "stage_opponent_02_rose_portrait_108_0_1_2_4.png"),
           LoadTexture(StageOpponentUi0124ArtRoot + "stage_opponent_03_prospector_portrait_108_0_1_2_4.png"),
           LoadTexture(StageOpponentUi0124ArtRoot + "stage_opponent_04_undertaker_portrait_108_0_1_2_4.png")
-        });
+        },
+        threeCallIcon: LoadTexture(IconOverhaulUi050ArtRoot + "phase_three_call_western_64_0_5_0.png"),
+        showdownIcon: LoadTexture(IconOverhaulUi050ArtRoot + "phase_showdown_western_64_0_5_0.png"),
+        limitOne: LoadTexture(IconOverhaulUi050ArtRoot + "stage_item_limit_one_western_64_0_5_0.png"),
+        limitTwo: LoadTexture(IconOverhaulUi050ArtRoot + "stage_item_limit_two_western_64_0_5_0.png"),
+        usedOne: LoadTexture(IconOverhaulUi050ArtRoot + "stage_item_limit_used_one_western_64_0_5_0.png"),
+        limitExhausted: LoadTexture(IconOverhaulUi050ArtRoot + "stage_item_limit_exhausted_western_64_0_5_0.png"),
+        inventoryRestricted: LoadTexture(IconOverhaulUi050ArtRoot + "stage_item_inventory_restricted_western_64_0_5_0.png"),
+        cardRestricted: LoadTexture(IconOverhaulUi050ArtRoot + "stage_item_card_restricted_western_64_0_5_0.png"));
       view.Configure(
         boardTexture,
         cardArtSet,

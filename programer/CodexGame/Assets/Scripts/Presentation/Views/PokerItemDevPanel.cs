@@ -39,7 +39,7 @@ namespace CodexGame.Presentation.Views
       SyncSelection(snapshot);
 
       GUI.Label(new Rect(56f, 24f, 848f, 38f), localization.Get("UI_ITEM_WINDOW_TITLE"), styles.Title);
-      DrawTableCards(snapshot, cards, styles, localization);
+      DrawTableCards(snapshot, cards, art, styles, localization);
 
       var stageLimitExhausted = snapshot.StageRestriction?.IsExhausted == true;
       var canAct = snapshot.Phase == PokerItemPhase.AwaitingActions
@@ -122,6 +122,7 @@ namespace CodexGame.Presentation.Views
     private static void DrawTableCards(
       PokerItemSnapshot snapshot,
       PlayableCardRenderer cards,
+      PokerItemUiArtSet art,
       PlayableDevStyles styles,
       LocalizationRuntime localization)
     {
@@ -146,8 +147,16 @@ namespace CodexGame.Presentation.Views
       {
         cards.DrawAt(new Rect(416f + index * 66f, 188f, 56f, 78f), snapshot.PublicCards[index]);
       }
+      var lockRect = new Rect(486f, 203f, 48f, 48f);
+      if (snapshot.PublicCards.Count == 1 && !snapshot.RevealingSecondPublicCard.HasValue)
+      {
+        var locked = art?.CommunityLocked;
+        if (locked != null) GUI.DrawTexture(lockRect, locked, ScaleMode.ScaleToFit, true);
+      }
       if (snapshot.RevealingSecondPublicCard.HasValue)
       {
+        var revealing = art?.CommunityReveal;
+        if (revealing != null) GUI.DrawTexture(lockRect, revealing, ScaleMode.ScaleToFit, true);
         CardFlipMotion.Draw(
           cards,
           snapshot.RevealingSecondPublicCard.Value,
@@ -155,6 +164,10 @@ namespace CodexGame.Presentation.Views
           new Rect(482f, 188f, 56f, 78f),
           snapshot.SecondPublicRevealProgress,
           false);
+      }
+      else if (snapshot.PublicCards.Count >= 2 && art?.CommunityOpen != null)
+      {
+        GUI.DrawTexture(new Rect(548f, 209f, 36f, 36f), art.CommunityOpen, ScaleMode.ScaleToFit, true);
       }
 
       GUI.Label(new Rect(56f, 346f, 220f, 26f), localization.Get("UI_POKER_PLAYER_PRIVATE"), styles.Heading);
@@ -327,7 +340,7 @@ namespace CodexGame.Presentation.Views
 
       if (GameItemCatalog.TryGet(_selectedItem.Value, out var definition) && definition != null)
       {
-        var icon = art?.FindItemIcon(_selectedItem.Value);
+        var icon = art?.FindPopupIcon(_selectedItem.Value);
         if (icon != null)
         {
           GUI.DrawTexture(new Rect(416f, 252f, 80f, 80f), icon, ScaleMode.ScaleToFit, true);
@@ -463,7 +476,7 @@ namespace CodexGame.Presentation.Views
 
       var pulse = 1f + Mathf.Sin(presentation.Progress * Mathf.PI) * 0.16f;
       var size = 96f * pulse;
-      var icon = art?.FindItemIcon(presentation.ItemId.Value);
+      var icon = art?.FindPopupIcon(presentation.ItemId.Value);
       if (icon != null)
       {
         GUI.DrawTexture(

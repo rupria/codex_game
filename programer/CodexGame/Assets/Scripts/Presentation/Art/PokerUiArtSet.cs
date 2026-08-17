@@ -17,6 +17,8 @@ namespace CodexGame.Presentation.Art
     [SerializeField] private Texture2D _aiPredictionIdle;
     [SerializeField] private Texture2D _aiPredictionHover;
     [SerializeField] private Texture2D _aiPredictionSelected;
+    [SerializeField] private Texture2D _predictionResultEmpty;
+    [SerializeField] private Texture2D _predictionResultFilled;
 
     public PokerUiArtSet(
       Texture2D winIdle,
@@ -29,7 +31,9 @@ namespace CodexGame.Presentation.Art
       Texture2D playerPredictionSelected = null,
       Texture2D aiPredictionIdle = null,
       Texture2D aiPredictionHover = null,
-      Texture2D aiPredictionSelected = null)
+      Texture2D aiPredictionSelected = null,
+      Texture2D predictionResultEmpty = null,
+      Texture2D predictionResultFilled = null)
     {
       _winIdle = winIdle ?? throw new ArgumentNullException(nameof(winIdle));
       _winHover = winHover ?? throw new ArgumentNullException(nameof(winHover));
@@ -42,6 +46,8 @@ namespace CodexGame.Presentation.Art
       _aiPredictionIdle = aiPredictionIdle;
       _aiPredictionHover = aiPredictionHover;
       _aiPredictionSelected = aiPredictionSelected;
+      _predictionResultEmpty = predictionResultEmpty;
+      _predictionResultFilled = predictionResultFilled;
     }
 
     public Texture2D WinIdle => _winIdle;
@@ -55,6 +61,8 @@ namespace CodexGame.Presentation.Art
     public Texture2D AiPredictionIdle => _aiPredictionIdle ?? _loseIdle;
     public Texture2D AiPredictionHover => _aiPredictionHover ?? _loseHover;
     public Texture2D AiPredictionSelected => _aiPredictionSelected ?? AiPredictionHover;
+    public Texture2D PredictionResultEmpty => _predictionResultEmpty;
+    public Texture2D PredictionResultFilled => _predictionResultFilled;
 
     public bool IsComplete => _winIdle != null
       && _winHover != null

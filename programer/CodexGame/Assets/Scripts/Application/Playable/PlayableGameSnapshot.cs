@@ -36,7 +36,8 @@ namespace CodexGame.Application.Playable
       PrivateCardSelectionSnapshot? selection,
       PokerItemSnapshot? pokerItems,
       PokerRoundSnapshot? poker,
-      BarShopSnapshot? barShop)
+      BarShopSnapshot? barShop,
+      int lastExpiredTemporaryBullets)
     {
       Phase = phase;
       StageNumber = stageNumber;
@@ -67,6 +68,7 @@ namespace CodexGame.Application.Playable
       PokerItems = pokerItems;
       Poker = poker;
       BarShop = barShop;
+      LastExpiredTemporaryBullets = Math.Max(0, lastExpiredTemporaryBullets);
     }
 
     public PlayableGamePhase Phase { get; }
@@ -93,6 +95,7 @@ namespace CodexGame.Application.Playable
     public PokerItemSnapshot? PokerItems { get; }
     public PokerRoundSnapshot? Poker { get; }
     public BarShopSnapshot? BarShop { get; }
+    public int LastExpiredTemporaryBullets { get; }
 
     private static IReadOnlyList<GameItemId> Copy(IReadOnlyList<GameItemId> source)
     {

@@ -13,7 +13,8 @@ namespace CodexGame.Presentation.Views
       int currentHealth,
       int maximumHealth,
       bool ai,
-      HealthUiArtSet art)
+      HealthUiArtSet art,
+      bool showDamage = false)
     {
       var state = HealthPipViewState.Create(currentHealth, maximumHealth);
       var totalWidth = maximumHealth * HeartSize + (maximumHealth - 1) * HeartGap;
@@ -23,7 +24,11 @@ namespace CodexGame.Presentation.Views
       for (var index = 0; index < maximumHealth; index++)
       {
         var filled = index < state.FilledCount;
-        var texture = SelectTexture(ai, filled, art);
+        var texture = SelectTexture(
+          ai,
+          filled,
+          showDamage && filled && index == state.FilledCount - 1,
+          art);
         var heartRect = new Rect(startX + index * (HeartSize + HeartGap), y, HeartSize, HeartSize);
         if (texture != null)
         {
@@ -41,9 +46,14 @@ namespace CodexGame.Presentation.Views
       }
     }
 
-    private static Texture2D SelectTexture(bool ai, bool filled, HealthUiArtSet art)
+    private static Texture2D SelectTexture(
+      bool ai,
+      bool filled,
+      bool damage,
+      HealthUiArtSet art)
     {
       if (art == null || !art.IsComplete) return null;
+      if (damage) return ai ? art.AiDamage : art.PlayerDamage;
       if (ai) return filled ? art.AiFilled : art.AiEmpty;
       return filled ? art.PlayerFilled : art.PlayerEmpty;
     }
