@@ -1,0 +1,80 @@
+{
+  "version": "0.5.0",
+  "baseDevCommit": "00b389c36610b1669b1f2415cbb81229b6df787c",
+  "status": "dev_shared_art_unconnected",
+  "authoringTool": "Aseprite",
+  "runtimeRoot": "Assets/Art/Prototype/UI/IconOverhaul_0_5_0",
+  "rules": {
+    "allIconsTransparent": true,
+    "bakedText": false,
+    "bakedSquareBackground": false,
+    "pixelFilter": "Point",
+    "mipmaps": false,
+    "playerAccent": "cyan",
+    "aiAccent": "red"
+  },
+  "items": [
+    {"itemId":"IT-01","iconKey":"bar_shop.item.reload","file":"item_reload_western_64_0_5_0.png"},
+    {"itemId":"IT-02","iconKey":"bar_shop.item.bottom_deal","file":"item_bottom_deal_western_64_0_5_0.png"},
+    {"itemId":"IT-03","iconKey":"bar_shop.item.hype_man","file":"item_hype_man_western_64_0_5_0.png"},
+    {"itemId":"IT-HP-01","iconKey":"bar_shop.item.health_recovery","file":"item_heal_tonic_western_64_0_5_0.png"}
+  ],
+  "currency": {
+    "basic":"currency_basic_bullet_western_40_0_5_0.png",
+    "temporary":"currency_temporary_cracked_round_40_0_5_0.png",
+    "price":"shop_price_bullet_western_24_0_5_0.png",
+    "exitWarning":"shop_exit_warning_badge_western_24_0_5_0.png",
+    "temporaryExpireSheet":"currency_temporary_expire_western_8f_320x40_0_5_0.png",
+    "exitWarningPulseSheet":"shop_exit_warning_pulse_western_6f_144x24_0_5_0.png"
+  },
+  "hp": {
+    "player":["hp_heart_player_filled_24_0_5_0.png","hp_heart_player_damage_24_0_5_0.png","hp_heart_player_empty_24_0_5_0.png"],
+    "ai":["hp_heart_ai_filled_24_0_5_0.png","hp_heart_ai_damage_24_0_5_0.png","hp_heart_ai_empty_24_0_5_0.png"]
+  },
+  "roundWins": {
+    "player":["round_win_badge_player_empty_32_0_5_0.png","round_win_badge_player_filled_32_0_5_0.png"],
+    "ai":["round_win_badge_ai_empty_32_0_5_0.png","round_win_badge_ai_filled_32_0_5_0.png"]
+  },
+  "prediction": {
+    "result":["prediction_success_badge_empty_28_0_5_0.png","prediction_success_badge_filled_28_0_5_0.png"],
+    "player":["poker_predict_player_portrait_idle_88_0_5_0.png","poker_predict_player_portrait_hover_88_0_5_0.png","poker_predict_player_portrait_selected_88_0_5_0.png"],
+    "ai":["poker_predict_ai_portrait_idle_88_0_5_0.png","poker_predict_ai_portrait_hover_88_0_5_0.png","poker_predict_ai_portrait_selected_88_0_5_0.png"]
+  },
+  "communityLock": [
+    "community_lock_locked_48_0_5_0.png",
+    "community_lock_reveal_48_0_5_0.png",
+    "community_lock_open_48_0_5_0.png"
+  ],
+  "aiThinkingSheet": {
+    "file":"ai_thinking_cylinder_western_8f_384x48_0_5_0.png",
+    "frameSize":[48,48],
+    "frameCount":8,
+    "frameDurationSeconds":0.08
+  },
+  "phases": {
+    "threeCall":"phase_three_call_western_64_0_5_0.png",
+    "showdown":"phase_showdown_western_64_0_5_0.png"
+  },
+  "itemRestrictions": [
+    "stage_item_limit_one_western_64_0_5_0.png",
+    "stage_item_limit_two_western_64_0_5_0.png",
+    "stage_item_limit_used_one_western_64_0_5_0.png",
+    "stage_item_limit_exhausted_western_64_0_5_0.png",
+    "stage_item_card_restricted_western_64_0_5_0.png",
+    "stage_item_inventory_restricted_western_64_0_5_0.png"
+  ],
+  "guideNavigation": [
+    "guide_nav_previous_western_32_0_5_0.png",
+    "guide_nav_next_western_32_0_5_0.png",
+    "guide_nav_close_western_32_0_5_0.png"
+  ],
+  "explicitlyNotReplaced": [
+    "approved brass bell state set",
+    "approved loose-round ammo pouch",
+    "approved rope/fire/explosion",
+    "poker item crates",
+    "card fronts, backs, face cards and jokers",
+    "stage opponent portraits",
+    "stage transition skull loading animation"
+  ]
+}
