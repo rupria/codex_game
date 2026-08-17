@@ -27,14 +27,16 @@ namespace CodexGame.Core.Shared
     public const int StageItemRestrictionActivationPercent = 20;
     public const int StageItemRestrictionMinimumUses = 1;
     public const int StageItemRestrictionMaximumUses = 2;
-    public const int BarShopRerollCost = 1;
-    public const int BarShopMaximumRerolls = 2;
+    public const int BarShopRerollCost = 0;
+    public const int BarShopMaximumRerolls = 1;
+    public const int PredictionInsuranceCharges = 2;
 
     public const long StageEntryPresentationMicroseconds = 6_000_000;
     public const long ThreeCallEntryPresentationMicroseconds = 5_000_000;
     public const long ThreeCallToSelectionPresentationMicroseconds = 2_000_000;
     public const long HalliResultLockMicroseconds = 2_000_000;
     public const long PrivateSelectionTimeoutMicroseconds = 60_000_000;
+    public const long PokerHandConfirmationTimeoutMicroseconds = 120_000_000;
     public const long PredictionTimeoutMicroseconds = 120_000_000;
     public const long SecondPublicCardRevealMicroseconds = 1_290_000;
     public const long PokerResultCardRevealMicroseconds = 1_000_000;
@@ -46,6 +48,11 @@ namespace CodexGame.Core.Shared
     public const long BottomDealItemPresentationMicroseconds = 1_000_000;
     public const long HypeManItemPresentationMicroseconds = 800_000;
     public const long HealthRecoveryItemPresentationMicroseconds = 500_000;
+    public const long WildInkItemPresentationMicroseconds = 650_000;
+    public const long BarrelItemPresentationMicroseconds = 450_000;
+    public const long BarrelDefensePresentationMicroseconds = 550_000;
+    public const long PredictionInsuranceItemPresentationMicroseconds = 450_000;
+    public const long MercenaryItemPresentationMicroseconds = 900_000;
     public const long BarShopPouchCoverMicroseconds = 120_000;
     public const long BarShopCoinFlipDurationMicroseconds = 500_000;
     public const long BarShopBulletPourDurationMicroseconds = 750_000;

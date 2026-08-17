@@ -55,6 +55,11 @@ namespace CodexGame.Application.Items
         case GameItemId.BottomDeal: return GameRules.BottomDealItemPresentationMicroseconds;
         case GameItemId.HypeMan: return GameRules.HypeManItemPresentationMicroseconds;
         case GameItemId.HealthRecovery: return GameRules.HealthRecoveryItemPresentationMicroseconds;
+        case GameItemId.WildInk: return GameRules.WildInkItemPresentationMicroseconds;
+        case GameItemId.Barrel: return GameRules.BarrelItemPresentationMicroseconds;
+        case GameItemId.PredictionInsurance:
+          return GameRules.PredictionInsuranceItemPresentationMicroseconds;
+        case GameItemId.Mercenary: return GameRules.MercenaryItemPresentationMicroseconds;
         default: throw new ArgumentOutOfRangeException(nameof(itemId));
       }
     }

@@ -211,7 +211,7 @@ namespace CodexGame.Core.Poker
     {
       for (var index = 1; index < cards.Count; index++)
       {
-        if (cards[index].Suit != cards[0].Suit)
+        if (cards[index].EffectiveSuit != cards[0].EffectiveSuit)
         {
           return false;
         }
@@ -293,13 +293,13 @@ namespace CodexGame.Core.Poker
         var rankComparison = EffectiveRank(right, wheel).CompareTo(EffectiveRank(left, wheel));
         return rankComparison != 0
           ? rankComparison
-          : ((int)right.Suit).CompareTo((int)left.Suit);
+          : ((int)right.EffectiveSuit).CompareTo((int)left.EffectiveSuit);
       });
 
       var suits = new int[ordered.Count];
       for (var index = 0; index < ordered.Count; index++)
       {
-        suits[index] = (int)ordered[index].Suit;
+        suits[index] = (int)ordered[index].EffectiveSuit;
       }
 
       return Array.AsReadOnly(suits);

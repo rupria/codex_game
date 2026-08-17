@@ -13,6 +13,7 @@ namespace CodexGame.SmokeTests.Shop
     {
       CheckVisitAndReroll(tests);
       CheckProductCatalog(tests);
+      CheckEligibilityFiltering(tests);
       CheckPurchaseTransaction(tests);
       CheckThreeBulletPurchaseLock(tests);
       CheckRejectedPurchases(tests);
@@ -29,30 +30,22 @@ namespace CodexGame.SmokeTests.Shop
       tests.Check(
         initial.Slots.Count == 4
           && initial.CanReroll
-          && initial.RerollCost == 1
-          && initial.RemainingRerolls == 2
+          && initial.RerollCost == 0
+          && initial.RemainingRerolls == 1
           && UniqueCount(initial.Slots) == 4,
-        "A bar visit must open four unique product slots with two one-bullet rerolls.");
+        "A bar visit must open four unique product slots with one free reroll.");
 
-      tests.Check(first.TryReroll(bullets), "The first paid reroll during a bar visit must succeed.");
+      tests.Check(first.TryReroll(bullets), "The free reroll during a bar visit must succeed.");
       var rerolled = first.GetSnapshot(availableBullets: bullets.Balance);
       tests.Check(
         rerolled.Slots.Count == 4
-          && rerolled.CanReroll
-          && rerolled.RemainingRerolls == 1
-          && bullets.Balance == 2,
-        "The first reroll must spend one bullet and leave one reroll available.");
-      tests.Check(
-        first.TryReroll(bullets) && bullets.Balance == 1,
-        "The second paid reroll during the same visit must succeed.");
-      var final = first.GetSnapshot(availableBullets: bullets.Balance);
-      tests.Check(
-        final.RemainingRerolls == 0
-          && !final.CanReroll
+          && !rerolled.CanReroll
+          && rerolled.RemainingRerolls == 0
+          && bullets.Balance == 3
           && !first.TryReroll(bullets)
-          && bullets.Balance == 1
-          && SameIds(final.Slots, first.GetSnapshot().Slots),
-        "A third reroll must be rejected without spending bullets or mutating the shop.");
+          && bullets.Balance == 3
+          && SameIds(rerolled.Slots, first.GetSnapshot().Slots),
+        "The one free reroll must not spend bullets and a second attempt must be rejected atomically.");
 
       var replay = new BarShopSession(BarShopCatalog.All);
       replay.Begin(20260809);
@@ -64,7 +57,7 @@ namespace CodexGame.SmokeTests.Shop
     private static void CheckProductCatalog(TestHarness tests)
     {
       tests.Check(
-        BarShopCatalog.All.Count == 4
+        BarShopCatalog.All.Count == 8
           && BarShopCatalog.All[0].ItemId == GameItemId.Reload
           && BarShopCatalog.All[0].Price == 1
           && BarShopCatalog.All[1].ItemId == GameItemId.BottomDeal
@@ -72,8 +65,50 @@ namespace CodexGame.SmokeTests.Shop
           && BarShopCatalog.All[2].ItemId == GameItemId.HypeMan
           && BarShopCatalog.All[2].Price == 2
           && BarShopCatalog.All[3].ItemId == GameItemId.HealthRecovery
-          && BarShopCatalog.All[3].Price == 1,
-        "The 0.1.2 shop catalog must expose the three poker items and health recovery at fixed prices.");
+          && BarShopCatalog.All[3].Price == 1
+          && BarShopCatalog.All[4].ItemId == GameItemId.WildInk
+          && BarShopCatalog.All[4].Price == 3
+          && BarShopCatalog.All[5].ItemId == GameItemId.Barrel
+          && BarShopCatalog.All[5].Price == 4
+          && BarShopCatalog.All[6].ItemId == GameItemId.PredictionInsurance
+          && BarShopCatalog.All[6].Price == 3
+          && BarShopCatalog.All[7].ItemId == GameItemId.Mercenary
+          && BarShopCatalog.All[7].Price == 4,
+        "The 0.1.2.5 shop catalog must expose all eight items at the fixed 1/2/2/1/3/4/3/4 prices.");
+    }
+
+    private static void CheckEligibilityFiltering(TestHarness tests)
+    {
+      var owned = new RunInventory();
+      owned.TryAdd(GameItemId.Reload);
+      var filtered = new BarShopSession(BarShopCatalog.All);
+      filtered.Begin(114, owned, 2);
+      var slots = filtered.GetSnapshot().Slots;
+      var excludesOwned = true;
+      for (var index = 0; index < slots.Count; index++)
+      {
+        excludesOwned &= slots[index].ItemId != GameItemId.Reload;
+      }
+      tests.Check(
+        slots.Count == 4 && excludesOwned,
+        "A shop draw must exclude an ItemId already owned by the player.");
+
+      var fullInventory = new RunInventory();
+      fullInventory.TryAdd(GameItemId.WildInk);
+      fullInventory.TryAdd(GameItemId.Barrel);
+      fullInventory.TryAdd(GameItemId.PredictionInsurance);
+      fullInventory.TryAdd(GameItemId.Mercenary);
+      var sparse = new BarShopSession(BarShopCatalog.All);
+      sparse.Begin(114, fullInventory, GameRules.StartingHealth);
+      var sparseSlots = sparse.GetSnapshot().Slots;
+      var excludesHealing = true;
+      for (var index = 0; index < sparseSlots.Count; index++)
+      {
+        excludesHealing &= sparseSlots[index].ItemId != GameItemId.HealthRecovery;
+      }
+      tests.Check(
+        sparseSlots.Count == 3 && excludesHealing,
+        "Full HP and four owned ItemIds must leave three products plus one disabled empty slot.");
     }
 
     private static void CheckPurchaseTransaction(TestHarness tests)

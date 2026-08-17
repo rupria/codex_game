@@ -1,3 +1,4 @@
+#nullable enable
 using System;
 using System.Collections.Generic;
 using CodexGame.Core.Cards;
@@ -18,7 +19,15 @@ namespace CodexGame.Application.Items
       StageItemRestrictionSnapshot? stageRestriction = null,
       Card? revealingSecondPublicCard = null,
       float secondPublicRevealProgress = 1f,
-      ItemUsePresentationSnapshot? usePresentation = null)
+      ItemUsePresentationSnapshot? usePresentation = null,
+      CardId? wildInkCardId = null,
+      bool barrelDefenseArmed = false,
+      bool insuranceActivated = false,
+      bool mercenaryExchangeApplied = false,
+      long handConfirmationRemainingMicroseconds = 0,
+      bool handConfirmationTimedOut = false,
+      IReadOnlyList<CardId>? mercenaryEligibleTargets = null,
+      bool canRecoverHealth = true)
     {
       Phase = phase;
       Inventory = Copy(inventory);
@@ -31,6 +40,17 @@ namespace CodexGame.Application.Items
       RevealingSecondPublicCard = revealingSecondPublicCard;
       SecondPublicRevealProgress = secondPublicRevealProgress;
       UsePresentation = usePresentation ?? ItemUsePresentationSnapshot.Inactive;
+      WildInkCardId = wildInkCardId;
+      BarrelDefenseArmed = barrelDefenseArmed;
+      InsuranceActivated = insuranceActivated;
+      MercenaryExchangeApplied = mercenaryExchangeApplied;
+      HandConfirmationRemainingMicroseconds = Math.Max(
+        0,
+        handConfirmationRemainingMicroseconds);
+      HandConfirmationTimedOut = handConfirmationTimedOut;
+      MercenaryEligibleTargets = Copy(
+        mercenaryEligibleTargets ?? Array.AsReadOnly(Array.Empty<CardId>()));
+      CanRecoverHealth = canRecoverHealth;
     }
 
     public PokerItemPhase Phase { get; }
@@ -44,6 +64,14 @@ namespace CodexGame.Application.Items
     public Card? RevealingSecondPublicCard { get; }
     public float SecondPublicRevealProgress { get; }
     public ItemUsePresentationSnapshot UsePresentation { get; }
+    public CardId? WildInkCardId { get; }
+    public bool BarrelDefenseArmed { get; }
+    public bool InsuranceActivated { get; }
+    public bool MercenaryExchangeApplied { get; }
+    public long HandConfirmationRemainingMicroseconds { get; }
+    public bool HandConfirmationTimedOut { get; }
+    public IReadOnlyList<CardId> MercenaryEligibleTargets { get; }
+    public bool CanRecoverHealth { get; }
 
     private static IReadOnlyList<T> Copy<T>(IReadOnlyList<T> source)
     {
