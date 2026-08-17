@@ -1,0 +1,82 @@
+{
+  "version": "0.5.2",
+  "spec": "게임진행플로우 0.1.2.5",
+  "specRevision": "2026-08-17-02",
+  "status": "dev_shared_art_unconnected",
+  "authoringTool": "Aseprite",
+  "runtimeRoot": "Assets/Art/Prototype/UI/ItemExpansion_0_5_2",
+  "referenceRoot": "ArtReferences/ItemExpansion_0_5_2",
+  "rules": {
+    "transparentIconBackground": true,
+    "bakedLocalizationText": false,
+    "pixelFilter": "Point",
+    "mipmaps": false,
+    "colorOnlyStateForbidden": true,
+    "cardRankSuitSafe": true,
+    "aiExchangeFaceHidden": true
+  },
+  "items": [
+    {
+      "itemId": "IT-04",
+      "key": "wild_ink",
+      "price": 3,
+      "popup": "item_wild_ink_popup_80_0_5_2.png",
+      "states": ["default", "hover", "selected", "disabled"],
+      "effects": ["wild_ink_spread_8f_512x64_0_5_2.png", "wild_ink_suit_seals_4x32_128x32_0_5_2.png", "wild_ink_card_applied_marker_32_0_5_2.png", "wild_ink_exchange_locked_marker_32_0_5_2.png"],
+      "timingSeconds": 0.65
+    },
+    {
+      "itemId": "IT-05",
+      "key": "barrel",
+      "price": 4,
+      "popup": "item_barrel_popup_80_0_5_2.png",
+      "states": ["default", "hover", "selected", "disabled"],
+      "effects": ["barrel_defense_impact_break_8f_512x64_0_5_2.png", "barrel_defense_ready_64_0_5_2.png", "barrel_defense_broken_64_0_5_2.png", "barrel_hp_preserved_marker_32_0_5_2.png"],
+      "timingSeconds": {"use": 0.45, "activation": 0.55}
+    },
+    {
+      "itemId": "IT-06",
+      "key": "prediction_insurance",
+      "price": 3,
+      "popup": "item_prediction_insurance_popup_80_0_5_2.png",
+      "states": ["default", "hover", "selected", "disabled"],
+      "effects": ["prediction_insurance_apply_6f_384x64_0_5_2.png", "prediction_insurance_charges_0_32_0_5_2.png", "prediction_insurance_charges_1_32_0_5_2.png", "prediction_insurance_charges_2_32_0_5_2.png", "prediction_result_actual_success_32_0_5_2.png", "prediction_result_insured_success_32_0_5_2.png"],
+      "timingSeconds": {"use": 0.45, "apply": 0.40}
+    },
+    {
+      "itemId": "IT-07",
+      "key": "mercenary",
+      "price": 4,
+      "popup": "item_mercenary_popup_80_0_5_2.png",
+      "states": ["default", "hover", "selected", "disabled"],
+      "effects": ["mercenary_simultaneous_exchange_10f_960x96_0_5_2.png", "mercenary_player_target_marker_32_0_5_2.png", "mercenary_ai_hidden_marker_32_0_5_2.png"],
+      "timingSeconds": 0.90
+    }
+  ],
+  "stateContract": {
+    "default": "base silhouette",
+    "hover": "brass outline plus glint diamond",
+    "selected": "cyan frame plus check mark",
+    "disabled": "desaturated icon plus iron slash and lock"
+  },
+  "safeAreaProofs": [
+    "item_expansion_application_preview_960x540_0_5_2.png",
+    "item_expansion_safearea_preview_1280x720_0_5_2.png",
+    "item_expansion_safearea_preview_1920x1080_0_5_2.png",
+    "item_expansion_card_safezone_preview_960x540_0_5_2.png"
+  ],
+  "source": [
+    "item_expansion_popup_masters_80_0_5_2.aseprite",
+    "item_expansion_inventory_states_64_0_5_2.aseprite",
+    "wild_ink_spread_8f_0_5_2.aseprite",
+    "wild_ink_suit_seals_4x32_0_5_2.aseprite",
+    "barrel_defense_impact_break_8f_0_5_2.aseprite",
+    "prediction_insurance_apply_6f_0_5_2.aseprite",
+    "mercenary_simultaneous_exchange_10f_0_5_2.aseprite"
+  ],
+  "license": {
+    "type": "project-owned procedural pixel art",
+    "externalRasterUsed": false,
+    "aiGeneratedRasterUsed": false
+  }
+}
