@@ -11,7 +11,7 @@ namespace CodexGame.Presentation.Localization
   {
     public const string DefaultLanguage = "ko";
     public const string FallbackLanguage = "en";
-    public const int RequiredKeyCount = 176;
+    public const int RequiredKeyCount = 197;
 
     private static readonly string[] RequiredJokerKeys =
     {
@@ -69,6 +69,31 @@ namespace CodexGame.Presentation.Localization
       "UI_RUN_COMPLETE",
       "UI_ITEM_USING",
       "UI_THREE_CALL_FLIP_READY"
+    };
+
+    private static readonly string[] RequiredItemExpansion0125Keys =
+    {
+      "UI_ITEM_RELOAD_DESC",
+      "UI_ITEM_BOTTOM_DEAL_DESC",
+      "UI_ITEM_HYPE_MAN_DESC",
+      "UI_ITEM_HEALTH_RECOVERY_DESC",
+      "UI_ITEM_WILD_INK",
+      "UI_ITEM_WILD_INK_DESC",
+      "UI_ITEM_BARREL",
+      "UI_ITEM_BARREL_DESC",
+      "UI_ITEM_PREDICTION_INSURANCE",
+      "UI_ITEM_PREDICTION_INSURANCE_DESC",
+      "UI_ITEM_MERCENARY",
+      "UI_ITEM_MERCENARY_DESC",
+      "UI_ITEM_EXCHANGE_LOCK_AFTER_INK",
+      "UI_ITEM_INSURANCE_APPLIED",
+      "UI_ITEM_NO_VALID_REPLACEMENT_PAIR",
+      "UI_ITEM_CONFIRM_TIMER",
+      "UI_ITEM_CONFIRM_TIMEOUT",
+      "UI_PREDICTION_ACTUAL_COUNT",
+      "UI_PREDICTION_INSURED_COUNT",
+      "UI_PREDICTION_CHARGES",
+      "UI_BARREL_DAMAGE_PREVENTED"
     };
 
     private static readonly string[] RequiredBarShopKeys =
@@ -183,6 +208,15 @@ namespace CodexGame.Presentation.Localization
           throw new FormatException(
             "Missing required 0.1.2.5 presentation localization key: "
               + RequiredPresentation0125Keys[index]);
+        }
+      }
+      for (var index = 0; index < RequiredItemExpansion0125Keys.Length; index++)
+      {
+        if (!entries.ContainsKey(RequiredItemExpansion0125Keys[index]))
+        {
+          throw new FormatException(
+            "Missing required 0.1.2.5 item localization key: "
+              + RequiredItemExpansion0125Keys[index]);
         }
       }
       for (var index = 0; index < RequiredBarShopKeys.Length; index++)

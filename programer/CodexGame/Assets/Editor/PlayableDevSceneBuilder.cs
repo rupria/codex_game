@@ -37,6 +37,7 @@ namespace CodexGame.Editor
     private const string StageOpponentUi0124ArtRoot = UiArtRoot + "StageOpponents_0_1_2_4/";
     private const string IconOverhaulUi050ArtRoot = UiArtRoot + "IconOverhaul_0_5_0/";
     private const string IconOverhaulUi051ArtRoot = UiArtRoot + "IconOverhaul_0_5_1/";
+    private const string ItemExpansionUi052ArtRoot = UiArtRoot + "ItemExpansion_0_5_2/";
     private const string StageTransitionUiArtRoot = UiArtRoot + "StageTransition_0_3_1/";
     private const string IntroArtPath = HalliUiArtRoot + "start_screen_background.png";
     private const string BackdropShaderPath = "Assets/Shaders/RuntimeBackdropLit.shader";
@@ -159,7 +160,47 @@ namespace CodexGame.Editor
         healthRecoveryPopupIcon: LoadTexture(IconOverhaulUi051ArtRoot + "item_heal_tonic_popup_80_0_5_1.png"),
         communityLocked: LoadTexture(IconOverhaulUi050ArtRoot + "community_lock_locked_48_0_5_0.png"),
         communityReveal: LoadTexture(IconOverhaulUi050ArtRoot + "community_lock_reveal_48_0_5_0.png"),
-        communityOpen: LoadTexture(IconOverhaulUi050ArtRoot + "community_lock_open_48_0_5_0.png"));
+        communityOpen: LoadTexture(IconOverhaulUi050ArtRoot + "community_lock_open_48_0_5_0.png"),
+        wildInkDefault: LoadTexture(ItemExpansionUi052ArtRoot + "item_wild_ink_default_64_0_5_2.png"),
+        wildInkHover: LoadTexture(ItemExpansionUi052ArtRoot + "item_wild_ink_hover_64_0_5_2.png"),
+        wildInkSelected: LoadTexture(ItemExpansionUi052ArtRoot + "item_wild_ink_selected_64_0_5_2.png"),
+        wildInkDisabled: LoadTexture(ItemExpansionUi052ArtRoot + "item_wild_ink_disabled_64_0_5_2.png"),
+        wildInkPopup: LoadTexture(ItemExpansionUi052ArtRoot + "item_wild_ink_popup_80_0_5_2.png"),
+        barrelDefault: LoadTexture(ItemExpansionUi052ArtRoot + "item_barrel_default_64_0_5_2.png"),
+        barrelHover: LoadTexture(ItemExpansionUi052ArtRoot + "item_barrel_hover_64_0_5_2.png"),
+        barrelSelected: LoadTexture(ItemExpansionUi052ArtRoot + "item_barrel_selected_64_0_5_2.png"),
+        barrelDisabled: LoadTexture(ItemExpansionUi052ArtRoot + "item_barrel_disabled_64_0_5_2.png"),
+        barrelPopup: LoadTexture(ItemExpansionUi052ArtRoot + "item_barrel_popup_80_0_5_2.png"),
+        insuranceDefault: LoadTexture(ItemExpansionUi052ArtRoot + "item_prediction_insurance_default_64_0_5_2.png"),
+        insuranceHover: LoadTexture(ItemExpansionUi052ArtRoot + "item_prediction_insurance_hover_64_0_5_2.png"),
+        insuranceSelected: LoadTexture(ItemExpansionUi052ArtRoot + "item_prediction_insurance_selected_64_0_5_2.png"),
+        insuranceDisabled: LoadTexture(ItemExpansionUi052ArtRoot + "item_prediction_insurance_disabled_64_0_5_2.png"),
+        insurancePopup: LoadTexture(ItemExpansionUi052ArtRoot + "item_prediction_insurance_popup_80_0_5_2.png"),
+        mercenaryDefault: LoadTexture(ItemExpansionUi052ArtRoot + "item_mercenary_default_64_0_5_2.png"),
+        mercenaryHover: LoadTexture(ItemExpansionUi052ArtRoot + "item_mercenary_hover_64_0_5_2.png"),
+        mercenarySelected: LoadTexture(ItemExpansionUi052ArtRoot + "item_mercenary_selected_64_0_5_2.png"),
+        mercenaryDisabled: LoadTexture(ItemExpansionUi052ArtRoot + "item_mercenary_disabled_64_0_5_2.png"),
+        mercenaryPopup: LoadTexture(ItemExpansionUi052ArtRoot + "item_mercenary_popup_80_0_5_2.png"),
+        wildInkSpreadSheet: LoadTexture(ItemExpansionUi052ArtRoot + "wild_ink_spread_8f_512x64_0_5_2.png"),
+        wildInkSpadeSeal: LoadTexture(ItemExpansionUi052ArtRoot + "wild_ink_suit_seal_1_32_0_5_2.png"),
+        wildInkHeartSeal: LoadTexture(ItemExpansionUi052ArtRoot + "wild_ink_suit_seal_2_32_0_5_2.png"),
+        wildInkClubSeal: LoadTexture(ItemExpansionUi052ArtRoot + "wild_ink_suit_seal_3_32_0_5_2.png"),
+        wildInkDiamondSeal: LoadTexture(ItemExpansionUi052ArtRoot + "wild_ink_suit_seal_4_32_0_5_2.png"),
+        wildInkAppliedMarker: LoadTexture(ItemExpansionUi052ArtRoot + "wild_ink_card_applied_marker_32_0_5_2.png"),
+        wildInkExchangeLockedMarker: LoadTexture(ItemExpansionUi052ArtRoot + "wild_ink_exchange_locked_marker_32_0_5_2.png"),
+        barrelDefenseReady: LoadTexture(ItemExpansionUi052ArtRoot + "barrel_defense_ready_64_0_5_2.png"),
+        barrelDefenseBroken: LoadTexture(ItemExpansionUi052ArtRoot + "barrel_defense_broken_64_0_5_2.png"),
+        barrelDefenseBreakSheet: LoadTexture(ItemExpansionUi052ArtRoot + "barrel_defense_impact_break_8f_512x64_0_5_2.png"),
+        barrelHpPreservedMarker: LoadTexture(ItemExpansionUi052ArtRoot + "barrel_hp_preserved_marker_32_0_5_2.png"),
+        insuranceApplySheet: LoadTexture(ItemExpansionUi052ArtRoot + "prediction_insurance_apply_6f_384x64_0_5_2.png"),
+        insuranceCharges0: LoadTexture(ItemExpansionUi052ArtRoot + "prediction_insurance_charges_0_32_0_5_2.png"),
+        insuranceCharges1: LoadTexture(ItemExpansionUi052ArtRoot + "prediction_insurance_charges_1_32_0_5_2.png"),
+        insuranceCharges2: LoadTexture(ItemExpansionUi052ArtRoot + "prediction_insurance_charges_2_32_0_5_2.png"),
+        predictionActualSuccess: LoadTexture(ItemExpansionUi052ArtRoot + "prediction_result_actual_success_32_0_5_2.png"),
+        predictionInsuredSuccess: LoadTexture(ItemExpansionUi052ArtRoot + "prediction_result_insured_success_32_0_5_2.png"),
+        mercenaryExchangeSheet: LoadTexture(ItemExpansionUi052ArtRoot + "mercenary_simultaneous_exchange_10f_960x96_0_5_2.png"),
+        mercenaryPlayerTargetMarker: LoadTexture(ItemExpansionUi052ArtRoot + "mercenary_player_target_marker_32_0_5_2.png"),
+        mercenaryAiHiddenMarker: LoadTexture(ItemExpansionUi052ArtRoot + "mercenary_ai_hidden_marker_32_0_5_2.png"));
       var barShopUiArtSet = new BarShopUiArtSet(
         LoadTexture(BarShopUiArtRoot + "bar_shop_background_unlit_960x540_0_3_0.png"),
         LoadTexture(BarShopUiArtRoot + "bar_shop_product_slot_230x210_0_3_0.png"),
@@ -186,6 +227,18 @@ namespace CodexGame.Editor
           new BarShopProductIconBinding(
             "bar_shop.item.health_recovery",
             LoadTexture(IconOverhaulUi050ArtRoot + "item_heal_tonic_western_64_0_5_0.png")),
+          new BarShopProductIconBinding(
+            "bar_shop.item.wild_ink",
+            LoadTexture(ItemExpansionUi052ArtRoot + "item_wild_ink_default_64_0_5_2.png")),
+          new BarShopProductIconBinding(
+            "bar_shop.item.barrel",
+            LoadTexture(ItemExpansionUi052ArtRoot + "item_barrel_default_64_0_5_2.png")),
+          new BarShopProductIconBinding(
+            "bar_shop.item.prediction_insurance",
+            LoadTexture(ItemExpansionUi052ArtRoot + "item_prediction_insurance_default_64_0_5_2.png")),
+          new BarShopProductIconBinding(
+            "bar_shop.item.mercenary",
+            LoadTexture(ItemExpansionUi052ArtRoot + "item_mercenary_default_64_0_5_2.png")),
           new BarShopProductIconBinding(
             "item.ammo_pouch.loose_rounds",
             LoadTexture(BarShopUi038ArtRoot + "ammo_pouch_loose_rounds_64_0_1_0.png"))

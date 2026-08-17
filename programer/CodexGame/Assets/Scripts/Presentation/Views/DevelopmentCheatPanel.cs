@@ -35,33 +35,37 @@ namespace CodexGame.Presentation.Views
       var itemValues = (GameItemId[])Enum.GetValues(typeof(GameItemId));
       for (var index = 0; index < itemValues.Length; index++)
       {
-        if (GUI.Button(new Rect(48f + index * 150f, 184f, 140f, 34f), itemValues[index].ToString()))
+        var column = index % 4;
+        var row = index / 4;
+        if (GUI.Button(
+          new Rect(48f + column * 190f, 184f + row * 36f, 180f, 32f),
+          itemValues[index].ToString()))
         {
           grantItem(itemValues[index]);
         }
       }
 
-      GUI.Label(new Rect(48f, 232f, 240f, 24f), "SET EXACT POKER HAND", styles.Small);
+      GUI.Label(new Rect(48f, 264f, 240f, 24f), "SET EXACT POKER HAND", styles.Small);
       var presets = (PokerCheatPreset[])Enum.GetValues(typeof(PokerCheatPreset));
       for (var index = 0; index < presets.Length; index++)
       {
         var column = index % 4;
         var row = index / 4;
         if (GUI.Button(
-          new Rect(48f + column * 190f, 258f + row * 34f, 180f, 30f),
+          new Rect(48f + column * 190f, 290f + row * 30f, 180f, 28f),
           presets[index].ToString()))
         {
           setPoker(presets[index]);
         }
       }
 
-      GUI.Label(new Rect(48f, 400f, 220f, 24f), "RECENT COMMANDS (LAST 20)", styles.Small);
+      GUI.Label(new Rect(48f, 438f, 220f, 24f), "RECENT COMMANDS (LAST 20)", styles.Small);
       var start = Math.Max(0, snapshot.CheatHistory.Count - 4);
       for (var index = start; index < snapshot.CheatHistory.Count; index++)
       {
         var entry = snapshot.CheatHistory[index];
         GUI.Label(
-          new Rect(48f, 424f + (index - start) * 20f, 840f, 20f),
+          new Rect(48f, 460f + (index - start) * 14f, 840f, 16f),
           $"{entry.Command} {entry.Input} -> {entry.Result}",
           styles.Small);
       }

@@ -99,6 +99,10 @@ namespace CodexGame.Presentation.Views
     public event Action<CardId> BottomDealChoiceRequested;
     public event Action HypeManItemRequested;
     public event Action HealthRecoveryItemRequested;
+    public event Action<CardId, CardSuit> WildInkItemRequested;
+    public event Action BarrelItemRequested;
+    public event Action PredictionInsuranceItemRequested;
+    public event Action<CardId> MercenaryItemRequested;
     public event Action ItemsConfirmRequested;
     public event Action BarShopRerollRequested;
     public event Action<int> BarShopPurchaseRequested;
@@ -415,6 +419,7 @@ namespace CodexGame.Presentation.Views
           _healthUiArtSet,
           _pokerUiArtSet,
           _pokerItemUiArtSet,
+          _snapshot.PredictionReward,
           _localization,
           Time.unscaledTime < _playerDamageUntil,
           Time.unscaledTime < _aiDamageUntil,
@@ -439,6 +444,10 @@ namespace CodexGame.Presentation.Views
           cardId => BottomDealChoiceRequested?.Invoke(cardId),
           () => HypeManItemRequested?.Invoke(),
           () => HealthRecoveryItemRequested?.Invoke(),
+          (cardId, suit) => WildInkItemRequested?.Invoke(cardId, suit),
+          () => BarrelItemRequested?.Invoke(),
+          () => PredictionInsuranceItemRequested?.Invoke(),
+          cardId => MercenaryItemRequested?.Invoke(cardId),
           () => ItemsConfirmRequested?.Invoke());
         DrawOpponentPortrait();
         _presentation0124Panel.DrawItemRestriction(
