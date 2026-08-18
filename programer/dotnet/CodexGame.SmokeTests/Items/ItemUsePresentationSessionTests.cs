@@ -42,16 +42,22 @@ namespace CodexGame.SmokeTests.Items
       var session = new PredictionInsuranceActivationSession();
       session.Begin(record, new GameTimestamp(100));
       var middle = session.GetSnapshot(new GameTimestamp(200_100));
+      var beforeCommit = session.GetSnapshot(new GameTimestamp(
+        100 + GameRules.PredictionInsuranceActivationChargeCommitMicroseconds - 1));
+      var afterCommit = session.GetSnapshot(new GameTimestamp(
+        100 + GameRules.PredictionInsuranceActivationChargeCommitMicroseconds));
       tests.Check(
         session.IsActive
           && middle.IsActive
           && middle.RecordSequence == 1
           && middle.ChargesBefore == 2
           && middle.ChargesAfter == 1
+          && beforeCommit.DisplayedCharges == 2
+          && afterCommit.DisplayedCharges == 1
           && !session.Tick(new GameTimestamp(400_099))
           && session.Tick(new GameTimestamp(400_100))
           && !session.IsActive,
-        "Actual insurance activation must be a distinct deterministic 0.40-second presentation.");
+        "Insurance activation must last 0.40 seconds and commit its visible charge once at 0.24 seconds.");
     }
   }
 }

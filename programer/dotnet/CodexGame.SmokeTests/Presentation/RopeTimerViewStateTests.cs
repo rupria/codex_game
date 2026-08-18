@@ -45,6 +45,10 @@ namespace CodexGame.SmokeTests.Presentation
           && RopeTimerViewState.OneShotFrame(0.69d, 0.7d, 8) == 7
           && RopeTimerViewState.OneShotFrame(0.7d, 0.7d, 8) == 7,
         "The eight-frame timeout burst must advance once and hold its final frame at 0.70 seconds.");
+      tests.Check(
+        RopeTimerViewState.RopeTipX(332d, 258d, 1d) == 590d
+          && RopeTimerViewState.RopeTipX(332d, 258d, 0d) == 332d,
+        "The live flame and timeout burst must share the same rope terminal anchor.");
     }
   }
 }
