@@ -2,6 +2,7 @@ using System;
 using System.IO;
 using CodexGame.Bootstrap;
 using CodexGame.Presentation.Art;
+using CodexGame.Presentation.Audio;
 using CodexGame.Presentation.Views;
 using UnityEditor;
 using UnityEditor.Build;
@@ -54,6 +55,9 @@ namespace CodexGame.Editor
     private const string IntroArtPath =
       MainMenuUi058ArtRoot + "start_screen_background_960x540_0_5_8.png";
     private const string BackdropShaderPath = "Assets/Shaders/RuntimeBackdropLit.shader";
+    private const string SampleAudioPackName = "Free UI Click Sound Pack";
+    private const string SampleAudioPackUrl =
+      "https://assetstore.unity.com/packages/audio/sound-fx/free-ui-click-sound-pack-244644";
 
     [MenuItem("Codex Game/Playable Dev/Create Scene")]
     public static void CreateScene()
@@ -67,6 +71,7 @@ namespace CodexGame.Editor
       camera.clearFlags = CameraClearFlags.SolidColor;
       camera.backgroundColor = new Color(0.035f, 0.055f, 0.08f, 1f);
       camera.transform.position = new Vector3(0f, 0f, -10f);
+      cameraObject.AddComponent<AudioListener>();
 
       var gameObject = new GameObject("CodexGame.PlayableDev");
       var boardTexture = AssetDatabase.LoadAssetAtPath<Texture2D>(BoardArtPath);
@@ -480,6 +485,7 @@ namespace CodexGame.Editor
         introTexture,
         barShopUiArtSet.Background,
         backdropShader);
+      ConfigureSampleAudio(gameObject.AddComponent<PlayableAudioDirector>());
       gameObject.AddComponent<PlayableDevGameController>();
 
       if (!EditorSceneManager.SaveScene(scene, ScenePath))
@@ -592,6 +598,77 @@ namespace CodexGame.Editor
       {
         AssetDatabase.CreateFolder("Assets", "Scenes");
       }
+    }
+
+    [MenuItem("Codex Game/Audio/Validate Free UI Click Sound Pack")]
+    public static void ValidateSampleAudio()
+    {
+      var missing = 0;
+      foreach (var fileName in SampleAudioFileNames)
+      {
+        if (FindAudioClip(fileName) != null) continue;
+        missing++;
+        Debug.LogWarning($"Missing sample audio clip: {fileName}");
+      }
+
+      if (missing == 0)
+      {
+        Debug.Log("Free UI Click Sound Pack sample clips are ready.");
+        return;
+      }
+
+      Debug.LogWarning(
+        $"Sample audio is running in silent-fallback mode. Missing clips: {missing}. "
+        + $"Import {SampleAudioPackName}, then recreate the playable dev scene. "
+        + SampleAudioPackUrl);
+    }
+
+    private static readonly string[] SampleAudioFileNames =
+    {
+      "SFX_UI_Click_Organic_Wooden_Thin_1.wav",
+      "SFX_UI_Click_Organic_Wooden_Select_1.wav",
+      "SFX_UI_Click_Organic_Wooden_Plastic_Negative_Back_1.wav",
+      "SFX_UI_Click_Designed_Metallic_Pop_Negative_Locked_1.wav",
+      "SFX_UI_Click_Organic_Crispy_Thick_Generic_1.wav",
+      "SFX_UI_Click_Organic_Metallic_Plastic_Select_1.wav",
+      "SFX_UI_Click_Organic_Crispy_Generic_Select_1.wav",
+      "SFX_UI_Click_Organic_Crispy_Pop_Generic_Open_1.wav",
+      "SFX_UI_Click_Organic_Metallic_Thin_Select_1.wav",
+      "SFX_UI_Click_Designed_Metallic_Dirty_Negative_1.wav",
+      "SFX_UI_Click_Organic_Crispy_Negative_Error_1.wav"
+    };
+
+    private static void ConfigureSampleAudio(PlayableAudioDirector audio)
+    {
+      audio.Configure(
+        uiSelect: FindAudioClip("SFX_UI_Click_Organic_Wooden_Thin_1.wav"),
+        uiConfirm: FindAudioClip("SFX_UI_Click_Organic_Wooden_Select_1.wav"),
+        uiBack: FindAudioClip("SFX_UI_Click_Organic_Wooden_Plastic_Negative_Back_1.wav"),
+        uiError: FindAudioClip("SFX_UI_Click_Designed_Metallic_Pop_Negative_Locked_1.wav"),
+        cardFlip: FindAudioClip("SFX_UI_Click_Organic_Crispy_Thick_Generic_1.wav"),
+        bell: FindAudioClip("SFX_UI_Click_Organic_Metallic_Plastic_Select_1.wav"),
+        itemUse: FindAudioClip("SFX_UI_Click_Organic_Crispy_Generic_Select_1.wav"),
+        reroll: FindAudioClip("SFX_UI_Click_Organic_Crispy_Pop_Generic_Open_1.wav"),
+        purchase: FindAudioClip("SFX_UI_Click_Organic_Metallic_Thin_Select_1.wav"),
+        damage: FindAudioClip("SFX_UI_Click_Designed_Metallic_Dirty_Negative_1.wav"),
+        win: FindAudioClip("SFX_UI_Click_Organic_Crispy_Generic_Select_1.wav"),
+        lose: FindAudioClip("SFX_UI_Click_Organic_Crispy_Negative_Error_1.wav"),
+        transition: FindAudioClip("SFX_UI_Click_Organic_Crispy_Pop_Generic_Open_1.wav"));
+    }
+
+    private static AudioClip FindAudioClip(string fileName)
+    {
+      var assetName = Path.GetFileNameWithoutExtension(fileName);
+      foreach (var guid in AssetDatabase.FindAssets($"{assetName} t:AudioClip"))
+      {
+        var path = AssetDatabase.GUIDToAssetPath(guid);
+        if (!string.Equals(Path.GetFileName(path), fileName, StringComparison.OrdinalIgnoreCase))
+        {
+          continue;
+        }
+        return AssetDatabase.LoadAssetAtPath<AudioClip>(path);
+      }
+      return null;
     }
 
     private static Texture2D LoadTexture(string path)
