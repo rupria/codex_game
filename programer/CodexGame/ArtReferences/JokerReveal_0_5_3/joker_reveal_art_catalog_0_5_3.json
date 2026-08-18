@@ -1,0 +1,66 @@
+{
+  "artSetId": "joker_reveal_0_5_3",
+  "specRevision": "0.1.2.5",
+  "status": "art_complete_programmer_binding_ready",
+  "issue": 32,
+  "license": "project-owned generated artwork; commercial use and modification allowed",
+  "production": {
+    "runtimeRoot": "Assets/Art/Prototype/UI/JokerReveal_0_5_3/",
+    "sourceRoot": "ArtReferences/JokerReveal_0_5_3/source/",
+    "previewRoot": "ArtReferences/JokerReveal_0_5_3/preview/",
+    "cardFronts": [
+      "Assets/Art/Prototype/Cards_0_08/poker_face_cards_112x156/card_poker_joker_brass_sheriff_revolver.png",
+      "Assets/Art/Prototype/Cards_0_08/poker_face_cards_112x156/card_poker_joker_crimson_cardsharp.png"
+    ]
+  },
+  "assets": [
+    {"id":"focus_vignette","file":"joker_reveal_focus_vignette_960x540_0_5_3.png","size":[960,540],"pivot":[0.5,0.5]},
+    {"id":"frame_idle","file":"joker_reveal_card_frame_idle_140x190_0_5_3.png","size":[140,190],"pivot":[0.5,0.5]},
+    {"id":"frame_active","file":"joker_reveal_card_frame_active_140x190_0_5_3.png","size":[140,190],"pivot":[0.5,0.5]},
+    {"id":"frame_glow","file":"joker_reveal_frame_glow_6f_840x190_0_5_3.png","frameSize":[140,190],"frames":6,"frameSeconds":0.08,"pivot":[0.5,0.5]},
+    {"id":"glint","file":"joker_reveal_glint_6f_384x64_0_5_3.png","frameSize":[64,64],"frames":6,"frameSeconds":0.08,"pivot":[0.5,0.5]},
+    {"id":"burst","file":"joker_reveal_burst_8f_512x64_0_5_3.png","frameSize":[64,64],"frames":8,"frameSeconds":[0.05,0.05,0.05,0.05,0.05,0.09,0.09,0.09],"pivot":[0.5,0.5]},
+    {"id":"badge","file":"joker_reveal_badge_64_0_5_3.png","size":[64,64],"pivot":[0.5,0.5]},
+    {"id":"ai_showdown_marker","file":"joker_ai_showdown_marker_48_0_5_3.png","size":[48,48],"pivot":[0.5,0.5]}
+  ],
+  "playerTimelineSeconds": {
+    "focusStart": 0.0,
+    "cardLeavesTray": 0.12,
+    "flipStarts": 0.34,
+    "frontReadable": 0.52,
+    "burstAndGlint": 0.54,
+    "settleStarts": 0.86,
+    "settled": 1.18,
+    "completed": 1.30
+  },
+  "events": ["JokerRevealStarted", "JokerRevealSettled", "JokerRevealCompleted"],
+  "layoutAt960x540": {
+    "focusCardCenter": [480,270],
+    "focusFrameSize": [140,190],
+    "localizedTitleSafeRect": [324,54,312,32],
+    "candidateRailSafeRect": [275,404,410,96],
+    "minimumScreenSafeInset": 24
+  },
+  "privacy": {
+    "player": "Play the complete 1.30 second reveal only after the player actually wins a Joker.",
+    "aiBeforeShowdown": "Do not show any marker, timing change, extra card count, glow, audio cue or badge.",
+    "aiAtShowdown": "Only if the AI actually uses the Joker in its final hand, show the 48 px marker and a shortened 0.35 second frame/glint emphasis.",
+    "aiUnused": "Do not reveal a Joker acquired but not selected."
+  },
+  "import": {
+    "textureType": "Sprite (2D and UI)",
+    "filterMode": "Point",
+    "compression": "Uncompressed",
+    "mipMaps": false,
+    "alphaIsTransparency": true,
+    "preserveAspect": true
+  },
+  "guardrails": [
+    "Do not bake player-facing words into these images; title and one-line description remain localized Unity text.",
+    "Do not create a second copy of either approved Joker card front.",
+    "Do not disclose AI Joker ownership before showdown.",
+    "Do not add delay to the non-winning path.",
+    "The final reveal position must hand off to the actual selectable candidate slot.",
+    "The player-acquired tray and candidate-card state remain the single source of card ownership."
+  ]
+}

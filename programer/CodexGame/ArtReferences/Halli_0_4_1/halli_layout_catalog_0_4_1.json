@@ -1,0 +1,28 @@
+{
+  "artSetId": "halli_layout_review_0_4_1",
+  "specRevision": "0.1.2.5",
+  "status": "visual_contract_programmer_binding_ready",
+  "issue": 46,
+  "preview": "preview/halli_combined_improved_mock_960x540_0_4_1.png",
+  "source": "source/halli_combined_improved_mock_0_4_1.aseprite",
+  "layoutAt960x540": {
+    "cardSize": [64,90],
+    "maximumVisiblePerPile": 3,
+    "horizontalStep": [58,60],
+    "horizontalOverlapPixels": [4,6],
+    "horizontalOverlapRatioMaximum": 0.10,
+    "verticalStep": [2,4],
+    "drawOrder": "oldest/first revealed card stays visually above later cards"
+  },
+  "requiredCompanions": [
+    "Halli_0_3_9 rope body, flame and timeout burst",
+    "Bell_UI_0_1_2_4 brass bell six-state set",
+    "Halli_0_3_4 persistent lower-left player acquired tray",
+    "textless player/AI round-win pips"
+  ],
+  "guardrails": [
+    "Do not reorder logical history or Card IDs to achieve the visual layer order.",
+    "Do not change bell judgement, reveal actor or reveal side mapping.",
+    "Do not restore Q/W/E, left/right, one-card-flip or community labels to the battle HUD."
+  ]
+}
