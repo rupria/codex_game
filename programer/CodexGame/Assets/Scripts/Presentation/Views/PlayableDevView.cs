@@ -80,7 +80,7 @@ namespace CodexGame.Presentation.Views
     private PlayableDevStyles _styles;
     private PlayableCardRenderer _halliCards;
     private PlayableCardRenderer _pokerCards;
-    private int _selectionFocus;
+    private int _selectionFocus = -1;
     private LocalizationRuntime _localization;
     private float _playerDamageUntil = float.NegativeInfinity;
     private float _aiDamageUntil = float.NegativeInfinity;
@@ -197,7 +197,7 @@ namespace CodexGame.Presentation.Views
       }
       if (_snapshot == null || _snapshot.Phase != snapshot.Phase)
       {
-        _selectionFocus = 0;
+        _selectionFocus = -1;
       }
 
       _snapshot = snapshot;
@@ -346,7 +346,6 @@ namespace CodexGame.Presentation.Views
           _guide.MovePrevious,
           AdvanceGuide,
           _guide.Close,
-          CompleteFirstStartTutorial,
           CompleteFirstStartTutorial);
         return;
       }
@@ -774,14 +773,18 @@ namespace CodexGame.Presentation.Views
       if (selection == null || selection.WinnerCandidates.Count == 0) return;
       if (Input.GetKeyDown(KeyCode.LeftArrow))
       {
-        _selectionFocus = (_selectionFocus - 1 + selection.WinnerCandidates.Count)
-          % selection.WinnerCandidates.Count;
+        _selectionFocus = _selectionFocus < 0
+          ? selection.WinnerCandidates.Count - 1
+          : (_selectionFocus - 1 + selection.WinnerCandidates.Count)
+            % selection.WinnerCandidates.Count;
       }
       else if (Input.GetKeyDown(KeyCode.RightArrow))
       {
-        _selectionFocus = (_selectionFocus + 1) % selection.WinnerCandidates.Count;
+        _selectionFocus = _selectionFocus < 0
+          ? 0
+          : (_selectionFocus + 1) % selection.WinnerCandidates.Count;
       }
-      else if (Input.GetKeyDown(KeyCode.UpArrow))
+      else if (Input.GetKeyDown(KeyCode.UpArrow) && _selectionFocus >= 0)
       {
         PrivateCardToggleRequested?.Invoke(selection.WinnerCandidates[_selectionFocus].Id);
       }

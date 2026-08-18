@@ -219,9 +219,8 @@ namespace CodexGame.SmokeTests.Distribution
       var snapshot = session.GetSnapshot(new GameTimestamp(0));
 
       tests.Check(
-        snapshot.SelectedCards.Count == 3
-          && CountRank(snapshot.SelectedCards, CardRank.Two) == 2,
-        "Early-health overflow selection must recommend an available rank pair.");
+        snapshot.SelectedCards.Count == 0 && !snapshot.CanConfirm,
+        "Overflow selection must start idle even when pair-assisted fill remains enabled.");
     }
 
     private static void CheckPairAssistFill(TestHarness tests)

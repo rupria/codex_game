@@ -37,10 +37,15 @@ namespace CodexGame.Presentation.Views
       {
         DrawPortraitFallback(new Rect(320f, 206f, 108f, 108f));
       }
-      GUI.Label(
-        new Rect(448f, 206f, 192f, 48f),
-        localization.Get("UI_STAGE_ENTRY", new LocalizationArgument("stage", snapshot.StageNumber)),
-        styles.Heading);
+      var opponentNameKey = OpponentNameKey(snapshot.StageNumber);
+      if (opponentNameKey != null)
+      {
+        GUI.Label(
+          new Rect(448f, 206f, 194f, 30f),
+          localization.Get(opponentNameKey),
+          styles.Heading);
+      }
+      DrawStagePips(snapshot.StageNumber);
       DrawRestriction(snapshot.StageItemRestriction, art, styles, localization, new Rect(320f, 344f, 320f, 84f));
 
       var hovered = SkipButton.Contains(Event.current.mousePosition);
@@ -154,6 +159,40 @@ namespace CodexGame.Presentation.Views
       GUI.color = new Color(0.04f, 0.035f, 0.03f, 0.94f);
       GUI.DrawTexture(rect, Texture2D.whiteTexture, ScaleMode.StretchToFill, true);
       GUI.color = previous;
+    }
+
+    private static string OpponentNameKey(int stageNumber)
+    {
+      return stageNumber switch
+      {
+        1 => "UI_OPPONENT_STAGE_1_NAME",
+        2 => "UI_OPPONENT_STAGE_2_NAME",
+        3 => "UI_OPPONENT_STAGE_3_NAME",
+        4 => "UI_OPPONENT_STAGE_4_NAME",
+        _ => null
+      };
+    }
+
+    private static void DrawStagePips(int stageNumber)
+    {
+      var previousColor = GUI.color;
+      var activeCount = Mathf.Clamp(stageNumber, 0, 3);
+      for (var index = 0; index < 3; index++)
+      {
+        GUI.color = index < activeCount
+          ? new Color(0.94f, 0.63f, 0.18f, 1f)
+          : new Color(0.27f, 0.23f, 0.18f, 1f);
+        var center = new Vector2(464f + 28f * index, 304f);
+        var previousMatrix = GUI.matrix;
+        GUIUtility.RotateAroundPivot(45f, center);
+        GUI.DrawTexture(
+          new Rect(center.x - 4f, center.y - 4f, 8f, 8f),
+          Texture2D.whiteTexture,
+          ScaleMode.StretchToFill,
+          true);
+        GUI.matrix = previousMatrix;
+      }
+      GUI.color = previousColor;
     }
   }
 }

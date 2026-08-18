@@ -27,7 +27,7 @@ namespace CodexGame.Presentation.Views
     private static readonly Rect PreviousButton = new Rect(299f, 451f, 56f, 58f);
     private static readonly Rect NextButton = new Rect(602f, 451f, 56f, 58f);
     private static readonly Rect CloseButton = new Rect(800f, 451f, 56f, 58f);
-    private static readonly Rect TutorialSkipButton = new Rect(762f, 452f, 158f, 52f);
+    private static readonly Rect PageIndicatorPlate = new Rect(430f, 449f, 100f, 33f);
 
     public void Draw(
       GuideModalState state,
@@ -37,8 +37,7 @@ namespace CodexGame.Presentation.Views
       Action previous,
       Action next,
       Action close,
-      Action completeTutorial,
-      Action skipTutorial)
+      Action completeTutorial)
     {
       DrawOpaqueBackground(art);
       if (art != null && art.IsComplete)
@@ -57,7 +56,7 @@ namespace CodexGame.Presentation.Views
         new Rect(390f, 145f, 475f, 260f),
         localization.Get(BodyKeys[state.PageIndex]),
         BodyStyle(styles));
-      DrawPageDots(state.PageIndex);
+      DrawPageDots(state.PageIndex, art?.PageIndicatorPlate);
 
       // The visible arrow and close icons are already part of the approved 960x540 art.
       // Keep a single transparent hit target on each icon instead of drawing a second
@@ -69,12 +68,8 @@ namespace CodexGame.Presentation.Views
         if (state.CanMoveNext) next();
         else completeTutorial();
       }
-      if (state.IsFirstStartTutorial)
-      {
-        GUI.Label(TutorialSkipButton, localization.Get("UI_GUIDE_TUTORIAL_SKIP"), styles.Heading);
-        if (GUI.Button(TutorialSkipButton, GUIContent.none, GUIStyle.none)) skipTutorial();
-      }
-      else if (DrawIconHitTarget(CloseButton, true, art?.CloseIcon)) close();
+      if (!state.IsFirstStartTutorial
+        && DrawIconHitTarget(CloseButton, true, art?.CloseIcon)) close();
     }
 
     private static void DrawOpaqueBackground(GuideUiArtSet art)
@@ -123,27 +118,28 @@ namespace CodexGame.Presentation.Views
       return clicked;
     }
 
-    private static void DrawPageDots(int pageIndex)
+    private static void DrawPageDots(int pageIndex, Texture2D plate)
     {
-      // The approved modal background still contains six baked placeholder pips.
-      // Mask only that interior and render the four real pages from state so the
-      // visible count and the navigation boundary cannot disagree.
       var previousColor = GUI.color;
-      GUI.color = new Color(0.055f, 0.047f, 0.039f, 1f);
-      GUI.DrawTexture(
-        new Rect(401f, 461f, 152f, 28f),
-        Texture2D.whiteTexture,
-        ScaleMode.StretchToFill,
-        true);
+      GUI.color = Color.white;
+      if (plate != null)
+      {
+        GUI.DrawTexture(PageIndicatorPlate, plate, ScaleMode.StretchToFill, true);
+      }
+      else
+      {
+        GUI.color = new Color(0.055f, 0.047f, 0.039f, 1f);
+        GUI.DrawTexture(PageIndicatorPlate, Texture2D.whiteTexture, ScaleMode.StretchToFill, true);
+      }
 
-      const float startX = 426f;
-      const float gap = 34f;
+      const float startX = 448f;
+      const float gap = 21f;
       for (var index = 0; index < GuideModalState.PageCount; index++)
       {
         GUI.color = index == pageIndex
           ? new Color(0.95f, 0.63f, 0.18f, 1f)
           : new Color(0.24f, 0.21f, 0.17f, 1f);
-        var center = new Vector2(startX + gap * index, 475f);
+        var center = new Vector2(startX + gap * index, 466f);
         var previousMatrix = GUI.matrix;
         GUIUtility.RotateAroundPivot(45f, center);
         GUI.DrawTexture(

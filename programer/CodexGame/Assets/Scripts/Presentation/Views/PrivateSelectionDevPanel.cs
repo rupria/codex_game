@@ -50,12 +50,12 @@ namespace CodexGame.Presentation.Views
           var card = snapshot.WinnerCandidates[index];
           var selected = Contains(snapshot.SelectedCards, card.Id);
           GUILayout.BeginVertical(GUILayout.Width(105f));
-          GUILayout.Label(index == focusedIndex ? localization.Get("UI_COMMON_FOCUS") : " ", styles.Small);
+          GUILayout.Label(" ", styles.Small);
           var cardRect = cards.Draw(card, 96f, 130f, selected);
           var hovered = cardRect.Contains(Event.current.mousePosition);
           var frame = selected
             ? presentationArt?.CandidateSelected
-            : hovered
+            : hovered || index == focusedIndex
               ? presentationArt?.CandidateHover
               : presentationArt?.CandidateIdle;
           if (frame != null)

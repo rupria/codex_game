@@ -135,15 +135,15 @@ STATUS_HALLI_AI_STAGE_WIN,AI가 할리갈리 단계에서 승리했습니다. �
 STATUS_HALLI_NO_TARGET_WINNER,목표 승자 없이 할리갈리 단계가 끝났습니다. 개인 카드 단계로 진행합니다.,Halli stage ended without a target winner. Continue to private cards.
 UI_GUIDE_PAGE_FLOW_TITLE,목표와 게임 흐름,GOAL & GAME FLOW
 UI_GUIDE_PAGE_FLOW_BODY,"1. 첫 커뮤니티 카드 공개
-2. 할리갈리에서 카드를 획득
-3. 개인 카드 3장 + 커뮤니티 카드 2장으로 포커
-4. 포커 패자는 HP 1 감소
+2. Three Call에서 카드를 획득
+3. 개인 카드 3장 + 커뮤니티 카드 2장으로 Showdown
+4. Showdown 패자는 HP 1 감소
 AI HP를 0으로 만들면 승리합니다.","1. Reveal the first community card
-2. Win cards in Halli
-3. Play poker with 3 private + 2 community cards
-4. The poker loser loses 1 HP
+2. Win cards in Three Call
+3. Play Showdown with 3 private + 2 community cards
+4. The Showdown loser loses 1 HP
 Reduce AI HP to 0 to win."
-UI_GUIDE_PAGE_HALLI_TITLE,할리갈리 판정,HALLI RULES
+UI_GUIDE_PAGE_HALLI_TITLE,Three Call 판정,THREE CALL RULES
 UI_GUIDE_PAGE_HALLI_BODY,"↑ 또는 카드 더미 클릭: 카드 1장 펼치기
 ←/→ 또는 벨 클릭: 왼쪽/오른쪽 판정
 같은 문양의 해골 합이 정확히 3이면 정답입니다.
@@ -157,29 +157,29 @@ Valid sets: 1+2 or one skull-3 card
 After the 2-second lock, decide within 30 seconds.
 A wrong answer or timeout gives the opponent one win.
 The stage ends at the win target, round 12, or deck exhaustion."
-UI_GUIDE_PAGE_CARDS_TITLE,카드 획득과 포커,CARDS & POKER
+UI_GUIDE_PAGE_CARDS_TITLE,카드 획득과 Showdown,CARDS & SHOWDOWN
 UI_GUIDE_PAGE_CARDS_BODY,"1+2 정답: 두 카드 모두 획득
 해골 3 정답: 해당 해골 3 카드 한 장 획득
-획득 카드는 현재 전투의 포커까지 유지됩니다.
-할리갈리 종료 후 포커에 사용할 개인 카드 3장을 확정합니다.
+획득 카드는 현재 전투의 Showdown까지 유지됩니다.
+Three Call 종료 후 Showdown에 사용할 개인 카드 3장을 확정합니다.
 부족한 카드는 미획득 카드에서 무작위로 보충됩니다.
-포커는 개인 3장과 커뮤니티 2장, 정확히 5장을 모두 사용합니다.","Correct 1+2: gain both cards
+Showdown은 개인 3장과 커뮤니티 2장, 정확히 5장을 모두 사용합니다.","Correct 1+2: gain both cards
 Correct skull 3: gain that skull-3 card only
-Gained cards stay until poker in the current battle.
-After Halli, finalize 3 private cards for poker.
+Gained cards stay until Showdown in the current battle.
+After Three Call, finalize 3 private cards for Showdown.
 Missing cards are filled randomly from unclaimed cards.
-Poker uses exactly all 3 private + 2 community cards."
+Showdown uses exactly all 3 private + 2 community cards."
 UI_GUIDE_PAGE_RESULT_TITLE,예측과 승리,PREDICTION & VICTORY
 UI_GUIDE_PAGE_RESULT_BODY,"1: 플레이어 승리 예측 / 2: AI 승리 예측
 제한 시간은 2분이며 예측은 실제 승패를 바꾸지 않습니다.
 같은 족보는 랭크 비교 후 문양 순서로 결정합니다.
 ♠ 스페이드 > ♦ 다이아몬드 > ♥ 하트 > ♣ 클로버
-포커 패자는 HP 1 감소합니다.
+Showdown 패자는 HP 1 감소합니다.
 AI HP가 0이 되면 잔여 플레이어 HP 1당 총알 1개를 받습니다.","1: predict Player / 2: predict AI
-You have 2 minutes; prediction does not change the poker result.
+You have 2 minutes; prediction does not change the Showdown result.
 Equal hands compare ranks, then suit order.
 ♠ Spades > ♦ Diamonds > ♥ Hearts > ♣ Clubs
-The poker loser loses 1 HP.
+The Showdown loser loses 1 HP.
 When AI HP reaches 0, gain 1 bullet per remaining Player HP."
 UI_GUIDE_PREV,이전,PREVIOUS
 UI_GUIDE_NEXT,다음,NEXT
@@ -250,3 +250,7 @@ UI_PREDICTION_ACTUAL_COUNT,실제 성공 {count},ACTUAL {count}
 UI_PREDICTION_INSURED_COUNT,보험 성공 {count},INSURED {count}
 UI_PREDICTION_CHARGES,보험 충전 {count},INSURANCE {count}
 UI_BARREL_DAMAGE_PREVENTED,술통 방어 · HP 유지,BARREL BLOCK · HP PRESERVED
+UI_OPPONENT_STAGE_1_NAME,종지기,BELLMAN
+UI_OPPONENT_STAGE_2_NAME,붉은 장미,RED ROSE
+UI_OPPONENT_STAGE_3_NAME,붉은 광맥의 탐광꾼,RED VEIN PROSPECTOR
+UI_OPPONENT_STAGE_4_NAME,검은장의 장의사,BLACKFIELD UNDERTAKER

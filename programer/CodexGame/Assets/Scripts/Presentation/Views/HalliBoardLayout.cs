@@ -39,10 +39,19 @@ namespace CodexGame.Presentation.Views
     public static Rect SharedPileRail(PileSide pile)
     {
       var newest = SharedPileCard(pile, 0, 1);
-      return new Rect(newest.x + HalliPileOverlapLayout.PreviousCardOffsetX - 8f,
-        newest.y - 8f,
-        140f,
-        136f);
+      var left = newest.x
+        - HalliPileOverlapLayout.CardStepX * (HalliPileOverlapLayout.MaximumPileCards - 1)
+        - 8f;
+      return new Rect(
+        left,
+        newest.y - HalliPileOverlapLayout.CardStepY
+          * (HalliPileOverlapLayout.MaximumPileCards - 1) - 8f,
+        HalliPileOverlapLayout.CardWidth
+          + HalliPileOverlapLayout.CardStepX * (HalliPileOverlapLayout.MaximumPileCards - 1)
+          + 16f,
+        HalliPileOverlapLayout.CardHeight
+          + HalliPileOverlapLayout.CardStepY * (HalliPileOverlapLayout.MaximumPileCards - 1)
+          + 16f);
     }
 
     public static Rect SharedPileCard(PileSide pile, int cardIndex, int cardCount)

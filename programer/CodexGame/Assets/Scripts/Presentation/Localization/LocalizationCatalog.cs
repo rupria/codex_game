@@ -11,7 +11,7 @@ namespace CodexGame.Presentation.Localization
   {
     public const string DefaultLanguage = "ko";
     public const string FallbackLanguage = "en";
-    public const int RequiredKeyCount = 199;
+    public const int RequiredKeyCount = 203;
 
     private static readonly string[] RequiredJokerKeys =
     {
@@ -55,6 +55,10 @@ namespace CodexGame.Presentation.Localization
     {
       "UI_STAGE_ENTRY",
       "UI_STAGE_ENTRY_SKIP",
+      "UI_OPPONENT_STAGE_1_NAME",
+      "UI_OPPONENT_STAGE_2_NAME",
+      "UI_OPPONENT_STAGE_3_NAME",
+      "UI_OPPONENT_STAGE_4_NAME",
       "UI_THREE_CALL_ENTRY",
       "UI_SHOWDOWN_ENTRY",
       "UI_ITEM_LIMIT_ACTIVE",

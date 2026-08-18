@@ -42,6 +42,10 @@ namespace CodexGame.SmokeTests.Localization
             == "PUSHING THROUGH THE SALOON DOORS",
         "Bar and tavern-transition strings must load from the runtime catalog.");
       tests.Check(
+        catalog.Get("UI_OPPONENT_STAGE_1_NAME", "ko") == "종지기"
+          && catalog.Get("UI_OPPONENT_STAGE_4_NAME", "en") == "BLACKFIELD UNDERTAKER",
+        "Stage-entry opponent names must come from the ko/en runtime catalog.");
+      tests.Check(
         catalog.Get(
           "UI_BAR_REROLL_FREE",
           "ko",
@@ -71,6 +75,30 @@ namespace CodexGame.SmokeTests.Localization
             new LocalizationArgument("page", 2),
             new LocalizationArgument("total", 4)) == "2 / 4",
         "The four-page guide Keys must load from the same ko/en runtime catalog.");
+      var guideKeys = new[]
+      {
+        "UI_GUIDE_PAGE_FLOW_TITLE",
+        "UI_GUIDE_PAGE_FLOW_BODY",
+        "UI_GUIDE_PAGE_HALLI_TITLE",
+        "UI_GUIDE_PAGE_HALLI_BODY",
+        "UI_GUIDE_PAGE_CARDS_TITLE",
+        "UI_GUIDE_PAGE_CARDS_BODY",
+        "UI_GUIDE_PAGE_RESULT_TITLE",
+        "UI_GUIDE_PAGE_RESULT_BODY"
+      };
+      var guideUsesSettingNames = true;
+      foreach (var key in guideKeys)
+      {
+        var korean = catalog.Get(key, "ko");
+        var english = catalog.Get(key, "en");
+        guideUsesSettingNames &= !korean.Contains("할리갈리")
+          && !korean.Contains("포커")
+          && !english.Contains("Halli", StringComparison.OrdinalIgnoreCase)
+          && !english.Contains("Poker", StringComparison.OrdinalIgnoreCase);
+      }
+      tests.Check(
+        guideUsesSettingNames,
+        "All four guide pages must use Three Call and Showdown instead of internal game names.");
       tests.Check(
         catalog.Get("UI_HALLI_LEFT_BELL", "ko") == "←  왼쪽"
           && catalog.Get("UI_HALLI_FLIP_ONE", "en") == "↑  FLIP 1"
