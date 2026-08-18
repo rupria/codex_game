@@ -13,6 +13,7 @@ namespace CodexGame.Core.Items
       int price,
       GameItemTargetMode targetMode,
       GameItemEffectType effectType,
+      GameItemUseTiming useTiming,
       string presentationKey,
       int configuredMagnitude = 0,
       int shopWeight = 1)
@@ -39,6 +40,10 @@ namespace CodexGame.Core.Items
       {
         throw new ArgumentOutOfRangeException(nameof(effectType));
       }
+      if (!Enum.IsDefined(typeof(GameItemUseTiming), useTiming))
+      {
+        throw new ArgumentOutOfRangeException(nameof(useTiming));
+      }
       if (string.IsNullOrWhiteSpace(presentationKey))
       {
         throw new ArgumentException("Item presentation key is required.", nameof(presentationKey));
@@ -54,6 +59,7 @@ namespace CodexGame.Core.Items
       Price = price;
       TargetMode = targetMode;
       EffectType = effectType;
+      UseTiming = useTiming;
       PresentationKey = presentationKey;
       ConfiguredMagnitude = configuredMagnitude;
       ShopWeight = shopWeight;
@@ -67,6 +73,7 @@ namespace CodexGame.Core.Items
     public int Price { get; }
     public GameItemTargetMode TargetMode { get; }
     public GameItemEffectType EffectType { get; }
+    public GameItemUseTiming UseTiming { get; }
     public string PresentationKey { get; }
     public int ConfiguredMagnitude { get; }
     public int ShopWeight { get; }
@@ -90,5 +97,37 @@ namespace CodexGame.Core.Items
     PreventShowdownDamage = 5,
     InsurePrediction = 6,
     ExchangeBothSides = 7
+  }
+
+  public enum GameItemUseTiming
+  {
+    None = 0,
+    BeforePublicCards = 1,
+    DuringPrivateSelection = 2,
+    AfterPublicCardsAndPrivateSelectionBeforePrediction = 3,
+    DuringPrediction = 4
+  }
+
+  public static class GameItemUseTimingPolicy
+  {
+    public static bool IsUsable(
+      GameItemDefinition definition,
+      GameItemUseTiming currentTiming)
+    {
+      if (definition == null) throw new ArgumentNullException(nameof(definition));
+      return definition.UseTiming != GameItemUseTiming.None
+        && definition.UseTiming == currentTiming;
+    }
+
+    public static string LocalizationKey(GameItemUseTiming timing)
+    {
+      switch (timing)
+      {
+        case GameItemUseTiming.AfterPublicCardsAndPrivateSelectionBeforePrediction:
+          return "UI_ITEM_USE_TIMING_BEFORE_PREDICTION";
+        default:
+          return "UI_ITEM_ACTION_FAILED";
+      }
+    }
   }
 }

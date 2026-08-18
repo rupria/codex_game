@@ -1,3 +1,4 @@
+#nullable enable
 using CodexGame.Application.Distribution;
 using CodexGame.Application.Poker;
 using CodexGame.Application.Shop;
@@ -25,9 +26,11 @@ namespace CodexGame.Application.Playable
       int lastStageBonusReward,
       int predictionSuccessCount,
       PredictionRewardSnapshot predictionReward,
+      PredictionInsuranceActivationSnapshot predictionInsuranceActivation,
       IReadOnlyList<GameItemId> inventory,
       bool cheatUsed,
       IReadOnlyList<CheatCommandEntry> cheatHistory,
+      ItemQaPresetResult? lastItemQaPresetResult,
       long inactivityRemainingMicroseconds,
       bool inactivityReturnPending,
       StageItemRestrictionSnapshot stageItemRestriction,
@@ -57,9 +60,12 @@ namespace CodexGame.Application.Playable
       PredictionSuccessCount = predictionSuccessCount;
       PredictionReward = predictionReward
         ?? throw new ArgumentNullException(nameof(predictionReward));
+      PredictionInsuranceActivation = predictionInsuranceActivation
+        ?? throw new ArgumentNullException(nameof(predictionInsuranceActivation));
       Inventory = Copy(inventory);
       CheatUsed = cheatUsed;
       CheatHistory = Copy(cheatHistory);
+      LastItemQaPresetResult = lastItemQaPresetResult;
       InactivityRemainingMicroseconds = inactivityRemainingMicroseconds;
       InactivityReturnPending = inactivityReturnPending;
       StageItemRestriction = stageItemRestriction
@@ -86,9 +92,11 @@ namespace CodexGame.Application.Playable
     public int LastStageBonusReward { get; }
     public int PredictionSuccessCount { get; }
     public PredictionRewardSnapshot PredictionReward { get; }
+    public PredictionInsuranceActivationSnapshot PredictionInsuranceActivation { get; }
     public IReadOnlyList<GameItemId> Inventory { get; }
     public bool CheatUsed { get; }
     public IReadOnlyList<CheatCommandEntry> CheatHistory { get; }
+    public ItemQaPresetResult? LastItemQaPresetResult { get; }
     public long InactivityRemainingMicroseconds { get; }
     public bool InactivityReturnPending { get; }
     public StageItemRestrictionSnapshot StageItemRestriction { get; }

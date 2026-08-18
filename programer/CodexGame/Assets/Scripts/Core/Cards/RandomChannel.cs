@@ -15,6 +15,7 @@ namespace CodexGame.Core.Cards
     AiPokerBalance = 12,
     ItemUse = 13,
     StageItemRestriction = 14,
-    MercenaryExchange = 15
+    MercenaryExchange = 15,
+    BottomDealPreview = 16
   }
 }

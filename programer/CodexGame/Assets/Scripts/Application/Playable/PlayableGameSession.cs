@@ -1,3 +1,4 @@
+#nullable enable
 using System;
 using System.Collections.Generic;
 using CodexGame.Application.Development;
@@ -38,7 +39,10 @@ namespace CodexGame.Application.Playable
     private readonly ItemUsePresentationSession _itemUsePresentation =
       new ItemUsePresentationSession();
     private readonly PredictionStreak _predictionStreak = new PredictionStreak();
+    private readonly PredictionInsuranceActivationSession _predictionInsuranceActivation =
+      new PredictionInsuranceActivationSession();
     private readonly DevelopmentCheatHistory _cheatHistory = new DevelopmentCheatHistory();
+    private ItemQaPresetResult? _lastItemQaPresetResult;
     private BattleHealth _health = BattleHealth.Initial;
     private Card? _firstPublicCard;
     private GameTimestamp _lastUserInputAt;
@@ -76,8 +80,10 @@ namespace CodexGame.Application.Playable
       _stageItemRestriction.ResetRun();
       _itemUsePresentation.Reset();
       _predictionStreak.Reset();
+      _predictionInsuranceActivation.Reset();
       _pokerPredictionRecorded = false;
       _cheatHistory.Reset();
+      _lastItemQaPresetResult = null;
       _lastStageReward = 0;
       _lastStageRewardDetails = StageBulletReward.None;
       _lastExpiredTemporaryBullets = 0;
@@ -193,7 +199,7 @@ namespace CodexGame.Application.Playable
         || !_barShop.TryReroll(_bullets, _inventory, _health.Player)) return false;
       _shopExitGuard.Reset();
       RecordInput(now);
-      RecordPredictionIfReady();
+      RecordPredictionIfReady(now);
       return true;
     }
 
@@ -298,7 +304,7 @@ namespace CodexGame.Application.Playable
         return PokerItemFailure.WrongPhase;
       }
       if (_itemUsePresentation.IsActive) return PokerItemFailure.PresentationLocked;
-      var result = _items.BeginBottomDeal(target);
+      var result = _items.BeginBottomDeal(target, now);
       if (result == PokerItemFailure.None) RecordInput(now);
       return result;
     }
@@ -310,7 +316,7 @@ namespace CodexGame.Application.Playable
         return PokerItemFailure.WrongPhase;
       }
       if (_itemUsePresentation.IsActive) return PokerItemFailure.PresentationLocked;
-      var result = _items.ChooseBottomDeal(candidate);
+      var result = _items.ChooseBottomDeal(candidate, now);
       if (result == PokerItemFailure.None)
       {
         _itemUsePresentation.Begin(GameItemId.BottomDeal, now);
@@ -318,6 +324,19 @@ namespace CodexGame.Application.Playable
       }
       CompleteItemWindowIfReady(now);
       return result;
+    }
+
+    public bool CancelBottomDeal(GameTimestamp now)
+    {
+      if (Phase != PlayableGamePhase.PokerItems
+        || _items == null
+        || _itemUsePresentation.IsActive
+        || !_items.CancelBottomDeal(now))
+      {
+        return false;
+      }
+      RecordInput(now);
+      return true;
     }
 
     public PokerItemFailure UseHypeMan(GameTimestamp now)
@@ -464,6 +483,7 @@ namespace CodexGame.Application.Playable
 
     public void Tick(GameTimestamp now)
     {
+      _predictionInsuranceActivation.Tick(now);
       if (IsActiveBattlePhase(Phase)
         && now.Microseconds - _lastUserInputAt.Microseconds
           >= GameRules.GlobalInactivityTimeoutMicroseconds)
@@ -525,7 +545,7 @@ namespace CodexGame.Application.Playable
       else if (Phase == PlayableGamePhase.PokerPrediction && _poker != null)
       {
         var completed = _poker.Tick(now);
-        RecordPredictionIfReady();
+        RecordPredictionIfReady(now);
         if (completed) CompletePokerRound();
       }
       else if (Phase == PlayableGamePhase.BarShop)
@@ -559,9 +579,11 @@ namespace CodexGame.Application.Playable
         _lastStageRewardDetails.BonusBullets,
         _predictionStreak.SuccessCount,
         _predictionStreak.GetSnapshot(),
+        _predictionInsuranceActivation.GetSnapshot(now),
         _inventory.Snapshot(),
         _cheatHistory.CheatUsed,
         _cheatHistory.Snapshot(),
+        _lastItemQaPresetResult,
         inactivityRemaining,
         _inactivityReturnPending,
         _stageItemRestriction.GetSnapshot(),
@@ -604,6 +626,7 @@ namespace CodexGame.Application.Playable
       _selection = null;
       _items = null;
       _itemUsePresentation.Reset();
+      _predictionInsuranceActivation.Reset();
       _poker = null;
       _pokerPredictionRecorded = false;
       _firstPublicCard = null;
@@ -730,6 +753,7 @@ namespace CodexGame.Application.Playable
       _combatRoundNumber = 1;
       _health = NextStageHealthResolver.RestoreAfterVictory(_health);
       _predictionStreak.ResetStage();
+      _predictionInsuranceActivation.Reset();
       _lastStageReward = 0;
       _lastStageRewardDetails = StageBulletReward.None;
       _lastExpiredTemporaryBullets = 0;
@@ -748,6 +772,7 @@ namespace CodexGame.Application.Playable
       _selection = null;
       _items = null;
       _itemUsePresentation.Reset();
+      _predictionInsuranceActivation.Reset();
       _poker = null;
       _firstPublicCard = null;
       _transition.Clear();
@@ -820,8 +845,10 @@ namespace CodexGame.Application.Playable
       _stageItemRestriction.ResetRun();
       _itemUsePresentation.Reset();
       _predictionStreak.Reset();
+      _predictionInsuranceActivation.Reset();
       _pokerPredictionRecorded = false;
       _cheatHistory.Reset();
+      _lastItemQaPresetResult = null;
       _shopExitGuard.Reset();
       _lastStageReward = 0;
       _lastStageRewardDetails = StageBulletReward.None;
@@ -836,17 +863,37 @@ namespace CodexGame.Application.Playable
       _lastStageReward = _lastStageRewardDetails.TotalBullets;
     }
 
-    private void RecordPredictionIfReady()
+    private void RecordPredictionIfReady(GameTimestamp now)
     {
       if (_pokerPredictionRecorded || _poker?.Result == null) return;
       if (_poker.Result.PredictionEligibleForInsurance)
       {
-        _predictionStreak.Record(_poker.Result.Prediction);
+        var record = _predictionStreak.RecordWithAudit(_poker.Result.Prediction);
+        if (record?.WasInsuredSuccess == true)
+        {
+          _predictionInsuranceActivation.Begin(record, now);
+        }
       }
       _pokerPredictionRecorded = true;
     }
 
 #if UNITY_EDITOR || ENABLE_GAMEPLAY_CHEATS
+    public ItemQaPresetResult CheatRunItemQaPreset(ItemQaPreset preset, GameTimestamp now)
+    {
+      var seed = 441_082L + _stageNumber * 10_000L + _combatRoundNumber;
+      _lastItemQaPresetResult = ItemQaPresetRunner.Run(
+        preset,
+        seed,
+        _stageNumber,
+        Phase.ToString());
+      _cheatHistory.Record(
+        now.Microseconds,
+        "item-qa-preset",
+        preset + "/seed=" + seed,
+        _lastItemQaPresetResult.Summary);
+      return _lastItemQaPresetResult;
+    }
+
     public bool CheatCompleteStage(GameTimestamp now)
     {
       if (!IsActiveBattlePhase(Phase) || _health.IsBattleOver)

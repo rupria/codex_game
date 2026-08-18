@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using CodexGame.Application.Poker;
+using CodexGame.Application.Items;
 using CodexGame.Core.Cards;
 using CodexGame.Core.Poker;
 using CodexGame.Core.Rewards;
@@ -27,6 +28,7 @@ namespace CodexGame.Presentation.Views
       PokerUiArtSet pokerArt,
       PokerItemUiArtSet pokerItemArt,
       PredictionRewardSnapshot predictionReward,
+      PredictionInsuranceActivationSnapshot insuranceActivation,
       LocalizationRuntime localization,
       bool playerDamage,
       bool aiDamage,
@@ -89,6 +91,12 @@ namespace CodexGame.Presentation.Views
       {
         advance();
       }
+
+      DrawPredictionInsuranceActivation(
+        insuranceActivation,
+        pokerItemArt,
+        styles,
+        localization);
     }
 
     private void UpdateRevealState(PokerRoundSnapshot snapshot)
@@ -422,7 +430,8 @@ namespace CodexGame.Presentation.Views
       var winner = localization.Get(
         comparison.Winner == PokerWinner.Player ? "UI_ACTOR_PLAYER" : "UI_ACTOR_AI");
       var predictionSucceeded = snapshot.Result.Prediction.IsCorrect;
-      var insuranceApplied = predictionReward?.LastResultWasInsured == true;
+      var insuranceApplied = !snapshot.Result.WasHandConfirmationTimeout
+        && predictionReward?.LastResultWasInsured == true;
       var prediction = snapshot.Result.WasHandConfirmationTimeout
         ? localization.Get("UI_ITEM_CONFIRM_TIMEOUT")
         : insuranceApplied
@@ -466,6 +475,43 @@ namespace CodexGame.Presentation.Views
         GUI.DrawTexture(new Rect(102f, 236f, 28f, 28f), predictionBadge, ScaleMode.ScaleToFit, true);
       }
       DrawBarrelDefenseResult(snapshot, pokerItemArt, localization, styles);
+    }
+
+    private static void DrawPredictionInsuranceActivation(
+      PredictionInsuranceActivationSnapshot snapshot,
+      PokerItemUiArtSet art,
+      PlayableDevStyles styles,
+      LocalizationRuntime localization)
+    {
+      if (snapshot == null || !snapshot.IsActive) return;
+      GUI.Box(new Rect(348f, 184f, 264f, 172f), GUIContent.none);
+      var sheet = art?.FindUseAnimationSheet(Core.Items.GameItemId.PredictionInsurance);
+      if (sheet != null)
+      {
+        const int frameCount = 6;
+        var frame = Mathf.Min(frameCount - 1, Mathf.FloorToInt(snapshot.Progress * frameCount));
+        GUI.DrawTextureWithTexCoords(
+          new Rect(432f, 202f, 96f, 96f),
+          sheet,
+          new Rect(frame / (float)frameCount, 0f, 1f / frameCount, 1f),
+          true);
+      }
+      else
+      {
+        var icon = art?.FindPopupIcon(Core.Items.GameItemId.PredictionInsurance);
+        if (icon != null)
+        {
+          GUI.DrawTexture(new Rect(432f, 202f, 96f, 96f), icon, ScaleMode.ScaleToFit, true);
+        }
+      }
+      GUI.Label(
+        new Rect(364f, 304f, 232f, 28f),
+        localization.Get("UI_ITEM_INSURANCE_APPLIED"),
+        styles.Status);
+      GUI.Label(
+        new Rect(364f, 332f, 232f, 20f),
+        $"{snapshot.ChargesBefore} → {snapshot.ChargesAfter}",
+        styles.Small);
     }
 
     private void DrawBarrelDefenseResult(

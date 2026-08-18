@@ -9,12 +9,15 @@ namespace CodexGame.Presentation.Views
 {
   internal sealed class DevelopmentCheatPanel
   {
+    private ItemQaPreset _selectedItemPreset;
+
     public void Draw(
       PlayableGameSnapshot snapshot,
       PlayableDevStyles styles,
       Action completeStage,
       Action<GameItemId> grantItem,
       Action<PokerCheatPreset> setPoker,
+      Action<ItemQaPreset> runItemPreset,
       Action close)
     {
       var previous = GUI.color;
@@ -29,6 +32,13 @@ namespace CodexGame.Presentation.Views
         $"STAGE {snapshot.StageNumber} / ROUND {snapshot.CombatRoundNumber} / {snapshot.Phase} / HP {snapshot.Health.Player}:{snapshot.Health.Ai}",
         styles.Small);
       if (GUI.Button(new Rect(48f, 108f, 190f, 38f), "COMPLETE STAGE")) completeStage();
+      if (GUI.Button(new Rect(258f, 108f, 42f, 38f), "<")) MoveItemPreset(-1);
+      GUI.Label(new Rect(306f, 108f, 330f, 38f), _selectedItemPreset.ToString(), styles.Small);
+      if (GUI.Button(new Rect(640f, 108f, 42f, 38f), ">")) MoveItemPreset(1);
+      if (GUI.Button(new Rect(692f, 108f, 204f, 38f), "RUN ITEM QA PRESET"))
+      {
+        runItemPreset(_selectedItemPreset);
+      }
       if (GUI.Button(new Rect(746f, 34f, 150f, 38f), "CLOSE")) close();
 
       GUI.Label(new Rect(48f, 158f, 240f, 24f), "GRANT UNIQUE ITEM", styles.Small);
@@ -59,16 +69,35 @@ namespace CodexGame.Presentation.Views
         }
       }
 
-      GUI.Label(new Rect(48f, 438f, 220f, 24f), "RECENT COMMANDS (LAST 20)", styles.Small);
-      var start = Math.Max(0, snapshot.CheatHistory.Count - 4);
+      if (snapshot.LastItemQaPresetResult != null)
+      {
+        var qa = snapshot.LastItemQaPresetResult;
+        GUI.Label(
+          new Rect(48f, 438f, 840f, 20f),
+          $"ITEM QA {(qa.Passed ? "PASS" : "FAIL")} {qa.Preset} seed={qa.Seed} expected={qa.Expected} actual={qa.Actual}",
+          styles.Small);
+        GUI.Label(
+          new Rect(48f, 458f, 840f, 20f),
+          $"hand={qa.PlayerHand} / public={qa.PublicCards} / items={qa.Items}",
+          styles.Small);
+      }
+      GUI.Label(new Rect(48f, 480f, 220f, 18f), "RECENT COMMANDS", styles.Small);
+      var start = Math.Max(0, snapshot.CheatHistory.Count - 1);
       for (var index = start; index < snapshot.CheatHistory.Count; index++)
       {
         var entry = snapshot.CheatHistory[index];
         GUI.Label(
-          new Rect(48f, 460f + (index - start) * 14f, 840f, 16f),
+          new Rect(48f, 498f + (index - start) * 14f, 840f, 16f),
           $"{entry.Command} {entry.Input} -> {entry.Result}",
           styles.Small);
       }
+    }
+
+    private void MoveItemPreset(int delta)
+    {
+      var values = (ItemQaPreset[])Enum.GetValues(typeof(ItemQaPreset));
+      var next = ((int)_selectedItemPreset + delta + values.Length) % values.Length;
+      _selectedItemPreset = values[next];
     }
   }
 }

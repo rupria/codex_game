@@ -38,6 +38,7 @@ namespace CodexGame.Bootstrap
       _view.ReloadItemRequested += UseReload;
       _view.BottomDealRequested += BeginBottomDeal;
       _view.BottomDealChoiceRequested += ChooseBottomDeal;
+      _view.BottomDealCancelRequested += CancelBottomDeal;
       _view.HypeManItemRequested += UseHypeMan;
       _view.HealthRecoveryItemRequested += UseHealthRecovery;
       _view.WildInkItemRequested += UseWildInk;
@@ -53,6 +54,7 @@ namespace CodexGame.Bootstrap
       _view.CheatStagePassRequested += CheatStagePass;
       _view.CheatGrantItemRequested += CheatGrantItem;
       _view.CheatPokerPresetRequested += CheatPokerPreset;
+      _view.CheatItemQaPresetRequested += CheatItemQaPreset;
 #endif
     }
 
@@ -88,6 +90,7 @@ namespace CodexGame.Bootstrap
       _view.ReloadItemRequested -= UseReload;
       _view.BottomDealRequested -= BeginBottomDeal;
       _view.BottomDealChoiceRequested -= ChooseBottomDeal;
+      _view.BottomDealCancelRequested -= CancelBottomDeal;
       _view.HypeManItemRequested -= UseHypeMan;
       _view.HealthRecoveryItemRequested -= UseHealthRecovery;
       _view.WildInkItemRequested -= UseWildInk;
@@ -103,6 +106,7 @@ namespace CodexGame.Bootstrap
       _view.CheatStagePassRequested -= CheatStagePass;
       _view.CheatGrantItemRequested -= CheatGrantItem;
       _view.CheatPokerPresetRequested -= CheatPokerPreset;
+      _view.CheatItemQaPresetRequested -= CheatItemQaPreset;
 #endif
     }
 
@@ -190,6 +194,12 @@ namespace CodexGame.Bootstrap
       Present();
     }
 
+    private void CancelBottomDeal()
+    {
+      _session.CancelBottomDeal(Now());
+      Present();
+    }
+
     private void UseHypeMan()
     {
       _session.UseHypeMan(Now());
@@ -265,6 +275,12 @@ namespace CodexGame.Bootstrap
         setup.AiCards,
         setup.PublicCards,
         Now());
+      Present();
+    }
+
+    private void CheatItemQaPreset(ItemQaPreset preset)
+    {
+      _session.CheatRunItemQaPreset(preset, Now());
       Present();
     }
 #endif

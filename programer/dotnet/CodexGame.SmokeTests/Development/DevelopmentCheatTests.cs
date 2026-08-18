@@ -53,6 +53,24 @@ namespace CodexGame.SmokeTests.Development
           && !ContainsJoker(PokerCheatPresetCatalog.Create(PokerCheatPreset.AiJokerIneligible).AiCards)
           && !ContainsJoker(PokerCheatPresetCatalog.Create(PokerCheatPreset.AiJokerNotAwarded).AiCards),
         "QA presets must cover player/AI Joker ineligible, not-awarded, and awarded downstream states.");
+
+      var itemPresetsPassed = true;
+      var itemPresetsDeterministic = true;
+      foreach (ItemQaPreset preset in Enum.GetValues(typeof(ItemQaPreset)))
+      {
+        var first = ItemQaPresetRunner.Run(preset, 441_082, 2, "PokerItems");
+        var second = ItemQaPresetRunner.Run(preset, 441_082, 2, "PokerItems");
+        itemPresetsPassed &= first.Passed;
+        itemPresetsDeterministic &= first.Passed == second.Passed
+          && first.PlayerHand == second.PlayerHand
+          && first.AiHand == second.AiHand
+          && first.PublicCards == second.PublicCards
+          && first.Actual == second.Actual;
+        tests.Check(first.Passed, preset + " item QA preset failed: " + first.Summary);
+      }
+      tests.Check(
+        itemPresetsPassed && itemPresetsDeterministic,
+        "Every 0.1.2.5 item QA preset must pass once and repeat deterministically for the same seed.");
     }
 
     private static bool Unique(params IReadOnlyList<Card>[] groups)

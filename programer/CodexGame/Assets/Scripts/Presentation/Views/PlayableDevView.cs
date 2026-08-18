@@ -97,6 +97,7 @@ namespace CodexGame.Presentation.Views
     public event Action<CardId> ReloadItemRequested;
     public event Action<CardId> BottomDealRequested;
     public event Action<CardId> BottomDealChoiceRequested;
+    public event Action BottomDealCancelRequested;
     public event Action HypeManItemRequested;
     public event Action HealthRecoveryItemRequested;
     public event Action<CardId, CardSuit> WildInkItemRequested;
@@ -112,6 +113,7 @@ namespace CodexGame.Presentation.Views
     public event Action CheatStagePassRequested;
     public event Action<GameItemId> CheatGrantItemRequested;
     public event Action<PokerCheatPreset> CheatPokerPresetRequested;
+    public event Action<ItemQaPreset> CheatItemQaPresetRequested;
 #endif
 
     internal PlayableGamePhase CurrentPhase => _snapshot == null
@@ -328,6 +330,7 @@ namespace CodexGame.Presentation.Views
           () => CheatStagePassRequested?.Invoke(),
           itemId => CheatGrantItemRequested?.Invoke(itemId),
           preset => CheatPokerPresetRequested?.Invoke(preset),
+          preset => CheatItemQaPresetRequested?.Invoke(preset),
           () => _cheatOpen = false);
         return;
       }
@@ -420,6 +423,7 @@ namespace CodexGame.Presentation.Views
           _pokerUiArtSet,
           _pokerItemUiArtSet,
           _snapshot.PredictionReward,
+          _snapshot.PredictionInsuranceActivation,
           _localization,
           Time.unscaledTime < _playerDamageUntil,
           Time.unscaledTime < _aiDamageUntil,
@@ -442,6 +446,7 @@ namespace CodexGame.Presentation.Views
           cardId => ReloadItemRequested?.Invoke(cardId),
           cardId => BottomDealRequested?.Invoke(cardId),
           cardId => BottomDealChoiceRequested?.Invoke(cardId),
+          () => BottomDealCancelRequested?.Invoke(),
           () => HypeManItemRequested?.Invoke(),
           () => HealthRecoveryItemRequested?.Invoke(),
           (cardId, suit) => WildInkItemRequested?.Invoke(cardId, suit),

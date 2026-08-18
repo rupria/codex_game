@@ -18,6 +18,7 @@ namespace CodexGame.Core.Items
           1,
           GameItemTargetMode.PlayerCard,
           GameItemEffectType.ExchangeOne,
+          GameItemUseTiming.AfterPublicCardsAndPrivateSelectionBeforePrediction,
           "item.reload"),
         new GameItemDefinition(
           GameItemId.BottomDeal,
@@ -28,6 +29,7 @@ namespace CodexGame.Core.Items
           2,
           GameItemTargetMode.PlayerCard,
           GameItemEffectType.ChooseReplacement,
+          GameItemUseTiming.AfterPublicCardsAndPrivateSelectionBeforePrediction,
           "item.bottom_deal"),
         new GameItemDefinition(
           GameItemId.HypeMan,
@@ -38,6 +40,7 @@ namespace CodexGame.Core.Items
           2,
           GameItemTargetMode.None,
           GameItemEffectType.RevealAiCard,
+          GameItemUseTiming.AfterPublicCardsAndPrivateSelectionBeforePrediction,
           "item.hype_man"),
         new GameItemDefinition(
           GameItemId.HealthRecovery,
@@ -48,6 +51,7 @@ namespace CodexGame.Core.Items
           1,
           GameItemTargetMode.None,
           GameItemEffectType.RecoverHealth,
+          GameItemUseTiming.AfterPublicCardsAndPrivateSelectionBeforePrediction,
           "item.health_recovery",
           1),
         new GameItemDefinition(
@@ -59,6 +63,7 @@ namespace CodexGame.Core.Items
           3,
           GameItemTargetMode.PlayerCardAndSuit,
           GameItemEffectType.OverrideSuit,
+          GameItemUseTiming.AfterPublicCardsAndPrivateSelectionBeforePrediction,
           "item.wild_ink"),
         new GameItemDefinition(
           GameItemId.Barrel,
@@ -69,6 +74,7 @@ namespace CodexGame.Core.Items
           4,
           GameItemTargetMode.None,
           GameItemEffectType.PreventShowdownDamage,
+          GameItemUseTiming.AfterPublicCardsAndPrivateSelectionBeforePrediction,
           "item.barrel"),
         new GameItemDefinition(
           GameItemId.PredictionInsurance,
@@ -79,6 +85,7 @@ namespace CodexGame.Core.Items
           3,
           GameItemTargetMode.None,
           GameItemEffectType.InsurePrediction,
+          GameItemUseTiming.AfterPublicCardsAndPrivateSelectionBeforePrediction,
           "item.prediction_insurance",
           2),
         new GameItemDefinition(
@@ -90,6 +97,7 @@ namespace CodexGame.Core.Items
           4,
           GameItemTargetMode.PlayerAndAiCardPair,
           GameItemEffectType.ExchangeBothSides,
+          GameItemUseTiming.AfterPublicCardsAndPrivateSelectionBeforePrediction,
           "item.mercenary")
       });
 

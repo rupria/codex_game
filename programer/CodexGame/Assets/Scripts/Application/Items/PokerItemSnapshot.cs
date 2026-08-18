@@ -10,6 +10,7 @@ namespace CodexGame.Application.Items
   {
     public PokerItemSnapshot(
       PokerItemPhase phase,
+      GameItemUseTiming currentUseTiming,
       IReadOnlyList<GameItemId> inventory,
       IReadOnlyList<Card> playerPrivateCards,
       IReadOnlyList<Card> visibleAiPrivateCards,
@@ -17,8 +18,6 @@ namespace CodexGame.Application.Items
       IReadOnlyList<Card> bottomDealCandidates,
       PokerItemFailure lastFailure,
       StageItemRestrictionSnapshot? stageRestriction = null,
-      Card? revealingSecondPublicCard = null,
-      float secondPublicRevealProgress = 1f,
       ItemUsePresentationSnapshot? usePresentation = null,
       CardId? wildInkCardId = null,
       bool barrelDefenseArmed = false,
@@ -27,9 +26,11 @@ namespace CodexGame.Application.Items
       long handConfirmationRemainingMicroseconds = 0,
       bool handConfirmationTimedOut = false,
       IReadOnlyList<CardId>? mercenaryEligibleTargets = null,
-      bool canRecoverHealth = true)
+      bool canRecoverHealth = true,
+      IReadOnlyList<BottomDealAuditEntry>? bottomDealAuditTrail = null)
     {
       Phase = phase;
+      CurrentUseTiming = currentUseTiming;
       Inventory = Copy(inventory);
       PlayerPrivateCards = Copy(playerPrivateCards);
       VisibleAiPrivateCards = Copy(visibleAiPrivateCards);
@@ -37,8 +38,6 @@ namespace CodexGame.Application.Items
       BottomDealCandidates = Copy(bottomDealCandidates);
       LastFailure = lastFailure;
       StageRestriction = stageRestriction;
-      RevealingSecondPublicCard = revealingSecondPublicCard;
-      SecondPublicRevealProgress = secondPublicRevealProgress;
       UsePresentation = usePresentation ?? ItemUsePresentationSnapshot.Inactive;
       WildInkCardId = wildInkCardId;
       BarrelDefenseArmed = barrelDefenseArmed;
@@ -51,9 +50,12 @@ namespace CodexGame.Application.Items
       MercenaryEligibleTargets = Copy(
         mercenaryEligibleTargets ?? Array.AsReadOnly(Array.Empty<CardId>()));
       CanRecoverHealth = canRecoverHealth;
+      BottomDealAuditTrail = Copy(
+        bottomDealAuditTrail ?? Array.AsReadOnly(Array.Empty<BottomDealAuditEntry>()));
     }
 
     public PokerItemPhase Phase { get; }
+    public GameItemUseTiming CurrentUseTiming { get; }
     public IReadOnlyList<GameItemId> Inventory { get; }
     public IReadOnlyList<Card> PlayerPrivateCards { get; }
     public IReadOnlyList<Card> VisibleAiPrivateCards { get; }
@@ -61,8 +63,6 @@ namespace CodexGame.Application.Items
     public IReadOnlyList<Card> BottomDealCandidates { get; }
     public PokerItemFailure LastFailure { get; }
     public StageItemRestrictionSnapshot? StageRestriction { get; }
-    public Card? RevealingSecondPublicCard { get; }
-    public float SecondPublicRevealProgress { get; }
     public ItemUsePresentationSnapshot UsePresentation { get; }
     public CardId? WildInkCardId { get; }
     public bool BarrelDefenseArmed { get; }
@@ -72,6 +72,7 @@ namespace CodexGame.Application.Items
     public bool HandConfirmationTimedOut { get; }
     public IReadOnlyList<CardId> MercenaryEligibleTargets { get; }
     public bool CanRecoverHealth { get; }
+    public IReadOnlyList<BottomDealAuditEntry> BottomDealAuditTrail { get; }
 
     private static IReadOnlyList<T> Copy<T>(IReadOnlyList<T> source)
     {

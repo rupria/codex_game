@@ -1,3 +1,4 @@
+#nullable enable
 using System;
 using CodexGame.Core.Shared;
 
