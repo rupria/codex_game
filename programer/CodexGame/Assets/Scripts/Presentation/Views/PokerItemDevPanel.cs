@@ -22,6 +22,7 @@ namespace CodexGame.Presentation.Views
     private CardId? _selectedTargetCard;
     private CardSuit? _selectedSuit;
     private bool _inventoryOpen;
+    private bool _targetSelectionCommitted;
 
     public void Draw(
       PokerItemSnapshot snapshot,
@@ -32,7 +33,6 @@ namespace CodexGame.Presentation.Views
       Action<CardId> reload,
       Action<CardId> beginBottomDeal,
       Action<CardId> chooseBottomDeal,
-      Action cancelBottomDeal,
       Action hypeMan,
       Action healthRecovery,
       Action<CardId, CardSuit> wildInk,
@@ -85,8 +85,7 @@ namespace CodexGame.Presentation.Views
           cards,
           styles,
           localization,
-          chooseBottomDeal,
-          cancelBottomDeal);
+          chooseBottomDeal);
         return;
       }
 
@@ -267,7 +266,7 @@ namespace CodexGame.Presentation.Views
       if (panel != null) GUI.DrawTexture(PopupRect, panel, ScaleMode.StretchToFill, true);
       else GUI.Box(PopupRect, GUIContent.none);
       GUI.Label(new Rect(388f, 118f, 390f, 32f), localization.Get("UI_ITEM_INVENTORY"), styles.Heading);
-      if (GUI.Button(CloseButton, "X"))
+      if (!_targetSelectionCommitted && GUI.Button(CloseButton, "X"))
       {
         CloseInventoryModal();
         return;
@@ -292,30 +291,45 @@ namespace CodexGame.Presentation.Views
 
       DrawItemDetail(snapshot, cards, art, styles, localization);
       var stageLimitExhausted = snapshot.StageRestriction?.IsExhausted == true;
+      var selectedRequiresTarget = _selectedItem.HasValue && RequiresTarget(_selectedItem.Value);
       var canUse = !stageLimitExhausted
         && !snapshot.UsePresentation.IsActive
-        && CanUseSelected(snapshot);
+        && (selectedRequiresTarget && !_targetSelectionCommitted
+          ? !IsItemDisabled(snapshot, _selectedItem!.Value)
+          : CanUseSelected(snapshot));
       if (DrawActionButton(
         UseButton,
-        localization.Get("UI_COMMON_SELECT"),
+        localization.Get(
+          selectedRequiresTarget && !_targetSelectionCommitted
+            ? "UI_COMMON_CONFIRM"
+            : "UI_COMMON_SELECT"),
         canUse,
         art,
         styles.Heading))
       {
-        UseSelectedItem(
-          reload,
-          beginBottomDeal,
-          hypeMan,
-          healthRecovery,
-          wildInk,
-          barrel,
-          predictionInsurance,
-          mercenary);
+        if (selectedRequiresTarget && !_targetSelectionCommitted)
+        {
+          _targetSelectionCommitted = true;
+          _selectedTargetCard = null;
+          _selectedSuit = null;
+        }
+        else
+        {
+          UseSelectedItem(
+            reload,
+            beginBottomDeal,
+            hypeMan,
+            healthRecovery,
+            wildInk,
+            barrel,
+            predictionInsurance,
+            mercenary);
+        }
       }
       if (DrawActionButton(
         ConfirmButton,
         localization.Get("UI_ITEM_CONFIRM_HAND"),
-        true,
+        !_targetSelectionCommitted,
         art,
         styles.Heading))
       {
@@ -364,12 +378,13 @@ namespace CodexGame.Presentation.Views
           ScaleMode.ScaleToFit,
           true);
       }
-      GUI.enabled = !itemDisabled;
+      GUI.enabled = !itemDisabled && !_targetSelectionCommitted;
       if (GUI.Button(rect, GUIContent.none, GUIStyle.none))
       {
         _selectedItem = itemId;
         _selectedTargetCard = null;
         _selectedSuit = null;
+        _targetSelectionCommitted = false;
       }
       GUI.enabled = true;
 
@@ -401,7 +416,7 @@ namespace CodexGame.Presentation.Views
         return;
       }
 
-      if (RequiresTarget(_selectedItem.Value))
+      if (RequiresTarget(_selectedItem.Value) && _targetSelectionCommitted)
       {
         var popupIcon = art?.FindPopupIcon(_selectedItem.Value);
         if (popupIcon != null)
@@ -666,10 +681,12 @@ namespace CodexGame.Presentation.Views
       _selectedItem = null;
       _selectedTargetCard = null;
       _selectedSuit = null;
+      _targetSelectionCommitted = false;
     }
 
     private void CloseInventoryModal()
     {
+      if (_targetSelectionCommitted) return;
       _inventoryOpen = false;
       ClearSelection();
     }
@@ -679,8 +696,7 @@ namespace CodexGame.Presentation.Views
       PlayableCardRenderer cards,
       PlayableDevStyles styles,
       LocalizationRuntime localization,
-      Action<CardId> chooseBottomDeal,
-      Action cancelBottomDeal)
+      Action<CardId> chooseBottomDeal)
     {
       var previous = GUI.color;
       GUI.color = new Color(0f, 0f, 0f, 0.74f);
@@ -697,17 +713,15 @@ namespace CodexGame.Presentation.Views
           chooseBottomDeal(snapshot.BottomDealCandidates[index].Id);
         }
       }
-      if (GUI.Button(
-        new Rect(394f, 352f, 172f, 36f),
-        localization.Get("UI_COMMON_CANCEL")))
-      {
-        cancelBottomDeal();
-      }
-      if (Event.current.type == EventType.KeyDown && Event.current.keyCode == KeyCode.Escape)
-      {
-        Event.current.Use();
-        cancelBottomDeal();
-      }
+      GUI.Label(
+        new Rect(320f, 352f, 320f, 36f),
+        localization.Get(
+          "UI_ITEM_CONFIRM_TIMER",
+          new LocalizationArgument(
+            "seconds",
+            Math.Ceiling(snapshot.HandConfirmationRemainingMicroseconds / 1_000_000d)
+              .ToString("0"))),
+        styles.Small);
     }
 
     private static void DrawItemUsePresentation(

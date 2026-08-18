@@ -13,7 +13,6 @@ namespace CodexGame.Presentation.Views
   {
     private static readonly Rect FullScreen = new Rect(0f, 0f, 960f, 540f);
     private static readonly Rect EconomyPanel = new Rect(40f, 28f, 278f, 58f);
-    private static readonly Rect HealthPanel = new Rect(720f, 28f, 200f, 58f);
     private static readonly Rect RerollButton = new Rect(38f, 462f, 190f, 48f);
     private static readonly Rect ContinueButton = new Rect(382f, 462f, 210f, 48f);
     private static readonly Rect AmmoPouch = new Rect(776f, 384f, 180f, 150f);
@@ -23,8 +22,6 @@ namespace CodexGame.Presentation.Views
       BarShopSnapshot shop,
       int baseBullets,
       int temporaryBullets,
-      int playerHealth,
-      int maximumHealth,
       IReadOnlyList<GameItemId> inventory,
       PlayableDevStyles styles,
       BarShopUiArtSet art,
@@ -59,15 +56,6 @@ namespace CodexGame.Presentation.Views
         displayedBaseBullets,
         economyArt,
         styles.Heading);
-      DrawStatusPanel(
-        HealthPanel,
-        new Rect(850f, 45f, 58f, 24f),
-        art?.HealthPanel,
-        localization.Get(
-          "UI_BAR_HP_STATUS",
-          new LocalizationArgument("current", playerHealth),
-          new LocalizationArgument("max", maximumHealth)),
-        styles.Small);
       for (var index = 0; index < SlotXPositions.Length; index++)
       {
         var slotRect = new Rect(SlotXPositions[index], 146f, 190f, 174f);
@@ -360,18 +348,6 @@ namespace CodexGame.Presentation.Views
       displayedTemporaryBullets = beforeCommit
         ? purchase.TemporaryBulletCountBefore
         : purchase.TemporaryBulletCountAfter;
-    }
-
-    private static void DrawStatusPanel(
-      Rect panelRect,
-      Rect labelRect,
-      Texture2D texture,
-      string label,
-      GUIStyle style)
-    {
-      if (texture != null) GUI.DrawTexture(panelRect, texture, ScaleMode.StretchToFill, true);
-      else GUI.Box(panelRect, GUIContent.none);
-      GUI.Label(labelRect, label, style);
     }
 
     private static void DrawFallbackBackground()

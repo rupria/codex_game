@@ -1,3 +1,4 @@
+#nullable enable
 using System;
 using System.Collections.Generic;
 using CodexGame.Core.Cards;
@@ -40,7 +41,8 @@ namespace CodexGame.Application.Playable
       PileSide? lastAcquiredPile,
       PileSide? lastBellPile,
       PrototypeBellFeedback bellFeedback,
-      HalliStageEndReason endReason)
+      HalliStageEndReason endReason,
+      HalliAiBellAuditEntry? lastAiBellAuditEntry)
     {
       Phase = phase;
       Status = status ?? throw new ArgumentNullException(nameof(status));
@@ -74,6 +76,7 @@ namespace CodexGame.Application.Playable
       LastBellPile = lastBellPile;
       BellFeedback = bellFeedback;
       EndReason = endReason;
+      LastAiBellAuditEntry = lastAiBellAuditEntry;
     }
 
     public PrototypeSessionPhase Phase { get; }
@@ -108,6 +111,7 @@ namespace CodexGame.Application.Playable
     public PileSide? LastBellPile { get; }
     public PrototypeBellFeedback BellFeedback { get; }
     public HalliStageEndReason EndReason { get; }
+    public HalliAiBellAuditEntry? LastAiBellAuditEntry { get; }
 
     private static IReadOnlyList<Card> Copy(IReadOnlyList<Card> source)
     {

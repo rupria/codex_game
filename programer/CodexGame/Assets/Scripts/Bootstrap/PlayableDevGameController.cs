@@ -18,6 +18,7 @@ namespace CodexGame.Bootstrap
   {
     private PlayableGameSession _session;
     private PlayableDevView _view;
+    private readonly HalliAiBellLocalLogWriter _localAiLog = new HalliAiBellLocalLogWriter();
     private long _seedSequence;
 
     private void Awake()
@@ -38,7 +39,6 @@ namespace CodexGame.Bootstrap
       _view.ReloadItemRequested += UseReload;
       _view.BottomDealRequested += BeginBottomDeal;
       _view.BottomDealChoiceRequested += ChooseBottomDeal;
-      _view.BottomDealCancelRequested += CancelBottomDeal;
       _view.HypeManItemRequested += UseHypeMan;
       _view.HealthRecoveryItemRequested += UseHealthRecovery;
       _view.WildInkItemRequested += UseWildInk;
@@ -90,7 +90,6 @@ namespace CodexGame.Bootstrap
       _view.ReloadItemRequested -= UseReload;
       _view.BottomDealRequested -= BeginBottomDeal;
       _view.BottomDealChoiceRequested -= ChooseBottomDeal;
-      _view.BottomDealCancelRequested -= CancelBottomDeal;
       _view.HypeManItemRequested -= UseHypeMan;
       _view.HealthRecoveryItemRequested -= UseHealthRecovery;
       _view.WildInkItemRequested -= UseWildInk;
@@ -194,12 +193,6 @@ namespace CodexGame.Bootstrap
       Present();
     }
 
-    private void CancelBottomDeal()
-    {
-      _session.CancelBottomDeal(Now());
-      Present();
-    }
-
     private void UseHypeMan()
     {
       _session.UseHypeMan(Now());
@@ -288,7 +281,9 @@ namespace CodexGame.Bootstrap
     private void Present()
     {
       var now = Now();
-      _view.Present(_session.GetSnapshot(now));
+      var snapshot = _session.GetSnapshot(now);
+      _localAiLog.TryWrite(snapshot);
+      _view.Present(snapshot);
     }
 
     private long NextSeed()

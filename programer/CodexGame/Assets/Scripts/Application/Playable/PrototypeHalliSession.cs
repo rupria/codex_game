@@ -1,3 +1,4 @@
+#nullable enable
 using System;
 using System.Collections.Generic;
 using CodexGame.Application.Distribution;
@@ -31,11 +32,16 @@ namespace CodexGame.Application.Playable
     private HalliRevealStep? _currentRevealStep;
     private Card? _currentRevealCard;
     private AiBellOutcome _aiOutcome;
+    private HalliAiBellDecision? _pendingAiDecision;
+    private GameTimestamp _pendingAiFieldOpenedAt;
+    private HalliAiBellAuditEntry? _lastAiBellAuditEntry;
     private bool _bellTimerActive;
     private bool _currentRevealCommitted;
     private LocalizedStatus _status = LocalizedStatus.Of("STATUS_HALLI_PRESS_START");
     private long _combatRoundSeed;
     private int _combatRoundNumber = 1;
+    private int _stageNumber = 1;
+    private int _aiAuditSequence;
     private int _playerWins;
     private int _aiWins;
     private int _flipCount;
@@ -53,12 +59,15 @@ namespace CodexGame.Application.Playable
       GameTimestamp now,
       long combatRoundSeed,
       int combatRoundNumber = 1,
-      bool waitForOpeningPresentation = false)
+      bool waitForOpeningPresentation = false,
+      int stageNumber = 1)
     {
       HalliStageRules.GetWinTarget(combatRoundNumber);
+      if (stageNumber <= 0) throw new ArgumentOutOfRangeException(nameof(stageNumber));
       var cards = CardSetFactory.CreateStandard52(new PrototypeSkullPolicy());
       _combatRoundSeed = combatRoundSeed;
       _combatRoundNumber = combatRoundNumber;
+      _stageNumber = stageNumber;
       _deck = Deck.CreateShuffled(
         cards,
         DeterministicRandomFactory.Create(combatRoundSeed, RandomChannel.CardOrder));
@@ -74,7 +83,9 @@ namespace CodexGame.Application.Playable
       _nextRevealStepIndex = 0;
       _bellTimerActive = false;
       _endReason = HalliStageEndReason.None;
-      CloseBellWindow();
+      _aiAuditSequence = 0;
+      _lastAiBellAuditEntry = null;
+      ResetBellWindow();
       ClearLastAcquisition();
 
       var firstPublic = _deck.Draw();
@@ -102,12 +113,14 @@ namespace CodexGame.Application.Playable
     {
       if (Phase == PrototypeSessionPhase.ReadyToFlip)
       {
+        if (TryResolveScheduledBellOrTimeout(now)) return;
         StartFlip(now);
         return;
       }
 
       if (Phase == PrototypeSessionPhase.BellOpen)
       {
+        if (TryResolveScheduledBellOrTimeout(now)) return;
         StartFlip(now);
       }
     }
@@ -193,7 +206,8 @@ namespace CodexGame.Application.Playable
         _lastAcquiredPile,
         _lastBellPile,
         _bellFeedback,
-        _endReason);
+        _endReason,
+        _lastAiBellAuditEntry);
     }
 
     public PrivateCardSelectionSession BeginPrivateCardDistribution(
@@ -250,7 +264,7 @@ namespace CodexGame.Application.Playable
       // An accepted flip is a new decision opportunity. Refresh immediately so
       // a reveal started near the old deadline cannot time out during its motion.
       ResetBellTimer(now);
-      CloseBellWindow();
+      CloseBellWindow(HalliAiBellResolution.FlipCancelled, false);
       ClearLastAcquisition();
       Phase = PrototypeSessionPhase.SequentialReveal;
       if (!RevealStep(_nextRevealStepIndex, now))
@@ -424,20 +438,28 @@ namespace CodexGame.Application.Playable
       bool leftValid,
       bool rightValid)
     {
-      CloseBellWindow();
+      CloseBellWindow(HalliAiBellResolution.FieldChanged, false);
       var reactionDelay = _aiBellPolicy.CreateReactionDelay(_aiReactionRandom);
       var decision = _aiBellPolicy.Decide(
         leftValid,
         rightValid,
         reactionDelay,
+        _stageNumber,
         ScorePile,
         _aiReactionRandom,
         _aiChoiceRandom);
       _aiOutcome = decision.Outcome;
       _aiPile = decision.Pile;
-      _aiBellAt = decision.Outcome == AiBellOutcome.Miss
-        ? (GameTimestamp?)null
-        : Add(now, decision.ReactionDelayMicroseconds);
+      _pendingAiDecision = decision;
+      _pendingAiFieldOpenedAt = now;
+      if (decision.Outcome == AiBellOutcome.Miss)
+      {
+        CloseBellWindow(HalliAiBellResolution.Miss, false);
+      }
+      else
+      {
+        _aiBellAt = Add(now, decision.ReactionDelayMicroseconds);
+      }
     }
 
     private void TickBellWindow(GameTimestamp now)
@@ -475,6 +497,7 @@ namespace CodexGame.Application.Playable
         var difference = playerBellAt.Microseconds - _aiBellAt.Value.Microseconds;
         if (Math.Abs(difference) <= GameRules.SimultaneousBellThresholdMicroseconds)
         {
+          FinalizeAiDecision(HalliAiBellResolution.SimultaneousPlayerPriority, false);
           ResolveSimultaneousBell(selectedPile, resolutionTime);
           return;
         }
@@ -488,10 +511,12 @@ namespace CodexGame.Application.Playable
 
       if (IsAcquirable(Evaluate(selectedPile)))
       {
+        FinalizeAiDecision(HalliAiBellResolution.PlayerInputFirst, false);
         ResolveCorrectBell(HalliActor.Player, selectedPile, resolutionTime);
       }
       else
       {
+        FinalizeAiDecision(HalliAiBellResolution.PlayerInputFirst, false);
         ResolveWrongBell(
           HalliActor.Player,
           resolutionTime,
@@ -528,6 +553,7 @@ namespace CodexGame.Application.Playable
     private void ResolveAiBell(GameTimestamp now)
     {
       if (!_aiPile.HasValue || _aiOutcome == AiBellOutcome.Miss) return;
+      FinalizeAiDecision(HalliAiBellResolution.AiInputFirst, true);
 
       if (_aiOutcome == AiBellOutcome.Correct
         && IsAcquirable(Evaluate(_aiPile.Value)))
@@ -640,7 +666,7 @@ namespace CodexGame.Application.Playable
       long durationMicroseconds,
       LocalizedStatus status)
     {
-      CloseBellWindow();
+      ResetBellWindow();
       _bellTimerActive = false;
       Phase = PrototypeSessionPhase.Review;
       _reviewDeadline = Add(now, durationMicroseconds);
@@ -673,6 +699,7 @@ namespace CodexGame.Application.Playable
 
     private void ResolveBellTimeout(GameTimestamp now)
     {
+      FinalizeAiDecision(HalliAiBellResolution.BellTimeout, false);
       ResolveWrongBell(
         HalliActor.Player,
         now,
@@ -691,7 +718,7 @@ namespace CodexGame.Application.Playable
 
     private void Finish(HalliStageEndReason endReason)
     {
-      CloseBellWindow();
+      CloseBellWindow(HalliAiBellResolution.RoundFinished, false);
       _nextRevealStepIndex = 0;
       ClearRevealState();
       ClearLastAcquisition();
@@ -718,11 +745,37 @@ namespace CodexGame.Application.Playable
         : 0;
     }
 
-    private void CloseBellWindow()
+    private void CloseBellWindow(HalliAiBellResolution resolution, bool aiInputWasFirst)
+    {
+      FinalizeAiDecision(resolution, aiInputWasFirst);
+      ResetBellWindow();
+    }
+
+    private void FinalizeAiDecision(HalliAiBellResolution resolution, bool aiInputWasFirst)
+    {
+      if (!_pendingAiDecision.HasValue) return;
+      var decision = _pendingAiDecision.Value;
+      _aiAuditSequence++;
+      _lastAiBellAuditEntry = new HalliAiBellAuditEntry(
+        _aiAuditSequence,
+        _stageNumber,
+        _combatRoundNumber,
+        _pendingAiFieldOpenedAt.Microseconds,
+        decision.BaseReactionDelayMicroseconds,
+        decision.StageMultiplierPercent,
+        decision.ReactionDelayMicroseconds,
+        decision.Outcome,
+        resolution,
+        aiInputWasFirst);
+      _pendingAiDecision = null;
+    }
+
+    private void ResetBellWindow()
     {
       _aiBellAt = null;
       _aiPile = null;
       _aiOutcome = AiBellOutcome.Miss;
+      _pendingAiDecision = null;
     }
 
     private void ClearLastAcquisition()

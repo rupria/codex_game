@@ -97,7 +97,6 @@ namespace CodexGame.Presentation.Views
     public event Action<CardId> ReloadItemRequested;
     public event Action<CardId> BottomDealRequested;
     public event Action<CardId> BottomDealChoiceRequested;
-    public event Action BottomDealCancelRequested;
     public event Action HypeManItemRequested;
     public event Action HealthRecoveryItemRequested;
     public event Action<CardId, CardSuit> WildInkItemRequested;
@@ -445,7 +444,6 @@ namespace CodexGame.Presentation.Views
           cardId => ReloadItemRequested?.Invoke(cardId),
           cardId => BottomDealRequested?.Invoke(cardId),
           cardId => BottomDealChoiceRequested?.Invoke(cardId),
-          () => BottomDealCancelRequested?.Invoke(),
           () => HypeManItemRequested?.Invoke(),
           () => HealthRecoveryItemRequested?.Invoke(),
           (cardId, suit) => WildInkItemRequested?.Invoke(cardId, suit),
@@ -469,8 +467,6 @@ namespace CodexGame.Presentation.Views
           _snapshot.BarShop,
           _snapshot.BaseBulletCount,
           _snapshot.TemporaryBulletCount,
-          _snapshot.Health.Player,
-          GameRules.StartingHealth,
           _snapshot.Inventory,
           _styles,
           _barShopUiArtSet,
@@ -500,7 +496,8 @@ namespace CodexGame.Presentation.Views
 
       if (_snapshot.Phase == PlayableGamePhase.StageWon)
       {
-        _presentation0124Panel.DrawStageClear(_presentationUiArtSet);
+        DrawStageWon();
+        return;
       }
 
       GUILayout.BeginArea(new Rect(48f, 28f, 864f, 484f));
@@ -535,9 +532,6 @@ namespace CodexGame.Presentation.Views
           break;
         case PlayableGamePhase.RunWon:
           DrawRunWon();
-          break;
-        case PlayableGamePhase.StageWon:
-          DrawStageWon();
           break;
       }
 
@@ -706,20 +700,27 @@ namespace CodexGame.Presentation.Views
 
     private void DrawStageWon()
     {
-      GUILayout.FlexibleSpace();
-      GUILayout.Space(126f);
+      _presentation0124Panel.DrawStageClear(_presentationUiArtSet);
       EconomyUiRenderer.DrawStageRewards(
-        new Rect(206f, 202f, 548f, 96f),
+        new Rect(120f, 102f, 720f, 300f),
         _snapshot.LastStageBaseReward,
         _snapshot.LastStageBonusReward,
         _economyUiArtSet,
         _styles.Status);
-      GUILayout.Space(110f);
-      if (GUILayout.Button(L("UI_COMMON_CONTINUE"), GUILayout.Height(62f)))
+      GUI.Label(new Rect(220f, 112f, 520f, 28f), L("UI_STAGE_REWARD_TITLE"), _styles.Heading);
+      GUI.Label(
+        new Rect(180f, 136f, 600f, 22f),
+        L(
+          "UI_STAGE_REWARD_DETAIL",
+          new LocalizationArgument("base", _snapshot.LastStageBaseReward),
+          new LocalizationArgument("bonus", _snapshot.LastStageBonusReward),
+          new LocalizationArgument("success", _snapshot.PredictionReward.RewardSuccessCount),
+          new LocalizationArgument("total", _snapshot.LastStageReward)),
+        _styles.Small);
+      if (GUI.Button(new Rect(360f, 430f, 240f, 54f), L("UI_COMMON_CONTINUE")))
       {
         AdvanceRequested?.Invoke();
       }
-      GUILayout.FlexibleSpace();
     }
 
     private void DrawBattleEconomyHud()

@@ -23,6 +23,7 @@ namespace CodexGame.Editor
     private const string HalliUi034ArtRoot = UiArtRoot + "Halli_0_3_4/";
     private const string HalliUi037ArtRoot = UiArtRoot + "Halli_0_3_7/";
     private const string HalliUi039ArtRoot = UiArtRoot + "Halli_0_3_9/";
+    private const string HalliAlertsUi054ArtRoot = UiArtRoot + "HalliAlerts_0_5_4/";
     private const string PokerUiArtRoot = UiArtRoot + "Poker_0_2_2/";
     private const string PokerUi034ArtRoot = UiArtRoot + "Poker_0_3_4/";
     private const string PokerUi036ArtRoot = UiArtRoot + "Poker_0_3_6/";
@@ -32,6 +33,7 @@ namespace CodexGame.Editor
     private const string BarShopUi034ArtRoot = UiArtRoot + "BarShop_0_3_4/";
     private const string BarShopUi038ArtRoot = UiArtRoot + "BarShop_0_3_8/";
     private const string EconomyUi012ArtRoot = UiArtRoot + "Economy_0_1_2/";
+    private const string StageRewardUi054ArtRoot = UiArtRoot + "StageReward_0_5_4/";
     private const string PresentationUi0124ArtRoot = UiArtRoot + "Presentation_0_1_2_4/";
     private const string TextlessCurrencyUi040ArtRoot = UiArtRoot + "Textless_Currency_0_4_0/";
     private const string StageOpponentUi0124ArtRoot = UiArtRoot + "StageOpponents_0_1_2_4/";
@@ -90,9 +92,9 @@ namespace CodexGame.Editor
         ropeCharCap: LoadTexture(
           HalliUi039ArtRoot + "halli_rope_burn_char_cap_24x16_0_3_9.png"),
         ropeFlame: LoadTexture(
-          HalliUi039ArtRoot + "halli_rope_burn_flame_6f_192x32_0_3_9.png"),
+          HalliAlertsUi054ArtRoot + "halli_rope_contact_flame_6f_288x48_0_5_4.png"),
         ropeExplosion: LoadTexture(
-          HalliUi039ArtRoot + "halli_rope_timeout_burst_8f_512x64_0_3_9.png"),
+          HalliAlertsUi054ArtRoot + "halli_rope_terminal_burst_8f_768x96_0_5_4.png"),
         sharedPileRailIdle: LoadTexture(
           HalliUi037ArtRoot + "halli_shared_pile_rail_idle_140x136_0_3_7.png"),
         sharedPileRailPlayerActive: LoadTexture(
@@ -102,7 +104,13 @@ namespace CodexGame.Editor
         playerOnlyAcquiredTray: LoadTexture(
           HalliUi034ArtRoot + "player_acquired_tray_open_378x130_0_3_4.png"),
         aiThinkingSheet: LoadTexture(
-          IconOverhaulUi050ArtRoot + "ai_thinking_cylinder_western_8f_384x48_0_5_0.png"));
+          IconOverhaulUi050ArtRoot + "ai_thinking_cylinder_western_8f_384x48_0_5_0.png"),
+        ropeScorch: LoadTexture(
+          HalliAlertsUi054ArtRoot + "halli_rope_terminal_scorch_32x24_0_5_4.png"),
+        lastFiveCountdownSheet: LoadTexture(
+          HalliAlertsUi054ArtRoot + "halli_last_five_countdown_sheet_5f_480x96_0_5_4.png"),
+        lastFiveCountdownPlate: LoadTexture(
+          HalliAlertsUi054ArtRoot + "halli_last_five_countdown_plate_96_0_5_4.png"));
       var guideUiArtSet = new GuideUiArtSet(
         LoadTexture(HalliUiArtRoot + "guide_modal_background.png"),
         LoadTexture(HalliUiArtRoot + "guide_page_flow_art.png"),
@@ -290,7 +298,13 @@ namespace CodexGame.Editor
         LoadOptionalTexture(EconomyUi012ArtRoot + "stage_reward_temporary_frame_240x96_0_1_2.png"),
         LoadOptionalTexture(IconOverhaulUi050ArtRoot + "shop_exit_warning_badge_western_24_0_5_0.png"),
         LoadOptionalTexture(IconOverhaulUi050ArtRoot + "currency_temporary_expire_western_8f_320x40_0_5_0.png"),
-        LoadOptionalTexture(IconOverhaulUi050ArtRoot + "shop_exit_warning_pulse_western_6f_144x24_0_5_0.png"));
+        LoadOptionalTexture(IconOverhaulUi050ArtRoot + "shop_exit_warning_pulse_western_6f_144x24_0_5_0.png"),
+        stageRewardSummaryPanel: LoadTexture(
+          StageRewardUi054ArtRoot + "stage_reward_summary_panel_720x300_0_5_4.png"),
+        stageRewardRowFrame: LoadTexture(
+          StageRewardUi054ArtRoot + "stage_reward_row_frame_320x64_0_5_4.png"),
+        stageRewardOverflowFade: LoadTexture(
+          StageRewardUi054ArtRoot + "stage_reward_overflow_fade_640x32_0_5_4.png"));
       var presentationUiArtSet = new PresentationUiArtSet(
         fileName => LoadTexture(PresentationUi0124ArtRoot + fileName),
         new[]

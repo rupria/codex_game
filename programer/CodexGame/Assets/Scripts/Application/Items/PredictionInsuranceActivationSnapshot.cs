@@ -1,4 +1,5 @@
 using CodexGame.Core.Rewards;
+using CodexGame.Core.Shared;
 
 namespace CodexGame.Application.Items
 {
@@ -32,5 +33,9 @@ namespace CodexGame.Application.Items
     public PredictionChoice Choice { get; }
     public int ChargesBefore { get; }
     public int ChargesAfter { get; }
+    public int DisplayedCharges => Progress * GameRules.PredictionInsuranceActivationPresentationMicroseconds
+        < GameRules.PredictionInsuranceActivationChargeCommitMicroseconds
+      ? ChargesBefore
+      : ChargesAfter;
   }
 }

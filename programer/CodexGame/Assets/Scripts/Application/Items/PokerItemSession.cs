@@ -211,11 +211,9 @@ namespace CodexGame.Application.Items
 
     public bool CancelBottomDeal(GameTimestamp now)
     {
-      if (Phase != PokerItemPhase.AwaitingBottomDealChoice) return false;
-      RecordBottomDealAudit(now, BottomDealAuditOutcome.Cancelled);
-      Phase = PokerItemPhase.AwaitingActions;
-      LastFailure = PokerItemFailure.None;
-      return true;
+      // Q-028: the confirmation popup is the final cancellable boundary.
+      // Target/candidate selection keeps the original deadline and cannot be closed.
+      return false;
     }
 
     public PokerItemFailure UseHypeMan()

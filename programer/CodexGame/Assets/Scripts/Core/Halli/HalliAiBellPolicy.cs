@@ -9,17 +9,32 @@ namespace CodexGame.Core.Halli
     public long CreateReactionDelay(IRandomSource reactionRandom)
     {
       if (reactionRandom == null) throw new ArgumentNullException(nameof(reactionRandom));
-
-      // Two uniform samples form a triangular distribution with its mode near two seconds.
-      var first = reactionRandom.NextInt(1_000_001);
-      var second = reactionRandom.NextInt(1_000_001);
-      return GameRules.AiMinimumReactionMicroseconds + first + second;
+      var bandRoll = reactionRandom.NextInt(100);
+      if (bandRoll < GameRules.AiFastReactionWeightPercent)
+      {
+        return Uniform(
+          reactionRandom,
+          GameRules.AiMinimumReactionMicroseconds,
+          GameRules.AiFastReactionMaximumMicroseconds);
+      }
+      if (bandRoll < GameRules.AiFastReactionWeightPercent + GameRules.AiMidReactionWeightPercent)
+      {
+        return Uniform(
+          reactionRandom,
+          GameRules.AiFastReactionMaximumMicroseconds,
+          GameRules.AiMidReactionMaximumMicroseconds);
+      }
+      return Uniform(
+        reactionRandom,
+        GameRules.AiMidReactionMaximumMicroseconds,
+        GameRules.AiMaximumReactionMicroseconds);
     }
 
     public HalliAiBellDecision Decide(
       bool leftValid,
       bool rightValid,
-      long reactionDelayMicroseconds,
+      long baseReactionDelayMicroseconds,
+      int stageNumber,
       Func<PileSide, int> strength,
       IRandomSource reactionRandom,
       IRandomSource choiceRandom)
@@ -28,34 +43,120 @@ namespace CodexGame.Core.Halli
       if (reactionRandom == null) throw new ArgumentNullException(nameof(reactionRandom));
       if (choiceRandom == null) throw new ArgumentNullException(nameof(choiceRandom));
 
+      var stageMultiplierPercent = StageMultiplierPercent(stageNumber);
+      var reactionDelayMicroseconds = ApplyStageMultiplier(
+        baseReactionDelayMicroseconds,
+        stageMultiplierPercent);
+
       if (!leftValid && !rightValid)
       {
-        return new HalliAiBellDecision(AiBellOutcome.Miss, null, reactionDelayMicroseconds);
-      }
-
-      var roll = reactionRandom.NextInt(100);
-      if (roll >= GameRules.AiCorrectBellPercent + GameRules.AiWrongBellPercent)
-      {
-        return new HalliAiBellDecision(AiBellOutcome.Miss, null, reactionDelayMicroseconds);
-      }
-
-      if (roll >= GameRules.AiCorrectBellPercent)
-      {
-        if (leftValid && rightValid)
-        {
-          return new HalliAiBellDecision(AiBellOutcome.Miss, null, reactionDelayMicroseconds);
-        }
-
-        return new HalliAiBellDecision(
-          AiBellOutcome.Wrong,
-          leftValid ? PileSide.Right : PileSide.Left,
+        return CreateDecision(
+          AiBellOutcome.Miss,
+          null,
+          baseReactionDelayMicroseconds,
+          stageMultiplierPercent,
           reactionDelayMicroseconds);
       }
 
-      return new HalliAiBellDecision(
+      if (reactionRandom.NextInt(100) < ConditionalMissPercent(baseReactionDelayMicroseconds))
+      {
+        return CreateDecision(
+          AiBellOutcome.Miss,
+          null,
+          baseReactionDelayMicroseconds,
+          stageMultiplierPercent,
+          reactionDelayMicroseconds);
+      }
+
+      if (choiceRandom.NextInt(100) >= GameRules.AiNonMissCorrectPercent)
+      {
+        if (leftValid && rightValid)
+        {
+          return CreateDecision(
+            AiBellOutcome.Miss,
+            null,
+            baseReactionDelayMicroseconds,
+            stageMultiplierPercent,
+            reactionDelayMicroseconds);
+        }
+
+        return CreateDecision(
+          AiBellOutcome.Wrong,
+          leftValid ? PileSide.Right : PileSide.Left,
+          baseReactionDelayMicroseconds,
+          stageMultiplierPercent,
+          reactionDelayMicroseconds);
+      }
+
+      return CreateDecision(
         AiBellOutcome.Correct,
         SelectCorrectPile(leftValid, rightValid, strength, choiceRandom),
+        baseReactionDelayMicroseconds,
+        stageMultiplierPercent,
         reactionDelayMicroseconds);
+    }
+
+    public static int StageMultiplierPercent(int stageNumber)
+    {
+      if (stageNumber <= 0) throw new ArgumentOutOfRangeException(nameof(stageNumber));
+      return stageNumber == 1
+        ? GameRules.AiStageOneReactionMultiplierPercent
+        : stageNumber == 2
+          ? GameRules.AiStageTwoReactionMultiplierPercent
+          : GameRules.AiStageThreeReactionMultiplierPercent;
+    }
+
+    public static long ApplyStageMultiplier(long baseDelayMicroseconds, int multiplierPercent)
+    {
+      if (baseDelayMicroseconds < GameRules.AiMinimumReactionMicroseconds
+        || baseDelayMicroseconds > GameRules.AiMaximumReactionMicroseconds)
+      {
+        throw new ArgumentOutOfRangeException(nameof(baseDelayMicroseconds));
+      }
+      if (multiplierPercent < GameRules.AiStageThreeReactionMultiplierPercent
+        || multiplierPercent > GameRules.AiStageOneReactionMultiplierPercent)
+      {
+        throw new ArgumentOutOfRangeException(nameof(multiplierPercent));
+      }
+      return Math.Max(
+        GameRules.AiMinimumReactionMicroseconds,
+        baseDelayMicroseconds * multiplierPercent / 100L);
+    }
+
+    public static int ConditionalMissPercent(long baseDelayMicroseconds)
+    {
+      if (baseDelayMicroseconds < GameRules.AiMinimumReactionMicroseconds
+        || baseDelayMicroseconds > GameRules.AiMaximumReactionMicroseconds)
+      {
+        throw new ArgumentOutOfRangeException(nameof(baseDelayMicroseconds));
+      }
+      if (baseDelayMicroseconds <= GameRules.AiFastReactionMaximumMicroseconds)
+      {
+        return GameRules.AiFastConditionalMissPercent;
+      }
+      return baseDelayMicroseconds <= GameRules.AiMidReactionMaximumMicroseconds
+        ? GameRules.AiMidConditionalMissPercent
+        : GameRules.AiSlowConditionalMissPercent;
+    }
+
+    private static HalliAiBellDecision CreateDecision(
+      AiBellOutcome outcome,
+      PileSide? pile,
+      long baseDelay,
+      int multiplierPercent,
+      long finalDelay)
+    {
+      return new HalliAiBellDecision(
+        outcome,
+        pile,
+        baseDelay,
+        multiplierPercent,
+        finalDelay);
+    }
+
+    private static long Uniform(IRandomSource random, long minimum, long maximum)
+    {
+      return minimum + random.NextInt(checked((int)(maximum - minimum + 1L)));
     }
 
     private static PileSide SelectCorrectPile(

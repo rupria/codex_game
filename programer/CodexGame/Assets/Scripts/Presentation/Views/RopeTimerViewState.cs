@@ -66,5 +66,15 @@ namespace CodexGame.Presentation.Views
       var progress = Math.Min(1d, elapsedSeconds / durationSeconds);
       return Math.Min(frameCount - 1, (int)Math.Floor(progress * frameCount));
     }
+
+    public static double RopeTipX(double ropeX, double ropeWidth, double remainingRatio)
+    {
+      if (ropeWidth < 0d) throw new ArgumentOutOfRangeException(nameof(ropeWidth));
+      if (remainingRatio < 0d || remainingRatio > 1d)
+      {
+        throw new ArgumentOutOfRangeException(nameof(remainingRatio));
+      }
+      return ropeX + ropeWidth * remainingRatio;
+    }
   }
 }

@@ -14,7 +14,8 @@ namespace CodexGame.Presentation.Views
 {
   internal sealed class PokerDevPanel
   {
-    private const float AiRevealDuration = 0.48f;
+    private const float AiRevealDuration =
+      GameRules.AiJokerShowdownHighlightMicroseconds / 1_000_000f;
     private int _lastVisibleAiCardCount;
     private float _aiRevealStartedAt = float.NegativeInfinity;
     private bool _wasOutcomeVisible;
@@ -41,7 +42,12 @@ namespace CodexGame.Presentation.Views
       DrawGroupLabels(styles, localization);
       DrawHealth(snapshot, styles, healthArt, localization, playerDamage, aiDamage);
       DrawItems(pokerItemArt);
-      DrawPredictionReward(predictionReward, pokerItemArt, styles, localization);
+      DrawPredictionReward(
+        predictionReward,
+        insuranceActivation,
+        pokerItemArt,
+        styles,
+        localization);
       DrawCards(snapshot, cards, pokerItemArt);
 
       if (snapshot.Phase == PokerRoundPhase.PlayerJokerPresentation)
@@ -230,18 +236,33 @@ namespace CodexGame.Presentation.Views
         {
           cards.DrawAt(rect, snapshot.VisibleAiPrivateCards[index], false, false);
         }
+        if (snapshot.VisibleAiPrivateCards[index].IsJoker && revealProgress < 1f)
+        {
+          var previousColor = GUI.color;
+          GUI.color = new Color(1f, 0.72f, 0.18f, 0.28f + 0.28f * Mathf.Sin(revealProgress * Mathf.PI));
+          GUI.DrawTexture(
+            new Rect(rect.x - 8f, rect.y - 8f, rect.width + 16f, rect.height + 16f),
+            Texture2D.whiteTexture,
+            ScaleMode.StretchToFill,
+            true);
+          GUI.color = previousColor;
+        }
       }
     }
 
     private static void DrawPredictionReward(
       PredictionRewardSnapshot reward,
+      PredictionInsuranceActivationSnapshot activation,
       PokerItemUiArtSet art,
       PlayableDevStyles styles,
       LocalizationRuntime localization)
     {
       if (reward == null) return;
       var x = 720f;
-      var charge = art?.FindInsuranceCharges(reward.InsuranceChargesRemaining);
+      var displayedCharges = activation?.IsActive == true
+        ? activation.DisplayedCharges
+        : reward.InsuranceChargesRemaining;
+      var charge = art?.FindInsuranceCharges(displayedCharges);
       if (reward.InsuranceActivatedThisStage && charge != null)
       {
         GUI.DrawTexture(new Rect(x, 94f, 32f, 32f), charge, ScaleMode.ScaleToFit, true);
@@ -258,7 +279,7 @@ namespace CodexGame.Presentation.Views
         new Rect(x + 34f, 98f, 190f, 22f),
         localization.Get(
           "UI_PREDICTION_CHARGES",
-          new LocalizationArgument("count", reward.InsuranceChargesRemaining)),
+          new LocalizationArgument("count", displayedCharges)),
         styles.Small);
       GUI.Label(
         new Rect(x + 34f, 136f, 190f, 22f),
@@ -302,14 +323,22 @@ namespace CodexGame.Presentation.Views
         progress,
         false,
         false);
-      var previousColor = GUI.color;
-      GUI.color = new Color(1f, 0.72f, 0.18f, 0.34f * Mathf.Sin(progress * Mathf.PI));
-      GUI.DrawTexture(
-        new Rect(target.x - 8f, target.y - 8f, target.width + 16f, target.height + 16f),
-        Texture2D.whiteTexture,
-        ScaleMode.StretchToFill,
-        true);
-      GUI.color = previousColor;
+      if (progress >= 0.35f && progress <= 0.85f)
+      {
+        var highlightProgress = (progress - 0.35f) / 0.5f;
+        var previousColor = GUI.color;
+        GUI.color = new Color(
+          1f,
+          0.72f,
+          0.18f,
+          0.32f + 0.22f * Mathf.Sin(highlightProgress * Mathf.PI));
+        GUI.DrawTexture(
+          new Rect(target.x - 8f, target.y - 8f, target.width + 16f, target.height + 16f),
+          Texture2D.whiteTexture,
+          ScaleMode.StretchToFill,
+          true);
+        GUI.color = previousColor;
+      }
       GUI.Label(
         new Rect(280f, 18f, 400f, 44f),
         localization.Get("UI_POKER_JOKER_REVEAL"),
@@ -485,15 +514,15 @@ namespace CodexGame.Presentation.Views
     {
       if (snapshot == null || !snapshot.IsActive) return;
       GUI.Box(new Rect(348f, 184f, 264f, 172f), GUIContent.none);
-      var sheet = art?.FindUseAnimationSheet(Core.Items.GameItemId.PredictionInsurance);
-      if (sheet != null)
+      var badge = art?.PredictionInsuredSuccess;
+      if (badge != null)
       {
-        const int frameCount = 6;
-        var frame = Mathf.Min(frameCount - 1, Mathf.FloorToInt(snapshot.Progress * frameCount));
-        GUI.DrawTextureWithTexCoords(
-          new Rect(432f, 202f, 96f, 96f),
-          sheet,
-          new Rect(frame / (float)frameCount, 0f, 1f / frameCount, 1f),
+        var pulse = 1f + 0.12f * Mathf.Sin(snapshot.Progress * Mathf.PI);
+        var size = 96f * pulse;
+        GUI.DrawTexture(
+          new Rect(480f - size * 0.5f, 250f - size * 0.5f, size, size),
+          badge,
+          ScaleMode.ScaleToFit,
           true);
       }
       else
@@ -510,7 +539,7 @@ namespace CodexGame.Presentation.Views
         styles.Status);
       GUI.Label(
         new Rect(364f, 332f, 232f, 20f),
-        $"{snapshot.ChargesBefore} → {snapshot.ChargesAfter}",
+        $"{snapshot.ChargesBefore} → {snapshot.DisplayedCharges}",
         styles.Small);
     }
 
