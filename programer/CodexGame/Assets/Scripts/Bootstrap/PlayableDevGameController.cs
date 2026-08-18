@@ -9,6 +9,7 @@ using CodexGame.Application.Development;
 using CodexGame.Core.Items;
 #endif
 using CodexGame.Presentation.Views;
+using CodexGame.Presentation.Audio;
 using UnityEngine;
 
 namespace CodexGame.Bootstrap
@@ -19,6 +20,7 @@ namespace CodexGame.Bootstrap
     private PlayableGameSession _session;
     private PlayableDevView _view;
     private readonly HalliAiBellLocalLogWriter _localAiLog = new HalliAiBellLocalLogWriter();
+    private PlayableAudioDirector _audio;
     private long _seedSequence;
 
     private void Awake()
@@ -26,6 +28,9 @@ namespace CodexGame.Bootstrap
       _session = new PlayableGameSession();
       _view = GetComponent<PlayableDevView>();
       if (_view == null) _view = gameObject.AddComponent<PlayableDevView>();
+      _audio = GetComponent<PlayableAudioDirector>();
+      if (_audio == null) _audio = gameObject.AddComponent<PlayableAudioDirector>();
+      _audio.Bind(_view);
 
       _view.StartRequested += StartNew;
       _view.StageEntrySkipRequested += SkipStageEntry;
@@ -78,6 +83,7 @@ namespace CodexGame.Bootstrap
 
     private void OnDestroy()
     {
+      if (_audio != null) _audio.Unbind();
       if (_view == null) return;
       _view.StartRequested -= StartNew;
       _view.StageEntrySkipRequested -= SkipStageEntry;
@@ -292,6 +298,7 @@ namespace CodexGame.Bootstrap
       var snapshot = _session.GetSnapshot(now);
       _localAiLog.TryWrite(snapshot);
       _view.Present(snapshot);
+      _audio.Present(snapshot);
     }
 
     private long NextSeed()
