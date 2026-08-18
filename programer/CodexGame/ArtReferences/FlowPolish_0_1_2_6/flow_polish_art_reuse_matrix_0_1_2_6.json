@@ -1,0 +1,94 @@
+{
+  "targetVersion": "0.1.2.6",
+  "specRevision": "2026-08-18-03",
+  "status": "art_audited_existing_assets_sufficient",
+  "newRuntimePng": false,
+  "rules": {
+    "localizedTextBakedIntoArt": false,
+    "pubDeployment": false,
+    "developmentBranch": "dev"
+  },
+  "features": [
+    {
+      "id": "F-03",
+      "name": "prediction insurance activation",
+      "verdict": "reuse",
+      "runtimeAssets": [
+        "Assets/Art/Prototype/UI/ItemExpansion_0_5_2/prediction_insurance_apply_6f_384x64_0_5_2.png",
+        "Assets/Art/Prototype/UI/ItemExpansion_0_5_2/prediction_result_insured_success_32_0_5_2.png",
+        "Assets/Art/Prototype/UI/ItemExpansion_0_5_2/prediction_insurance_charges_2_32_0_5_2.png",
+        "Assets/Art/Prototype/UI/ItemExpansion_0_5_2/prediction_insurance_charges_1_32_0_5_2.png",
+        "Assets/Art/Prototype/UI/ItemExpansion_0_5_2/prediction_insurance_charges_0_32_0_5_2.png"
+      ],
+      "timingSeconds": { "itemUse": 0.45, "actualActivation": 0.40 },
+      "guards": [
+        "Do not play the apply sheet for an actual insurance correction.",
+        "Do not create an activation session for a hand-confirm timeout.",
+        "Replace the charge state once at 0.24 seconds."
+      ]
+    },
+    {
+      "id": "F-06",
+      "name": "joker award reveal",
+      "verdict": "reuse_with_latest_timing_override",
+      "runtimeRoot": "Assets/Art/Prototype/UI/JokerReveal_0_5_3",
+      "player": {
+        "totalSeconds": 1.0,
+        "unskippable": true,
+        "frontHighlightSeconds": 0.5,
+        "condition": "player actually wins a Joker"
+      },
+      "ai": {
+        "totalSeconds": 0.5,
+        "condition": "AI actually selects the Joker in its final Showdown hand",
+        "beforeShowdown": "fully hidden"
+      },
+      "supersedesCatalogTiming": {
+        "playerTotalSeconds": 1.30,
+        "aiTotalSeconds": 0.35
+      }
+    },
+    {
+      "id": "F-07",
+      "name": "phase and item-state readability",
+      "verdict": "reuse",
+      "runtimeAssets": [
+        "Assets/Art/Prototype/UI/Presentation_0_1_2_4/phase_entry_label_frame_288x80_0_1_2_4.png",
+        "Assets/Art/Prototype/UI/Halli_0_1_0/flip_deck_idle.png",
+        "Assets/Art/Prototype/UI/Halli_0_1_0/flip_deck_hover.png",
+        "Assets/Art/Prototype/UI/Halli_0_1_0/flip_deck_pressed.png",
+        "Assets/Art/Prototype/UI/Halli_0_1_0/flip_deck_disabled.png",
+        "Assets/Art/Prototype/UI/ItemExpansion_0_5_2"
+      ],
+      "text": {
+        "phaseEntry": "localized Three Call/Showdown entry message",
+        "flipReady": "localized Flip prompt; transient only"
+      },
+      "guards": [
+        "Remove persistent Q/E/W and one-card-flip instructions.",
+        "Show Flip only when the next flip is actually enabled.",
+        "Hide Flip immediately when flip input is accepted; do not wait for the fade animation."
+      ]
+    },
+    {
+      "id": "F-09",
+      "name": "private-card timeout auto confirm",
+      "verdict": "no_new_art",
+      "presentation": "Reuse the same selected highlight and confirm movement used by direct selection; do not play a new-card draw unless the unowned pool actually fills a shortage."
+    },
+    {
+      "id": "F-10",
+      "name": "AI bell timing",
+      "verdict": "no_new_art",
+      "presentation": "Runtime timing and logging only. The transient Flip prompt follows F-07."
+    }
+  ],
+  "safeAreaEvidence": [
+    "ArtReferences/ItemExpansion_0_5_2_1/preview/insurance_activation_review_960x540_0_5_2_1.png",
+    "ArtReferences/ItemExpansion_0_5_2_1/preview/insurance_activation_review_1280x720_0_5_2_1.png",
+    "ArtReferences/ItemExpansion_0_5_2_1/preview/insurance_activation_review_1920x1080_0_5_2_1.png",
+    "ArtReferences/JokerReveal_0_5_3/preview/joker_reveal_safe_960x540_0_5_3.png",
+    "ArtReferences/JokerReveal_0_5_3/preview/joker_reveal_safe_1280x720_0_5_3.png",
+    "ArtReferences/JokerReveal_0_5_3/preview/joker_reveal_safe_1920x1080_0_5_3.png"
+  ]
+}
