@@ -136,19 +136,6 @@ namespace CodexGame.Application.Distribution
           pairAssistEnabled)
         : Array.AsReadOnly(Array.Empty<CardId>());
 
-      if (winner == HalliStageWinner.Player
-        && _requiredSelectionCount > 0
-        && pairAssistEnabled)
-      {
-        var recommended = PairAssistSelectionPolicy.Select(
-          _winnerCandidates,
-          _requiredSelectionCount,
-          _random);
-        for (var index = 0; index < recommended.Count; index++)
-        {
-          _selectedIds.Add(recommended[index]);
-        }
-      }
       if (_requiredSelectionCount == 0 || winner != HalliStageWinner.Player)
       {
         Complete(PrivateCardSelectionMode.Confirmed);

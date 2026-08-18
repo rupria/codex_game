@@ -15,8 +15,8 @@ namespace CodexGame.Presentation.Views
     private readonly HalliBellControl _bellControl = new HalliBellControl();
     private readonly HalliLowerHudRenderer _lowerHud = new HalliLowerHudRenderer();
     private readonly HalliRopeTimer _ropeTimer = new HalliRopeTimer();
-    private readonly List<SharedPileCard> _leftPileHistory = new List<SharedPileCard>(2);
-    private readonly List<SharedPileCard> _rightPileHistory = new List<SharedPileCard>(2);
+    private readonly List<SharedPileCard> _leftPileHistory = new List<SharedPileCard>(3);
+    private readonly List<SharedPileCard> _rightPileHistory = new List<SharedPileCard>(3);
     private long _historyRoundSeed = long.MinValue;
     private CardId? _lastHistoryReveal;
     private CardId? _lastHistoryAcquisition;
