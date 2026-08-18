@@ -117,8 +117,6 @@ namespace CodexGame.Application.Shop
         if (product.ItemId.HasValue
           && inventory != null
           && inventory.Contains(product.ItemId.Value)) continue;
-        if (product.ItemId == GameItemId.HealthRecovery
-          && currentHealth >= GameRules.StartingHealth) continue;
         eligible.Add(product);
       }
 

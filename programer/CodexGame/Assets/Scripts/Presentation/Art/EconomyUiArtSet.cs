@@ -16,6 +16,9 @@ namespace CodexGame.Presentation.Art
     [SerializeField] private Texture2D _exitWarningIcon;
     [SerializeField] private Texture2D _temporaryExpireSheet;
     [SerializeField] private Texture2D _exitWarningPulseSheet;
+    [SerializeField] private Texture2D _stageRewardSummaryPanel;
+    [SerializeField] private Texture2D _stageRewardRowFrame;
+    [SerializeField] private Texture2D _stageRewardOverflowFade;
 
     public EconomyUiArtSet()
     {
@@ -31,7 +34,10 @@ namespace CodexGame.Presentation.Art
       Texture2D temporaryRewardFrame,
       Texture2D exitWarningIcon,
       Texture2D temporaryExpireSheet = null,
-      Texture2D exitWarningPulseSheet = null)
+      Texture2D exitWarningPulseSheet = null,
+      Texture2D stageRewardSummaryPanel = null,
+      Texture2D stageRewardRowFrame = null,
+      Texture2D stageRewardOverflowFade = null)
     {
       _baseCurrencyIcon = baseCurrencyIcon;
       _temporaryCurrencyIcon = temporaryCurrencyIcon;
@@ -43,6 +49,9 @@ namespace CodexGame.Presentation.Art
       _exitWarningIcon = exitWarningIcon;
       _temporaryExpireSheet = temporaryExpireSheet;
       _exitWarningPulseSheet = exitWarningPulseSheet;
+      _stageRewardSummaryPanel = stageRewardSummaryPanel;
+      _stageRewardRowFrame = stageRewardRowFrame;
+      _stageRewardOverflowFade = stageRewardOverflowFade;
     }
 
     public Texture2D BaseCurrencyIcon => _baseCurrencyIcon;
@@ -55,6 +64,9 @@ namespace CodexGame.Presentation.Art
     public Texture2D ExitWarningIcon => _exitWarningIcon;
     public Texture2D TemporaryExpireSheet => _temporaryExpireSheet;
     public Texture2D ExitWarningPulseSheet => _exitWarningPulseSheet;
+    public Texture2D StageRewardSummaryPanel => _stageRewardSummaryPanel;
+    public Texture2D StageRewardRowFrame => _stageRewardRowFrame;
+    public Texture2D StageRewardOverflowFade => _stageRewardOverflowFade;
 
     public bool HasDualCurrencyIcons => _baseCurrencyIcon != null
       && _temporaryCurrencyIcon != null;

@@ -27,8 +27,8 @@ namespace CodexGame.Core.Shared
     public const int StageItemRestrictionActivationPercent = 20;
     public const int StageItemRestrictionMinimumUses = 1;
     public const int StageItemRestrictionMaximumUses = 2;
-    public const int BarShopRerollCost = 0;
-    public const int BarShopMaximumRerolls = 1;
+    public const int BarShopRerollCost = 1;
+    public const int BarShopMaximumRerolls = 2;
     public const int PredictionInsuranceCharges = 2;
 
     public const long StageEntryPresentationMicroseconds = 6_000_000;
@@ -42,7 +42,9 @@ namespace CodexGame.Core.Shared
     public const long PokerResultOutcomeMicroseconds = 1_000_000;
     public const long PokerResultAnnouncementMicroseconds =
       PokerResultCardRevealMicroseconds + PokerResultOutcomeMicroseconds;
-    public const long PlayerJokerPresentationMicroseconds = 350_000;
+    public const long PlayerJokerPresentationMicroseconds = 1_000_000;
+    public const long PlayerJokerFrontHighlightMicroseconds = 500_000;
+    public const long AiJokerShowdownHighlightMicroseconds = 500_000;
     public const long ReloadItemPresentationMicroseconds = 800_000;
     public const long BottomDealItemPresentationMicroseconds = 1_000_000;
     public const long HypeManItemPresentationMicroseconds = 800_000;
@@ -52,6 +54,7 @@ namespace CodexGame.Core.Shared
     public const long BarrelDefensePresentationMicroseconds = 550_000;
     public const long PredictionInsuranceItemPresentationMicroseconds = 450_000;
     public const long PredictionInsuranceActivationPresentationMicroseconds = 400_000;
+    public const long PredictionInsuranceActivationChargeCommitMicroseconds = 240_000;
     public const long MercenaryItemPresentationMicroseconds = 900_000;
     public const long BarShopPouchCoverMicroseconds = 120_000;
     public const long BarShopCoinFlipDurationMicroseconds = 500_000;
@@ -68,12 +71,23 @@ namespace CodexGame.Core.Shared
     public const long NextStageTransitionFadeInMicroseconds = 350_000;
     public const long GlobalInactivityTimeoutMicroseconds = 180_000_000;
     public const long AiMinimumReactionMicroseconds = 1_000_000;
-    public const long AiTypicalReactionMicroseconds = 2_000_000;
-    public const long AiMaximumReactionMicroseconds = 3_000_000;
+    public const long AiFastReactionMaximumMicroseconds = 2_000_000;
+    public const long AiMidReactionMaximumMicroseconds = 5_000_000;
+    public const long AiMaximumReactionMicroseconds = 10_000_000;
 
     public const int AiCorrectBellPercent = 60;
     public const int AiWrongBellPercent = 20;
     public const int AiValidBellMissPercent = 20;
     public const double AiValidBellMissProbability = 0.20;
+    public const int AiFastReactionWeightPercent = 60;
+    public const int AiMidReactionWeightPercent = 30;
+    public const int AiSlowReactionWeightPercent = 10;
+    public const int AiFastConditionalMissPercent = 10;
+    public const int AiMidConditionalMissPercent = 30;
+    public const int AiSlowConditionalMissPercent = 50;
+    public const int AiNonMissCorrectPercent = 75;
+    public const int AiStageOneReactionMultiplierPercent = 100;
+    public const int AiStageTwoReactionMultiplierPercent = 95;
+    public const int AiStageThreeReactionMultiplierPercent = 90;
   }
 }

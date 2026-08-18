@@ -35,14 +35,19 @@ namespace CodexGame.Presentation.Views
         exploding);
       if (!state.IsVisible) return;
 
+      var ropeRect = new Rect(332f, 144f, 258f, 16f);
+
       if (state.Mode == RopeTimerMode.Exploding)
       {
-        DrawExplosion(art?.RopeExplosion);
+        DrawExplosion(ropeRect, art?.RopeExplosion, art?.RopeScorch);
         return;
       }
 
-      var ropeRect = new Rect(332f, 144f, 258f, 16f);
       var filledRect = new Rect(ropeRect.x, ropeRect.y, ropeRect.width * state.RemainingRatio, ropeRect.height);
+      var ropeTipX = (float)RopeTimerViewState.RopeTipX(
+        ropeRect.x,
+        ropeRect.width,
+        state.RemainingRatio);
       var previousColor = GUI.color;
       GUI.color = new Color(0.11f, 0.075f, 0.04f, 0.92f);
       GUI.DrawTexture(ropeRect, Texture2D.whiteTexture, ScaleMode.StretchToFill, true);
@@ -75,21 +80,17 @@ namespace CodexGame.Presentation.Views
           ScaleMode.StretchToFill,
           true);
       }
-      GUI.color = state.Mode == RopeTimerMode.Urgent
-        ? new Color(1f, 0.7f, 0.1f, pulse)
-        : Color.white;
-      var flameSize = state.Mode == RopeTimerMode.Urgent ? 27f + 5f * pulse : 24f;
+      GUI.color = Color.white;
       var flameRect = new Rect(
-        filledRect.xMax - flameSize * 0.5f,
-        ropeRect.center.y - flameSize * 0.5f,
-        flameSize,
-        flameSize);
+        ropeTipX - 14f,
+        ropeRect.center.y - 24f,
+        48f,
+        48f);
       if (art?.RopeFlame != null)
       {
-        var frameDuration = state.Mode == RopeTimerMode.Urgent ? 0.05f : 0.08f;
         var frame = RopeTimerViewState.LoopingFrame(
           Time.unscaledTime,
-          frameDuration,
+          0.08f,
           FlameFrameCount);
         GUI.DrawTextureWithTexCoords(
           flameRect,
@@ -121,13 +122,21 @@ namespace CodexGame.Presentation.Views
       GUI.color = previousColor;
     }
 
-    private void DrawExplosion(Texture2D explosionTexture)
+    private void DrawExplosion(Rect ropeRect, Texture2D explosionTexture, Texture2D scorchTexture)
     {
       var elapsed = Mathf.Clamp01((Time.unscaledTime - _explosionStartedAt) / ExplosionDuration);
-      var center = new Vector2(332f, 152f);
+      var terminal = new Vector2(ropeRect.x, ropeRect.center.y);
       var previousColor = GUI.color;
       GUI.color = Color.white;
-      var rect = new Rect(center.x - 32f, center.y - 32f, 64f, 64f);
+      if (scorchTexture != null)
+      {
+        GUI.DrawTexture(
+          new Rect(terminal.x - 10f, terminal.y - 12f, 32f, 24f),
+          scorchTexture,
+          ScaleMode.ScaleToFit,
+          true);
+      }
+      var rect = new Rect(terminal.x - 24f, terminal.y - 48f, 96f, 96f);
       if (explosionTexture != null)
       {
         var frame = RopeTimerViewState.OneShotFrame(

@@ -28,11 +28,14 @@ namespace CodexGame.Presentation.Art
     [SerializeField] private Texture2D _ropeCharCap;
     [SerializeField] private Texture2D _ropeFlame;
     [SerializeField] private Texture2D _ropeExplosion;
+    [SerializeField] private Texture2D _ropeScorch;
     [SerializeField] private Texture2D _sharedPileRailIdle;
     [SerializeField] private Texture2D _sharedPileRailPlayerActive;
     [SerializeField] private Texture2D _sharedPileRailAiActive;
     [SerializeField] private Texture2D _playerOnlyAcquiredTray;
     [SerializeField] private Texture2D _aiThinkingSheet;
+    [SerializeField] private Texture2D _lastFiveCountdownSheet;
+    [SerializeField] private Texture2D _lastFiveCountdownPlate;
 
     public HalliUiArtSet(
       Texture2D bellIdle,
@@ -61,7 +64,10 @@ namespace CodexGame.Presentation.Art
       Texture2D sharedPileRailPlayerActive = null,
       Texture2D sharedPileRailAiActive = null,
       Texture2D playerOnlyAcquiredTray = null,
-      Texture2D aiThinkingSheet = null)
+      Texture2D aiThinkingSheet = null,
+      Texture2D ropeScorch = null,
+      Texture2D lastFiveCountdownSheet = null,
+      Texture2D lastFiveCountdownPlate = null)
     {
       _bellIdle = bellIdle ?? throw new ArgumentNullException(nameof(bellIdle));
       _bellHover = bellHover ?? throw new ArgumentNullException(nameof(bellHover));
@@ -88,11 +94,14 @@ namespace CodexGame.Presentation.Art
       _ropeCharCap = ropeCharCap;
       _ropeFlame = ropeFlame;
       _ropeExplosion = ropeExplosion;
+      _ropeScorch = ropeScorch;
       _sharedPileRailIdle = sharedPileRailIdle;
       _sharedPileRailPlayerActive = sharedPileRailPlayerActive;
       _sharedPileRailAiActive = sharedPileRailAiActive;
       _playerOnlyAcquiredTray = playerOnlyAcquiredTray;
       _aiThinkingSheet = aiThinkingSheet;
+      _lastFiveCountdownSheet = lastFiveCountdownSheet;
+      _lastFiveCountdownPlate = lastFiveCountdownPlate;
     }
 
     public Texture2D BellIdle => _bellIdle;
@@ -117,10 +126,13 @@ namespace CodexGame.Presentation.Art
     public Texture2D RopeCharCap => _ropeCharCap;
     public Texture2D RopeFlame => _ropeFlame;
     public Texture2D RopeExplosion => _ropeExplosion;
+    public Texture2D RopeScorch => _ropeScorch;
     public Texture2D SharedPileRailIdle => _sharedPileRailIdle;
     public Texture2D SharedPileRailPlayerActive => _sharedPileRailPlayerActive;
     public Texture2D SharedPileRailAiActive => _sharedPileRailAiActive;
     public Texture2D AiThinkingSheet => _aiThinkingSheet;
+    public Texture2D LastFiveCountdownSheet => _lastFiveCountdownSheet;
+    public Texture2D LastFiveCountdownPlate => _lastFiveCountdownPlate;
     public bool UsesPlayerOnlyLowerHud => _playerOnlyAcquiredTray != null;
 
     public bool HasRoundWinPips => _playerWinPipEmpty != null

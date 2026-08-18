@@ -8,6 +8,8 @@ namespace CodexGame.Core.Halli
     public HalliAiBellDecision(
       AiBellOutcome outcome,
       PileSide? pile,
+      long baseReactionDelayMicroseconds,
+      int stageMultiplierPercent,
       long reactionDelayMicroseconds)
     {
       if (!Enum.IsDefined(typeof(AiBellOutcome), outcome))
@@ -20,6 +22,18 @@ namespace CodexGame.Core.Halli
         throw new ArgumentException("Only a miss may omit the selected pile.", nameof(pile));
       }
 
+      if (baseReactionDelayMicroseconds < GameRules.AiMinimumReactionMicroseconds
+        || baseReactionDelayMicroseconds > GameRules.AiMaximumReactionMicroseconds)
+      {
+        throw new ArgumentOutOfRangeException(nameof(baseReactionDelayMicroseconds));
+      }
+
+      if (stageMultiplierPercent < GameRules.AiStageThreeReactionMultiplierPercent
+        || stageMultiplierPercent > GameRules.AiStageOneReactionMultiplierPercent)
+      {
+        throw new ArgumentOutOfRangeException(nameof(stageMultiplierPercent));
+      }
+
       if (reactionDelayMicroseconds < GameRules.AiMinimumReactionMicroseconds
         || reactionDelayMicroseconds > GameRules.AiMaximumReactionMicroseconds)
       {
@@ -28,11 +42,15 @@ namespace CodexGame.Core.Halli
 
       Outcome = outcome;
       Pile = pile;
+      BaseReactionDelayMicroseconds = baseReactionDelayMicroseconds;
+      StageMultiplierPercent = stageMultiplierPercent;
       ReactionDelayMicroseconds = reactionDelayMicroseconds;
     }
 
     public AiBellOutcome Outcome { get; }
     public PileSide? Pile { get; }
+    public long BaseReactionDelayMicroseconds { get; }
+    public int StageMultiplierPercent { get; }
     public long ReactionDelayMicroseconds { get; }
   }
 }

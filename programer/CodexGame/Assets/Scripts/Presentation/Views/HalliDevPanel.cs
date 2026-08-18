@@ -15,6 +15,9 @@ namespace CodexGame.Presentation.Views
     private readonly HalliBellControl _bellControl = new HalliBellControl();
     private readonly HalliLowerHudRenderer _lowerHud = new HalliLowerHudRenderer();
     private readonly HalliRopeTimer _ropeTimer = new HalliRopeTimer();
+    private readonly HalliRemainingCardCountdownState _remainingCardCountdown =
+      new HalliRemainingCardCountdownState();
+    private readonly FlipReadyPromptState _flipReadyPrompt = new FlipReadyPromptState();
     private readonly List<SharedPileCard> _leftPileHistory = new List<SharedPileCard>(3);
     private readonly List<SharedPileCard> _rightPileHistory = new List<SharedPileCard>(3);
     private long _historyRoundSeed = long.MinValue;
@@ -41,6 +44,13 @@ namespace CodexGame.Presentation.Views
     {
       _localization = localization;
       UpdateRevealHistory(snapshot);
+      _remainingCardCountdown.Observe(
+        snapshot.CombatRoundSeed,
+        snapshot.RemainingDeckCards,
+        Time.unscaledTime);
+      _flipReadyPrompt.Observe(
+        gamePhase == PlayableGamePhase.Halli && snapshot.CanFlip,
+        Time.unscaledTime);
       if (gamePhase == PlayableGamePhase.HalliOpening)
       {
         DrawOpening(
@@ -54,6 +64,7 @@ namespace CodexGame.Presentation.Views
           cards,
           uiArt,
           healthArt);
+        DrawRemainingCardCountdown(uiArt, styles);
         return;
       }
 
@@ -64,7 +75,6 @@ namespace CodexGame.Presentation.Views
       }
 
       DrawScoreboard(
-        snapshot,
         playerHealth,
         aiHealth,
         playerDamage,
@@ -92,6 +102,7 @@ namespace CodexGame.Presentation.Views
       DrawRevealMotion(snapshot, cards);
       DrawAiThinking(snapshot, uiArt);
       _lowerHud.DrawAcquisitionMotion(snapshot, cards, uiArt);
+      DrawRemainingCardCountdown(uiArt, styles);
       GUI.color = previousColor;
     }
 
@@ -108,7 +119,6 @@ namespace CodexGame.Presentation.Views
       HealthUiArtSet healthArt)
     {
       DrawScoreboard(
-        snapshot,
         playerHealth,
         aiHealth,
         playerDamage,
@@ -131,7 +141,6 @@ namespace CodexGame.Presentation.Views
     }
 
     private void DrawScoreboard(
-      PrototypeHalliSnapshot snapshot,
       int playerHealth,
       int aiHealth,
       bool playerDamage,
@@ -163,11 +172,39 @@ namespace CodexGame.Presentation.Views
         true,
         healthArt,
         aiDamage);
-      GUI.Label(
-        new Rect(350f, 12f, 260f, 24f),
-        snapshot.FlipCount + "/" + GameRules.HalliDistributionLimit
-          + "  ·  " + snapshot.RemainingDeckCards,
-        styles.Small);
+    }
+
+    private void DrawRemainingCardCountdown(HalliUiArtSet uiArt, PlayableDevStyles styles)
+    {
+      var now = Time.unscaledTime;
+      if (!_remainingCardCountdown.IsVisible(now)) return;
+
+      const float nativeSize = 96f;
+      var elapsed = _remainingCardCountdown.ElapsedSeconds(now);
+      var scale = HalliRemainingCardCountdownState.Scale(elapsed);
+      var alpha = HalliRemainingCardCountdownState.Alpha(elapsed);
+      var size = nativeSize * scale;
+      var rect = new Rect(480f - size * 0.5f, 266f - size * 0.5f, size, size);
+      var previousColor = GUI.color;
+      GUI.color = new Color(1f, 1f, 1f, alpha);
+      if (uiArt?.LastFiveCountdownSheet != null)
+      {
+        const int frameCount = 5;
+        GUI.DrawTextureWithTexCoords(
+          rect,
+          uiArt.LastFiveCountdownSheet,
+          new Rect(_remainingCardCountdown.FrameIndex / (float)frameCount, 0f, 1f / frameCount, 1f),
+          true);
+      }
+      else
+      {
+        if (uiArt?.LastFiveCountdownPlate != null)
+        {
+          GUI.DrawTexture(rect, uiArt.LastFiveCountdownPlate, ScaleMode.ScaleToFit, true);
+        }
+        GUI.Label(rect, _remainingCardCountdown.ActiveValue.ToString(), styles.Title);
+      }
+      GUI.color = previousColor;
     }
 
     private static void DrawRoundWins(PrototypeHalliSnapshot snapshot, HalliUiArtSet uiArt)
@@ -321,12 +358,15 @@ namespace CodexGame.Presentation.Views
       PlayableDevStyles styles)
     {
       if (gamePhase != PlayableGamePhase.Halli
-        || snapshot.Phase != PrototypeSessionPhase.ReadyToFlip
-        || snapshot.FlipCount != 0) return;
+        || !snapshot.CanFlip
+        || !_flipReadyPrompt.IsVisible(Time.unscaledTime)) return;
+      var previousColor = GUI.color;
+      GUI.color = new Color(1f, 1f, 1f, _flipReadyPrompt.Alpha(Time.unscaledTime));
       GUI.Label(
         new Rect(350f, 148f, 260f, 44f),
         _localization.Get("UI_THREE_CALL_FLIP_READY"),
         styles.Status);
+      GUI.color = previousColor;
     }
 
     private void DrawControls(
@@ -382,7 +422,11 @@ namespace CodexGame.Presentation.Views
         GUI.color = previousColor;
       }
       GUI.enabled = canFlip;
-      if (GUI.Button(HalliBoardLayout.FlipHit, GUIContent.none, GUIStyle.none)) advance();
+      if (GUI.Button(HalliBoardLayout.FlipHit, GUIContent.none, GUIStyle.none))
+      {
+        _flipReadyPrompt.Dismiss();
+        advance();
+      }
       GUI.enabled = true;
     }
 

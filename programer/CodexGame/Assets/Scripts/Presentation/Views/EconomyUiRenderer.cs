@@ -62,30 +62,43 @@ namespace CodexGame.Presentation.Views
     }
 
     public static void DrawStageRewards(
-      Rect area,
+      Rect popupRect,
       int baseReward,
       int temporaryReward,
       EconomyUiArtSet art,
       GUIStyle countStyle)
     {
-      var gap = 24f;
-      var width = (area.width - gap) * 0.5f;
-      DrawBalance(
-        new Rect(area.x, area.y, width, area.height),
+      if (art?.StageRewardSummaryPanel != null)
+      {
+        GUI.DrawTexture(popupRect, art.StageRewardSummaryPanel, ScaleMode.StretchToFill, true);
+      }
+      else GUI.Box(popupRect, GUIContent.none);
+
+      var contentRect = new Rect(
+        popupRect.x + 24f,
+        popupRect.y + 58f,
+        StageRewardGridLayout.ContentWidth,
+        StageRewardGridLayout.ContentHeight);
+      GUI.BeginGroup(contentRect);
+      var first = StageRewardGridLayout.Slot(2, 0, 0);
+      DrawRewardRow(
+        new Rect(first.X, first.Y, StageRewardGridLayout.RowWidth, StageRewardGridLayout.RowHeight),
         baseReward,
         art?.BaseCurrencyIcon,
-        art?.BaseRewardFrame,
+        art?.StageRewardRowFrame,
         BaseFallback,
         "●",
         countStyle);
-      DrawBalance(
-        new Rect(area.x + width + gap, area.y, width, area.height),
+      var second = StageRewardGridLayout.Slot(2, 0, 1);
+      DrawRewardRow(
+        new Rect(second.X, second.Y, StageRewardGridLayout.RowWidth, StageRewardGridLayout.RowHeight),
         temporaryReward,
         art?.TemporaryCurrencyIcon,
-        art?.TemporaryRewardFrame,
+        art?.StageRewardRowFrame,
         TemporaryFallback,
         "◇",
         countStyle);
+      GUI.EndGroup();
     }
 
     public static void DrawPrice(Rect rect, int price, EconomyUiArtSet art, GUIStyle countStyle)
@@ -173,6 +186,29 @@ namespace CodexGame.Presentation.Views
           rect.width - iconSize - padding * 3f,
           rect.height),
         count.ToString(),
+        countStyle);
+    }
+
+    private static void DrawRewardRow(
+      Rect rect,
+      int count,
+      Texture2D icon,
+      Texture2D frame,
+      Color fallback,
+      string fallbackGlyph,
+      GUIStyle countStyle)
+    {
+      if (frame != null) GUI.DrawTexture(rect, frame, ScaleMode.StretchToFill, true);
+      else GUI.Box(rect, GUIContent.none);
+      DrawIcon(
+        new Rect(rect.x + 16f, rect.y + 12f, 40f, 40f),
+        icon,
+        fallback,
+        fallbackGlyph,
+        countStyle);
+      GUI.Label(
+        new Rect(rect.x + 72f, rect.y + 8f, rect.width - 88f, rect.height - 16f),
+        "+" + count,
         countStyle);
     }
 

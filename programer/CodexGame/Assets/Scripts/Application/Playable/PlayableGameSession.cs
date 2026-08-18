@@ -630,7 +630,7 @@ namespace CodexGame.Application.Playable
       _poker = null;
       _pokerPredictionRecorded = false;
       _firstPublicCard = null;
-      _halli.StartNew(now, combatRoundSeed, _combatRoundNumber, true);
+      _halli.StartNew(now, combatRoundSeed, _combatRoundNumber, true, _stageNumber);
       if (includeStageEntry)
       {
         _stageItemRestriction.EnterStage(_stageNumber, combatRoundSeed);

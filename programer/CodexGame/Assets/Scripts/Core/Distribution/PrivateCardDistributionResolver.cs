@@ -266,6 +266,14 @@ namespace CodexGame.Core.Distribution
         if (!selectedSet.Contains(acquired[index].Id)) unselectedAcquired.Add(acquired[index]);
       }
 
+      if (mode == PrivateCardSelectionMode.TimedOut)
+      {
+        while (selected.Count < directSelectionCount && unselectedAcquired.Count > 0)
+        {
+          selected.Add(TakeRandom(unselectedAcquired, random));
+        }
+      }
+
       for (var index = 0; index < unselectedAcquired.Count; index++)
       {
         if (!unselectedAcquired[index].IsJoker) randomCandidates.Add(unselectedAcquired[index]);
