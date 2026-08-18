@@ -1,0 +1,62 @@
+{
+  "package": "HalliAlerts_0_5_4",
+  "revision": "0.5.4",
+  "issues": [48, 51],
+  "runtimeRoot": "Assets/Art/Prototype/UI/HalliAlerts_0_5_4",
+  "pixelArt": true,
+  "import": {
+    "textureType": "Sprite (2D and UI)",
+    "spriteMode": "Single",
+    "filterMode": "Point",
+    "compression": "None",
+    "alphaIsTransparency": true,
+    "mipMaps": false
+  },
+  "assets": [
+    {
+      "file": "halli_last_five_countdown_sheet_5f_480x96_0_5_4.png",
+      "frameSize": [96, 96],
+      "frameCount": 5,
+      "frameOrder": [5, 4, 3, 2, 1],
+      "event": "successful flip changes RemainingDeckCards to an integer from 5 through 1",
+      "behavior": "transient only; do not restore the removed persistent top count text",
+      "timingSeconds": { "popIn": 0.08, "hold": 0.20, "fadeOut": 0.20 },
+      "recommendedCenter960x540": [480, 266]
+    },
+    {
+      "file": "halli_last_five_countdown_plate_96_0_5_4.png",
+      "size": [96, 96],
+      "role": "fallback badge frame if the digit is rendered separately"
+    },
+    {
+      "file": "halli_rope_contact_flame_6f_288x48_0_5_4.png",
+      "frameSize": [48, 48],
+      "frameCount": 6,
+      "contactAnchorPx": [14, 24],
+      "frameDurationSeconds": 0.08,
+      "placement": "Rect(ropeTipX - 14, ropeRect.center.y - 24, 48, 48)",
+      "notes": "The rope-tip contact point is fixed while flame and smoke expand into the burned space on the right."
+    },
+    {
+      "file": "halli_rope_terminal_burst_8f_768x96_0_5_4.png",
+      "frameSize": [96, 96],
+      "frameCount": 8,
+      "terminalAnchorPx": [24, 48],
+      "totalDurationSeconds": 0.70,
+      "placement": "Rect(ropeRect.x - 24, ropeRect.center.y - 48, 96, 96)",
+      "notes": "Explosion begins at the same rope terminal point used by the contact flame; it expands mainly to the right."
+    },
+    {
+      "file": "halli_rope_terminal_scorch_32x24_0_5_4.png",
+      "size": [32, 24],
+      "anchorPx": [10, 12],
+      "placement": "Rect(ropeRect.x - 10, ropeRect.center.y - 12, 32, 24)",
+      "notes": "Optional short-lived soot mark after the burst."
+    }
+  ],
+  "preserve": [
+    "Assets/Art/Prototype/UI/Halli_0_3_9/halli_rope_braided_body_258x16_0_3_9.png",
+    "Assets/Art/Prototype/UI/Halli_0_3_9/halli_rope_burn_char_cap_24x16_0_3_9.png"
+  ],
+  "preview": "ArtReferences/HalliAlerts_0_5_4/preview/issue_48_51_halli_application_preview_960x540_0_5_4.png"
+}
