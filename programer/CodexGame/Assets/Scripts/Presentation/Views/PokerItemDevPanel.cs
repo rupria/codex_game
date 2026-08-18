@@ -238,16 +238,11 @@ namespace CodexGame.Presentation.Views
         var rect = new Rect(382f + index * 78f, 328f, 64f, 90f);
         var card = snapshot.PlayerPrivateCards[index];
         cards.DrawAt(rect, card);
-        if (card.IsJoker || card.EffectiveSuit == card.Suit) continue;
-        var seal = art?.FindWildInkSuitSeal(card.EffectiveSuit);
-        if (seal != null)
-        {
-          GUI.DrawTexture(
-            new Rect(rect.x + rect.width - 34f, rect.y + rect.height - 34f, 30f, 30f),
-            seal,
-            ScaleMode.ScaleToFit,
-            true);
-        }
+        PokerItemCardStateRenderer.DrawWildInkState(
+          rect,
+          card,
+          snapshot.WildInkCardId.HasValue,
+          art);
       }
     }
 
@@ -412,10 +407,16 @@ namespace CodexGame.Presentation.Views
 
       if (RequiresTarget(_selectedItem.Value))
       {
+        var popupIcon = art?.FindPopupIcon(_selectedItem.Value);
+        if (popupIcon != null)
+        {
+          GUI.DrawTexture(new Rect(410f, 252f, 80f, 80f), popupIcon, ScaleMode.ScaleToFit, true);
+        }
+
         for (var index = 0; index < snapshot.PlayerPrivateCards.Count; index++)
         {
           var card = snapshot.PlayerPrivateCards[index];
-          var rect = new Rect(438f + index * 92f, 252f, 56f, 78f);
+          var rect = new Rect(500f + index * 64f, 252f, 56f, 78f);
           var targetEnabled = IsTargetEnabled(snapshot, _selectedItem.Value, card);
           var previousCardColor = GUI.color;
           if (!targetEnabled) GUI.color = new Color(0.45f, 0.45f, 0.45f, 0.78f);
@@ -423,14 +424,22 @@ namespace CodexGame.Presentation.Views
           GUI.color = previousCardColor;
           if (_selectedTargetCard.HasValue && _selectedTargetCard.Value == card.Id)
           {
-            var color = GUI.color;
-            GUI.color = new Color(0.08f, 0.9f, 0.9f, 0.32f);
-            GUI.DrawTexture(
-              new Rect(rect.x - 4f, rect.y - 4f, rect.width + 8f, rect.height + 8f),
-              Texture2D.whiteTexture,
-              ScaleMode.StretchToFill,
-              true);
-            GUI.color = color;
+            if (_selectedItem.Value == GameItemId.Mercenary
+              && art?.MercenaryPlayerTargetMarker != null)
+            {
+              PokerItemCardStateRenderer.DrawMercenaryTarget(rect, art);
+            }
+            else
+            {
+              var color = GUI.color;
+              GUI.color = new Color(0.08f, 0.9f, 0.9f, 0.32f);
+              GUI.DrawTexture(
+                new Rect(rect.x - 4f, rect.y - 4f, rect.width + 8f, rect.height + 8f),
+                Texture2D.whiteTexture,
+                ScaleMode.StretchToFill,
+                true);
+              GUI.color = color;
+            }
           }
           GUI.enabled = targetEnabled;
           if (GUI.Button(rect, GUIContent.none, GUIStyle.none)) _selectedTargetCard = card.Id;
@@ -439,6 +448,10 @@ namespace CodexGame.Presentation.Views
         if (_selectedItem.Value == GameItemId.WildInk)
         {
           DrawSuitChoices(snapshot, art);
+        }
+        else if (_selectedItem.Value == GameItemId.Mercenary)
+        {
+          DrawMercenaryAiHiddenArea(cards, art);
         }
         return;
       }
@@ -564,6 +577,27 @@ namespace CodexGame.Presentation.Views
         if (cards[index].Id == id) return index;
       }
       return -1;
+    }
+
+    private static void DrawMercenaryAiHiddenArea(
+      PlayableCardRenderer cards,
+      PokerItemUiArtSet art)
+    {
+      var hiddenCard = new Rect(704f, 252f, 56f, 78f);
+      for (var index = 0; index < 3; index++)
+      {
+        cards.DrawBackAt(
+          new Rect(hiddenCard.x + index * 3f, hiddenCard.y - index * 2f, hiddenCard.width, hiddenCard.height),
+          180f);
+      }
+      if (art?.MercenaryAiHiddenMarker != null)
+      {
+        GUI.DrawTexture(
+          new Rect(hiddenCard.x + 18f, hiddenCard.y + 23f, 32f, 32f),
+          art.MercenaryAiHiddenMarker,
+          ScaleMode.ScaleToFit,
+          true);
+      }
     }
 
     private static bool DrawActionButton(
@@ -696,7 +730,11 @@ namespace CodexGame.Presentation.Views
       };
       for (var index = 0; index < suits.Length; index++)
       {
-        var rect = new Rect(510f + index * 42f, 310f, 32f, 32f);
+        var rect = new Rect(
+          700f + (index % 2) * 36f,
+          246f + (index / 2) * 36f,
+          32f,
+          32f);
         var texture = art?.FindWildInkSuitSeal(suits[index]);
         var currentSuit = false;
         if (_selectedTargetCard.HasValue)

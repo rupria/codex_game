@@ -189,7 +189,7 @@ namespace CodexGame.Presentation.Views
         var rect = PokerTableLayout.PlayerCard(index);
         DrawShadow(rect);
         cards.DrawAt(rect, card, false, false);
-        DrawEffectiveSuitSeal(rect, card, pokerItemArt);
+        PokerItemCardStateRenderer.DrawWildInkState(rect, card, false, pokerItemArt);
       }
 
       if (snapshot.VisibleAiPrivateCards.Count == 0)
@@ -223,25 +223,6 @@ namespace CodexGame.Presentation.Views
           cards.DrawAt(rect, snapshot.VisibleAiPrivateCards[index], false, false);
         }
       }
-    }
-
-    private static void DrawEffectiveSuitSeal(
-      Rect cardRect,
-      Card card,
-      PokerItemUiArtSet art)
-    {
-      if (card.IsJoker || card.EffectiveSuit == card.Suit) return;
-      var seal = art?.FindWildInkSuitSeal(card.EffectiveSuit);
-      if (seal == null) return;
-      GUI.DrawTexture(
-        new Rect(
-          cardRect.x + cardRect.width - 30f,
-          cardRect.y + cardRect.height - 30f,
-          28f,
-          28f),
-        seal,
-        ScaleMode.ScaleToFit,
-        true);
     }
 
     private static void DrawPredictionReward(
@@ -496,7 +477,7 @@ namespace CodexGame.Presentation.Views
       if (!snapshot.Result.WasPlayerDamagePrevented) return;
       var duration = GameRules.BarrelDefensePresentationMicroseconds / 1_000_000f;
       var progress = Mathf.Clamp01((Time.unscaledTime - _resultOverlayStartedAt) / duration);
-      if (art?.BarrelDefenseBreakSheet != null)
+      if (progress < 1f && art?.BarrelDefenseBreakSheet != null)
       {
         const int frameCount = 8;
         var frame = Mathf.Min(frameCount - 1, Mathf.FloorToInt(progress * frameCount));
@@ -506,13 +487,24 @@ namespace CodexGame.Presentation.Views
           new Rect(frame / (float)frameCount, 0f, 1f / frameCount, 1f),
           true);
       }
-      if (progress >= 1f && art?.BarrelHpPreservedMarker != null)
+      if (progress >= 1f)
       {
-        GUI.DrawTexture(
-          new Rect(786f, 234f, 32f, 32f),
-          art.BarrelHpPreservedMarker,
-          ScaleMode.ScaleToFit,
-          true);
+        if (art?.BarrelDefenseBroken != null)
+        {
+          GUI.DrawTexture(
+            new Rect(686f, 222f, 64f, 64f),
+            art.BarrelDefenseBroken,
+            ScaleMode.ScaleToFit,
+            true);
+        }
+        if (art?.BarrelHpPreservedMarker != null)
+        {
+          GUI.DrawTexture(
+            new Rect(786f, 234f, 32f, 32f),
+            art.BarrelHpPreservedMarker,
+            ScaleMode.ScaleToFit,
+            true);
+        }
       }
     }
 
