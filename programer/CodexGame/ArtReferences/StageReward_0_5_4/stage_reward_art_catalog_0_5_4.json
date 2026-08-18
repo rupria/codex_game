@@ -1,0 +1,41 @@
+{
+  "package": "StageReward_0_5_4",
+  "revision": "0.5.4",
+  "issues": [49],
+  "runtimeRoot": "Assets/Art/Prototype/UI/StageReward_0_5_4",
+  "referenceResolution": [960, 540],
+  "import": {
+    "textureType": "Sprite (2D and UI)",
+    "spriteMode": "Single",
+    "filterMode": "Point",
+    "compression": "None",
+    "alphaIsTransparency": true,
+    "mipMaps": false
+  },
+  "layout": {
+    "popupRect": [120, 102, 720, 300],
+    "contentSafeRectLocal": [24, 58, 672, 198],
+    "rewardGrid": { "columns": 2, "rows": 2, "gapX": 32, "gapY": 8 },
+    "rowSize": [320, 64],
+    "overflowRule": "Clip to the content safe rectangle. If there are more than four reward rows, paginate or scroll internally; never enlarge the popup beyond its frame.",
+    "continueButtonRect": [360, 430, 240, 54]
+  },
+  "assets": [
+    {
+      "file": "stage_reward_summary_panel_720x300_0_5_4.png",
+      "size": [720, 300],
+      "role": "bounded stage reward popup"
+    },
+    {
+      "file": "stage_reward_row_frame_320x64_0_5_4.png",
+      "size": [320, 64],
+      "role": "single reward result row; supports icon plus label/value"
+    },
+    {
+      "file": "stage_reward_overflow_fade_640x32_0_5_4.png",
+      "size": [640, 32],
+      "role": "optional bottom fade inside clipped/scrollable content"
+    }
+  ],
+  "preview": "ArtReferences/StageReward_0_5_4/preview/issue_49_stage_reward_safe_layout_preview_960x540_0_5_4.png"
+}
