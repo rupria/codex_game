@@ -117,9 +117,10 @@ namespace CodexGame.SmokeTests.Distribution
 
       tests.Check(
         Contains(first.PlayerPrivateCards, retained)
+          && CountFrom(first.PlayerPrivateCards, player) >= 2
           && Same(first.PlayerPrivateCards, second.PlayerPrivateCards)
           && Same(first.AiPrivateCards, second.AiPrivateCards),
-        "Timeout fill must retain partial choices and remain deterministic for the combat seed.");
+        "Timeout fill must retain partial choices, auto-fill owned candidates first, and remain deterministic.");
     }
 
     private static void CheckSelectionSession(TestHarness tests)
@@ -334,6 +335,21 @@ namespace CodexGame.SmokeTests.Distribution
       if (left.Count != right.Count) return false;
       for (var index = 0; index < left.Count; index++) if (left[index].Id != right[index].Id) return false;
       return true;
+    }
+
+    private static int CountFrom(IReadOnlyList<Card> cards, IReadOnlyList<Card> candidates)
+    {
+      var count = 0;
+      for (var cardIndex = 0; cardIndex < cards.Count; cardIndex++)
+      {
+        for (var candidateIndex = 0; candidateIndex < candidates.Count; candidateIndex++)
+        {
+          if (cards[cardIndex].Id != candidates[candidateIndex].Id) continue;
+          count++;
+          break;
+        }
+      }
+      return count;
     }
 
     private static void CheckUniqueAndConserved(

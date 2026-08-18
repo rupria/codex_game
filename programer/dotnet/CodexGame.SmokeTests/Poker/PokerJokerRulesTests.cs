@@ -163,6 +163,11 @@ namespace CodexGame.SmokeTests.Poker
           && session.GetSnapshot(new GameTimestamp(GameRules.PlayerJokerPresentationMicroseconds)).Phase
             == PokerRoundPhase.AwaitingPlayerJokerChoice,
         "Joker presentation must complete once and then require a legal hand choice.");
+      tests.Check(
+        GameRules.PlayerJokerPresentationMicroseconds == 1_000_000
+          && GameRules.PlayerJokerFrontHighlightMicroseconds == 500_000
+          && GameRules.AiJokerShowdownHighlightMicroseconds == 500_000,
+        "0.1.2.6 Joker presentation must use the unskippable 1.0s player and 0.5s AI timings.");
       var choice = session.GetSnapshot(new GameTimestamp(GameRules.PlayerJokerPresentationMicroseconds));
       tests.Check(
         choice.LegalPlayerJokerOptions.Count > 0

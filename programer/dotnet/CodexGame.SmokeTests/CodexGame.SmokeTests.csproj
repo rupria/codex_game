@@ -26,6 +26,15 @@
       Include="..\..\CodexGame\Assets\Scripts\Presentation\Views\RopeTimerViewState.cs"
       Link="Presentation\RopeTimerViewState.cs" />
     <Compile
+      Include="..\..\CodexGame\Assets\Scripts\Presentation\Views\HalliRemainingCardCountdownState.cs"
+      Link="Presentation\HalliRemainingCardCountdownState.cs" />
+    <Compile
+      Include="..\..\CodexGame\Assets\Scripts\Presentation\Views\StageRewardGridLayout.cs"
+      Link="Presentation\StageRewardGridLayout.cs" />
+    <Compile
+      Include="..\..\CodexGame\Assets\Scripts\Presentation\Views\FlipReadyPromptState.cs"
+      Link="Presentation\FlipReadyPromptState.cs" />
+    <Compile
       Include="..\..\CodexGame\Assets\Scripts\Presentation\Views\PokerResultOverlayState.cs"
       Link="Presentation\PokerResultOverlayState.cs" />
     <Compile

@@ -30,22 +30,29 @@ namespace CodexGame.SmokeTests.Shop
       tests.Check(
         initial.Slots.Count == 4
           && initial.CanReroll
-          && initial.RerollCost == 0
-          && initial.RemainingRerolls == 1
+          && initial.RerollCost == 1
+          && initial.RemainingRerolls == 2
           && UniqueCount(initial.Slots) == 4,
-        "A bar visit must open four unique product slots with one free reroll.");
+        "A bar visit must open four unique product slots with two one-bullet rerolls.");
 
-      tests.Check(first.TryReroll(bullets), "The free reroll during a bar visit must succeed.");
+      tests.Check(first.TryReroll(bullets), "The first paid reroll during a bar visit must succeed.");
+      var firstReroll = first.GetSnapshot(availableBullets: bullets.Balance);
+      tests.Check(
+        firstReroll.CanReroll
+          && firstReroll.RemainingRerolls == 1
+          && bullets.Balance == 2,
+        "The first reroll must spend exactly one bullet and leave one visit reroll.");
+      tests.Check(first.TryReroll(bullets), "The second paid reroll during a bar visit must succeed.");
       var rerolled = first.GetSnapshot(availableBullets: bullets.Balance);
       tests.Check(
         rerolled.Slots.Count == 4
           && !rerolled.CanReroll
           && rerolled.RemainingRerolls == 0
-          && bullets.Balance == 3
+          && bullets.Balance == 1
           && !first.TryReroll(bullets)
-          && bullets.Balance == 3
+          && bullets.Balance == 1
           && SameIds(rerolled.Slots, first.GetSnapshot().Slots),
-        "The one free reroll must not spend bullets and a second attempt must be rejected atomically.");
+        "A third reroll must be rejected without spending a bullet or changing the slots.");
 
       var replay = new BarShopSession(BarShopCatalog.All);
       replay.Begin(20260809);
@@ -101,14 +108,14 @@ namespace CodexGame.SmokeTests.Shop
       var sparse = new BarShopSession(BarShopCatalog.All);
       sparse.Begin(114, fullInventory, GameRules.StartingHealth);
       var sparseSlots = sparse.GetSnapshot().Slots;
-      var excludesHealing = true;
+      var includesHealing = false;
       for (var index = 0; index < sparseSlots.Count; index++)
       {
-        excludesHealing &= sparseSlots[index].ItemId != GameItemId.HealthRecovery;
+        includesHealing |= sparseSlots[index].ItemId == GameItemId.HealthRecovery;
       }
       tests.Check(
-        sparseSlots.Count == 3 && excludesHealing,
-        "Full HP and four owned ItemIds must leave three products plus one disabled empty slot.");
+        sparseSlots.Count == 4 && includesHealing,
+        "Health Recovery may be displayed and purchased at full HP even though use stays disabled.");
     }
 
     private static void CheckPurchaseTransaction(TestHarness tests)

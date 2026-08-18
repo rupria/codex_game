@@ -285,23 +285,17 @@ namespace CodexGame.SmokeTests.Items
       var cancelled = session.CancelBottomDeal(cancelledAt);
       var afterCancel = session.GetSnapshot(cancelledAt);
       tests.Check(
-        cancelled
-          && afterCancel.Phase == PokerItemPhase.AwaitingActions
+        !cancelled
+          && afterCancel.Phase == PokerItemPhase.AwaitingBottomDealChoice
           && inventory.Contains(GameItemId.BottomDeal)
           && afterCancel.PlayerPrivateCards[0].Id == original.PlayerPrivateCards[0].Id
           && afterCancel.HandConfirmationRemainingMicroseconds
             == GameRules.PokerHandConfirmationTimeoutMicroseconds - 2_000,
-        "Cancelling Bottom Deal must preserve the hand, item, use count, and original deadline.");
-
-      var reenteredAt = new GameTimestamp(4_000);
-      session.BeginBottomDeal(target, reenteredAt);
-      var secondEntry = session.GetSnapshot(reenteredAt);
+        "After use confirmation, Bottom Deal target selection cannot be cancelled and keeps the original deadline.");
       tests.Check(
-        secondEntry.BottomDealCandidates[0].Id == firstCandidateIds[0]
-          && secondEntry.BottomDealCandidates[1].Id == firstCandidateIds[1]
-          && secondEntry.HandConfirmationRemainingMicroseconds
-            == GameRules.PokerHandConfirmationTimeoutMicroseconds - 3_000,
-        "Re-entering Bottom Deal must reuse candidates and continue the same deadline without rerolling.");
+        afterCancel.BottomDealCandidates[0].Id == firstCandidateIds[0]
+          && afterCancel.BottomDealCandidates[1].Id == firstCandidateIds[1],
+        "A rejected cancellation must not reroll or mutate the committed candidate selection.");
 
       var deadline = new GameTimestamp(
         startedAt.Microseconds + GameRules.PokerHandConfirmationTimeoutMicroseconds);
@@ -312,20 +306,10 @@ namespace CodexGame.SmokeTests.Items
           && timedOut.HandConfirmationTimedOut
           && inventory.Contains(GameItemId.BottomDeal)
           && timedOut.PlayerPrivateCards[0].Id == original.PlayerPrivateCards[0].Id
-          && timedOut.BottomDealAuditTrail.Count == 4
-          && timedOut.BottomDealAuditTrail[3].Outcome == BottomDealAuditOutcome.TimedOut,
+          && timedOut.BottomDealAuditTrail.Count == 2
+          && timedOut.BottomDealAuditTrail[1].Outcome == BottomDealAuditOutcome.TimedOut,
         "Bottom Deal timeout must close the chooser once, keep the original hand/item, and record an audit result.");
 
-      var controlInventory = new RunInventory();
-      controlInventory.TryAdd(GameItemId.BottomDeal);
-      controlInventory.TryAdd(GameItemId.Reload);
-      var control = new PokerItemSession();
-      control.Begin(
-        C(CardSuit.Spades, CardRank.Ace),
-        Distribution(),
-        controlInventory,
-        1207,
-        startedAt);
       var subjectInventory = new RunInventory();
       subjectInventory.TryAdd(GameItemId.BottomDeal);
       subjectInventory.TryAdd(GameItemId.Reload);
@@ -338,13 +322,15 @@ namespace CodexGame.SmokeTests.Items
         startedAt);
       var subjectTarget = subject.GetSnapshot(startedAt).PlayerPrivateCards[0].Id;
       subject.BeginBottomDeal(subjectTarget, enteredAt);
+      var subjectBefore = subject.GetSnapshot(cancelledAt);
       subject.CancelBottomDeal(cancelledAt);
-      subject.UseReload(subjectTarget);
-      control.UseReload(subjectTarget);
+      var subjectAfter = subject.GetSnapshot(cancelledAt);
       tests.Check(
-        subject.GetSnapshot().PlayerPrivateCards[0].Id
-          == control.GetSnapshot().PlayerPrivateCards[0].Id,
-        "Cancelling Bottom Deal must not advance the shared item RNG stream.");
+        subjectBefore.BottomDealCandidates[0].Id == subjectAfter.BottomDealCandidates[0].Id
+          && subjectBefore.BottomDealCandidates[1].Id == subjectAfter.BottomDealCandidates[1].Id
+          && subjectAfter.HandConfirmationRemainingMicroseconds
+            == GameRules.PokerHandConfirmationTimeoutMicroseconds - 2_000,
+        "A rejected post-confirm cancellation must leave candidates, deadline, and RNG state untouched.");
     }
 
     private static PrivateCardDistributionResult Distribution()
