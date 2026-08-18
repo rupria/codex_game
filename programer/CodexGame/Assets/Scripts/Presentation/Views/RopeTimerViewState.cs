@@ -40,5 +40,31 @@ namespace CodexGame.Presentation.Views
       var mode = seconds <= 10 ? RopeTimerMode.Urgent : RopeTimerMode.Normal;
       return new RopeTimerViewState(mode, ratio, seconds);
     }
+
+    public static int LoopingFrame(
+      double elapsedSeconds,
+      double frameDurationSeconds,
+      int frameCount)
+    {
+      if (elapsedSeconds < 0) throw new ArgumentOutOfRangeException(nameof(elapsedSeconds));
+      if (frameDurationSeconds <= 0)
+      {
+        throw new ArgumentOutOfRangeException(nameof(frameDurationSeconds));
+      }
+      if (frameCount <= 0) throw new ArgumentOutOfRangeException(nameof(frameCount));
+      return (int)Math.Floor(elapsedSeconds / frameDurationSeconds) % frameCount;
+    }
+
+    public static int OneShotFrame(
+      double elapsedSeconds,
+      double durationSeconds,
+      int frameCount)
+    {
+      if (elapsedSeconds < 0) throw new ArgumentOutOfRangeException(nameof(elapsedSeconds));
+      if (durationSeconds <= 0) throw new ArgumentOutOfRangeException(nameof(durationSeconds));
+      if (frameCount <= 0) throw new ArgumentOutOfRangeException(nameof(frameCount));
+      var progress = Math.Min(1d, elapsedSeconds / durationSeconds);
+      return Math.Min(frameCount - 1, (int)Math.Floor(progress * frameCount));
+    }
   }
 }

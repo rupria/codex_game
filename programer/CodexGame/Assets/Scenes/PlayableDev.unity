@@ -1334,8 +1334,9 @@ MonoBehaviour:
     _aiWinPipEmpty: {fileID: 2800000, guid: ddaa199e4550e40805842acc24e824d0, type: 3}
     _aiWinPipFilled: {fileID: 2800000, guid: a549288ce1bf50299a3dc1a12b96c4c8, type: 3}
     _ropeBody: {fileID: 2800000, guid: afe7dce189489ff1cac8d166e6ddb59a, type: 3}
-    _ropeFlame: {fileID: 2800000, guid: d6cf4f4ae193ce75a9b58a54e5159f14, type: 3}
-    _ropeExplosion: {fileID: 2800000, guid: abd5cc81431bc6faddc99e2d74bc7053, type: 3}
+    _ropeCharCap: {fileID: 2800000, guid: 283033e07e6ee0df3f55df96c88e40e3, type: 3}
+    _ropeFlame: {fileID: 2800000, guid: f563a100b9ffc5bce57e5f0e86dc004a, type: 3}
+    _ropeExplosion: {fileID: 2800000, guid: 05b2e76e9c2774862b3e21a2d093b3d9, type: 3}
     _sharedPileRailIdle: {fileID: 2800000, guid: a0370000000000000000000000000003, type: 3}
     _sharedPileRailPlayerActive: {fileID: 2800000, guid: a0370000000000000000000000000004, type: 3}
     _sharedPileRailAiActive: {fileID: 2800000, guid: a0370000000000000000000000000005, type: 3}

@@ -8,6 +8,8 @@ namespace CodexGame.Presentation.Views
   internal sealed class HalliRopeTimer
   {
     private const float ExplosionDuration = 0.7f;
+    private const int FlameFrameCount = 6;
+    private const int ExplosionFrameCount = 8;
     private bool _wasTimeoutReview;
     private float _explosionStartedAt = float.NegativeInfinity;
 
@@ -64,15 +66,41 @@ namespace CodexGame.Presentation.Views
         GUI.DrawTexture(filledRect, Texture2D.whiteTexture, ScaleMode.StretchToFill, true);
         DrawKnots(ropeRect, state.RemainingRatio);
       }
+      if (art?.RopeCharCap != null)
+      {
+        GUI.color = Color.white;
+        GUI.DrawTexture(
+          new Rect(filledRect.xMax - 12f, ropeRect.y, 24f, 16f),
+          art.RopeCharCap,
+          ScaleMode.StretchToFill,
+          true);
+      }
       GUI.color = state.Mode == RopeTimerMode.Urgent
         ? new Color(1f, 0.7f, 0.1f, pulse)
         : Color.white;
       var flameSize = state.Mode == RopeTimerMode.Urgent ? 27f + 5f * pulse : 24f;
-      GUI.DrawTexture(
-        new Rect(filledRect.xMax - flameSize * 0.5f, ropeRect.center.y - flameSize * 0.5f, flameSize, flameSize),
-        art?.RopeFlame != null ? art.RopeFlame : Texture2D.whiteTexture,
-        ScaleMode.ScaleToFit,
-        true);
+      var flameRect = new Rect(
+        filledRect.xMax - flameSize * 0.5f,
+        ropeRect.center.y - flameSize * 0.5f,
+        flameSize,
+        flameSize);
+      if (art?.RopeFlame != null)
+      {
+        var frameDuration = state.Mode == RopeTimerMode.Urgent ? 0.05f : 0.08f;
+        var frame = RopeTimerViewState.LoopingFrame(
+          Time.unscaledTime,
+          frameDuration,
+          FlameFrameCount);
+        GUI.DrawTextureWithTexCoords(
+          flameRect,
+          art.RopeFlame,
+          new Rect((float)frame / FlameFrameCount, 0f, 1f / FlameFrameCount, 1f),
+          true);
+      }
+      else
+      {
+        GUI.DrawTexture(flameRect, Texture2D.whiteTexture, ScaleMode.ScaleToFit, true);
+      }
       GUI.color = previousColor;
       GUI.Label(new Rect(596f, 141f, 58f, 24f), state.DisplayedSeconds + "s", styles.Small);
     }
@@ -96,24 +124,26 @@ namespace CodexGame.Presentation.Views
     private void DrawExplosion(Texture2D explosionTexture)
     {
       var elapsed = Mathf.Clamp01((Time.unscaledTime - _explosionStartedAt) / ExplosionDuration);
-      var radius = Mathf.Lerp(18f, 78f, elapsed);
-      var alpha = 1f - elapsed;
-      var center = new Vector2(480f, 154f);
+      var center = new Vector2(332f, 152f);
       var previousColor = GUI.color;
-      GUI.color = new Color(1f, 1f, 1f, alpha);
-      GUI.DrawTexture(
-        new Rect(center.x - radius, center.y - radius, radius * 2f, radius * 2f),
-        explosionTexture != null ? explosionTexture : Texture2D.whiteTexture,
-        ScaleMode.ScaleToFit,
-        true);
-      if (explosionTexture == null)
+      GUI.color = Color.white;
+      var rect = new Rect(center.x - 32f, center.y - 32f, 64f, 64f);
+      if (explosionTexture != null)
       {
-        GUI.color = new Color(1f, 0.84f, 0.22f, alpha);
-        GUI.DrawTexture(
-          new Rect(center.x - radius * 0.45f, center.y - radius * 0.45f, radius * 0.9f, radius * 0.9f),
-          Texture2D.whiteTexture,
-          ScaleMode.ScaleToFit,
+        var frame = RopeTimerViewState.OneShotFrame(
+          Time.unscaledTime - _explosionStartedAt,
+          ExplosionDuration,
+          ExplosionFrameCount);
+        GUI.DrawTextureWithTexCoords(
+          rect,
+          explosionTexture,
+          new Rect((float)frame / ExplosionFrameCount, 0f, 1f / ExplosionFrameCount, 1f),
           true);
+      }
+      else
+      {
+        GUI.color = new Color(1f, 0.84f, 0.22f, 1f - elapsed);
+        GUI.DrawTexture(rect, Texture2D.whiteTexture, ScaleMode.ScaleToFit, true);
       }
       GUI.color = previousColor;
     }

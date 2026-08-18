@@ -25,6 +25,7 @@ namespace CodexGame.Presentation.Art
     [SerializeField] private Texture2D _aiWinPipEmpty;
     [SerializeField] private Texture2D _aiWinPipFilled;
     [SerializeField] private Texture2D _ropeBody;
+    [SerializeField] private Texture2D _ropeCharCap;
     [SerializeField] private Texture2D _ropeFlame;
     [SerializeField] private Texture2D _ropeExplosion;
     [SerializeField] private Texture2D _sharedPileRailIdle;
@@ -53,6 +54,7 @@ namespace CodexGame.Presentation.Art
       Texture2D aiWinPipEmpty = null,
       Texture2D aiWinPipFilled = null,
       Texture2D ropeBody = null,
+      Texture2D ropeCharCap = null,
       Texture2D ropeFlame = null,
       Texture2D ropeExplosion = null,
       Texture2D sharedPileRailIdle = null,
@@ -83,6 +85,7 @@ namespace CodexGame.Presentation.Art
       _aiWinPipEmpty = aiWinPipEmpty;
       _aiWinPipFilled = aiWinPipFilled;
       _ropeBody = ropeBody;
+      _ropeCharCap = ropeCharCap;
       _ropeFlame = ropeFlame;
       _ropeExplosion = ropeExplosion;
       _sharedPileRailIdle = sharedPileRailIdle;
@@ -111,6 +114,7 @@ namespace CodexGame.Presentation.Art
     public Texture2D AiWinPipEmpty => _aiWinPipEmpty;
     public Texture2D AiWinPipFilled => _aiWinPipFilled;
     public Texture2D RopeBody => _ropeBody;
+    public Texture2D RopeCharCap => _ropeCharCap;
     public Texture2D RopeFlame => _ropeFlame;
     public Texture2D RopeExplosion => _ropeExplosion;
     public Texture2D SharedPileRailIdle => _sharedPileRailIdle;
@@ -125,6 +129,7 @@ namespace CodexGame.Presentation.Art
       && _aiWinPipFilled != null;
 
     public bool HasRopeTimerArt => _ropeBody != null
+      && _ropeCharCap != null
       && _ropeFlame != null
       && _ropeExplosion != null;
 
