@@ -38,7 +38,6 @@ namespace CodexGame.Core.Shared
     public const long PrivateSelectionTimeoutMicroseconds = 60_000_000;
     public const long PokerHandConfirmationTimeoutMicroseconds = 120_000_000;
     public const long PredictionTimeoutMicroseconds = 120_000_000;
-    public const long SecondPublicCardRevealMicroseconds = 1_290_000;
     public const long PokerResultCardRevealMicroseconds = 1_000_000;
     public const long PokerResultOutcomeMicroseconds = 1_000_000;
     public const long PokerResultAnnouncementMicroseconds =
@@ -52,6 +51,7 @@ namespace CodexGame.Core.Shared
     public const long BarrelItemPresentationMicroseconds = 450_000;
     public const long BarrelDefensePresentationMicroseconds = 550_000;
     public const long PredictionInsuranceItemPresentationMicroseconds = 450_000;
+    public const long PredictionInsuranceActivationPresentationMicroseconds = 400_000;
     public const long MercenaryItemPresentationMicroseconds = 900_000;
     public const long BarShopPouchCoverMicroseconds = 120_000;
     public const long BarShopCoinFlipDurationMicroseconds = 500_000;

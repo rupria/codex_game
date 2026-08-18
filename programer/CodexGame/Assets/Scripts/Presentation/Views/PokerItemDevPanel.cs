@@ -32,6 +32,7 @@ namespace CodexGame.Presentation.Views
       Action<CardId> reload,
       Action<CardId> beginBottomDeal,
       Action<CardId> chooseBottomDeal,
+      Action cancelBottomDeal,
       Action hypeMan,
       Action healthRecovery,
       Action<CardId, CardSuit> wildInk,
@@ -59,6 +60,7 @@ namespace CodexGame.Presentation.Views
 
       var stageLimitExhausted = snapshot.StageRestriction?.IsExhausted == true;
       var canAct = snapshot.Phase == PokerItemPhase.AwaitingActions
+        && HasUsableItemAtCurrentTiming(snapshot)
         && !stageLimitExhausted
         && !snapshot.UsePresentation.IsActive;
       DrawClosedCrate(
@@ -78,7 +80,13 @@ namespace CodexGame.Presentation.Views
 
       if (snapshot.Phase == PokerItemPhase.AwaitingBottomDealChoice)
       {
-        DrawBottomDealCandidates(snapshot, cards, styles, localization, chooseBottomDeal);
+        DrawBottomDealCandidates(
+          snapshot,
+          cards,
+          styles,
+          localization,
+          chooseBottomDeal,
+          cancelBottomDeal);
         return;
       }
 
@@ -110,7 +118,7 @@ namespace CodexGame.Presentation.Views
       {
         GUI.Label(
           new Rect(155f, 468f, 540f, 28f),
-          FailureMessage(snapshot.LastFailure, localization),
+          FailureMessage(snapshot.LastFailure, _selectedItem, localization),
           styles.Small);
       }
     }
@@ -145,9 +153,15 @@ namespace CodexGame.Presentation.Views
 
     private static string FailureMessage(
       PokerItemFailure failure,
+      GameItemId? selectedItem,
       LocalizationRuntime localization)
     {
-      var key = failure == PokerItemFailure.CardExchangeLocked
+      var key = failure == PokerItemFailure.WrongPhase
+          && selectedItem.HasValue
+          && GameItemCatalog.TryGet(selectedItem.Value, out var definition)
+          && definition != null
+        ? GameItemUseTimingPolicy.LocalizationKey(definition.UseTiming)
+        : failure == PokerItemFailure.CardExchangeLocked
         ? "UI_ITEM_EXCHANGE_LOCK_AFTER_INK"
         : failure == PokerItemFailure.NoValidReplacementPair
           ? "UI_ITEM_NO_VALID_REPLACEMENT_PAIR"
@@ -209,25 +223,7 @@ namespace CodexGame.Presentation.Views
       {
         cards.DrawAt(new Rect(416f + index * 66f, 188f, 56f, 78f), snapshot.PublicCards[index]);
       }
-      var lockRect = new Rect(486f, 203f, 48f, 48f);
-      if (snapshot.PublicCards.Count == 1 && !snapshot.RevealingSecondPublicCard.HasValue)
-      {
-        var locked = art?.CommunityLocked;
-        if (locked != null) GUI.DrawTexture(lockRect, locked, ScaleMode.ScaleToFit, true);
-      }
-      if (snapshot.RevealingSecondPublicCard.HasValue)
-      {
-        var revealing = art?.CommunityReveal;
-        if (revealing != null) GUI.DrawTexture(lockRect, revealing, ScaleMode.ScaleToFit, true);
-        CardFlipMotion.Draw(
-          cards,
-          snapshot.RevealingSecondPublicCard.Value,
-          new Rect(448f, 98f, 56f, 78f),
-          new Rect(482f, 188f, 56f, 78f),
-          snapshot.SecondPublicRevealProgress,
-          false);
-      }
-      else if (snapshot.PublicCards.Count >= 2 && art?.CommunityOpen != null)
+      if (snapshot.PublicCards.Count >= 2 && art?.CommunityOpen != null)
       {
         GUI.DrawTexture(new Rect(548f, 209f, 36f, 36f), art.CommunityOpen, ScaleMode.ScaleToFit, true);
       }
@@ -453,6 +449,7 @@ namespace CodexGame.Presentation.Views
         {
           DrawMercenaryAiHiddenArea(cards, art);
         }
+        DrawUseTiming(_selectedItem.Value, localization, styles);
         return;
       }
 
@@ -471,6 +468,7 @@ namespace CodexGame.Presentation.Views
           new Rect(510f, 292f, 250f, 34f),
           localization.Get(definition.LocalizationDescriptionKey),
           styles.Small);
+        DrawUseTiming(_selectedItem.Value, localization, styles);
       }
     }
 
@@ -543,6 +541,9 @@ namespace CodexGame.Presentation.Views
 
     private static bool IsItemDisabled(PokerItemSnapshot snapshot, GameItemId itemId)
     {
+      if (!GameItemCatalog.TryGet(itemId, out var definition)
+        || definition == null
+        || !GameItemUseTimingPolicy.IsUsable(definition, snapshot.CurrentUseTiming)) return true;
       if (snapshot.StageRestriction?.IsExhausted == true) return true;
       if (itemId == GameItemId.HealthRecovery && !snapshot.CanRecoverHealth) return true;
       if (snapshot.WildInkCardId.HasValue
@@ -551,6 +552,29 @@ namespace CodexGame.Presentation.Views
           || itemId == GameItemId.Mercenary)) return true;
       return itemId == GameItemId.Mercenary
         && snapshot.MercenaryEligibleTargets.Count == 0;
+    }
+
+    private static bool HasUsableItemAtCurrentTiming(PokerItemSnapshot snapshot)
+    {
+      for (var index = 0; index < snapshot.Inventory.Count; index++)
+      {
+        if (GameItemCatalog.TryGet(snapshot.Inventory[index], out var definition)
+          && definition != null
+          && GameItemUseTimingPolicy.IsUsable(definition, snapshot.CurrentUseTiming)) return true;
+      }
+      return false;
+    }
+
+    private static void DrawUseTiming(
+      GameItemId itemId,
+      LocalizationRuntime localization,
+      PlayableDevStyles styles)
+    {
+      if (!GameItemCatalog.TryGet(itemId, out var definition) || definition == null) return;
+      GUI.Label(
+        new Rect(410f, 346f, 360f, 20f),
+        localization.Get(GameItemUseTimingPolicy.LocalizationKey(definition.UseTiming)),
+        styles.Small);
     }
 
     private static bool IsTargetEnabled(
@@ -655,7 +679,8 @@ namespace CodexGame.Presentation.Views
       PlayableCardRenderer cards,
       PlayableDevStyles styles,
       LocalizationRuntime localization,
-      Action<CardId> chooseBottomDeal)
+      Action<CardId> chooseBottomDeal,
+      Action cancelBottomDeal)
     {
       var previous = GUI.color;
       GUI.color = new Color(0f, 0f, 0f, 0.74f);
@@ -671,6 +696,17 @@ namespace CodexGame.Presentation.Views
         {
           chooseBottomDeal(snapshot.BottomDealCandidates[index].Id);
         }
+      }
+      if (GUI.Button(
+        new Rect(394f, 352f, 172f, 36f),
+        localization.Get("UI_COMMON_CANCEL")))
+      {
+        cancelBottomDeal();
+      }
+      if (Event.current.type == EventType.KeyDown && Event.current.keyCode == KeyCode.Escape)
+      {
+        Event.current.Use();
+        cancelBottomDeal();
       }
     }
 

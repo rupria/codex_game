@@ -11,7 +11,7 @@ namespace CodexGame.Presentation.Localization
   {
     public const string DefaultLanguage = "ko";
     public const string FallbackLanguage = "en";
-    public const int RequiredKeyCount = 197;
+    public const int RequiredKeyCount = 199;
 
     private static readonly string[] RequiredJokerKeys =
     {
@@ -66,6 +66,7 @@ namespace CodexGame.Presentation.Localization
       "UI_GUIDE_TUTORIAL_SKIP",
       "UI_INACTIVITY_RETURN_MESSAGE",
       "UI_COMMON_CONFIRM",
+      "UI_COMMON_CANCEL",
       "UI_RUN_COMPLETE",
       "UI_ITEM_USING",
       "UI_THREE_CALL_FLIP_READY"
@@ -90,6 +91,7 @@ namespace CodexGame.Presentation.Localization
       "UI_ITEM_NO_VALID_REPLACEMENT_PAIR",
       "UI_ITEM_CONFIRM_TIMER",
       "UI_ITEM_CONFIRM_TIMEOUT",
+      "UI_ITEM_USE_TIMING_BEFORE_PREDICTION",
       "UI_PREDICTION_ACTUAL_COUNT",
       "UI_PREDICTION_INSURED_COUNT",
       "UI_PREDICTION_CHARGES",

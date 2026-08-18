@@ -1,3 +1,4 @@
+#nullable enable
 using System;
 using CodexGame.Core.Shared;
 
@@ -11,7 +12,8 @@ namespace CodexGame.Core.Rewards
       int insuranceChargesRemaining,
       int rewardSuccessCount,
       bool insuranceActivatedThisStage,
-      bool lastResultWasInsured)
+      bool lastResultWasInsured,
+      PredictionRecordAuditEntry? lastRecord)
     {
       if (actualSuccessCount < 0) throw new ArgumentOutOfRangeException(nameof(actualSuccessCount));
       if (insuredSuccessCount < 0) throw new ArgumentOutOfRangeException(nameof(insuredSuccessCount));
@@ -31,6 +33,7 @@ namespace CodexGame.Core.Rewards
       RewardSuccessCount = rewardSuccessCount;
       InsuranceActivatedThisStage = insuranceActivatedThisStage;
       LastResultWasInsured = lastResultWasInsured;
+      LastRecord = lastRecord;
     }
 
     public int ActualSuccessCount { get; }
@@ -39,5 +42,6 @@ namespace CodexGame.Core.Rewards
     public int RewardSuccessCount { get; }
     public bool InsuranceActivatedThisStage { get; }
     public bool LastResultWasInsured { get; }
+    public PredictionRecordAuditEntry? LastRecord { get; }
   }
 }

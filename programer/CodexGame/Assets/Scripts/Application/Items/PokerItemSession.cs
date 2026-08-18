@@ -1,3 +1,4 @@
+#nullable enable
 using System;
 using System.Collections.Generic;
 using CodexGame.Core.Cards;
@@ -15,6 +16,8 @@ namespace CodexGame.Application.Items
     private readonly List<Card> _aiCards = new List<Card>();
     private readonly List<Card> _remainingCandidates = new List<Card>();
     private readonly List<Card> _bottomDealCandidates = new List<Card>();
+    private readonly List<BottomDealAuditEntry> _bottomDealAuditTrail =
+      new List<BottomDealAuditEntry>();
     private RunInventory _inventory = null!;
     private PrivateCardDistributionResult _source = null!;
     private IRandomSource _random = null!;
@@ -23,15 +26,15 @@ namespace CodexGame.Application.Items
     private CardId _bottomDealTarget;
     private Card _firstPublicCard;
     private int _visibleAiCardIndex = -1;
-    private GameTimestamp _secondPublicRevealStartedAt;
-    private GameTimestamp _secondPublicRevealEndsAt;
     private GameTimestamp _handConfirmationDeadline;
+    private long _combatRoundSeed;
     private CardId? _wildInkCardId;
     private bool _barrelDefenseArmed;
     private bool _insuranceActivated;
     private bool _mercenaryExchangeApplied;
     private bool _handConfirmationTimedOut;
     private bool _canRecoverHealth;
+    private GameItemUseTiming _currentUseTiming = GameItemUseTiming.None;
 
     public PokerItemPhase Phase { get; private set; } = PokerItemPhase.NotStarted;
     public PokerItemFailure LastFailure { get; private set; }
@@ -51,7 +54,6 @@ namespace CodexGame.Application.Items
         combatRoundSeed,
         stageRestriction,
         new GameTimestamp(0),
-        false,
         canRecoverHealth);
     }
 
@@ -71,7 +73,6 @@ namespace CodexGame.Application.Items
         combatRoundSeed,
         stageRestriction,
         now,
-        true,
         canRecoverHealth);
     }
 
@@ -82,7 +83,6 @@ namespace CodexGame.Application.Items
       long combatRoundSeed,
       StageItemRestrictionSession? stageRestriction,
       GameTimestamp now,
-      bool presentSecondPublicCard,
       bool canRecoverHealth)
     {
       if (!firstPublicCard.IsValid)
@@ -96,11 +96,13 @@ namespace CodexGame.Application.Items
         combatRoundSeed,
         RandomChannel.MercenaryExchange);
       _stageRestriction = stageRestriction;
+      _combatRoundSeed = combatRoundSeed;
       _firstPublicCard = firstPublicCard;
       Replace(_playerCards, distribution.PlayerPrivateCards);
       Replace(_aiCards, distribution.AiPrivateCards);
       Replace(_remainingCandidates, distribution.RemainingCandidates);
       _bottomDealCandidates.Clear();
+      _bottomDealAuditTrail.Clear();
       _visibleAiCardIndex = -1;
       _wildInkCardId = null;
       _barrelDefenseArmed = false;
@@ -108,47 +110,32 @@ namespace CodexGame.Application.Items
       _mercenaryExchangeApplied = false;
       _handConfirmationTimedOut = false;
       _canRecoverHealth = canRecoverHealth;
+      _currentUseTiming = GameItemUseTiming.AfterPublicCardsAndPrivateSelectionBeforePrediction;
       LastFailure = PokerItemFailure.None;
-      if (presentSecondPublicCard)
+      Phase = inventory.Count == 0
+        ? PokerItemPhase.Completed
+        : PokerItemPhase.AwaitingActions;
+      if (Phase == PokerItemPhase.AwaitingActions)
       {
-        _secondPublicRevealStartedAt = now;
-        _secondPublicRevealEndsAt = Add(now, GameRules.SecondPublicCardRevealMicroseconds);
-        Phase = PokerItemPhase.RevealingSecondPublic;
-      }
-      else
-      {
-        Phase = inventory.Count == 0
-          ? PokerItemPhase.Completed
-          : PokerItemPhase.AwaitingActions;
-        if (Phase == PokerItemPhase.AwaitingActions)
-        {
-          _handConfirmationDeadline = Add(
-            now,
-            GameRules.PokerHandConfirmationTimeoutMicroseconds);
-        }
+        _handConfirmationDeadline = Add(
+          now,
+          GameRules.PokerHandConfirmationTimeoutMicroseconds);
       }
     }
 
     public bool Tick(GameTimestamp now)
     {
-      if (Phase == PokerItemPhase.RevealingSecondPublic)
-      {
-        if (now.Microseconds < _secondPublicRevealEndsAt.Microseconds) return false;
-        Phase = _inventory.Count == 0
-          ? PokerItemPhase.Completed
-          : PokerItemPhase.AwaitingActions;
-        if (Phase == PokerItemPhase.AwaitingActions)
-        {
-          _handConfirmationDeadline = Add(
-            _secondPublicRevealEndsAt,
-            GameRules.PokerHandConfirmationTimeoutMicroseconds);
-        }
-        return true;
-      }
-
-      if (Phase == PokerItemPhase.AwaitingActions
+      if ((Phase == PokerItemPhase.AwaitingActions
+          || Phase == PokerItemPhase.AwaitingBottomDealChoice)
         && now.Microseconds >= _handConfirmationDeadline.Microseconds)
       {
+        if (Phase == PokerItemPhase.AwaitingBottomDealChoice)
+        {
+          RecordBottomDealAudit(
+            _handConfirmationDeadline,
+            BottomDealAuditOutcome.TimedOut);
+          _bottomDealCandidates.Clear();
+        }
         _handConfirmationTimedOut = true;
         Phase = PokerItemPhase.Completed;
         LastFailure = PokerItemFailure.None;
@@ -173,26 +160,31 @@ namespace CodexGame.Application.Items
       return LastFailure;
     }
 
-    public PokerItemFailure BeginBottomDeal(CardId target)
+    public PokerItemFailure BeginBottomDeal(CardId target, GameTimestamp now)
     {
       if (!CanUse(GameItemId.BottomDeal, target, out var targetIndex)) return LastFailure;
       var candidates = new List<Card>(_remainingCandidates) { _playerCards[targetIndex] };
       if (!ValidateCandidatePool(candidates, 2)) return LastFailure;
 
-      _bottomDealCandidates.Clear();
-      for (var count = 0; count < 2; count++)
+      if (_bottomDealCandidates.Count != 2 || _bottomDealTarget != target)
       {
-        var selectedIndex = _random.NextInt(candidates.Count);
-        _bottomDealCandidates.Add(candidates[selectedIndex]);
-        candidates.RemoveAt(selectedIndex);
+        _bottomDealCandidates.Clear();
+        var previewRandom = CreateBottomDealPreviewRandom(target);
+        for (var count = 0; count < 2; count++)
+        {
+          var selectedIndex = previewRandom.NextInt(candidates.Count);
+          _bottomDealCandidates.Add(candidates[selectedIndex]);
+          candidates.RemoveAt(selectedIndex);
+        }
       }
       _bottomDealTarget = target;
       LastFailure = PokerItemFailure.None;
       Phase = PokerItemPhase.AwaitingBottomDealChoice;
+      RecordBottomDealAudit(now, BottomDealAuditOutcome.Entered);
       return LastFailure;
     }
 
-    public PokerItemFailure ChooseBottomDeal(CardId candidateId)
+    public PokerItemFailure ChooseBottomDeal(CardId candidateId, GameTimestamp now)
     {
       if (Phase != PokerItemPhase.AwaitingBottomDealChoice)
       {
@@ -210,17 +202,25 @@ namespace CodexGame.Application.Items
       candidates.RemoveAt(selectedPoolIndex);
       _playerCards[targetIndex] = selected;
       Replace(_remainingCandidates, candidates);
+      RecordBottomDealAudit(now, BottomDealAuditOutcome.Confirmed);
       _bottomDealCandidates.Clear();
       Consume(GameItemId.BottomDeal);
       if (Phase != PokerItemPhase.Completed) Phase = PokerItemPhase.AwaitingActions;
       return LastFailure;
     }
 
+    public bool CancelBottomDeal(GameTimestamp now)
+    {
+      if (Phase != PokerItemPhase.AwaitingBottomDealChoice) return false;
+      RecordBottomDealAudit(now, BottomDealAuditOutcome.Cancelled);
+      Phase = PokerItemPhase.AwaitingActions;
+      LastFailure = PokerItemFailure.None;
+      return true;
+    }
+
     public PokerItemFailure UseHypeMan()
     {
-      if (Phase != PokerItemPhase.AwaitingActions) return Fail(PokerItemFailure.WrongPhase);
-      if (!_inventory.Contains(GameItemId.HypeMan)) return Fail(PokerItemFailure.ItemNotOwned);
-      if (!CanUseInCurrentStage()) return LastFailure;
+      if (!CanUseWithoutTarget(GameItemId.HypeMan)) return LastFailure;
       if (_aiCards.Count == 0) return Fail(PokerItemFailure.CandidatePoolExhausted);
       var visibleCandidates = new List<int>(_aiCards.Count);
       for (var index = 0; index < _aiCards.Count; index++)
@@ -235,9 +235,7 @@ namespace CodexGame.Application.Items
 
     public PokerItemFailure UseHealthRecovery(bool canRecover)
     {
-      if (Phase != PokerItemPhase.AwaitingActions) return Fail(PokerItemFailure.WrongPhase);
-      if (!_inventory.Contains(GameItemId.HealthRecovery)) return Fail(PokerItemFailure.ItemNotOwned);
-      if (!CanUseInCurrentStage()) return LastFailure;
+      if (!CanUseWithoutTarget(GameItemId.HealthRecovery)) return LastFailure;
       if (!canRecover) return Fail(PokerItemFailure.HealthAlreadyFull);
       Consume(GameItemId.HealthRecovery);
       return LastFailure;
@@ -337,18 +335,9 @@ namespace CodexGame.Application.Items
         : EmptyCards;
       var publicCards = _source == null
         ? EmptyCards
-        : Phase == PokerItemPhase.RevealingSecondPublic
-          ? Array.AsReadOnly(new[] { _firstPublicCard })
-          : Array.AsReadOnly(new[] { _firstPublicCard, _source.SecondPublicCard });
-      var revealProgress = Phase == PokerItemPhase.RevealingSecondPublic
-        ? GetSecondPublicRevealProgress(now ?? _secondPublicRevealStartedAt)
-        : 1f;
-      var handConfirmationRemaining = Phase == PokerItemPhase.AwaitingActions
-        ? Math.Max(
-          0,
-          _handConfirmationDeadline.Microseconds
-            - (now ?? _handConfirmationDeadline).Microseconds)
-        : 0;
+        : Array.AsReadOnly(new[] { _firstPublicCard, _source.SecondPublicCard });
+      var handConfirmationRemaining = GetHandConfirmationRemaining(
+        now ?? _handConfirmationDeadline);
       var mercenaryTargets = new List<CardId>();
       if (_source != null
         && _inventory != null
@@ -372,6 +361,7 @@ namespace CodexGame.Application.Items
       }
       return new PokerItemSnapshot(
         Phase,
+        _currentUseTiming,
         _inventory != null ? _inventory.Snapshot() : Array.AsReadOnly(Array.Empty<GameItemId>()),
         _playerCards,
         visibleAi,
@@ -379,8 +369,6 @@ namespace CodexGame.Application.Items
         _bottomDealCandidates,
         LastFailure,
         _stageRestriction?.GetSnapshot(),
-        Phase == PokerItemPhase.RevealingSecondPublic ? _source!.SecondPublicCard : (Card?)null,
-        revealProgress,
         usePresentation,
         _wildInkCardId,
         _barrelDefenseArmed,
@@ -389,7 +377,8 @@ namespace CodexGame.Application.Items
         handConfirmationRemaining,
         _handConfirmationTimedOut,
         Array.AsReadOnly(mercenaryTargets.ToArray()),
-        _canRecoverHealth);
+        _canRecoverHealth,
+        Array.AsReadOnly(_bottomDealAuditTrail.ToArray()));
     }
 
     public int VisibleAiCardIndex => _visibleAiCardIndex;
@@ -399,9 +388,8 @@ namespace CodexGame.Application.Items
     private bool CanUse(GameItemId itemId, CardId target, out int targetIndex)
     {
       targetIndex = -1;
-      if (Phase != PokerItemPhase.AwaitingActions)
+      if (!CanUseAtCurrentTiming(itemId))
       {
-        Fail(PokerItemFailure.WrongPhase);
         return false;
       }
       if (!_inventory.Contains(itemId))
@@ -426,9 +414,8 @@ namespace CodexGame.Application.Items
 
     private bool CanUseWithoutTarget(GameItemId itemId)
     {
-      if (Phase != PokerItemPhase.AwaitingActions)
+      if (!CanUseAtCurrentTiming(itemId))
       {
-        Fail(PokerItemFailure.WrongPhase);
         return false;
       }
       if (!_inventory.Contains(itemId))
@@ -437,6 +424,19 @@ namespace CodexGame.Application.Items
         return false;
       }
       return CanUseInCurrentStage();
+    }
+
+    private bool CanUseAtCurrentTiming(GameItemId itemId)
+    {
+      if (Phase != PokerItemPhase.AwaitingActions
+        || !GameItemCatalog.TryGet(itemId, out var definition)
+        || definition == null
+        || !GameItemUseTimingPolicy.IsUsable(definition, _currentUseTiming))
+      {
+        Fail(PokerItemFailure.WrongPhase);
+        return false;
+      }
+      return true;
     }
 
     private static bool IsCardExchangeItem(GameItemId itemId)
@@ -504,12 +504,32 @@ namespace CodexGame.Application.Items
       for (var index = 0; index < source.Count; index++) target.Add(source[index]);
     }
 
-    private float GetSecondPublicRevealProgress(GameTimestamp now)
+    private IRandomSource CreateBottomDealPreviewRandom(CardId target)
     {
-      var duration = _secondPublicRevealEndsAt.Microseconds - _secondPublicRevealStartedAt.Microseconds;
-      if (duration <= 0) return 1f;
-      var elapsed = Math.Max(0, now.Microseconds - _secondPublicRevealStartedAt.Microseconds);
-      return (float)Math.Min(1d, (double)elapsed / duration);
+      var targetSalt = unchecked(
+        (long)((ulong)(target.Value + 1) * 0x9E3779B97F4A7C15UL));
+      return DeterministicRandomFactory.Create(
+        unchecked(_combatRoundSeed ^ targetSalt),
+        RandomChannel.BottomDealPreview);
+    }
+
+    private long GetHandConfirmationRemaining(GameTimestamp now)
+    {
+      return Phase == PokerItemPhase.AwaitingActions
+          || Phase == PokerItemPhase.AwaitingBottomDealChoice
+        ? Math.Max(0, _handConfirmationDeadline.Microseconds - now.Microseconds)
+        : 0;
+    }
+
+    private void RecordBottomDealAudit(
+      GameTimestamp now,
+      BottomDealAuditOutcome outcome)
+    {
+      _bottomDealAuditTrail.Add(new BottomDealAuditEntry(
+        now.Microseconds,
+        GetHandConfirmationRemaining(now),
+        _bottomDealTarget,
+        outcome));
     }
 
     private static GameTimestamp Add(GameTimestamp timestamp, long microseconds)

@@ -58,6 +58,21 @@ namespace CodexGame.Application.Items
 
     public bool CanUse => !_isActive || _usedCount < _useLimit;
 
+    internal void ConfigureQaOverride(int stageNumber, int useLimit)
+    {
+      if (stageNumber < 1) throw new ArgumentOutOfRangeException(nameof(stageNumber));
+      if (useLimit < 0 || useLimit > GameRules.StageItemRestrictionMaximumUses)
+      {
+        throw new ArgumentOutOfRangeException(nameof(useLimit));
+      }
+      _stageNumber = stageNumber;
+      _wasAssessed = true;
+      _activatedDuringRun = true;
+      _isActive = true;
+      _useLimit = useLimit;
+      _usedCount = 0;
+    }
+
     public void RecordUse()
     {
       if (!CanUse)

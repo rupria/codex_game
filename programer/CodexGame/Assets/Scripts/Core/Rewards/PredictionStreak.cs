@@ -1,3 +1,4 @@
+#nullable enable
 using System;
 using CodexGame.Core.Shared;
 
@@ -10,6 +11,8 @@ namespace CodexGame.Core.Rewards
     public int InsuranceChargesRemaining { get; private set; }
     public bool InsuranceActivatedThisStage { get; private set; }
     public bool LastResultWasInsured { get; private set; }
+    public PredictionRecordAuditEntry? LastRecord { get; private set; }
+    private int _recordSequence;
     public int SuccessCount => RewardSuccessCount;
     public int RewardSuccessCount => Math.Min(
       GameRules.MaximumPredictionSuccessCount,
@@ -27,18 +30,37 @@ namespace CodexGame.Core.Rewards
 
     public bool Record(PredictionResult result)
     {
-      if (result == null) return false;
+      return RecordWithAudit(result)?.CountedAsSuccess == true;
+    }
+
+    public PredictionRecordAuditEntry? RecordWithAudit(PredictionResult result)
+    {
+      if (result == null) return null;
+      var chargesBefore = InsuranceChargesRemaining;
       LastResultWasInsured = false;
+      var actual = false;
+      var insured = false;
       if (result.IsCorrect)
       {
         checked { ActualSuccessCount++; }
-        return true;
+        actual = true;
       }
-      if (InsuranceChargesRemaining <= 0) return false;
-      InsuranceChargesRemaining--;
-      checked { InsuredSuccessCount++; }
-      LastResultWasInsured = true;
-      return true;
+      else if (InsuranceChargesRemaining > 0)
+      {
+        InsuranceChargesRemaining--;
+        checked { InsuredSuccessCount++; }
+        LastResultWasInsured = true;
+        insured = true;
+      }
+      checked { _recordSequence++; }
+      LastRecord = new PredictionRecordAuditEntry(
+        _recordSequence,
+        result.Choice,
+        actual,
+        insured,
+        chargesBefore,
+        InsuranceChargesRemaining);
+      return LastRecord;
     }
 
     public void Reset()
@@ -53,6 +75,8 @@ namespace CodexGame.Core.Rewards
       InsuranceChargesRemaining = 0;
       InsuranceActivatedThisStage = false;
       LastResultWasInsured = false;
+      LastRecord = null;
+      _recordSequence = 0;
     }
 
     public PredictionRewardSnapshot GetSnapshot()
@@ -63,7 +87,8 @@ namespace CodexGame.Core.Rewards
         InsuranceChargesRemaining,
         RewardSuccessCount,
         InsuranceActivatedThisStage,
-        LastResultWasInsured);
+        LastResultWasInsured,
+        LastRecord);
     }
   }
 }

@@ -18,6 +18,7 @@ namespace CodexGame.SmokeTests.Items
     public static void Run(TestHarness tests)
     {
       CheckCatalogData(tests);
+      CheckItemUseTimingData(tests);
       CheckWildInk(tests);
       CheckMercenary(tests);
       CheckBarrelAndHandTimeout(tests);
@@ -257,8 +258,11 @@ namespace CodexGame.SmokeTests.Items
           && streak.InsuranceChargesRemaining == 2,
         "Prediction Insurance must activate once per stage with exactly two charges.");
       streak.Record(new PredictionResult(PredictionChoice.PlayerWins, PokerWinner.Player, true));
+      var correctRecord = streak.LastRecord;
       streak.Record(new PredictionResult(PredictionChoice.PlayerWins, PokerWinner.Ai, false));
+      var firstInsuredRecord = streak.LastRecord;
       streak.Record(new PredictionResult(PredictionChoice.Skipped, PokerWinner.Ai, false));
+      var secondInsuredRecord = streak.LastRecord;
       var thirdFailureAdjusted = streak.Record(
         new PredictionResult(PredictionChoice.PlayerWins, PokerWinner.Ai, false));
       tests.Check(
@@ -268,6 +272,21 @@ namespace CodexGame.SmokeTests.Items
           && !thirdFailureAdjusted
           && streak.RewardSuccessCount == 3,
         "Correct predictions must preserve charges; two wrong/timeout predictions must consume them separately.");
+      tests.Check(
+        correctRecord != null
+          && correctRecord.WasActualSuccess
+          && !correctRecord.WasInsuredSuccess
+          && correctRecord.InsuranceChargesBefore == 2
+          && correctRecord.InsuranceChargesAfter == 2
+          && firstInsuredRecord != null
+          && firstInsuredRecord.WasInsuredSuccess
+          && firstInsuredRecord.InsuranceChargesBefore == 2
+          && firstInsuredRecord.InsuranceChargesAfter == 1
+          && secondInsuredRecord != null
+          && secondInsuredRecord.WasInsuredSuccess
+          && secondInsuredRecord.InsuranceChargesBefore == 1
+          && secondInsuredRecord.InsuranceChargesAfter == 0,
+        "Prediction audit snapshots must separate actual/insured success and capture charge counts before/after.");
       for (var index = 0; index < 6; index++)
       {
         streak.Record(new PredictionResult(PredictionChoice.PlayerWins, PokerWinner.Player, true));
@@ -284,6 +303,64 @@ namespace CodexGame.SmokeTests.Items
         "Stage transition must clear prediction totals and unused insurance charges.");
     }
 
+    private static void CheckItemUseTimingData(TestHarness tests)
+    {
+      var allCurrent = true;
+      for (var index = 0; index < GameItemCatalog.All.Count; index++)
+      {
+        var definition = GameItemCatalog.All[index];
+        allCurrent &= definition.UseTiming
+            == GameItemUseTiming.AfterPublicCardsAndPrivateSelectionBeforePrediction
+          && GameItemUseTimingPolicy.IsUsable(
+            definition,
+            GameItemUseTiming.AfterPublicCardsAndPrivateSelectionBeforePrediction)
+          && !GameItemUseTimingPolicy.IsUsable(definition, GameItemUseTiming.DuringPrediction);
+      }
+      tests.Check(
+        allCurrent && GameItemCatalog.All.Count == 8,
+        "All eight items must share the data-driven post-selection/pre-prediction timing.");
+
+      var movedDefinition = new GameItemDefinition(
+        GameItemId.Reload,
+        "QA-MOVED",
+        "UI_ITEM_RELOAD",
+        "UI_ITEM_RELOAD_DESC",
+        "bar_shop.item.reload",
+        1,
+        GameItemTargetMode.PlayerCard,
+        GameItemEffectType.ExchangeOne,
+        GameItemUseTiming.DuringPrediction,
+        "item.reload");
+      tests.Check(
+        !GameItemUseTimingPolicy.IsUsable(
+          movedDefinition,
+          GameItemUseTiming.AfterPublicCardsAndPrivateSelectionBeforePrediction)
+          && GameItemUseTimingPolicy.IsUsable(
+            movedDefinition,
+            GameItemUseTiming.DuringPrediction),
+        "Changing only UseTiming data must move the policy decision without item-specific code.");
+
+      var inventory = new RunInventory();
+      inventory.TryAdd(GameItemId.Reload);
+      var session = new PokerItemSession();
+      session.Begin(
+        C(CardSuit.Clubs, CardRank.Two),
+        Distribution(),
+        inventory,
+        88,
+        new GameTimestamp(0));
+      var before = session.GetSnapshot(new GameTimestamp(0));
+      session.Confirm();
+      var failure = session.UseReload(before.PlayerPrivateCards[0].Id);
+      var after = session.GetSnapshot(new GameTimestamp(1));
+      tests.Check(
+        failure == PokerItemFailure.WrongPhase
+          && inventory.Contains(GameItemId.Reload)
+          && before.PlayerPrivateCards[0].Id == after.PlayerPrivateCards[0].Id
+          && before.CurrentUseTiming == after.CurrentUseTiming,
+        "Wrong-timing requests must not consume an item or mutate cards/timing state.");
+    }
+
     private static void CheckHandConfirmationTimer(TestHarness tests)
     {
       var inventory = new RunInventory();
@@ -295,17 +372,13 @@ namespace CodexGame.SmokeTests.Items
         inventory,
         777,
         new GameTimestamp(0));
-      var revealEnd = new GameTimestamp(GameRules.SecondPublicCardRevealMicroseconds);
-      session.Tick(revealEnd);
-      var opened = session.GetSnapshot(revealEnd);
+      var opened = session.GetSnapshot(new GameTimestamp(0));
       tests.Check(
         opened.Phase == PokerItemPhase.AwaitingActions
           && opened.HandConfirmationRemainingMicroseconds
             == GameRules.PokerHandConfirmationTimeoutMicroseconds,
-        "The shared two-minute hand-confirm timer must start after the second public-card reveal.");
-      var deadline = new GameTimestamp(
-        GameRules.SecondPublicCardRevealMicroseconds
-          + GameRules.PokerHandConfirmationTimeoutMicroseconds);
+        "The shared two-minute hand-confirm timer must start when the item phase opens.");
+      var deadline = new GameTimestamp(GameRules.PokerHandConfirmationTimeoutMicroseconds);
       session.Tick(deadline);
       tests.Check(
         session.Phase == PokerItemPhase.Completed

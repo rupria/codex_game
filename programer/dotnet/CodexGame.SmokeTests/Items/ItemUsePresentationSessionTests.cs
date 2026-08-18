@@ -1,5 +1,7 @@
 using CodexGame.Application.Items;
 using CodexGame.Core.Items;
+using CodexGame.Core.Poker;
+using CodexGame.Core.Rewards;
 using CodexGame.Core.Shared;
 
 namespace CodexGame.SmokeTests.Items
@@ -12,6 +14,7 @@ namespace CodexGame.SmokeTests.Items
       CheckDuration(tests, GameItemId.BottomDeal, 1_000_000);
       CheckDuration(tests, GameItemId.HypeMan, 800_000);
       CheckDuration(tests, GameItemId.HealthRecovery, 500_000);
+      CheckInsuranceActivationDuration(tests);
     }
 
     private static void CheckDuration(TestHarness tests, GameItemId itemId, long duration)
@@ -25,6 +28,30 @@ namespace CodexGame.SmokeTests.Items
           && session.Tick(new GameTimestamp(100 + duration))
           && !session.IsActive,
         itemId + " must lock input for its exact 0.1.2.5 presentation duration.");
+    }
+
+    private static void CheckInsuranceActivationDuration(TestHarness tests)
+    {
+      var record = new PredictionRecordAuditEntry(
+        1,
+        PredictionChoice.PlayerWins,
+        false,
+        true,
+        2,
+        1);
+      var session = new PredictionInsuranceActivationSession();
+      session.Begin(record, new GameTimestamp(100));
+      var middle = session.GetSnapshot(new GameTimestamp(200_100));
+      tests.Check(
+        session.IsActive
+          && middle.IsActive
+          && middle.RecordSequence == 1
+          && middle.ChargesBefore == 2
+          && middle.ChargesAfter == 1
+          && !session.Tick(new GameTimestamp(400_099))
+          && session.Tick(new GameTimestamp(400_100))
+          && !session.IsActive,
+        "Actual insurance activation must be a distinct deterministic 0.40-second presentation.");
     }
   }
 }

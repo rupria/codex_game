@@ -22,7 +22,8 @@ namespace CodexGame.SmokeTests.Items
       CheckHypeManReveal(tests);
       CheckHealthRecoveryGuard(tests);
       CheckStageUseLimit(tests);
-      CheckSecondPublicRevealOrder(tests);
+      CheckPublicCardsPersistIntoItems(tests);
+      CheckBottomDealTimerAndCancel(tests);
     }
 
     private static void CheckReloadAndBottomDeal(TestHarness tests)
@@ -45,12 +46,12 @@ namespace CodexGame.SmokeTests.Items
 
       var bottomTarget = session.GetSnapshot().PlayerPrivateCards[1].Id;
       tests.Check(
-        session.BeginBottomDeal(bottomTarget) == PokerItemFailure.None
+        session.BeginBottomDeal(bottomTarget, new GameTimestamp(10)) == PokerItemFailure.None
           && session.GetSnapshot().BottomDealCandidates.Count == 2,
         "Bottom Deal must offer two unique replacement candidates before committing.");
       var choice = session.GetSnapshot().BottomDealCandidates[0].Id;
       tests.Check(
-        session.ChooseBottomDeal(choice) == PokerItemFailure.None
+        session.ChooseBottomDeal(choice, new GameTimestamp(20)) == PokerItemFailure.None
           && !inventory.Contains(GameItemId.BottomDeal)
           && session.Phase == PokerItemPhase.Completed,
         "Bottom Deal must consume IT-02 only after a valid replacement choice.");
@@ -81,7 +82,7 @@ namespace CodexGame.SmokeTests.Items
         var bottom = new PokerItemSession();
         bottom.Begin(C(CardSuit.Spades, CardRank.Ace), Distribution(), bottomInventory, seed);
         var bottomTarget = bottom.GetSnapshot().PlayerPrivateCards[0];
-        bottom.BeginBottomDeal(bottomTarget.Id);
+        bottom.BeginBottomDeal(bottomTarget.Id, new GameTimestamp(0));
         var candidates = bottom.GetSnapshot().BottomDealCandidates;
         for (var index = 0; index < candidates.Count; index++)
         {
@@ -118,7 +119,7 @@ namespace CodexGame.SmokeTests.Items
       session.Begin(C(CardSuit.Spades, CardRank.Ace), distribution, inventory, 1);
       var target = session.GetSnapshot().PlayerPrivateCards[0];
       tests.Check(
-        session.BeginBottomDeal(target.Id) == PokerItemFailure.CandidatePoolExhausted
+        session.BeginBottomDeal(target.Id, new GameTimestamp(0)) == PokerItemFailure.CandidatePoolExhausted
           && inventory.Contains(GameItemId.BottomDeal)
           && session.GetSnapshot().PlayerPrivateCards[0].Id == target.Id
           && session.Phase == PokerItemPhase.AwaitingActions,
@@ -230,7 +231,7 @@ namespace CodexGame.SmokeTests.Items
         "Poker item actions must consume and enforce the shared stage-use allowance atomically.");
     }
 
-    private static void CheckSecondPublicRevealOrder(TestHarness tests)
+    private static void CheckPublicCardsPersistIntoItems(TestHarness tests)
     {
       var inventory = new RunInventory();
       inventory.TryAdd(GameItemId.Reload);
@@ -244,17 +245,106 @@ namespace CodexGame.SmokeTests.Items
         new GameTimestamp(50));
       var during = session.GetSnapshot(new GameTimestamp(50));
       tests.Check(
-        during.Phase == PokerItemPhase.RevealingSecondPublic
-          && during.PublicCards.Count == 1
-          && during.RevealingSecondPublicCard.HasValue
-          && during.RevealingSecondPublicCard.Value.Id == distribution.SecondPublicCard.Id,
-        "The second public card must reveal only after private distribution and item-phase entry.");
+        during.Phase == PokerItemPhase.AwaitingActions
+          && during.PublicCards.Count == 2
+          && during.PublicCards[0].Id == C(CardSuit.Spades, CardRank.Ace).Id
+          && during.PublicCards[1].Id == distribution.SecondPublicCard.Id,
+        "Both public-card identities must persist face-up when the item phase begins.");
       tests.Check(
-        !session.Tick(new GameTimestamp(50 + GameRules.SecondPublicCardRevealMicroseconds - 1))
-          && session.Tick(new GameTimestamp(50 + GameRules.SecondPublicCardRevealMicroseconds))
-          && session.GetSnapshot().PublicCards.Count == 2
-          && session.Phase == PokerItemPhase.AwaitingActions,
-        "The second public-card flip must lock item input until its exact reveal boundary.");
+        !session.Tick(new GameTimestamp(
+          50 + GameRules.PokerHandConfirmationTimeoutMicroseconds - 1))
+          && during.HandConfirmationRemainingMicroseconds
+            == GameRules.PokerHandConfirmationTimeoutMicroseconds,
+        "Item input must begin immediately without hiding or replaying the second public card.");
+    }
+
+    private static void CheckBottomDealTimerAndCancel(TestHarness tests)
+    {
+      var inventory = new RunInventory();
+      inventory.TryAdd(GameItemId.BottomDeal);
+      inventory.TryAdd(GameItemId.Reload);
+      var session = new PokerItemSession();
+      var startedAt = new GameTimestamp(1_000);
+      session.Begin(
+        C(CardSuit.Spades, CardRank.Ace),
+        Distribution(),
+        inventory,
+        1206,
+        startedAt);
+      var original = session.GetSnapshot(startedAt);
+      var target = original.PlayerPrivateCards[0].Id;
+      var enteredAt = new GameTimestamp(2_000);
+      session.BeginBottomDeal(target, enteredAt);
+      var firstEntry = session.GetSnapshot(enteredAt);
+      var firstCandidateIds = new[]
+      {
+        firstEntry.BottomDealCandidates[0].Id,
+        firstEntry.BottomDealCandidates[1].Id
+      };
+      var cancelledAt = new GameTimestamp(3_000);
+      var cancelled = session.CancelBottomDeal(cancelledAt);
+      var afterCancel = session.GetSnapshot(cancelledAt);
+      tests.Check(
+        cancelled
+          && afterCancel.Phase == PokerItemPhase.AwaitingActions
+          && inventory.Contains(GameItemId.BottomDeal)
+          && afterCancel.PlayerPrivateCards[0].Id == original.PlayerPrivateCards[0].Id
+          && afterCancel.HandConfirmationRemainingMicroseconds
+            == GameRules.PokerHandConfirmationTimeoutMicroseconds - 2_000,
+        "Cancelling Bottom Deal must preserve the hand, item, use count, and original deadline.");
+
+      var reenteredAt = new GameTimestamp(4_000);
+      session.BeginBottomDeal(target, reenteredAt);
+      var secondEntry = session.GetSnapshot(reenteredAt);
+      tests.Check(
+        secondEntry.BottomDealCandidates[0].Id == firstCandidateIds[0]
+          && secondEntry.BottomDealCandidates[1].Id == firstCandidateIds[1]
+          && secondEntry.HandConfirmationRemainingMicroseconds
+            == GameRules.PokerHandConfirmationTimeoutMicroseconds - 3_000,
+        "Re-entering Bottom Deal must reuse candidates and continue the same deadline without rerolling.");
+
+      var deadline = new GameTimestamp(
+        startedAt.Microseconds + GameRules.PokerHandConfirmationTimeoutMicroseconds);
+      session.Tick(deadline);
+      var timedOut = session.GetSnapshot(deadline);
+      tests.Check(
+        timedOut.Phase == PokerItemPhase.Completed
+          && timedOut.HandConfirmationTimedOut
+          && inventory.Contains(GameItemId.BottomDeal)
+          && timedOut.PlayerPrivateCards[0].Id == original.PlayerPrivateCards[0].Id
+          && timedOut.BottomDealAuditTrail.Count == 4
+          && timedOut.BottomDealAuditTrail[3].Outcome == BottomDealAuditOutcome.TimedOut,
+        "Bottom Deal timeout must close the chooser once, keep the original hand/item, and record an audit result.");
+
+      var controlInventory = new RunInventory();
+      controlInventory.TryAdd(GameItemId.BottomDeal);
+      controlInventory.TryAdd(GameItemId.Reload);
+      var control = new PokerItemSession();
+      control.Begin(
+        C(CardSuit.Spades, CardRank.Ace),
+        Distribution(),
+        controlInventory,
+        1207,
+        startedAt);
+      var subjectInventory = new RunInventory();
+      subjectInventory.TryAdd(GameItemId.BottomDeal);
+      subjectInventory.TryAdd(GameItemId.Reload);
+      var subject = new PokerItemSession();
+      subject.Begin(
+        C(CardSuit.Spades, CardRank.Ace),
+        Distribution(),
+        subjectInventory,
+        1207,
+        startedAt);
+      var subjectTarget = subject.GetSnapshot(startedAt).PlayerPrivateCards[0].Id;
+      subject.BeginBottomDeal(subjectTarget, enteredAt);
+      subject.CancelBottomDeal(cancelledAt);
+      subject.UseReload(subjectTarget);
+      control.UseReload(subjectTarget);
+      tests.Check(
+        subject.GetSnapshot().PlayerPrivateCards[0].Id
+          == control.GetSnapshot().PlayerPrivateCards[0].Id,
+        "Cancelling Bottom Deal must not advance the shared item RNG stream.");
     }
 
     private static PrivateCardDistributionResult Distribution()
