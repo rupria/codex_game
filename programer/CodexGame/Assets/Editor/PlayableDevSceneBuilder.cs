@@ -87,10 +87,12 @@ namespace CodexGame.Editor
         LoadTexture(IconOverhaulUi050ArtRoot + "round_win_badge_ai_filled_32_0_5_0.png"),
         ropeBody: LoadTexture(
           HalliUi039ArtRoot + "halli_rope_braided_body_258x16_0_3_9.png"),
+        ropeCharCap: LoadTexture(
+          HalliUi039ArtRoot + "halli_rope_burn_char_cap_24x16_0_3_9.png"),
         ropeFlame: LoadTexture(
-          HalliUi039ArtRoot + "halli_rope_burn_flame_32x32_0_3_9.png"),
+          HalliUi039ArtRoot + "halli_rope_burn_flame_6f_192x32_0_3_9.png"),
         ropeExplosion: LoadTexture(
-          HalliUi039ArtRoot + "halli_rope_timeout_burst_64x64_0_3_9.png"),
+          HalliUi039ArtRoot + "halli_rope_timeout_burst_8f_512x64_0_3_9.png"),
         sharedPileRailIdle: LoadTexture(
           HalliUi037ArtRoot + "halli_shared_pile_rail_idle_140x136_0_3_7.png"),
         sharedPileRailPlayerActive: LoadTexture(

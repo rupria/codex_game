@@ -34,6 +34,17 @@ namespace CodexGame.SmokeTests.Presentation
       tests.Check(
         explosion.Mode == RopeTimerMode.Exploding && explosion.DisplayedSeconds == 0,
         "A timeout transition must expose one presentation-only explosion state without changing game rules.");
+
+      tests.Check(
+        RopeTimerViewState.LoopingFrame(0d, 0.08d, 6) == 0
+          && RopeTimerViewState.LoopingFrame(0.47d, 0.08d, 6) == 5
+          && RopeTimerViewState.LoopingFrame(0.48d, 0.08d, 6) == 0,
+        "The six-frame rope flame must loop at the approved 0.08 second cadence.");
+      tests.Check(
+        RopeTimerViewState.OneShotFrame(0d, 0.7d, 8) == 0
+          && RopeTimerViewState.OneShotFrame(0.69d, 0.7d, 8) == 7
+          && RopeTimerViewState.OneShotFrame(0.7d, 0.7d, 8) == 7,
+        "The eight-frame timeout burst must advance once and hold its final frame at 0.70 seconds.");
     }
   }
 }
