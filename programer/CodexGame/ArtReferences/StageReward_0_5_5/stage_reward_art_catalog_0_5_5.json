@@ -1,0 +1,31 @@
+{
+  "package": "StageReward_0_5_5",
+  "revision": "0.5.5",
+  "issues": [49],
+  "status": "art_complete_programmer_binding_required",
+  "runtimeRoot": "Assets/Art/Prototype/UI/StageReward_0_5_5",
+  "referenceResolution": [960, 540],
+  "import": {
+    "textureType": "Sprite (2D and UI)",
+    "spriteMode": "Single",
+    "filterMode": "Point",
+    "compression": "None",
+    "alphaIsTransparency": true,
+    "mipMaps": false
+  },
+  "layout": {
+    "popupRect": [140, 90, 680, 360],
+    "titleSafeRectLocal": [24, 20, 632, 52],
+    "contentSafeRectLocal": [24, 88, 632, 154],
+    "rewardGrid": {"columns": 2, "rows": 2, "gapX": 24, "gapY": 12},
+    "rowSize": [304, 64],
+    "continueButtonSafeRectLocal": [220, 288, 240, 52],
+    "overflowRule": "Clip every reward row to the opaque content safe rectangle. Paginate or scroll after four rows; never draw behind or outside the popup."
+  },
+  "assets": [
+    {"file":"stage_reward_summary_panel_680x360_0_5_5.png","size":[680,360],"role":"single opaque reward popup including title, content and continue-button safe frames"},
+    {"file":"stage_reward_row_frame_304x64_0_5_5.png","size":[304,64],"role":"reward row frame for icon, label and value"},
+    {"file":"stage_reward_content_opaque_632x154_0_5_5.png","size":[632,154],"role":"optional hard opaque mask/background for the clipped reward content group"}
+  ],
+  "preview": "ArtReferences/StageReward_0_5_5/preview/issue_49_stage_reward_centered_preview_960x540_0_5_5.png"
+}
