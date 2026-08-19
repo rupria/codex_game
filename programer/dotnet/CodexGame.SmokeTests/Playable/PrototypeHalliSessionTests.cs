@@ -82,8 +82,9 @@ namespace CodexGame.SmokeTests.Playable
         ready.Phase == PrototypeSessionPhase.ReadyToFlip
           && ready.CanFlip
           && ready.CanRing
+          && ready.RemainingFlipCount == GameRules.HalliDistributionLimit
           && ready.RemainingMicroseconds == GameRules.BellInputTimeoutMicroseconds,
-        "The opening must start a 30-second bell window without a flip timeout.");
+        "The opening must expose all 12 remaining distributions and start a 30-second bell window.");
 
       var startedAt = new GameTimestamp(1);
       session.Advance(startedAt);
@@ -93,9 +94,10 @@ namespace CodexGame.SmokeTests.Playable
           && moving.FlipCount == 1
           && moving.RevealStepNumber == 1
           && !moving.RevealCommitted
+          && moving.RemainingFlipCount == GameRules.HalliDistributionLimit - 1
           && moving.LeftPile.Count == 0
           && moving.CanRing,
-        "The first W input must start one player card, count one distribution, and keep the moving card ineligible.");
+        "The first W input must consume one distribution, expose 11 remaining, and keep the moving card ineligible.");
 
       var firstFaceUpAt = new GameTimestamp(startedAt.Microseconds + 221_000);
       session.Tick(firstFaceUpAt);

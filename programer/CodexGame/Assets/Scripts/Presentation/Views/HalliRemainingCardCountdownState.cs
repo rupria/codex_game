@@ -10,7 +10,7 @@ namespace CodexGame.Presentation.Views
     public const double TotalDurationSeconds = PopInSeconds + HoldSeconds + FadeOutSeconds;
 
     private long _roundSeed = long.MinValue;
-    private int _previousRemainingCards = -1;
+    private int _previousRemainingFlips = -1;
     private double _startedAtSeconds = double.NegativeInfinity;
 
     public int ActiveValue { get; private set; }
@@ -18,32 +18,32 @@ namespace CodexGame.Presentation.Views
 
     public bool Observe(
       long roundSeed,
-      int remainingCards,
+      int remainingFlips,
       bool revealCommitted,
       double nowSeconds)
     {
-      if (remainingCards < 0) throw new ArgumentOutOfRangeException(nameof(remainingCards));
+      if (remainingFlips < 0) throw new ArgumentOutOfRangeException(nameof(remainingFlips));
       if (nowSeconds < 0d) throw new ArgumentOutOfRangeException(nameof(nowSeconds));
 
-      if (_roundSeed != roundSeed || _previousRemainingCards < 0)
+      if (_roundSeed != roundSeed || _previousRemainingFlips < 0)
       {
         _roundSeed = roundSeed;
-        _previousRemainingCards = remainingCards;
+        _previousRemainingFlips = remainingFlips;
         ActiveValue = 0;
         _startedAtSeconds = double.NegativeInfinity;
         return false;
       }
 
-      // The deck count drops when a card is reserved for its motion. Wait until
-      // the reveal is actually committed so the full alert is visible alongside
-      // the readable face-up card.
+      // The remaining distribution count drops when the player starts a flip.
+      // Wait until the reveal is committed so the full alert is visible alongside
+      // the readable face-up card instead of being consumed by its motion.
       if (!revealCommitted) return false;
 
-      var decreased = remainingCards < _previousRemainingCards;
-      _previousRemainingCards = remainingCards;
-      if (!decreased || remainingCards < 1 || remainingCards > 5) return false;
+      var decreased = remainingFlips < _previousRemainingFlips;
+      _previousRemainingFlips = remainingFlips;
+      if (!decreased || remainingFlips < 1 || remainingFlips > 5) return false;
 
-      ActiveValue = remainingCards;
+      ActiveValue = remainingFlips;
       _startedAtSeconds = nowSeconds;
       return true;
     }

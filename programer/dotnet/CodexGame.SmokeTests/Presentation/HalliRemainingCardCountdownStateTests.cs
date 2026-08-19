@@ -11,12 +11,12 @@ namespace CodexGame.SmokeTests.Presentation
         !state.Observe(7, 6, false, 0d)
           && !state.Observe(7, 5, false, 1d)
           && !state.IsVisible(1d),
-        "Reserving the fifth card for its reveal motion must not consume the countdown alert.");
+        "Starting the flip with five distributions remaining must not consume the countdown alert.");
       tests.Check(
         state.Observe(7, 5, true, 1.2d)
           && state.ActiveValue == 5
           && state.FrameIndex == 0,
-        "The last-five badge must start when the face-up reveal commits with five cards left.");
+        "The last-five badge must start when the face-up reveal commits with five distributions left.");
       tests.Check(
         !state.Observe(7, 5, true, 1.3d)
           && state.IsVisible(1.67d)
