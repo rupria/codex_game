@@ -41,6 +41,7 @@ BarShopSlotLayoutTests.Run(tests);
 AcquiredCardFanLayoutTests.Run(tests);
 HalliPileOverlapLayoutTests.Run(tests);
 PokerItemActionAvailabilityTests.Run(tests);
+PrivateSelectionJokerRevealStateTests.Run(tests);
 StageFlowPlanTests.Run(tests);
 BarShopSessionTests.Run(tests);
 NextStageTransitionGateTests.Run(tests);

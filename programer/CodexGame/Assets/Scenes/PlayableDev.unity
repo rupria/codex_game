@@ -1587,6 +1587,25 @@ MonoBehaviour:
     - {fileID: 2800000, guid: 12d4a963a9e74b47aa067f74bdca0102, type: 3}
     - {fileID: 2800000, guid: 12d4a963a9e74b47aa067f74bdca0103, type: 3}
     - {fileID: 2800000, guid: 12d4a963a9e74b47aa067f74bdca0104, type: 3}
+  _privateSelectionUiArtSet:
+    _modalDim: {fileID: 2800000, guid: c1dcfc13d5e6a5b293b651d152d14b47, type: 3}
+    _modalPanel: {fileID: 2800000, guid: 1c700e4d6bca4de144005dcebc0882bd, type: 3}
+    _publicFrame: {fileID: 2800000, guid: b6ec421a82f4f85a8c1e3311f3ad525c, type: 3}
+    _candidateIdle: {fileID: 2800000, guid: 72dc06f7b5abbbf8f940e9aa44a6741c, type: 3}
+    _candidateHover: {fileID: 2800000, guid: 8fb66532afa6c2fc0e8a5cb15477179a, type: 3}
+    _candidateSelected: {fileID: 2800000, guid: b19300788c9e0b12260f23b1200a2ba1, type: 3}
+    _candidateConfirmed: {fileID: 2800000, guid: 144bc81d59f08a5b3fbbbc976495e064, type: 3}
+    _candidateDisabled: {fileID: 2800000, guid: 74826fc96d5cc5f90a8f88bb97c90527, type: 3}
+    _confirmIdle: {fileID: 2800000, guid: 2094dab3d3395a2065774bfd3027b433, type: 3}
+    _confirmActive: {fileID: 2800000, guid: 5aeff051cce1086ef838297385fdcb34, type: 3}
+    _confirmDisabled: {fileID: 2800000, guid: 508fa5b6b5616554226fbbbac8897ef9, type: 3}
+  _jokerRevealUiArtSet:
+    _focusVignette: {fileID: 2800000, guid: bccacd06cb0abd5de9833e70c2afe911, type: 3}
+    _arcTrailSheet: {fileID: 2800000, guid: 0eed7ff37067097a5804bc0376d31cc0, type: 3}
+    _gunsightRingSheet: {fileID: 2800000, guid: f2d54257a489c98caf2274bf70138e4f, type: 3}
+    _muzzleFlashSheet: {fileID: 2800000, guid: 8dc6c472731523692c89e42571d33008, type: 3}
+    _cardGlintSheet: {fileID: 2800000, guid: b9dbadc45d6a239e40b5f01f1812172f, type: 3}
+    _settleGlintSheet: {fileID: 2800000, guid: 019f29f064aba850f4e4e3a0b56b4efe, type: 3}
   _useSceneBackdrop: 1
   _useIntroArtLayout: 1
 --- !u!4 &1520723589
