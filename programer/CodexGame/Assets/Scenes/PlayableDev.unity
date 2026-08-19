@@ -119,7 +119,7 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
---- !u!1 &514219226
+--- !u!1 &302588198
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -127,8 +127,8 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 514219228}
-  - component: {fileID: 514219227}
+  - component: {fileID: 302588200}
+  - component: {fileID: 302588199}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -136,13 +136,13 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!20 &514219227
+--- !u!20 &302588199
 Camera:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 514219226}
+  m_GameObject: {fileID: 302588198}
   m_Enabled: 1
   serializedVersion: 2
   m_ClearFlags: 2
@@ -187,13 +187,13 @@ Camera:
   m_OcclusionCulling: 1
   m_StereoConvergence: 10
   m_StereoSeparation: 0.022
---- !u!4 &514219228
+--- !u!4 &302588200
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 514219226}
+  m_GameObject: {fileID: 302588198}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: -10}
@@ -202,7 +202,7 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &1520723585
+--- !u!1 &905646442
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -210,10 +210,10 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 1520723589}
-  - component: {fileID: 1520723588}
-  - component: {fileID: 1520723587}
-  - component: {fileID: 1520723586}
+  - component: {fileID: 905646446}
+  - component: {fileID: 905646445}
+  - component: {fileID: 905646444}
+  - component: {fileID: 905646443}
   m_Layer: 0
   m_Name: CodexGame.PlayableDev
   m_TagString: Untagged
@@ -221,43 +221,43 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &1520723586
+--- !u!114 &905646443
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1520723585}
+  m_GameObject: {fileID: 905646442}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: e01485696a2a0564f8908e12ee526b34, type: 3}
   m_Name: 
   m_EditorClassIdentifier: CodexGame.Bootstrap::CodexGame.Bootstrap.PlayableDevGameController
---- !u!114 &1520723587
+--- !u!114 &905646444
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1520723585}
+  m_GameObject: {fileID: 905646442}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 63fa6614e8e1444eb69d2c8ca6814cb3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: CodexGame.Presentation::CodexGame.Presentation.Views.TableScenePresentationRig
-  _sceneCamera: {fileID: 514219227}
-  _view: {fileID: 1520723588}
+  _sceneCamera: {fileID: 302588199}
+  _view: {fileID: 905646445}
   _battleBackdrop: {fileID: 2800000, guid: 263d2d00d83c60947acaa998c8961e7a, type: 3}
   _introBackdrop: {fileID: 2800000, guid: 4fffdd8f5e45fa4cd921945ef9042957, type: 3}
   _barShopBackdrop: {fileID: 2800000, guid: c6f4b89d92a14e188cf5f1c1ae903002, type: 3}
   _backdropShader: {fileID: 4800000, guid: 9b3acbe23ca64a43b7c17fce4b297763, type: 3}
---- !u!114 &1520723588
+--- !u!114 &905646445
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1520723585}
+  m_GameObject: {fileID: 905646442}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: bdb4d81e9bb4ec94681bf2457196d90b, type: 3}
@@ -1351,13 +1351,23 @@ MonoBehaviour:
     _halliPage: {fileID: 2800000, guid: 12c2660b974cb6ffa31d6cb123865dac, type: 3}
     _cardsPage: {fileID: 2800000, guid: bf2ab90e80b2153da9a332bf025f949e, type: 3}
     _resultPage: {fileID: 2800000, guid: 29b5746388f705e2b692c3dced0a78f8, type: 3}
-    _navIdle: {fileID: 2800000, guid: b6078ba3ac469bf091ac8c5ba762cbd4, type: 3}
-    _navHover: {fileID: 2800000, guid: e8cd52738cdd0b74445f8a0e0b35ae0d, type: 3}
-    _navDisabled: {fileID: 2800000, guid: 19fda25af443b2fb0607898ce8dac0e4, type: 3}
-    _pageIndicatorPlate: {fileID: 2800000, guid: 8f6aff2d0203f6d0a759794a9fc979d9, type: 3}
-    _previousIcon: {fileID: 2800000, guid: 7ddf9f68819a0c6eca56e09889039140, type: 3}
-    _nextIcon: {fileID: 2800000, guid: 287df1531cf676101a92aa87fcf032bc, type: 3}
-    _closeIcon: {fileID: 2800000, guid: c6ca647947ccaff9ab7a21025e4e695e, type: 3}
+    _navRail: {fileID: 2800000, guid: be22e25ace23c52fa37e77ac7565f9e8, type: 3}
+    _pageIndicatorPlate: {fileID: 2800000, guid: dfd225ba8c533d861d27ba943d7d5372, type: 3}
+    _previousButton:
+      _idle: {fileID: 2800000, guid: c6a31c75794018da067599f4cd67fafd, type: 3}
+      _hover: {fileID: 2800000, guid: 521d18ee11aea316a15450fe7b1675ae, type: 3}
+      _pressed: {fileID: 2800000, guid: 07b456e292a95006236d2552cc73a3b9, type: 3}
+      _disabled: {fileID: 2800000, guid: f97f974a8b221c927a7281b1f0165ec8, type: 3}
+    _nextButton:
+      _idle: {fileID: 2800000, guid: 683eede2bf62b2b1b374dd48f29c2f8e, type: 3}
+      _hover: {fileID: 2800000, guid: b1d51b72e17d953f49a53ac6a710d97f, type: 3}
+      _pressed: {fileID: 2800000, guid: 473127bb124ac222a93fab22bcb06839, type: 3}
+      _disabled: {fileID: 2800000, guid: ff8dd4c83159ea7c8ff01cc435cbd0bf, type: 3}
+    _closeButton:
+      _idle: {fileID: 2800000, guid: fb7425426dd6861147317b619c781b7f, type: 3}
+      _hover: {fileID: 2800000, guid: e7e3cc5b4528dda4ad4bc32ebd726d23, type: 3}
+      _pressed: {fileID: 2800000, guid: e5f36aec27f9360be5bf659d6bcef5f1, type: 3}
+      _disabled: {fileID: 2800000, guid: 96516c1a949f98975789e004ae05c8c5, type: 3}
   _introTexture: {fileID: 2800000, guid: 4fffdd8f5e45fa4cd921945ef9042957, type: 3}
   _healthUiArtSet:
     _playerFilled: {fileID: 2800000, guid: b34aa310633a40255fdff9250399da23, type: 3}
@@ -1608,13 +1618,13 @@ MonoBehaviour:
     _settleGlintSheet: {fileID: 2800000, guid: 019f29f064aba850f4e4e3a0b56b4efe, type: 3}
   _useSceneBackdrop: 1
   _useIntroArtLayout: 1
---- !u!4 &1520723589
+--- !u!4 &905646446
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1520723585}
+  m_GameObject: {fileID: 905646442}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
@@ -1627,5 +1637,5 @@ Transform:
 SceneRoots:
   m_ObjectHideFlags: 0
   m_Roots:
-  - {fileID: 514219228}
-  - {fileID: 1520723589}
+  - {fileID: 302588200}
+  - {fileID: 905646446}

@@ -24,11 +24,11 @@ namespace CodexGame.Presentation.Views
     };
 
     private GUIStyle _bodyStyle;
-    private static readonly Rect PreviousButton = new Rect(299f, 451f, 56f, 58f);
-    private static readonly Rect NextButton = new Rect(602f, 451f, 56f, 58f);
-    private static readonly Rect CloseButton = new Rect(800f, 451f, 56f, 58f);
-    private static readonly Rect PageIndicatorMask = new Rect(401f, 461f, 152f, 28f);
-    private static readonly Rect PageIndicatorPlate = new Rect(430f, 449f, 100f, 33f);
+    private static readonly Rect NavigationRail = new Rect(0f, 436f, 960f, 104f);
+    private static readonly Rect PreviousButton = new Rect(352f, 451f, 56f, 58f);
+    private static readonly Rect PageIndicatorPlate = new Rect(414f, 461f, 132f, 38f);
+    private static readonly Rect NextButton = new Rect(552f, 451f, 56f, 58f);
+    private static readonly Rect CloseButton = new Rect(850f, 451f, 56f, 58f);
 
     public void Draw(
       GuideModalState state,
@@ -41,6 +41,7 @@ namespace CodexGame.Presentation.Views
       Action completeTutorial)
     {
       DrawOpaqueBackground(art);
+      DrawNavigationRail(art);
       if (art != null && art.IsComplete)
       {
         GUI.DrawTexture(
@@ -59,18 +60,25 @@ namespace CodexGame.Presentation.Views
         BodyStyle(styles));
       DrawPageDots(state.PageIndex, art?.PageIndicatorPlate);
 
-      // The visible arrow and close icons are already part of the approved 960x540 art.
-      // Keep a single transparent hit target on each icon instead of drawing a second
-      // grey text button over it.
-      if (DrawIconHitTarget(PreviousButton, state.CanMovePrevious, art?.PreviousIcon)) previous();
+      if (DrawNavButton(
+        "GuidePrevious",
+        PreviousButton,
+        state.CanMovePrevious,
+        art?.PreviousButton)) previous();
       var canAdvance = state.CanMoveNext || state.IsFirstStartTutorial;
-      if (DrawIconHitTarget(NextButton, canAdvance, art?.NextIcon))
+      if (DrawNavButton("GuideNext", NextButton, canAdvance, art?.NextButton))
       {
         if (state.CanMoveNext) next();
         else completeTutorial();
       }
       if (!state.IsFirstStartTutorial
-        && DrawIconHitTarget(CloseButton, true, art?.CloseIcon)) close();
+        && DrawNavButton("GuideClose", CloseButton, true, art?.CloseButton)) close();
+    }
+
+    private static void DrawNavigationRail(GuideUiArtSet art)
+    {
+      if (art?.NavRail == null) return;
+      GUI.DrawTexture(NavigationRail, art.NavRail, ScaleMode.StretchToFill, true);
     }
 
     private static void DrawOpaqueBackground(GuideUiArtSet art)
@@ -95,25 +103,26 @@ namespace CodexGame.Presentation.Views
       GUI.color = previousColor;
     }
 
-    private static bool DrawIconHitTarget(Rect rect, bool enabled, Texture2D icon)
+    private static bool DrawNavButton(
+      string controlName,
+      Rect rect,
+      bool enabled,
+      GuideNavButtonArtSet art)
     {
-      var previousColor = GUI.color;
-      if (icon != null)
+      var mouseHovered = rect.Contains(Event.current.mousePosition);
+      var keyboardFocused = string.Equals(
+        GUI.GetNameOfFocusedControl(),
+        controlName,
+        StringComparison.Ordinal);
+      var pressed = enabled && mouseHovered && Input.GetMouseButton(0);
+      var texture = art?.GetTexture(enabled, mouseHovered || keyboardFocused, pressed);
+      if (texture != null)
       {
-        GUI.DrawTexture(rect, icon, ScaleMode.ScaleToFit, true);
+        GUI.DrawTexture(rect, texture, ScaleMode.StretchToFill, true);
       }
-      if (!enabled)
-      {
-        GUI.color = new Color(0.02f, 0.02f, 0.025f, 0.62f);
-        GUI.DrawTexture(rect, Texture2D.whiteTexture, ScaleMode.StretchToFill, true);
-      }
-      else if (rect.Contains(Event.current.mousePosition))
-      {
-        GUI.color = new Color(1f, 0.78f, 0.32f, 0.14f);
-        GUI.DrawTexture(rect, Texture2D.whiteTexture, ScaleMode.StretchToFill, true);
-      }
-      GUI.color = previousColor;
+
       GUI.enabled = enabled;
+      GUI.SetNextControlName(controlName);
       var clicked = GUI.Button(rect, GUIContent.none, GUIStyle.none);
       GUI.enabled = true;
       return clicked;
@@ -122,9 +131,6 @@ namespace CodexGame.Presentation.Views
     private static void DrawPageDots(int pageIndex, Texture2D plate)
     {
       var previousColor = GUI.color;
-      UiPixelSurfaceRenderer.Fill(
-        PageIndicatorMask,
-        new Color(0.055f, 0.047f, 0.039f, 1f));
       GUI.color = Color.white;
       if (plate != null)
       {
@@ -136,14 +142,14 @@ namespace CodexGame.Presentation.Views
         GUI.DrawTexture(PageIndicatorPlate, Texture2D.whiteTexture, ScaleMode.StretchToFill, true);
       }
 
-      const float startX = 448f;
-      const float gap = 21f;
+      const float startX = 444f;
+      const float gap = 24f;
       for (var index = 0; index < GuideModalState.PageCount; index++)
       {
         var color = index == pageIndex
           ? new Color(0.95f, 0.63f, 0.18f, 1f)
           : new Color(0.24f, 0.21f, 0.17f, 1f);
-        var center = new Vector2(startX + gap * index, 466f);
+        var center = new Vector2(startX + gap * index, 480f);
         UiPixelSurfaceRenderer.DrawDiamond(center, color);
       }
       GUI.color = previousColor;
