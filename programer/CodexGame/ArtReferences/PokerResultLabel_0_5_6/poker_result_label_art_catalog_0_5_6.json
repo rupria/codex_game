@@ -1,0 +1,52 @@
+{
+  "artSetId": "poker_result_label_0_5_6",
+  "specRevision": "0.1.2.6",
+  "status": "art_complete_programmer_binding_required",
+  "issues": [58],
+  "license": "project-owned generated artwork; commercial use and modification allowed",
+  "runtimeRoot": "Assets/Art/Prototype/UI/PokerResultLabel_0_5_6/",
+  "sourceRoot": "ArtReferences/PokerResultLabel_0_5_6/source/",
+  "previewRoot": "ArtReferences/PokerResultLabel_0_5_6/preview/",
+  "referenceResolution": [960, 540],
+  "width": 788,
+  "heightVariants": {
+    "compact": 108,
+    "standard": 132,
+    "expanded": 164
+  },
+  "stateVariants": ["success", "failure", "neutral"],
+  "layout": {
+    "compactRect": [86, 190, 788, 108],
+    "standardRect": [86, 178, 788, 132],
+    "expandedRect": [86, 160, 788, 164],
+    "badgeSafeRectLocal": [18, 0, 44, 44],
+    "messageSafeRectLocal": [72, 16, 686, 76],
+    "itemStatusChipSize": [360, 32]
+  },
+  "assets": [
+    {"id":"success_compact","file":"poker_result_message_panel_success_compact_788x108_0_5_6.png","size":[788,108]},
+    {"id":"success_standard","file":"poker_result_message_panel_success_standard_788x132_0_5_6.png","size":[788,132]},
+    {"id":"success_expanded","file":"poker_result_message_panel_success_expanded_788x164_0_5_6.png","size":[788,164]},
+    {"id":"failure_compact","file":"poker_result_message_panel_failure_compact_788x108_0_5_6.png","size":[788,108]},
+    {"id":"failure_standard","file":"poker_result_message_panel_failure_standard_788x132_0_5_6.png","size":[788,132]},
+    {"id":"failure_expanded","file":"poker_result_message_panel_failure_expanded_788x164_0_5_6.png","size":[788,164]},
+    {"id":"neutral_compact","file":"poker_result_message_panel_neutral_compact_788x108_0_5_6.png","size":[788,108]},
+    {"id":"neutral_standard","file":"poker_result_message_panel_neutral_standard_788x132_0_5_6.png","size":[788,132]},
+    {"id":"neutral_expanded","file":"poker_result_message_panel_neutral_expanded_788x164_0_5_6.png","size":[788,164]},
+    {"id":"item_status_chip","file":"poker_result_item_status_chip_360x32_0_5_6.png","size":[360,32]}
+  ],
+  "import": {
+    "textureType": "Sprite (2D and UI)",
+    "filterMode": "Point",
+    "compression": "Uncompressed",
+    "mipMaps": false,
+    "alphaIsTransparency": true
+  },
+  "guardrails": [
+    "Measure the localized result text before choosing compact, standard or expanded height.",
+    "Keep the two-line result summary and optional item-status line in separate draw regions.",
+    "Do not change result calculation, item effects or timeout behavior.",
+    "The opaque panel must cover the old fixed-height label completely.",
+    "Keep localized words out of the art textures."
+  ]
+}
