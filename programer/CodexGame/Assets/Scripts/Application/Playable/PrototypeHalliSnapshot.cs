@@ -93,6 +93,7 @@ namespace CodexGame.Application.Playable
     public IReadOnlyList<Card> AiAcquiredCards { get; }
     public int WinTarget { get; }
     public int FlipCount { get; }
+    public int RemainingFlipCount => Math.Max(0, GameRules.HalliDistributionLimit - FlipCount);
     public int RemainingDeckCards { get; }
     public long RemainingMicroseconds { get; }
     public HalliActor LeadActor { get; }

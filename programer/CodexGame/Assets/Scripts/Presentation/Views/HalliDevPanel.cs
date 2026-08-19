@@ -46,7 +46,7 @@ namespace CodexGame.Presentation.Views
       UpdateRevealHistory(snapshot);
       _remainingCardCountdown.Observe(
         snapshot.CombatRoundSeed,
-        snapshot.RemainingDeckCards,
+        snapshot.RemainingFlipCount,
         snapshot.RevealCommitted,
         Time.unscaledTime);
       _flipReadyPrompt.Observe(
