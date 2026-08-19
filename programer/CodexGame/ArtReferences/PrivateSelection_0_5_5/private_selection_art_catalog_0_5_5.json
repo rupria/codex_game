@@ -1,0 +1,50 @@
+{
+  "artSetId": "private_selection_0_5_5",
+  "specRevision": "0.1.2.6",
+  "status": "art_complete_programmer_binding_required",
+  "issues": [32, 47],
+  "license": "project-owned generated artwork; commercial use and modification allowed",
+  "runtimeRoot": "Assets/Art/Prototype/UI/PrivateSelection_0_5_5/",
+  "sourceRoot": "ArtReferences/PrivateSelection_0_5_5/source/",
+  "previewRoot": "ArtReferences/PrivateSelection_0_5_5/preview/",
+  "referenceResolution": [960, 540],
+  "layout": {
+    "modalDimRect": [0, 0, 960, 540],
+    "panelRect": [50, 42, 860, 456],
+    "titleSafeRectLocal": [18, 16, 824, 54],
+    "publicReferenceRectLocal": [18, 82, 190, 226],
+    "selectionStatusRectLocal": [18, 320, 190, 42],
+    "confirmButtonRectLocal": [23, 376, 180, 52],
+    "candidateGridRectLocal": [220, 82, 622, 336],
+    "candidateGrid": {"columns": 4, "rows": 2, "cellSize": [112, 150], "gapX": 20, "gapY": 10},
+    "candidateCardRectLocalToCell": [14, 13, 84, 117]
+  },
+  "assets": [
+    {"id":"modal_dim","file":"private_selection_modal_dim_960x540_0_5_5.png","size":[960,540]},
+    {"id":"modal_panel","file":"private_selection_modal_panel_860x456_0_5_5.png","size":[860,456]},
+    {"id":"public_frame","file":"private_selection_public_frame_166x198_0_5_5.png","size":[166,198]},
+    {"id":"candidate_idle","file":"private_selection_candidate_idle_112x150_0_5_5.png","size":[112,150]},
+    {"id":"candidate_hover","file":"private_selection_candidate_hover_112x150_0_5_5.png","size":[112,150]},
+    {"id":"candidate_selected","file":"private_selection_candidate_selected_112x150_0_5_5.png","size":[112,150]},
+    {"id":"candidate_confirmed","file":"private_selection_candidate_confirmed_112x150_0_5_5.png","size":[112,150]},
+    {"id":"candidate_disabled","file":"private_selection_candidate_disabled_112x150_0_5_5.png","size":[112,150]},
+    {"id":"confirm_idle","file":"private_selection_confirm_idle_180x52_0_5_5.png","size":[180,52]},
+    {"id":"confirm_active","file":"private_selection_confirm_active_180x52_0_5_5.png","size":[180,52]},
+    {"id":"confirm_disabled","file":"private_selection_confirm_disabled_180x52_0_5_5.png","size":[180,52]}
+  ],
+  "import": {
+    "textureType": "Sprite (2D and UI)",
+    "filterMode": "Point",
+    "compression": "Uncompressed",
+    "mipMaps": false,
+    "alphaIsTransparency": true
+  },
+  "guardrails": [
+    "The popup must be opaque enough that cards and text never merge with the table background.",
+    "Do not preselect the first candidate. Focus, hover and selected are different states.",
+    "Keep the current selection count, timeout, keyboard navigation and confirm rules unchanged.",
+    "Open selection input only after JokerRevealSettled when a Joker reveal is active.",
+    "Block all table input while the modal is open.",
+    "Keep localized words out of the art textures."
+  ]
+}
