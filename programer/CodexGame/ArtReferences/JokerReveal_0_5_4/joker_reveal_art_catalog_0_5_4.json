@@ -1,0 +1,37 @@
+{
+  "artSetId": "joker_reveal_0_5_4",
+  "specRevision": "0.1.2.6",
+  "status": "art_complete_programmer_binding_required",
+  "issue": 32,
+  "license": "project-owned generated artwork; commercial use and modification allowed",
+  "runtimeRoot": "Assets/Art/Prototype/UI/JokerReveal_0_5_4/",
+  "sourceRoot": "ArtReferences/JokerReveal_0_5_4/source/",
+  "previewRoot": "ArtReferences/JokerReveal_0_5_4/preview/",
+  "approvedCardFront": "Assets/Art/Prototype/Cards_0_08/poker_face_cards_112x156/card_poker_joker_brass_sheriff_revolver.png",
+  "assets": [
+    {"id":"focus_vignette","file":"joker_reveal_focus_vignette_960x540_0_5_4.png","size":[960,540],"pivot":[0.5,0.5]},
+    {"id":"arc_trail","file":"joker_reveal_arc_trail_6f_576x96_0_5_4.png","frameSize":[96,96],"frames":6,"pivot":[0.5,0.5]},
+    {"id":"gunsight_ring","file":"joker_reveal_gunsight_ring_8f_1536x192_0_5_4.png","frameSize":[192,192],"frames":8,"pivot":[0.5,0.5]},
+    {"id":"muzzle_flash","file":"joker_reveal_muzzle_flash_8f_1280x160_0_5_4.png","frameSize":[160,160],"frames":8,"pivot":[0.5,0.5]},
+    {"id":"card_glint","file":"joker_reveal_card_glint_6f_672x156_0_5_4.png","frameSize":[112,156],"frames":6,"pivot":[0.5,0.5]},
+    {"id":"settle_glint","file":"joker_reveal_settle_glint_5f_320x64_0_5_4.png","frameSize":[64,64],"frames":5,"pivot":[0.5,0.5]}
+  ],
+  "playerTimelineSeconds": {
+    "focus": [0.00, 0.15],
+    "liftAndFlip": [0.15, 0.35],
+    "frontReadableAndAccent": [0.35, 0.85],
+    "settle": [0.85, 1.00]
+  },
+  "aiShowdownTimelineSeconds": 0.50,
+  "privacy": {
+    "player": "Play only after the player actually receives a Joker.",
+    "aiBeforeShowdown": "Never expose Joker ownership through markers, delay, glow, audio or card count.",
+    "aiAtShowdown": "Play the shortened treatment only if the Joker is actually used in the final hand."
+  },
+  "guardrails": [
+    "Replace the current white rectangle focus treatment; do not layer both treatments.",
+    "Do not alter card ownership, draw order, result timing or poker evaluation.",
+    "Keep all player-facing words in localized Unity text.",
+    "Do not duplicate or redraw the approved Joker card front."
+  ]
+}
