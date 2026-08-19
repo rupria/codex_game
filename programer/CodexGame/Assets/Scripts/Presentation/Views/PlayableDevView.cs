@@ -32,6 +32,9 @@ namespace CodexGame.Presentation.Views
     private Texture2D _introTexture;
 
     [SerializeField]
+    private MainMenuUiArtSet _mainMenuUiArtSet;
+
+    [SerializeField]
     private HealthUiArtSet _healthUiArtSet;
 
     [SerializeField]
@@ -175,7 +178,8 @@ namespace CodexGame.Presentation.Views
       PresentationUiArtSet presentationUiArtSet = null,
       PokerResultUiArtSet pokerResultUiArtSet = null,
       PrivateSelectionUiArtSet privateSelectionUiArtSet = null,
-      JokerRevealUiArtSet jokerRevealUiArtSet = null)
+      JokerRevealUiArtSet jokerRevealUiArtSet = null,
+      MainMenuUiArtSet mainMenuUiArtSet = null)
     {
       _boardTexture = boardTexture;
       _cardArtSet = cardArtSet;
@@ -192,6 +196,7 @@ namespace CodexGame.Presentation.Views
       _presentationUiArtSet = presentationUiArtSet;
       _privateSelectionUiArtSet = privateSelectionUiArtSet;
       _jokerRevealUiArtSet = jokerRevealUiArtSet;
+      _mainMenuUiArtSet = mainMenuUiArtSet;
       _useSceneBackdrop = useSceneBackdrop;
       _useIntroArtLayout = useIntroArtLayout;
       _halliCards = null;
@@ -610,14 +615,16 @@ namespace CodexGame.Presentation.Views
       if (DrawIntroArtButton(
         new Rect(312f, 266f, 336f, 76f),
         L("UI_MAIN_START"),
-        new Color(0.015f, 0.055f, 0.075f, 0.96f)))
+        _mainMenuUiArtSet?.StartButton,
+        "MainMenuStart"))
       {
         RequestStart();
       }
       if (DrawIntroArtButton(
         new Rect(312f, 354f, 336f, 78f),
         L("UI_MAIN_GUIDE"),
-        new Color(0.055f, 0.02f, 0.035f, 0.96f)))
+        _mainMenuUiArtSet?.GuideButton,
+        "MainMenuGuide"))
       {
         _guide.OpenMainGuide();
       }
@@ -635,28 +642,30 @@ namespace CodexGame.Presentation.Views
       GUI.enabled = true;
     }
 
-    private bool DrawIntroArtButton(Rect rect, string label, Color coverColor)
+    private bool DrawIntroArtButton(
+      Rect rect,
+      string label,
+      MainMenuButtonArtSet art,
+      string controlName)
     {
-      var hovered = rect.Contains(Event.current.mousePosition);
-      var pressed = hovered && Input.GetMouseButton(0);
-      var previousColor = GUI.color;
-      GUI.color = hovered
-        ? new Color(
-          Mathf.Min(coverColor.r * 1.35f, 1f),
-          Mathf.Min(coverColor.g * 1.35f, 1f),
-          Mathf.Min(coverColor.b * 1.35f, 1f),
-          1f)
-        : new Color(coverColor.r, coverColor.g, coverColor.b, 1f);
-      GUI.DrawTexture(
-        new Rect(rect.x + 9f, rect.y + 9f, rect.width - 18f, rect.height - 18f),
-        Texture2D.whiteTexture,
-        ScaleMode.StretchToFill,
-        true);
-      GUI.color = previousColor;
+      var mouseHovered = rect.Contains(Event.current.mousePosition);
+      var keyboardFocused = string.Equals(
+        GUI.GetNameOfFocusedControl(),
+        controlName,
+        StringComparison.Ordinal);
+      var hovered = mouseHovered || keyboardFocused;
+      var pressed = mouseHovered && Input.GetMouseButton(0);
+      var texture = art?.GetTexture(hovered, pressed);
+      if (texture != null)
+      {
+        GUI.DrawTexture(rect, texture, ScaleMode.StretchToFill, true);
+      }
+
       var labelRect = pressed
         ? new Rect(rect.x, rect.y + 2f, rect.width, rect.height)
         : rect;
       GUI.Label(labelRect, label, _styles.IntroButton);
+      GUI.SetNextControlName(controlName);
       return GUI.Button(rect, GUIContent.none, GUIStyle.none);
     }
 

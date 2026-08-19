@@ -43,6 +43,7 @@ namespace CodexGame.Editor
     private const string PokerResultUi056ArtRoot = UiArtRoot + "PokerResultLabel_0_5_6/";
     private const string ShopItemIconsUi056ArtRoot = UiArtRoot + "ShopItemIcons_0_5_6/";
     private const string GuideNavUi056ArtRoot = UiArtRoot + "GuideNav_0_5_6/";
+    private const string MainMenuUi056ArtRoot = UiArtRoot + "MainMenu_0_5_6/";
     private const string JokerRevealUi054ArtRoot = UiArtRoot + "JokerReveal_0_5_4/";
     private const string PrivateSelectionUi055ArtRoot = UiArtRoot + "PrivateSelection_0_5_5/";
     private const string StageTransitionUiArtRoot = UiArtRoot + "StageTransition_0_3_1/";
@@ -139,6 +140,15 @@ namespace CodexGame.Editor
           LoadTexture(GuideNavUi056ArtRoot + "guide_nav_close_hover_56x58_0_5_6.png"),
           LoadTexture(GuideNavUi056ArtRoot + "guide_nav_close_pressed_56x58_0_5_6.png"),
           LoadTexture(GuideNavUi056ArtRoot + "guide_nav_close_disabled_56x58_0_5_6.png")));
+      var mainMenuUiArtSet = new MainMenuUiArtSet(
+        new MainMenuButtonArtSet(
+          LoadTexture(MainMenuUi056ArtRoot + "main_menu_start_idle_336x78_0_5_6.png"),
+          LoadTexture(MainMenuUi056ArtRoot + "main_menu_start_hover_336x78_0_5_6.png"),
+          LoadTexture(MainMenuUi056ArtRoot + "main_menu_start_pressed_336x78_0_5_6.png")),
+        new MainMenuButtonArtSet(
+          LoadTexture(MainMenuUi056ArtRoot + "main_menu_guide_idle_336x78_0_5_6.png"),
+          LoadTexture(MainMenuUi056ArtRoot + "main_menu_guide_hover_336x78_0_5_6.png"),
+          LoadTexture(MainMenuUi056ArtRoot + "main_menu_guide_pressed_336x78_0_5_6.png")));
       var healthUiArtSet = new HealthUiArtSet(
         LoadTexture(IconOverhaulUi050ArtRoot + "hp_heart_player_filled_24_0_5_0.png"),
         LoadTexture(IconOverhaulUi050ArtRoot + "hp_heart_player_empty_24_0_5_0.png"),
@@ -397,7 +407,8 @@ namespace CodexGame.Editor
         presentationUiArtSet: presentationUiArtSet,
         pokerResultUiArtSet: pokerResultUiArtSet,
         privateSelectionUiArtSet: privateSelectionUiArtSet,
-        jokerRevealUiArtSet: jokerRevealUiArtSet);
+        jokerRevealUiArtSet: jokerRevealUiArtSet,
+        mainMenuUiArtSet: mainMenuUiArtSet);
       var presentationRig = gameObject.AddComponent<TableScenePresentationRig>();
       var backdropShader = AssetDatabase.LoadAssetAtPath<Shader>(BackdropShaderPath);
       if (backdropShader == null)
