@@ -12,6 +12,8 @@ namespace CodexGame.Presentation.Views
     private static readonly Rect FullScreen = new Rect(0f, 0f, 960f, 540f);
     private static readonly Rect EntryLabel = new Rect(336f, 34f, 288f, 80f);
     private static readonly Rect SkipButton = new Rect(816f, 476f, 120f, 44f);
+    private static readonly Rect OpponentIntroFrame = new Rect(300f, 184f, 360f, 152f);
+    private static readonly Rect OpponentDescriptionMask = new Rect(454f, 243f, 182f, 47f);
 
     public void DrawStageEntry(
       PlayableGameSnapshot snapshot,
@@ -26,7 +28,10 @@ namespace CodexGame.Presentation.Views
       }
       if (art?.OpponentIntroFrame != null)
       {
-        GUI.DrawTexture(new Rect(300f, 184f, 360f, 152f), art.OpponentIntroFrame, ScaleMode.StretchToFill, true);
+        GUI.DrawTexture(OpponentIntroFrame, art.OpponentIntroFrame, ScaleMode.StretchToFill, true);
+        UiPixelSurfaceRenderer.Fill(
+          OpponentDescriptionMask,
+          new Color(0.055f, 0.047f, 0.039f, 1f));
       }
       var cutout = art?.GetOpponentCutout(snapshot.StageNumber);
       if (cutout != null)
@@ -179,18 +184,11 @@ namespace CodexGame.Presentation.Views
       var activeCount = Mathf.Clamp(stageNumber, 0, 3);
       for (var index = 0; index < 3; index++)
       {
-        GUI.color = index < activeCount
+        var color = index < activeCount
           ? new Color(0.94f, 0.63f, 0.18f, 1f)
           : new Color(0.27f, 0.23f, 0.18f, 1f);
         var center = new Vector2(464f + 28f * index, 304f);
-        var previousMatrix = GUI.matrix;
-        GUIUtility.RotateAroundPivot(45f, center);
-        GUI.DrawTexture(
-          new Rect(center.x - 4f, center.y - 4f, 8f, 8f),
-          Texture2D.whiteTexture,
-          ScaleMode.StretchToFill,
-          true);
-        GUI.matrix = previousMatrix;
+        UiPixelSurfaceRenderer.DrawDiamond(center, color);
       }
       GUI.color = previousColor;
     }

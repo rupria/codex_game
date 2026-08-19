@@ -59,18 +59,19 @@ namespace CodexGame.Presentation.Views
       DrawPreparedEffects(snapshot, art, styles, localization);
 
       var stageLimitExhausted = snapshot.StageRestriction?.IsExhausted == true;
-      var canAct = snapshot.Phase == PokerItemPhase.AwaitingActions
+      var canOpenInventory = snapshot.Phase == PokerItemPhase.AwaitingActions
         && HasUsableItemAtCurrentTiming(snapshot)
         && !stageLimitExhausted
         && !snapshot.UsePresentation.IsActive;
+      var canConfirmHand = PokerItemActionAvailability.CanConfirmHand(snapshot);
       DrawClosedCrate(
         snapshot.Inventory.Count,
-        canAct && !_inventoryOpen,
+        canOpenInventory && !_inventoryOpen,
         art,
         styles,
         localization);
 
-      GUI.enabled = canAct && !_inventoryOpen;
+      GUI.enabled = canConfirmHand && !_inventoryOpen;
       if (GUI.Button(new Rect(734f, 472f, 170f, 42f), localization.Get("UI_ITEM_CONFIRM_HAND")))
       {
         ClearSelection();
@@ -407,6 +408,9 @@ namespace CodexGame.Presentation.Views
       if (art?.DetailPanel != null)
       {
         GUI.DrawTexture(DetailRect, art.DetailPanel, ScaleMode.StretchToFill, true);
+        UiPixelSurfaceRenderer.Fill(
+          new Rect(506f, 248f, 260f, 86f),
+          new Color(0.169f, 0.098f, 0.055f, 1f));
       }
       else GUI.Box(DetailRect, GUIContent.none);
 
@@ -476,11 +480,11 @@ namespace CodexGame.Presentation.Views
           GUI.DrawTexture(new Rect(416f, 252f, 80f, 80f), icon, ScaleMode.ScaleToFit, true);
         }
         GUI.Label(
-          new Rect(510f, 254f, 250f, 32f),
+          new Rect(510f, 252f, 250f, 30f),
           localization.Get(definition.LocalizationNameKey),
           styles.Heading);
         GUI.Label(
-          new Rect(510f, 292f, 250f, 34f),
+          new Rect(510f, 286f, 250f, 48f),
           localization.Get(definition.LocalizationDescriptionKey),
           styles.Small);
         DrawUseTiming(_selectedItem.Value, localization, styles);

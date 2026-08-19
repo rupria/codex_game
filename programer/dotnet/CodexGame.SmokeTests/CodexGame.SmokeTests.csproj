@@ -43,6 +43,9 @@
     <Compile
       Include="..\..\CodexGame\Assets\Scripts\Presentation\Views\HalliPileOverlapLayout.cs"
       Link="Presentation\HalliPileOverlapLayout.cs" />
+    <Compile
+      Include="..\..\CodexGame\Assets\Scripts\Presentation\Views\PokerItemActionAvailability.cs"
+      Link="Presentation\PokerItemActionAvailability.cs" />
     <None
       Include="..\..\CodexGame\Assets\StreamingAssets\Localization\ui_strings.csv"
       Link="Localization\ui_strings.csv"
