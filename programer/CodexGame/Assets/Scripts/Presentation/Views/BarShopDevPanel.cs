@@ -84,6 +84,7 @@ namespace CodexGame.Presentation.Views
         ? localization.Get(
           "UI_BAR_REROLL_FREE",
           new LocalizationArgument("remaining", shop.RemainingRerolls),
+          new LocalizationArgument("maximum", shop.MaximumRerolls),
           new LocalizationArgument("cost", shop.RerollCost))
         : localization.Get("UI_BAR_REROLL_USED");
       if (DrawButton(
@@ -94,7 +95,7 @@ namespace CodexGame.Presentation.Views
         art?.RerollHover,
         art?.RerollPressed,
         art?.RerollDisabled,
-        styles.Heading))
+        styles.Body))
       {
         reroll();
       }

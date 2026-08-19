@@ -49,13 +49,14 @@ namespace CodexGame.SmokeTests.Localization
         catalog.Get(
           "UI_BAR_REROLL_FREE",
           "ko",
-          new LocalizationArgument("remaining", 1),
-          new LocalizationArgument("cost", 0)) == "무료 재추첨 1/1"
-          && catalog.Get("UI_BAR_REROLL_USED", "en") == "REROLL COMPLETE"
+          new LocalizationArgument("remaining", 2),
+          new LocalizationArgument("maximum", 2),
+          new LocalizationArgument("cost", 1)) == "아이템 재배치 2/2 · 총알 1"
+          && catalog.Get("UI_BAR_REROLL_USED", "en") == "REARRANGE COMPLETE"
           && catalog.Get("UI_BAR_DUMMY_ITEM_06", "ko") == "진열 상품 F"
           && !catalog.Get("UI_BAR_DUMMY_ITEM_01", "ko").Contains("미확정")
           && !catalog.Get("UI_BAR_DUMMY_ITEM_01", "ko").Contains("개발 중"),
-        "The bar shop must localize its one free reroll and preview-product labels without internal wording.");
+        "The bar shop must label paid item rearrangement with its cost and remaining uses without stale free-reroll wording.");
       tests.Check(
         catalog.Get("UI_ITEM_WILD_INK", "ko") == "와일드 잉크"
           && catalog.Get("UI_ITEM_BARREL", "en") == "BARREL"
