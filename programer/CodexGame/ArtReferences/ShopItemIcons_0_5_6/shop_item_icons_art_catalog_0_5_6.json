@@ -1,0 +1,53 @@
+{
+  "artSetId": "shop_item_icons_0_5_6",
+  "specRevision": "0.1.2.6",
+  "status": "art_complete_programmer_binding_required",
+  "issues": [60],
+  "license": "project-owned generated artwork; commercial use and modification allowed",
+  "runtimeRoot": "Assets/Art/Prototype/UI/ShopItemIcons_0_5_6/",
+  "sourceRoot": "ArtReferences/ShopItemIcons_0_5_6/source/",
+  "previewRoot": "ArtReferences/ShopItemIcons_0_5_6/preview/",
+  "referenceResolution": [960, 540],
+  "shopLayout": {
+    "slotRects": [[20,146,190,174],[250,146,190,174],[480,146,190,174],[710,146,190,174]],
+    "iconPlateRectLocal": [51,10,88,88],
+    "iconRectLocal": [55,14,80,80],
+    "nameRectLocal": [12,112,166,20],
+    "priceRectLocal": [60,134,70,28],
+    "purchaseButtonRectLocal": [24,140,142,28],
+    "economyPanel": [40,28,278,58]
+  },
+  "assets": [
+    {"id":"slot","file":"bar_shop_product_slot_190x174_0_5_6.png","size":[190,174]},
+    {"id":"icon_plate_idle","file":"bar_shop_item_icon_plate_idle_88x88_0_5_6.png","size":[88,88]},
+    {"id":"icon_plate_hover","file":"bar_shop_item_icon_plate_hover_88x88_0_5_6.png","size":[88,88]},
+    {"id":"icon_plate_disabled","file":"bar_shop_item_icon_plate_disabled_88x88_0_5_6.png","size":[88,88]},
+    {"id":"currency_basic","file":"currency_basic_bullet_western_48_0_5_6.png","size":[48,48]},
+    {"id":"currency_temporary","file":"currency_temporary_cracked_round_48_0_5_6.png","size":[48,48]},
+    {"id":"shop_price","file":"shop_price_bullet_western_28_0_5_6.png","size":[28,28]}
+  ],
+  "reuseBindings": {
+    "reload": "Assets/Art/Prototype/UI/IconOverhaul_0_5_1/item_reload_popup_80_0_5_1.png",
+    "bottomDeal": "Assets/Art/Prototype/UI/IconOverhaul_0_5_1/item_bottom_deal_popup_80_0_5_1.png",
+    "hypeMan": "Assets/Art/Prototype/UI/IconOverhaul_0_5_1/item_hype_man_popup_80_0_5_1.png",
+    "healthRecovery": "Assets/Art/Prototype/UI/IconOverhaul_0_5_1/item_heal_tonic_popup_80_0_5_1.png",
+    "wildInk": "Assets/Art/Prototype/UI/ItemExpansion_0_5_2/item_wild_ink_popup_80_0_5_2.png",
+    "barrel": "Assets/Art/Prototype/UI/ItemExpansion_0_5_2/item_barrel_popup_80_0_5_2.png",
+    "predictionInsurance": "Assets/Art/Prototype/UI/ItemExpansion_0_5_2/item_prediction_insurance_popup_80_0_5_2.png",
+    "mercenary": "Assets/Art/Prototype/UI/ItemExpansion_0_5_2/item_mercenary_popup_80_0_5_2.png"
+  },
+  "import": {
+    "textureType": "Sprite (2D and UI)",
+    "filterMode": "Point",
+    "compression": "Uncompressed",
+    "mipMaps": false,
+    "alphaIsTransparency": true
+  },
+  "guardrails": [
+    "Use the approved 80px popup item art in the shop instead of the legacy 64px bindings.",
+    "Do not stretch the 230x210 legacy slot texture into the 190x174 runtime rectangle.",
+    "Keep item names, prices and purchase labels as localized live text.",
+    "Do not change item prices, inventory rules or purchase behavior.",
+    "Use the same currency icons in stage start, inventory and shop balances."
+  ]
+}
