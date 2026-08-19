@@ -11,6 +11,7 @@ namespace CodexGame.SmokeTests.Playable
     public static void Run(TestHarness tests)
     {
       CheckOneCardInputAndFaceUpBoundary(tests);
+      CheckAiFlipStartsAfterHalfSecond(tests);
       CheckFlipRefreshesBellTimer(tests);
       CheckBellDuringRevealStopsDistribution(tests);
       CheckResultLockAndBellTimeout(tests);
@@ -18,6 +19,27 @@ namespace CodexGame.SmokeTests.Playable
       CheckWrongBellWaitsForManualFlipAfterLock(tests);
       CheckWrongBellPreservesEarlierAcquiredCards(tests);
       CheckGlobalInactivity(tests);
+    }
+
+    private static void CheckAiFlipStartsAfterHalfSecond(TestHarness tests)
+    {
+      var session = new PrototypeHalliSession();
+      session.StartNew(new GameTimestamp(0), 20260819);
+      session.Advance(new GameTimestamp(0));
+
+      var beforeAi = new GameTimestamp(GameRules.AiCardFlipDelayMicroseconds - 1);
+      session.Tick(beforeAi);
+      var beforeSnapshot = session.GetSnapshot(beforeAi);
+      var aiStart = new GameTimestamp(GameRules.AiCardFlipDelayMicroseconds);
+      session.Tick(aiStart);
+      var atSnapshot = session.GetSnapshot(aiStart);
+
+      tests.Check(
+        GameRules.AiCardFlipDelayMicroseconds == 500_000
+          && beforeSnapshot.RevealingActor == HalliActor.Player
+          && atSnapshot.RevealingActor == HalliActor.Ai
+          && atSnapshot.RevealProgress == 0f,
+        "The AI response card must start exactly 0.5 seconds after the player's card starts.");
     }
 
     private static void CheckFlipRefreshesBellTimer(TestHarness tests)
@@ -80,7 +102,7 @@ namespace CodexGame.SmokeTests.Playable
         firstFaceUp.LeftPile.Count == 1 && firstFaceUp.RightPile.Count == 0,
         "A card must enter Halli judgment only after its face-up motion completes.");
 
-      var pairFinishedAt = new GameTimestamp(startedAt.Microseconds + 700_000);
+      var pairFinishedAt = new GameTimestamp(startedAt.Microseconds + 850_000);
       session.Tick(pairFinishedAt);
       var waiting = session.GetSnapshot(pairFinishedAt);
       tests.Check(

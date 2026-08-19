@@ -19,21 +19,21 @@ namespace CodexGame.SmokeTests.Presentation
             == PileSide.Right,
         "Player-left and AI-right must share the left pile; AI-left and player-right must share the right pile.");
       tests.Check(
-        HalliPileOverlapLayout.CardX(PileSide.Left, 0, 3) == 178f
-          && HalliPileOverlapLayout.CardY(0, 3) == 206f
-          && HalliPileOverlapLayout.CardX(PileSide.Left, 1, 3) == 237f
-          && HalliPileOverlapLayout.CardY(1, 3) == 209f
-          && HalliPileOverlapLayout.CardX(PileSide.Left, 2, 3) == 296f
-          && HalliPileOverlapLayout.CardY(2, 3) == 212f
+        HalliPileOverlapLayout.CardX(PileSide.Left, 0, 2) == 237f
+          && HalliPileOverlapLayout.CardY(0, 2) == 209f
+          && HalliPileOverlapLayout.CardX(PileSide.Left, 1, 2) == 296f
+          && HalliPileOverlapLayout.CardY(1, 2) == 212f
           && HalliPileOverlapLayout.CardX(PileSide.Right, 0, 2) == 597f
           && HalliPileOverlapLayout.CardX(PileSide.Right, 1, 2) == 656f,
-        "Three cards must expose all ranks and suits with only five pixels of horizontal overlap.");
+        "Each pile must show only the latest card and its immediate predecessor with readable ranks and suits.");
       tests.Check(
-        HalliPileOverlapLayout.MaximumPileCards == 3
-          && HalliPileOverlapLayout.DrawOrderIndex(0, 3) == 2
-          && HalliPileOverlapLayout.DrawOrderIndex(1, 3) == 1
-          && HalliPileOverlapLayout.DrawOrderIndex(2, 3) == 0,
-        "Each shared pile must keep three cards and draw the oldest card last so it remains above later cards.");
+        HalliPileOverlapLayout.MaximumPileCards == 2
+          && HalliPileOverlapLayout.DrawOrderIndex(0, 2) == 0
+          && HalliPileOverlapLayout.DrawOrderIndex(1, 2) == 1,
+        "The predecessor must draw first and the latest card last so the latest card remains on top.");
+      tests.CheckThrows<System.ArgumentOutOfRangeException>(
+        () => HalliPileOverlapLayout.CardX(PileSide.Left, 0, 3),
+        "A third visible pile card must be rejected by the 0.1.2.6 layout contract.");
     }
   }
 }

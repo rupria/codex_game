@@ -13,7 +13,7 @@ namespace CodexGame.Presentation.Views
     public const float LeftNewestX = 296f;
     public const float RightNewestX = 656f;
     public const float NewestY = 212f;
-    public const int MaximumPileCards = 3;
+    public const int MaximumPileCards = 2;
 
     public static PileSide PhysicalPile(HalliActor actor, HalliRelativeSide side)
     {
@@ -51,7 +51,7 @@ namespace CodexGame.Presentation.Views
     public static int DrawOrderIndex(int drawIndex, int cardCount)
     {
       ValidateCardIndex(drawIndex, cardCount);
-      return cardCount - 1 - drawIndex;
+      return drawIndex;
     }
 
     private static void ValidateCardIndex(int cardIndex, int cardCount)

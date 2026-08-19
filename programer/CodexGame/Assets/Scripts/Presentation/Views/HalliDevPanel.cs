@@ -18,8 +18,8 @@ namespace CodexGame.Presentation.Views
     private readonly HalliRemainingCardCountdownState _remainingCardCountdown =
       new HalliRemainingCardCountdownState();
     private readonly FlipReadyPromptState _flipReadyPrompt = new FlipReadyPromptState();
-    private readonly List<SharedPileCard> _leftPileHistory = new List<SharedPileCard>(3);
-    private readonly List<SharedPileCard> _rightPileHistory = new List<SharedPileCard>(3);
+    private readonly List<SharedPileCard> _leftPileHistory = new List<SharedPileCard>(2);
+    private readonly List<SharedPileCard> _rightPileHistory = new List<SharedPileCard>(2);
     private long _historyRoundSeed = long.MinValue;
     private CardId? _lastHistoryReveal;
     private CardId? _lastHistoryAcquisition;
