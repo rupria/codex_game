@@ -55,6 +55,12 @@ namespace CodexGame.SmokeTests.Poker
         JokerAwardResolver.Roll(4, new FixedRandom(9))
           && !JokerAwardResolver.Roll(4, new FixedRandom(10)),
         "Four or more acquired cards must use an independent exact 10% Joker roll.");
+      var forcedButIneligible = new CountingRandom(99);
+      tests.Check(
+        JokerAwardResolver.Roll(4, new FixedRandom(99), 100)
+          && !JokerAwardResolver.Roll(3, forcedButIneligible, 100)
+          && forcedButIneligible.CallCount == 0,
+        "The 100% QA override must guarantee only eligible Joker awards and preserve the four-card gate.");
     }
 
     private static void CheckBestLegalSubstitution(TestHarness tests)

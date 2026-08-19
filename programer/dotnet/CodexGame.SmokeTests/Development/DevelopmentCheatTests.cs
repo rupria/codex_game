@@ -21,6 +21,18 @@ namespace CodexGame.SmokeTests.Development
           && history.Snapshot()[0].TimestampMicroseconds == 5,
         "Development cheats must set a watermark flag and retain only the latest 20 commands.");
 
+      var jokerAward = new JokerAwardCheatState();
+      tests.Check(
+        !jokerAward.IsGuaranteed
+          && jokerAward.EffectiveAwardPercent == 10
+          && jokerAward.SetGuaranteed(true)
+          && jokerAward.IsGuaranteed
+          && jokerAward.EffectiveAwardPercent == 100
+          && !jokerAward.SetGuaranteed(true)
+          && jokerAward.SetGuaranteed(false)
+          && jokerAward.EffectiveAwardPercent == 10,
+        "The Joker award cheat must toggle between the default 10% and guaranteed 100% without stacking.");
+
       var presetsValid = true;
       foreach (PokerCheatPreset preset in Enum.GetValues(typeof(PokerCheatPreset)))
       {

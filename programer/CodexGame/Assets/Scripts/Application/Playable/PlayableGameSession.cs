@@ -42,6 +42,7 @@ namespace CodexGame.Application.Playable
     private readonly PredictionInsuranceActivationSession _predictionInsuranceActivation =
       new PredictionInsuranceActivationSession();
     private readonly DevelopmentCheatHistory _cheatHistory = new DevelopmentCheatHistory();
+    private readonly JokerAwardCheatState _jokerAwardCheat = new JokerAwardCheatState();
     private ItemQaPresetResult? _lastItemQaPresetResult;
     private BattleHealth _health = BattleHealth.Initial;
     private Card? _firstPublicCard;
@@ -83,6 +84,14 @@ namespace CodexGame.Application.Playable
       _predictionInsuranceActivation.Reset();
       _pokerPredictionRecorded = false;
       _cheatHistory.Reset();
+      if (_jokerAwardCheat.IsGuaranteed)
+      {
+        _cheatHistory.Record(
+          now.Microseconds,
+          "joker-award",
+          "100%",
+          "retained");
+      }
       _lastItemQaPresetResult = null;
       _lastStageReward = 0;
       _lastStageRewardDetails = StageBulletReward.None;
@@ -581,7 +590,8 @@ namespace CodexGame.Application.Playable
         _predictionStreak.GetSnapshot(),
         _predictionInsuranceActivation.GetSnapshot(now),
         _inventory.Snapshot(),
-        _cheatHistory.CheatUsed,
+        _cheatHistory.CheatUsed || _jokerAwardCheat.IsGuaranteed,
+        _jokerAwardCheat.IsGuaranteed,
         _cheatHistory.Snapshot(),
         _lastItemQaPresetResult,
         inactivityRemaining,
@@ -676,7 +686,8 @@ namespace CodexGame.Application.Playable
       _firstPublicCard = halliSnapshot.FirstPublicCard.Value;
       _selection = _halli.BeginPrivateCardDistribution(
         now,
-        PrivateCardDistributionRules.IsPairAssistEnabled(_health));
+        pairAssistEnabled: PrivateCardDistributionRules.IsPairAssistEnabled(_health),
+        jokerAwardPercent: _jokerAwardCheat.EffectiveAwardPercent);
       Phase = PlayableGamePhase.PrivateSelection;
       var selectionSnapshot = _selection.GetSnapshot(now);
 
@@ -878,6 +889,17 @@ namespace CodexGame.Application.Playable
     }
 
 #if UNITY_EDITOR || ENABLE_GAMEPLAY_CHEATS
+    public bool CheatSetJokerAwardGuaranteed(bool enabled, GameTimestamp now)
+    {
+      var changed = _jokerAwardCheat.SetGuaranteed(enabled);
+      _cheatHistory.Record(
+        now.Microseconds,
+        "joker-award",
+        _jokerAwardCheat.EffectiveAwardPercent + "%",
+        changed ? "ok" : "unchanged");
+      return changed;
+    }
+
     public ItemQaPresetResult CheatRunItemQaPreset(ItemQaPreset preset, GameTimestamp now)
     {
       var seed = 441_082L + _stageNumber * 10_000L + _combatRoundNumber;

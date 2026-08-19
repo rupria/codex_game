@@ -52,6 +52,7 @@ namespace CodexGame.Bootstrap
       _view.InactivityAcknowledgedRequested += AcknowledgeInactivityReturn;
 #if UNITY_EDITOR || ENABLE_GAMEPLAY_CHEATS
       _view.CheatStagePassRequested += CheatStagePass;
+      _view.CheatJokerAwardRequested += CheatSetJokerAwardGuaranteed;
       _view.CheatGrantItemRequested += CheatGrantItem;
       _view.CheatPokerPresetRequested += CheatPokerPreset;
       _view.CheatItemQaPresetRequested += CheatItemQaPreset;
@@ -103,6 +104,7 @@ namespace CodexGame.Bootstrap
       _view.InactivityAcknowledgedRequested -= AcknowledgeInactivityReturn;
 #if UNITY_EDITOR || ENABLE_GAMEPLAY_CHEATS
       _view.CheatStagePassRequested -= CheatStagePass;
+      _view.CheatJokerAwardRequested -= CheatSetJokerAwardGuaranteed;
       _view.CheatGrantItemRequested -= CheatGrantItem;
       _view.CheatPokerPresetRequested -= CheatPokerPreset;
       _view.CheatItemQaPresetRequested -= CheatItemQaPreset;
@@ -248,6 +250,12 @@ namespace CodexGame.Bootstrap
     }
 
 #if UNITY_EDITOR || ENABLE_GAMEPLAY_CHEATS
+    private void CheatSetJokerAwardGuaranteed(bool enabled)
+    {
+      _session.CheatSetJokerAwardGuaranteed(enabled, Now());
+      Present();
+    }
+
     private void CheatStagePass()
     {
       _session.CheatCompleteStage(Now());
