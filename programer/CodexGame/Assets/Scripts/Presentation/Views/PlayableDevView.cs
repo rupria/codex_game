@@ -56,6 +56,12 @@ namespace CodexGame.Presentation.Views
     private PresentationUiArtSet _presentationUiArtSet;
 
     [SerializeField]
+    private PrivateSelectionUiArtSet _privateSelectionUiArtSet;
+
+    [SerializeField]
+    private JokerRevealUiArtSet _jokerRevealUiArtSet;
+
+    [SerializeField]
     private bool _useSceneBackdrop;
 
     [SerializeField]
@@ -84,6 +90,7 @@ namespace CodexGame.Presentation.Views
     private PlayableCardRenderer _halliCards;
     private PlayableCardRenderer _pokerCards;
     private int _selectionFocus = -1;
+    private long _selectionSessionSerial;
     private LocalizationRuntime _localization;
     private float _playerDamageUntil = float.NegativeInfinity;
     private float _aiDamageUntil = float.NegativeInfinity;
@@ -166,7 +173,9 @@ namespace CodexGame.Presentation.Views
       PokerItemUiArtSet pokerItemUiArtSet = null,
       EconomyUiArtSet economyUiArtSet = null,
       PresentationUiArtSet presentationUiArtSet = null,
-      PokerResultUiArtSet pokerResultUiArtSet = null)
+      PokerResultUiArtSet pokerResultUiArtSet = null,
+      PrivateSelectionUiArtSet privateSelectionUiArtSet = null,
+      JokerRevealUiArtSet jokerRevealUiArtSet = null)
     {
       _boardTexture = boardTexture;
       _cardArtSet = cardArtSet;
@@ -181,6 +190,8 @@ namespace CodexGame.Presentation.Views
       _stageTransitionUiArtSet = stageTransitionUiArtSet;
       _economyUiArtSet = economyUiArtSet;
       _presentationUiArtSet = presentationUiArtSet;
+      _privateSelectionUiArtSet = privateSelectionUiArtSet;
+      _jokerRevealUiArtSet = jokerRevealUiArtSet;
       _useSceneBackdrop = useSceneBackdrop;
       _useIntroArtLayout = useIntroArtLayout;
       _halliCards = null;
@@ -189,6 +200,11 @@ namespace CodexGame.Presentation.Views
 
     public void Present(PlayableGameSnapshot snapshot)
     {
+      if ((_snapshot == null || _snapshot.Phase != PlayableGamePhase.PrivateSelection)
+        && snapshot.Phase == PlayableGamePhase.PrivateSelection)
+      {
+        _selectionSessionSerial++;
+      }
       if (_snapshot != null)
       {
         if (snapshot.Health.Player < _snapshot.Health.Player)
@@ -251,7 +267,14 @@ namespace CodexGame.Presentation.Views
         case PlayableGamePhase.HalliTransition:
           break;
         case PlayableGamePhase.PrivateSelection:
-          HandleSelectionInput();
+          if (_snapshot.Selection != null)
+          {
+            _selectionPanel.Observe(
+              _selectionSessionSerial,
+              _snapshot.Selection,
+              Time.unscaledTime);
+            if (!_selectionPanel.IsInputLocked(Time.unscaledTime)) HandleSelectionInput();
+          }
           break;
         case PlayableGamePhase.PokerPrediction:
           if (_snapshot.Poker != null
@@ -428,6 +451,7 @@ namespace CodexGame.Presentation.Views
           _pokerUiArtSet,
           _pokerItemUiArtSet,
           _pokerResultUiArtSet,
+          _jokerRevealUiArtSet,
           _snapshot.PredictionReward,
           _snapshot.PredictionInsuranceActivation,
           _localization,
@@ -438,6 +462,24 @@ namespace CodexGame.Presentation.Views
           () => AdvanceRequested?.Invoke());
         DrawOpponentPortrait();
         DrawBattleEconomyHud();
+        return;
+      }
+
+      if (_snapshot.Phase == PlayableGamePhase.PrivateSelection
+        && _snapshot.Selection != null)
+      {
+        _selectionPanel.Draw(
+          _selectionSessionSerial,
+          _snapshot.Selection,
+          _selectionFocus,
+          _styles,
+          _pokerCards,
+          _privateSelectionUiArtSet,
+          _jokerRevealUiArtSet,
+          _localization,
+          index => _selectionFocus = index,
+          cardId => PrivateCardToggleRequested?.Invoke(cardId),
+          () => PrivateCardsConfirmRequested?.Invoke());
         return;
       }
 
@@ -520,21 +562,6 @@ namespace CodexGame.Presentation.Views
 
       switch (_snapshot.Phase)
       {
-        case PlayableGamePhase.PrivateSelection:
-          if (_snapshot.Selection != null)
-          {
-            _selectionPanel.Draw(
-              _snapshot.Selection,
-              _selectionFocus,
-              _styles,
-              _pokerCards,
-              _presentationUiArtSet,
-              _localization,
-              index => _selectionFocus = index,
-              cardId => PrivateCardToggleRequested?.Invoke(cardId),
-              () => PrivateCardsConfirmRequested?.Invoke());
-          }
-          break;
         case PlayableGamePhase.BattleFinished:
           DrawBattleFinished();
           break;

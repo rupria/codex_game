@@ -42,6 +42,8 @@ namespace CodexGame.Editor
     private const string ItemExpansionUi052ArtRoot = UiArtRoot + "ItemExpansion_0_5_2/";
     private const string PokerResultUi056ArtRoot = UiArtRoot + "PokerResultLabel_0_5_6/";
     private const string ShopItemIconsUi056ArtRoot = UiArtRoot + "ShopItemIcons_0_5_6/";
+    private const string JokerRevealUi054ArtRoot = UiArtRoot + "JokerReveal_0_5_4/";
+    private const string PrivateSelectionUi055ArtRoot = UiArtRoot + "PrivateSelection_0_5_5/";
     private const string StageTransitionUiArtRoot = UiArtRoot + "StageTransition_0_3_1/";
     private const string IntroArtPath = HalliUiArtRoot + "start_screen_background.png";
     private const string BackdropShaderPath = "Assets/Shaders/RuntimeBackdropLit.shader";
@@ -348,6 +350,25 @@ namespace CodexGame.Editor
         limitExhausted: LoadTexture(IconOverhaulUi050ArtRoot + "stage_item_limit_exhausted_western_64_0_5_0.png"),
         inventoryRestricted: LoadTexture(IconOverhaulUi050ArtRoot + "stage_item_inventory_restricted_western_64_0_5_0.png"),
         cardRestricted: LoadTexture(IconOverhaulUi050ArtRoot + "stage_item_card_restricted_western_64_0_5_0.png"));
+      var jokerRevealUiArtSet = new JokerRevealUiArtSet(
+        LoadTexture(JokerRevealUi054ArtRoot + "joker_reveal_focus_vignette_960x540_0_5_4.png"),
+        LoadTexture(JokerRevealUi054ArtRoot + "joker_reveal_arc_trail_6f_576x96_0_5_4.png"),
+        LoadTexture(JokerRevealUi054ArtRoot + "joker_reveal_gunsight_ring_8f_1536x192_0_5_4.png"),
+        LoadTexture(JokerRevealUi054ArtRoot + "joker_reveal_muzzle_flash_8f_1280x160_0_5_4.png"),
+        LoadTexture(JokerRevealUi054ArtRoot + "joker_reveal_card_glint_6f_672x156_0_5_4.png"),
+        LoadTexture(JokerRevealUi054ArtRoot + "joker_reveal_settle_glint_5f_320x64_0_5_4.png"));
+      var privateSelectionUiArtSet = new PrivateSelectionUiArtSet(
+        LoadTexture(PrivateSelectionUi055ArtRoot + "private_selection_modal_dim_960x540_0_5_5.png"),
+        LoadTexture(PrivateSelectionUi055ArtRoot + "private_selection_modal_panel_860x456_0_5_5.png"),
+        LoadTexture(PrivateSelectionUi055ArtRoot + "private_selection_public_frame_166x198_0_5_5.png"),
+        LoadTexture(PrivateSelectionUi055ArtRoot + "private_selection_candidate_idle_112x150_0_5_5.png"),
+        LoadTexture(PrivateSelectionUi055ArtRoot + "private_selection_candidate_hover_112x150_0_5_5.png"),
+        LoadTexture(PrivateSelectionUi055ArtRoot + "private_selection_candidate_selected_112x150_0_5_5.png"),
+        LoadTexture(PrivateSelectionUi055ArtRoot + "private_selection_candidate_confirmed_112x150_0_5_5.png"),
+        LoadTexture(PrivateSelectionUi055ArtRoot + "private_selection_candidate_disabled_112x150_0_5_5.png"),
+        LoadTexture(PrivateSelectionUi055ArtRoot + "private_selection_confirm_idle_180x52_0_5_5.png"),
+        LoadTexture(PrivateSelectionUi055ArtRoot + "private_selection_confirm_active_180x52_0_5_5.png"),
+        LoadTexture(PrivateSelectionUi055ArtRoot + "private_selection_confirm_disabled_180x52_0_5_5.png"));
       view.Configure(
         boardTexture,
         cardArtSet,
@@ -363,7 +384,9 @@ namespace CodexGame.Editor
         pokerItemUiArtSet: pokerItemUiArtSet,
         economyUiArtSet: economyUiArtSet,
         presentationUiArtSet: presentationUiArtSet,
-        pokerResultUiArtSet: pokerResultUiArtSet);
+        pokerResultUiArtSet: pokerResultUiArtSet,
+        privateSelectionUiArtSet: privateSelectionUiArtSet,
+        jokerRevealUiArtSet: jokerRevealUiArtSet);
       var presentationRig = gameObject.AddComponent<TableScenePresentationRig>();
       var backdropShader = AssetDatabase.LoadAssetAtPath<Shader>(BackdropShaderPath);
       if (backdropShader == null)

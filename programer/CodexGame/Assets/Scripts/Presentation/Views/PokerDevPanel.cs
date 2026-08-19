@@ -29,6 +29,7 @@ namespace CodexGame.Presentation.Views
       PokerUiArtSet pokerArt,
       PokerItemUiArtSet pokerItemArt,
       PokerResultUiArtSet pokerResultArt,
+      JokerRevealUiArtSet jokerRevealArt,
       PredictionRewardSnapshot predictionReward,
       PredictionInsuranceActivationSnapshot insuranceActivation,
       LocalizationRuntime localization,
@@ -49,13 +50,9 @@ namespace CodexGame.Presentation.Views
         pokerItemArt,
         styles,
         localization);
-      DrawCards(snapshot, cards, pokerItemArt);
+      DrawCards(snapshot, cards, pokerItemArt, jokerRevealArt);
 
-      if (snapshot.Phase == PokerRoundPhase.PlayerJokerPresentation)
-      {
-        DrawPlayerJokerPresentation(snapshot, styles, cards, localization);
-      }
-      else if (snapshot.Phase == PokerRoundPhase.AwaitingPlayerJokerChoice)
+      if (snapshot.Phase == PokerRoundPhase.AwaitingPlayerJokerChoice)
       {
         DrawJokerHandChoice(snapshot, styles, localization, chooseJokerHand);
       }
@@ -123,11 +120,15 @@ namespace CodexGame.Presentation.Views
     private void UpdateRevealState(PokerRoundSnapshot snapshot)
     {
       var visibleCount = snapshot.VisibleAiPrivateCards.Count;
-      if (visibleCount > 0 && _lastVisibleAiCardCount == 0)
+      if (visibleCount == GameRules.RequiredPrivateCards
+        && _lastVisibleAiCardCount < GameRules.RequiredPrivateCards)
       {
         _aiRevealStartedAt = Time.unscaledTime;
       }
-      if (visibleCount == 0) _aiRevealStartedAt = float.NegativeInfinity;
+      if (visibleCount < GameRules.RequiredPrivateCards)
+      {
+        _aiRevealStartedAt = float.NegativeInfinity;
+      }
       _lastVisibleAiCardCount = visibleCount;
     }
 
@@ -208,13 +209,13 @@ namespace CodexGame.Presentation.Views
     private void DrawCards(
       PokerRoundSnapshot snapshot,
       PlayableCardRenderer cards,
-      PokerItemUiArtSet pokerItemArt)
+      PokerItemUiArtSet pokerItemArt,
+      JokerRevealUiArtSet jokerRevealArt)
     {
       DrawFaceCards(snapshot.PublicCards, PokerTableLayout.CommunityCard, 2, cards);
       for (var index = 0; index < Math.Min(3, snapshot.PlayerPrivateCards.Count); index++)
       {
         var card = snapshot.PlayerPrivateCards[index];
-        if (snapshot.Phase == PokerRoundPhase.PlayerJokerPresentation && card.IsJoker) continue;
         var rect = PokerTableLayout.PlayerCard(index);
         DrawShadow(rect);
         cards.DrawAt(rect, card, false, false);
@@ -253,16 +254,32 @@ namespace CodexGame.Presentation.Views
         }
         if (snapshot.VisibleAiPrivateCards[index].IsJoker && revealProgress < 1f)
         {
-          var previousColor = GUI.color;
-          GUI.color = new Color(1f, 0.72f, 0.18f, 0.28f + 0.28f * Mathf.Sin(revealProgress * Mathf.PI));
-          GUI.DrawTexture(
-            new Rect(rect.x - 8f, rect.y - 8f, rect.width + 16f, rect.height + 16f),
-            Texture2D.whiteTexture,
-            ScaleMode.StretchToFill,
-            true);
-          GUI.color = previousColor;
+          DrawAiJokerReveal(rect, revealProgress, jokerRevealArt);
         }
       }
+    }
+
+    private static void DrawAiJokerReveal(
+      Rect cardRect,
+      float progress,
+      JokerRevealUiArtSet art)
+    {
+      if (art == null || !art.IsComplete) return;
+      DrawSheetFrame(
+        art.GunsightRingSheet,
+        8,
+        progress,
+        Centered(cardRect.center, 144f, 144f));
+      DrawSheetFrame(
+        art.MuzzleFlashSheet,
+        8,
+        progress,
+        Centered(cardRect.center, 120f, 120f));
+      DrawSheetFrame(
+        art.CardGlintSheet,
+        6,
+        progress,
+        Centered(cardRect.center, 112f, 156f));
     }
 
     private static void DrawPredictionReward(
@@ -308,56 +325,6 @@ namespace CodexGame.Presentation.Views
           "UI_PREDICTION_INSURED_COUNT",
           new LocalizationArgument("count", reward.InsuredSuccessCount)),
         styles.Small);
-    }
-
-    private static void DrawPlayerJokerPresentation(
-      PokerRoundSnapshot snapshot,
-      PlayableDevStyles styles,
-      PlayableCardRenderer cards,
-      LocalizationRuntime localization)
-    {
-      var jokerIndex = -1;
-      for (var index = 0; index < snapshot.PlayerPrivateCards.Count; index++)
-      {
-        if (snapshot.PlayerPrivateCards[index].IsJoker)
-        {
-          jokerIndex = index;
-          break;
-        }
-      }
-      if (jokerIndex < 0) return;
-
-      var progress = 1f - Mathf.Clamp01(
-        (float)snapshot.RemainingMicroseconds / GameRules.PlayerJokerPresentationMicroseconds);
-      var target = PokerTableLayout.PlayerCard(jokerIndex);
-      CardFlipMotion.Draw(
-        cards,
-        snapshot.PlayerPrivateCards[jokerIndex],
-        PokerTableLayout.PlayerItem,
-        target,
-        progress,
-        false,
-        false);
-      if (progress >= 0.35f && progress <= 0.85f)
-      {
-        var highlightProgress = (progress - 0.35f) / 0.5f;
-        var previousColor = GUI.color;
-        GUI.color = new Color(
-          1f,
-          0.72f,
-          0.18f,
-          0.32f + 0.22f * Mathf.Sin(highlightProgress * Mathf.PI));
-        GUI.DrawTexture(
-          new Rect(target.x - 8f, target.y - 8f, target.width + 16f, target.height + 16f),
-          Texture2D.whiteTexture,
-          ScaleMode.StretchToFill,
-          true);
-        GUI.color = previousColor;
-      }
-      GUI.Label(
-        new Rect(280f, 18f, 400f, 44f),
-        localization.Get("UI_POKER_JOKER_REVEAL"),
-        styles.Status);
     }
 
     private static void DrawFaceCards(
@@ -599,6 +566,29 @@ namespace CodexGame.Presentation.Views
             true);
         }
       }
+    }
+
+    private static Rect Centered(Vector2 center, float width, float height)
+    {
+      return new Rect(center.x - width * 0.5f, center.y - height * 0.5f, width, height);
+    }
+
+    private static void DrawSheetFrame(
+      Texture2D sheet,
+      int frameCount,
+      float progress,
+      Rect rect)
+    {
+      if (sheet == null || frameCount <= 0) return;
+      var frame = Mathf.Clamp(
+        Mathf.FloorToInt(Mathf.Clamp01(progress) * frameCount),
+        0,
+        frameCount - 1);
+      GUI.DrawTextureWithTexCoords(
+        rect,
+        sheet,
+        new Rect((float)frame / frameCount, 0f, 1f / frameCount, 1f),
+        true);
     }
 
     private static string CategoryName(PokerHandCategory category, LocalizationRuntime localization)

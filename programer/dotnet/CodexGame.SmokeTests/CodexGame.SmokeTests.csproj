@@ -52,6 +52,9 @@
     <Compile
       Include="..\..\CodexGame\Assets\Scripts\Presentation\Views\PokerItemActionAvailability.cs"
       Link="Presentation\PokerItemActionAvailability.cs" />
+    <Compile
+      Include="..\..\CodexGame\Assets\Scripts\Presentation\Views\PrivateSelectionJokerRevealState.cs"
+      Link="Presentation\PrivateSelectionJokerRevealState.cs" />
     <None
       Include="..\..\CodexGame\Assets\StreamingAssets\Localization\ui_strings.csv"
       Link="Localization\ui_strings.csv"
