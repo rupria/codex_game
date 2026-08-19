@@ -4,6 +4,39 @@ using UnityEngine;
 namespace CodexGame.Presentation.Art
 {
   [Serializable]
+  public sealed class GuideNavButtonArtSet
+  {
+    [SerializeField] private Texture2D _idle;
+    [SerializeField] private Texture2D _hover;
+    [SerializeField] private Texture2D _pressed;
+    [SerializeField] private Texture2D _disabled;
+
+    public GuideNavButtonArtSet(
+      Texture2D idle,
+      Texture2D hover,
+      Texture2D pressed,
+      Texture2D disabled)
+    {
+      _idle = idle ?? throw new ArgumentNullException(nameof(idle));
+      _hover = hover ?? throw new ArgumentNullException(nameof(hover));
+      _pressed = pressed ?? throw new ArgumentNullException(nameof(pressed));
+      _disabled = disabled ?? throw new ArgumentNullException(nameof(disabled));
+    }
+
+    public Texture2D GetTexture(bool enabled, bool hovered, bool pressed)
+    {
+      if (!enabled) return _disabled;
+      if (pressed) return _pressed;
+      return hovered ? _hover : _idle;
+    }
+
+    public bool IsComplete => _idle != null
+      && _hover != null
+      && _pressed != null
+      && _disabled != null;
+  }
+
+  [Serializable]
   public sealed class GuideUiArtSet
   {
     [SerializeField] private Texture2D _modalBackground;
@@ -11,13 +44,11 @@ namespace CodexGame.Presentation.Art
     [SerializeField] private Texture2D _halliPage;
     [SerializeField] private Texture2D _cardsPage;
     [SerializeField] private Texture2D _resultPage;
-    [SerializeField] private Texture2D _navIdle;
-    [SerializeField] private Texture2D _navHover;
-    [SerializeField] private Texture2D _navDisabled;
+    [SerializeField] private Texture2D _navRail;
     [SerializeField] private Texture2D _pageIndicatorPlate;
-    [SerializeField] private Texture2D _previousIcon;
-    [SerializeField] private Texture2D _nextIcon;
-    [SerializeField] private Texture2D _closeIcon;
+    [SerializeField] private GuideNavButtonArtSet _previousButton;
+    [SerializeField] private GuideNavButtonArtSet _nextButton;
+    [SerializeField] private GuideNavButtonArtSet _closeButton;
 
     public GuideUiArtSet(
       Texture2D modalBackground,
@@ -25,37 +56,31 @@ namespace CodexGame.Presentation.Art
       Texture2D halliPage,
       Texture2D cardsPage,
       Texture2D resultPage,
-      Texture2D navIdle,
-      Texture2D navHover,
-      Texture2D navDisabled,
+      Texture2D navRail,
       Texture2D pageIndicatorPlate,
-      Texture2D previousIcon = null,
-      Texture2D nextIcon = null,
-      Texture2D closeIcon = null)
+      GuideNavButtonArtSet previousButton,
+      GuideNavButtonArtSet nextButton,
+      GuideNavButtonArtSet closeButton)
     {
       _modalBackground = modalBackground ?? throw new ArgumentNullException(nameof(modalBackground));
       _flowPage = flowPage ?? throw new ArgumentNullException(nameof(flowPage));
       _halliPage = halliPage ?? throw new ArgumentNullException(nameof(halliPage));
       _cardsPage = cardsPage ?? throw new ArgumentNullException(nameof(cardsPage));
       _resultPage = resultPage ?? throw new ArgumentNullException(nameof(resultPage));
-      _navIdle = navIdle ?? throw new ArgumentNullException(nameof(navIdle));
-      _navHover = navHover ?? throw new ArgumentNullException(nameof(navHover));
-      _navDisabled = navDisabled ?? throw new ArgumentNullException(nameof(navDisabled));
+      _navRail = navRail ?? throw new ArgumentNullException(nameof(navRail));
       _pageIndicatorPlate = pageIndicatorPlate
         ?? throw new ArgumentNullException(nameof(pageIndicatorPlate));
-      _previousIcon = previousIcon;
-      _nextIcon = nextIcon;
-      _closeIcon = closeIcon;
+      _previousButton = previousButton ?? throw new ArgumentNullException(nameof(previousButton));
+      _nextButton = nextButton ?? throw new ArgumentNullException(nameof(nextButton));
+      _closeButton = closeButton ?? throw new ArgumentNullException(nameof(closeButton));
     }
 
     public Texture2D ModalBackground => _modalBackground;
-    public Texture2D NavIdle => _navIdle;
-    public Texture2D NavHover => _navHover;
-    public Texture2D NavDisabled => _navDisabled;
+    public Texture2D NavRail => _navRail;
     public Texture2D PageIndicatorPlate => _pageIndicatorPlate;
-    public Texture2D PreviousIcon => _previousIcon;
-    public Texture2D NextIcon => _nextIcon;
-    public Texture2D CloseIcon => _closeIcon;
+    public GuideNavButtonArtSet PreviousButton => _previousButton;
+    public GuideNavButtonArtSet NextButton => _nextButton;
+    public GuideNavButtonArtSet CloseButton => _closeButton;
 
     public Texture2D GetPageArt(int pageIndex)
     {
@@ -74,9 +99,13 @@ namespace CodexGame.Presentation.Art
       && _halliPage != null
       && _cardsPage != null
       && _resultPage != null
-      && _navIdle != null
-      && _navHover != null
-      && _navDisabled != null
-      && _pageIndicatorPlate != null;
+      && _navRail != null
+      && _pageIndicatorPlate != null
+      && _previousButton != null
+      && _previousButton.IsComplete
+      && _nextButton != null
+      && _nextButton.IsComplete
+      && _closeButton != null
+      && _closeButton.IsComplete;
   }
 }

@@ -42,6 +42,7 @@ namespace CodexGame.Editor
     private const string ItemExpansionUi052ArtRoot = UiArtRoot + "ItemExpansion_0_5_2/";
     private const string PokerResultUi056ArtRoot = UiArtRoot + "PokerResultLabel_0_5_6/";
     private const string ShopItemIconsUi056ArtRoot = UiArtRoot + "ShopItemIcons_0_5_6/";
+    private const string GuideNavUi056ArtRoot = UiArtRoot + "GuideNav_0_5_6/";
     private const string JokerRevealUi054ArtRoot = UiArtRoot + "JokerReveal_0_5_4/";
     private const string PrivateSelectionUi055ArtRoot = UiArtRoot + "PrivateSelection_0_5_5/";
     private const string StageTransitionUiArtRoot = UiArtRoot + "StageTransition_0_3_1/";
@@ -121,13 +122,23 @@ namespace CodexGame.Editor
         LoadTexture(HalliUiArtRoot + "guide_page_halli_art.png"),
         LoadTexture(HalliUiArtRoot + "guide_page_cards_art.png"),
         LoadTexture(HalliUiArtRoot + "guide_page_result_art.png"),
-        LoadTexture(HalliUiArtRoot + "guide_nav_button_idle.png"),
-        LoadTexture(HalliUiArtRoot + "guide_nav_button_hover.png"),
-        LoadTexture(HalliUiArtRoot + "guide_nav_button_disabled.png"),
-        LoadTexture(HalliUiArtRoot + "guide_page_indicator_plate.png"),
-        LoadTexture(IconOverhaulUi050ArtRoot + "guide_nav_previous_western_32_0_5_0.png"),
-        LoadTexture(IconOverhaulUi050ArtRoot + "guide_nav_next_western_32_0_5_0.png"),
-        LoadTexture(IconOverhaulUi050ArtRoot + "guide_nav_close_western_32_0_5_0.png"));
+        LoadTexture(GuideNavUi056ArtRoot + "guide_nav_rail_960x104_0_5_6.png"),
+        LoadTexture(GuideNavUi056ArtRoot + "guide_page_indicator_plate_132x38_0_5_6.png"),
+        new GuideNavButtonArtSet(
+          LoadTexture(GuideNavUi056ArtRoot + "guide_nav_previous_idle_56x58_0_5_6.png"),
+          LoadTexture(GuideNavUi056ArtRoot + "guide_nav_previous_hover_56x58_0_5_6.png"),
+          LoadTexture(GuideNavUi056ArtRoot + "guide_nav_previous_pressed_56x58_0_5_6.png"),
+          LoadTexture(GuideNavUi056ArtRoot + "guide_nav_previous_disabled_56x58_0_5_6.png")),
+        new GuideNavButtonArtSet(
+          LoadTexture(GuideNavUi056ArtRoot + "guide_nav_next_idle_56x58_0_5_6.png"),
+          LoadTexture(GuideNavUi056ArtRoot + "guide_nav_next_hover_56x58_0_5_6.png"),
+          LoadTexture(GuideNavUi056ArtRoot + "guide_nav_next_pressed_56x58_0_5_6.png"),
+          LoadTexture(GuideNavUi056ArtRoot + "guide_nav_next_disabled_56x58_0_5_6.png")),
+        new GuideNavButtonArtSet(
+          LoadTexture(GuideNavUi056ArtRoot + "guide_nav_close_idle_56x58_0_5_6.png"),
+          LoadTexture(GuideNavUi056ArtRoot + "guide_nav_close_hover_56x58_0_5_6.png"),
+          LoadTexture(GuideNavUi056ArtRoot + "guide_nav_close_pressed_56x58_0_5_6.png"),
+          LoadTexture(GuideNavUi056ArtRoot + "guide_nav_close_disabled_56x58_0_5_6.png")));
       var healthUiArtSet = new HealthUiArtSet(
         LoadTexture(IconOverhaulUi050ArtRoot + "hp_heart_player_filled_24_0_5_0.png"),
         LoadTexture(IconOverhaulUi050ArtRoot + "hp_heart_player_empty_24_0_5_0.png"),
