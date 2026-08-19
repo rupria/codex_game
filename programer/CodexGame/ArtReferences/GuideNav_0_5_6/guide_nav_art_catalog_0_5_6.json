@@ -1,0 +1,56 @@
+{
+  "package": "GuideNav_0_5_6",
+  "issue": 63,
+  "artRevision": "0.5.6",
+  "designResolution": "960x540",
+  "runtimeRoot": "Assets/Art/Prototype/UI/GuideNav_0_5_6/",
+  "layout": {
+    "rail": [0, 436, 960, 104],
+    "previous": [352, 451, 56, 58],
+    "pageIndicator": [414, 461, 132, 38],
+    "next": [552, 451, 56, 58],
+    "close": [850, 451, 56, 58],
+    "pageDotCenters": [
+      [444, 480],
+      [468, 480],
+      [492, 480],
+      [516, 480]
+    ]
+  },
+  "states": [
+    "idle",
+    "hover",
+    "pressed",
+    "disabled"
+  ],
+  "assets": [
+    {
+      "file": "guide_nav_rail_960x104_0_5_6.png",
+      "size": "960x104",
+      "usage": "bottom navigation rail overlay"
+    },
+    {
+      "file": "guide_page_indicator_plate_132x38_0_5_6.png",
+      "size": "132x38",
+      "usage": "centered four-page indicator plate"
+    },
+    {
+      "pattern": "guide_nav_{previous|next|close}_{idle|hover|pressed|disabled}_56x58_0_5_6.png",
+      "size": "56x58",
+      "count": 12,
+      "usage": "navigation button state sprites"
+    }
+  ],
+  "preview": [
+    "preview/guide_nav_compact_layout_preview_960x540_0_5_6.png",
+    "preview/guide_nav_button_states_960x300_0_5_6.png"
+  ],
+  "source": [
+    "source/generate_guide_nav_0_5_6.lua",
+    "source/guide_nav_rail_960x104_0_5_6.aseprite",
+    "source/guide_nav_button_states_56x58_0_5_6.aseprite"
+  ],
+  "bindingRequired": true,
+  "dropInReplacement": false,
+  "note": "Do not replace the old baked guide background before the hit rectangles are moved to the new compact layout."
+}
