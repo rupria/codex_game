@@ -1,0 +1,85 @@
+{
+  "package": "MainMenu_0_5_6",
+  "issue": 62,
+  "artRevision": "0.5.6",
+  "designResolution": "960x540",
+  "theme": [
+    "western saloon",
+    "brass and leather",
+    "skull bell sheriff crest",
+    "duel cards and revolvers"
+  ],
+  "runtimeRoot": "Assets/Art/Prototype/UI/MainMenu_0_5_6/",
+  "dropInTarget": "Assets/Art/Prototype/UI/Halli_0_1_0/start_screen_background.png",
+  "assets": [
+    {
+      "file": "main_menu_duel_crest_240x170_0_5_6.png",
+      "size": "240x170",
+      "alpha": true,
+      "usage": "main title crest"
+    },
+    {
+      "file": "main_menu_start_idle_336x78_0_5_6.png",
+      "size": "336x78",
+      "alpha": true,
+      "usage": "START idle"
+    },
+    {
+      "file": "main_menu_start_hover_336x78_0_5_6.png",
+      "size": "336x78",
+      "alpha": true,
+      "usage": "START hover"
+    },
+    {
+      "file": "main_menu_start_pressed_336x78_0_5_6.png",
+      "size": "336x78",
+      "alpha": true,
+      "usage": "START pressed"
+    },
+    {
+      "file": "main_menu_guide_idle_336x78_0_5_6.png",
+      "size": "336x78",
+      "alpha": true,
+      "usage": "GUIDE idle"
+    },
+    {
+      "file": "main_menu_guide_hover_336x78_0_5_6.png",
+      "size": "336x78",
+      "alpha": true,
+      "usage": "GUIDE hover"
+    },
+    {
+      "file": "main_menu_guide_pressed_336x78_0_5_6.png",
+      "size": "336x78",
+      "alpha": true,
+      "usage": "GUIDE pressed"
+    },
+    {
+      "file": "start_screen_background_960x540_0_5_6.png",
+      "size": "960x540",
+      "alpha": false,
+      "usage": "complete main screen background composite"
+    }
+  ],
+  "liveText": {
+    "required": true,
+    "keys": [
+      "UI_MAIN_START",
+      "UI_MAIN_GUIDE"
+    ],
+    "note": "Labels in preview images are review-only. Runtime buttons remain localized live text."
+  },
+  "legacyHitRects": {
+    "start": [312, 266, 336, 76],
+    "guide": [312, 354, 336, 78]
+  },
+  "source": {
+    "generator": "source/generate_main_menu_0_5_6.lua",
+    "aseprite": "source/main_menu_western_ui_960x540_0_5_6.aseprite",
+    "buttonStates": "source/main_menu_button_states_336x78_0_5_6.aseprite"
+  },
+  "preview": [
+    "preview/main_menu_western_ui_preview_960x540_0_5_6.png",
+    "preview/main_menu_button_states_960x360_0_5_6.png"
+  ]
+}
