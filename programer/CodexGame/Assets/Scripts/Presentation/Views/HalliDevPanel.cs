@@ -47,6 +47,7 @@ namespace CodexGame.Presentation.Views
       _remainingCardCountdown.Observe(
         snapshot.CombatRoundSeed,
         snapshot.RemainingDeckCards,
+        snapshot.RevealCommitted,
         Time.unscaledTime);
       _flipReadyPrompt.Observe(
         gamePhase == PlayableGamePhase.Halli && snapshot.CanFlip,

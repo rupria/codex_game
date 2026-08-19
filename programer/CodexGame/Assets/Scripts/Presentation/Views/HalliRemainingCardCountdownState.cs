@@ -16,7 +16,11 @@ namespace CodexGame.Presentation.Views
     public int ActiveValue { get; private set; }
     public int FrameIndex => 5 - ActiveValue;
 
-    public bool Observe(long roundSeed, int remainingCards, double nowSeconds)
+    public bool Observe(
+      long roundSeed,
+      int remainingCards,
+      bool revealCommitted,
+      double nowSeconds)
     {
       if (remainingCards < 0) throw new ArgumentOutOfRangeException(nameof(remainingCards));
       if (nowSeconds < 0d) throw new ArgumentOutOfRangeException(nameof(nowSeconds));
@@ -29,6 +33,11 @@ namespace CodexGame.Presentation.Views
         _startedAtSeconds = double.NegativeInfinity;
         return false;
       }
+
+      // The deck count drops when a card is reserved for its motion. Wait until
+      // the reveal is actually committed so the full alert is visible alongside
+      // the readable face-up card.
+      if (!revealCommitted) return false;
 
       var decreased = remainingCards < _previousRemainingCards;
       _previousRemainingCards = remainingCards;

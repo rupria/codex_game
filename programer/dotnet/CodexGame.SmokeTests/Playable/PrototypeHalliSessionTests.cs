@@ -91,6 +91,7 @@ namespace CodexGame.SmokeTests.Playable
         moving.Phase == PrototypeSessionPhase.SequentialReveal
           && moving.FlipCount == 1
           && moving.RevealStepNumber == 1
+          && !moving.RevealCommitted
           && moving.LeftPile.Count == 0
           && moving.CanRing,
         "The first W input must start one player card, count one distribution, and keep the moving card ineligible.");
@@ -99,7 +100,9 @@ namespace CodexGame.SmokeTests.Playable
       session.Tick(firstFaceUpAt);
       var firstFaceUp = session.GetSnapshot(firstFaceUpAt);
       tests.Check(
-        firstFaceUp.LeftPile.Count == 1 && firstFaceUp.RightPile.Count == 0,
+        firstFaceUp.RevealCommitted
+          && firstFaceUp.LeftPile.Count == 1
+          && firstFaceUp.RightPile.Count == 0,
         "A card must enter Halli judgment only after its face-up motion completes.");
 
       var pairFinishedAt = new GameTimestamp(startedAt.Microseconds + 850_000);

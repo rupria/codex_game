@@ -32,6 +32,7 @@ namespace CodexGame.Application.Playable
       HalliRelativeSide? revealingRelativeSide,
       PileSide? revealingPile,
       Card? revealingCard,
+      bool revealCommitted,
       float revealProgress,
       Card? firstPublicCard,
       IReadOnlyList<Card> leftPile,
@@ -66,6 +67,7 @@ namespace CodexGame.Application.Playable
       RevealingRelativeSide = revealingRelativeSide;
       RevealingPile = revealingPile;
       RevealingCard = revealingCard;
+      RevealCommitted = revealCommitted;
       RevealProgress = revealProgress;
       FirstPublicCard = firstPublicCard;
       LeftPile = Copy(leftPile);
@@ -101,6 +103,7 @@ namespace CodexGame.Application.Playable
     public HalliRelativeSide? RevealingRelativeSide { get; }
     public PileSide? RevealingPile { get; }
     public Card? RevealingCard { get; }
+    public bool RevealCommitted { get; }
     public float RevealProgress { get; }
     public Card? FirstPublicCard { get; }
     public IReadOnlyList<Card> LeftPile { get; }

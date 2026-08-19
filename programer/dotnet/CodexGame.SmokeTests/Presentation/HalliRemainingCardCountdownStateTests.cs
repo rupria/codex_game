@@ -8,23 +8,28 @@ namespace CodexGame.SmokeTests.Presentation
     {
       var state = new HalliRemainingCardCountdownState();
       tests.Check(
-        !state.Observe(7, 6, 0d)
-          && state.Observe(7, 5, 1d)
+        !state.Observe(7, 6, false, 0d)
+          && !state.Observe(7, 5, false, 1d)
+          && !state.IsVisible(1d),
+        "Reserving the fifth card for its reveal motion must not consume the countdown alert.");
+      tests.Check(
+        state.Observe(7, 5, true, 1.2d)
           && state.ActiveValue == 5
           && state.FrameIndex == 0,
-        "The last-five badge must start only when a successful reveal decreases the deck to five.");
+        "The last-five badge must start when the face-up reveal commits with five cards left.");
       tests.Check(
-        !state.Observe(7, 5, 1.1d)
-          && state.IsVisible(1.47d)
-          && !state.IsVisible(1.48d),
+        !state.Observe(7, 5, true, 1.3d)
+          && state.IsVisible(1.67d)
+          && !state.IsVisible(1.68d),
         "An unchanged snapshot must not restart the 0.48-second countdown badge.");
       tests.Check(
-        state.Observe(7, 4, 2d)
+        !state.Observe(7, 4, false, 2d)
+          && state.Observe(7, 4, true, 2.2d)
           && state.ActiveValue == 4
           && state.FrameIndex == 1,
         "Each decreased value from five through one must select its matching art frame once.");
       tests.Check(
-        !state.Observe(8, 3, 3d) && !state.IsVisible(3d),
+        !state.Observe(8, 3, true, 3d) && !state.IsVisible(3d),
         "A new combat round must establish a silent baseline instead of replaying an old alert.");
       tests.Check(
         HalliRemainingCardCountdownState.Scale(0d) < 1f
