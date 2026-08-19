@@ -17,6 +17,7 @@ namespace CodexGame.SmokeTests.Playable
       CheckResultLockAndBellTimeout(tests);
       CheckWrongBellHasNoRewardSelection(tests);
       CheckWrongBellWaitsForManualFlipAfterLock(tests);
+      CheckWrongBellPreservesExposedPileOrder(tests);
       CheckWrongBellPreservesEarlierAcquiredCards(tests);
       CheckGlobalInactivity(tests);
     }
@@ -270,6 +271,47 @@ namespace CodexGame.SmokeTests.Playable
       tests.Check(false, "A deterministic seed should verify acquired-card retention after a later wrong bell.");
     }
 
+    private static void CheckWrongBellPreservesExposedPileOrder(TestHarness tests)
+    {
+      for (var seed = 1L; seed <= 500; seed++)
+      {
+        var session = new PrototypeHalliSession();
+        session.StartNew(new GameTimestamp(0), seed);
+
+        var firstFlipAt = new GameTimestamp(1);
+        session.Advance(firstFlipAt);
+        var firstPairReadyAt = new GameTimestamp(firstFlipAt.Microseconds + 850_000);
+        session.Tick(firstPairReadyAt);
+
+        var secondFlipAt = new GameTimestamp(firstPairReadyAt.Microseconds + 1);
+        session.Advance(secondFlipAt);
+        var secondPairReadyAt = new GameTimestamp(secondFlipAt.Microseconds + 850_000);
+        session.Tick(secondPairReadyAt);
+        var beforeWrong = session.GetSnapshot(secondPairReadyAt);
+        if (beforeWrong.LeftPile.Count != 2 || beforeWrong.RightPile.Count != 2) continue;
+
+        PileSide wrongPile;
+        if (!IsAcquirable(Evaluate(beforeWrong.LeftPile))) wrongPile = PileSide.Left;
+        else if (!IsAcquirable(Evaluate(beforeWrong.RightPile))) wrongPile = PileSide.Right;
+        else continue;
+
+        var leftBefore = GetCardIds(beforeWrong.LeftPile);
+        var rightBefore = GetCardIds(beforeWrong.RightPile);
+        var wrongAt = new GameTimestamp(secondPairReadyAt.Microseconds + 1);
+        session.Ring(wrongPile, wrongAt);
+        var afterWrong = session.GetSnapshot(wrongAt);
+
+        tests.Check(
+          SameCardIds(leftBefore, afterWrong.LeftPile)
+            && SameCardIds(rightBefore, afterWrong.RightPile)
+            && afterWrong.AiWins == 1,
+          "A wrong bell must preserve the exact visible order of both exposed piles for the next judgment.");
+        return;
+      }
+
+      tests.Check(false, "A deterministic seed should verify exposed-pile order after a wrong bell.");
+    }
+
     private static void CheckGlobalInactivity(TestHarness tests)
     {
       var game = new PlayableGameSession();
@@ -313,6 +355,23 @@ namespace CodexGame.SmokeTests.Playable
       var first = cards.Count > 0 ? cards[0] : (Card?)null;
       var second = cards.Count > 1 ? cards[1] : (Card?)null;
       return SkullAcquisitionResolver.Resolve(first, second);
+    }
+
+    private static int[] GetCardIds(System.Collections.Generic.IReadOnlyList<Card> cards)
+    {
+      var ids = new int[cards.Count];
+      for (var index = 0; index < cards.Count; index++) ids[index] = cards[index].Id.Value;
+      return ids;
+    }
+
+    private static bool SameCardIds(int[] expected, System.Collections.Generic.IReadOnlyList<Card> actual)
+    {
+      if (expected.Length != actual.Count) return false;
+      for (var index = 0; index < expected.Length; index++)
+      {
+        if (expected[index] != actual[index].Id.Value) return false;
+      }
+      return true;
     }
 
     private static bool IsAcquirable(AcquisitionKind result)

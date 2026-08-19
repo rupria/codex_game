@@ -586,7 +586,6 @@ namespace CodexGame.Application.Playable
         pile,
         resolution,
         actor == HalliActor.Player ? CardZone.PlayerAcquired : CardZone.AiAcquired);
-      MoveUnselectedPileTopToBottom(pile);
       if (actor == HalliActor.Player) _playerWins++;
       else _aiWins++;
       _turnOrder.SetLead(actor);
@@ -610,7 +609,6 @@ namespace CodexGame.Application.Playable
       if (winner == HalliActor.Player) _playerWins++;
       else _aiWins++;
       _turnOrder.SetLead(winner);
-      if (selectedPile.HasValue) MoveUnselectedPileTopToBottom(selectedPile.Value);
       _lastBellPile = selectedPile;
       _bellFeedback = selectedPile.HasValue
         ? PrototypeBellFeedback.Wrong
@@ -816,12 +814,6 @@ namespace CodexGame.Application.Playable
     {
       _nextRevealStepIndex = 0;
       ClearRevealState();
-    }
-
-    private void MoveUnselectedPileTopToBottom(PileSide selectedPile)
-    {
-      _field.MoveTopToBottom(
-        selectedPile == PileSide.Left ? PileSide.Right : PileSide.Left);
     }
 
     private float GetRevealProgress(GameTimestamp now)
