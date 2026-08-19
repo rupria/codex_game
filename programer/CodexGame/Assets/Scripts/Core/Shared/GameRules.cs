@@ -24,6 +24,7 @@ namespace CodexGame.Core.Shared
     public const long CardRevealMotionRangeMicroseconds = 40_000;
     public const long CardRevealGapMinimumMicroseconds = 60_000;
     public const long CardRevealGapRangeMicroseconds = 40_000;
+    public const long AiCardFlipDelayMicroseconds = 500_000;
     public const int StageItemRestrictionActivationPercent = 20;
     public const int StageItemRestrictionMinimumUses = 1;
     public const int StageItemRestrictionMaximumUses = 2;

@@ -341,9 +341,16 @@ namespace CodexGame.Application.Playable
       _currentRevealCompleteAt = Add(startedAt, motionDuration);
       if (step.Number < HalliRevealSequence.Count)
       {
-        var gap = GameRules.CardRevealGapMinimumMicroseconds
-          + _revealRandom.NextInt((int)GameRules.CardRevealGapRangeMicroseconds + 1);
-        _nextRevealEventAt = Add(_currentRevealCompleteAt, gap);
+        if (step.Actor == HalliActor.Player)
+        {
+          _nextRevealEventAt = Add(startedAt, GameRules.AiCardFlipDelayMicroseconds);
+        }
+        else
+        {
+          var gap = GameRules.CardRevealGapMinimumMicroseconds
+            + _revealRandom.NextInt((int)GameRules.CardRevealGapRangeMicroseconds + 1);
+          _nextRevealEventAt = Add(_currentRevealCompleteAt, gap);
+        }
       }
       else
       {
