@@ -744,16 +744,31 @@ namespace CodexGame.Presentation.Views
 
     private void DrawStageWon()
     {
-      _presentation0124Panel.DrawStageClear(_presentationUiArtSet);
+      var popupRect = new Rect(
+        StageRewardGridLayout.PopupX,
+        StageRewardGridLayout.PopupY,
+        StageRewardGridLayout.PopupWidth,
+        StageRewardGridLayout.PopupHeight);
       EconomyUiRenderer.DrawStageRewards(
-        new Rect(120f, 102f, 720f, 300f),
+        popupRect,
         _snapshot.LastStageBaseReward,
         _snapshot.LastStageBonusReward,
         _economyUiArtSet,
         _styles.Status);
-      GUI.Label(new Rect(220f, 112f, 520f, 28f), L("UI_STAGE_REWARD_TITLE"), _styles.Heading);
       GUI.Label(
-        new Rect(180f, 136f, 600f, 22f),
+        new Rect(
+          popupRect.x + StageRewardGridLayout.TitleX,
+          popupRect.y + StageRewardGridLayout.TitleY,
+          StageRewardGridLayout.TitleWidth,
+          28f),
+        L("UI_STAGE_REWARD_TITLE"),
+        _styles.Heading);
+      GUI.Label(
+        new Rect(
+          popupRect.x + StageRewardGridLayout.TitleX,
+          popupRect.y + StageRewardGridLayout.TitleY + 28f,
+          StageRewardGridLayout.TitleWidth,
+          StageRewardGridLayout.TitleHeight - 28f),
         L(
           "UI_STAGE_REWARD_DETAIL",
           new LocalizationArgument("base", _snapshot.LastStageBaseReward),
@@ -761,7 +776,13 @@ namespace CodexGame.Presentation.Views
           new LocalizationArgument("success", _snapshot.PredictionReward.RewardSuccessCount),
           new LocalizationArgument("total", _snapshot.LastStageReward)),
         _styles.Small);
-      if (GUI.Button(new Rect(360f, 430f, 240f, 54f), L("UI_COMMON_CONTINUE")))
+      if (GUI.Button(
+        new Rect(
+          popupRect.x + StageRewardGridLayout.ContinueX,
+          popupRect.y + StageRewardGridLayout.ContinueY,
+          StageRewardGridLayout.ContinueWidth,
+          StageRewardGridLayout.ContinueHeight),
+        L("UI_COMMON_CONTINUE")))
       {
         AdvanceRequested?.Invoke();
       }
