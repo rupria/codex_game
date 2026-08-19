@@ -36,6 +36,8 @@ HalliRemainingCardCountdownStateTests.Run(tests);
 StageRewardGridLayoutTests.Run(tests);
 FlipReadyPromptStateTests.Run(tests);
 PokerResultOverlayStateTests.Run(tests);
+PokerResultPanelLayoutTests.Run(tests);
+BarShopSlotLayoutTests.Run(tests);
 AcquiredCardFanLayoutTests.Run(tests);
 HalliPileOverlapLayoutTests.Run(tests);
 PokerItemActionAvailabilityTests.Run(tests);

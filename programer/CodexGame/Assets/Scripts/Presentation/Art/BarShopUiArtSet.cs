@@ -54,6 +54,9 @@ namespace CodexGame.Presentation.Art
     [SerializeField] private Texture2D _ammoPouchHandCover;
     [SerializeField] private Texture2D _bulletCoinFlipSheet;
     [SerializeField] private Texture2D _bulletPourSheet;
+    [SerializeField] private Texture2D _itemIconPlateIdle;
+    [SerializeField] private Texture2D _itemIconPlateHover;
+    [SerializeField] private Texture2D _itemIconPlateDisabled;
     [SerializeField] private List<BarShopProductIconBinding> _productIcons =
       new List<BarShopProductIconBinding>();
 
@@ -76,6 +79,9 @@ namespace CodexGame.Presentation.Art
     public Texture2D AmmoPouchHandCover => _ammoPouchHandCover;
     public Texture2D BulletCoinFlipSheet => _bulletCoinFlipSheet;
     public Texture2D BulletPourSheet => _bulletPourSheet;
+    public Texture2D ItemIconPlateIdle => _itemIconPlateIdle;
+    public Texture2D ItemIconPlateHover => _itemIconPlateHover;
+    public Texture2D ItemIconPlateDisabled => _itemIconPlateDisabled;
     public IReadOnlyList<Texture2D> BulletTossFrames => _bulletTossFrames;
 
     public BarShopUiArtSet()
@@ -103,7 +109,10 @@ namespace CodexGame.Presentation.Art
       Texture2D ammoPouchBullet = null,
       Texture2D ammoPouchHandCover = null,
       Texture2D bulletCoinFlipSheet = null,
-      Texture2D bulletPourSheet = null)
+      Texture2D bulletPourSheet = null,
+      Texture2D itemIconPlateIdle = null,
+      Texture2D itemIconPlateHover = null,
+      Texture2D itemIconPlateDisabled = null)
     {
       _background = RequireTexture(background, nameof(background));
       _slotFrame = RequireTexture(slotFrame, nameof(slotFrame));
@@ -127,6 +136,9 @@ namespace CodexGame.Presentation.Art
       _ammoPouchHandCover = ammoPouchHandCover;
       _bulletCoinFlipSheet = bulletCoinFlipSheet;
       _bulletPourSheet = bulletPourSheet;
+      _itemIconPlateIdle = itemIconPlateIdle;
+      _itemIconPlateHover = itemIconPlateHover;
+      _itemIconPlateDisabled = itemIconPlateDisabled;
       _productIcons = productIcons != null
         ? new List<BarShopProductIconBinding>(productIcons)
         : throw new ArgumentNullException(nameof(productIcons));

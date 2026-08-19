@@ -41,6 +41,9 @@ namespace CodexGame.Presentation.Views
     private PokerItemUiArtSet _pokerItemUiArtSet;
 
     [SerializeField]
+    private PokerResultUiArtSet _pokerResultUiArtSet;
+
+    [SerializeField]
     private BarShopUiArtSet _barShopUiArtSet;
 
     [SerializeField]
@@ -162,7 +165,8 @@ namespace CodexGame.Presentation.Views
       StageTransitionUiArtSet stageTransitionUiArtSet = null,
       PokerItemUiArtSet pokerItemUiArtSet = null,
       EconomyUiArtSet economyUiArtSet = null,
-      PresentationUiArtSet presentationUiArtSet = null)
+      PresentationUiArtSet presentationUiArtSet = null,
+      PokerResultUiArtSet pokerResultUiArtSet = null)
     {
       _boardTexture = boardTexture;
       _cardArtSet = cardArtSet;
@@ -172,6 +176,7 @@ namespace CodexGame.Presentation.Views
       _healthUiArtSet = healthUiArtSet;
       _pokerUiArtSet = pokerUiArtSet;
       _pokerItemUiArtSet = pokerItemUiArtSet;
+      _pokerResultUiArtSet = pokerResultUiArtSet;
       _barShopUiArtSet = barShopUiArtSet;
       _stageTransitionUiArtSet = stageTransitionUiArtSet;
       _economyUiArtSet = economyUiArtSet;
@@ -422,6 +427,7 @@ namespace CodexGame.Presentation.Views
           _healthUiArtSet,
           _pokerUiArtSet,
           _pokerItemUiArtSet,
+          _pokerResultUiArtSet,
           _snapshot.PredictionReward,
           _snapshot.PredictionInsuranceActivation,
           _localization,

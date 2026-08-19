@@ -40,6 +40,8 @@ namespace CodexGame.Editor
     private const string IconOverhaulUi050ArtRoot = UiArtRoot + "IconOverhaul_0_5_0/";
     private const string IconOverhaulUi051ArtRoot = UiArtRoot + "IconOverhaul_0_5_1/";
     private const string ItemExpansionUi052ArtRoot = UiArtRoot + "ItemExpansion_0_5_2/";
+    private const string PokerResultUi056ArtRoot = UiArtRoot + "PokerResultLabel_0_5_6/";
+    private const string ShopItemIconsUi056ArtRoot = UiArtRoot + "ShopItemIcons_0_5_6/";
     private const string StageTransitionUiArtRoot = UiArtRoot + "StageTransition_0_3_1/";
     private const string IntroArtPath = HalliUiArtRoot + "start_screen_background.png";
     private const string BackdropShaderPath = "Assets/Shaders/RuntimeBackdropLit.shader";
@@ -211,9 +213,20 @@ namespace CodexGame.Editor
         mercenaryExchangeSheet: LoadTexture(ItemExpansionUi052ArtRoot + "mercenary_simultaneous_exchange_10f_960x96_0_5_2.png"),
         mercenaryPlayerTargetMarker: LoadTexture(ItemExpansionUi052ArtRoot + "mercenary_player_target_marker_32_0_5_2.png"),
         mercenaryAiHiddenMarker: LoadTexture(ItemExpansionUi052ArtRoot + "mercenary_ai_hidden_marker_32_0_5_2.png"));
+      var pokerResultUiArtSet = new PokerResultUiArtSet(
+        LoadTexture(PokerResultUi056ArtRoot + "poker_result_message_panel_success_compact_788x108_0_5_6.png"),
+        LoadTexture(PokerResultUi056ArtRoot + "poker_result_message_panel_success_standard_788x132_0_5_6.png"),
+        LoadTexture(PokerResultUi056ArtRoot + "poker_result_message_panel_success_expanded_788x164_0_5_6.png"),
+        LoadTexture(PokerResultUi056ArtRoot + "poker_result_message_panel_failure_compact_788x108_0_5_6.png"),
+        LoadTexture(PokerResultUi056ArtRoot + "poker_result_message_panel_failure_standard_788x132_0_5_6.png"),
+        LoadTexture(PokerResultUi056ArtRoot + "poker_result_message_panel_failure_expanded_788x164_0_5_6.png"),
+        LoadTexture(PokerResultUi056ArtRoot + "poker_result_message_panel_neutral_compact_788x108_0_5_6.png"),
+        LoadTexture(PokerResultUi056ArtRoot + "poker_result_message_panel_neutral_standard_788x132_0_5_6.png"),
+        LoadTexture(PokerResultUi056ArtRoot + "poker_result_message_panel_neutral_expanded_788x164_0_5_6.png"),
+        LoadTexture(PokerResultUi056ArtRoot + "poker_result_item_status_chip_360x32_0_5_6.png"));
       var barShopUiArtSet = new BarShopUiArtSet(
         LoadTexture(BarShopUiArtRoot + "bar_shop_background_unlit_960x540_0_3_0.png"),
-        LoadTexture(BarShopUiArtRoot + "bar_shop_product_slot_230x210_0_3_0.png"),
+        LoadTexture(ShopItemIconsUi056ArtRoot + "bar_shop_product_slot_190x174_0_5_6.png"),
         LoadTexture(BarShopUi034ArtRoot + "bar_shop_reroll_idle_180x56_0_3_4.png"),
         LoadTexture(BarShopUi034ArtRoot + "bar_shop_reroll_hover_180x56_0_3_4.png"),
         LoadTexture(BarShopUi034ArtRoot + "bar_shop_reroll_pressed_180x56_0_3_4.png"),
@@ -227,28 +240,28 @@ namespace CodexGame.Editor
         {
           new BarShopProductIconBinding(
             "bar_shop.item.reload",
-            LoadTexture(IconOverhaulUi050ArtRoot + "item_reload_western_64_0_5_0.png")),
+            LoadTexture(IconOverhaulUi051ArtRoot + "item_reload_popup_80_0_5_1.png")),
           new BarShopProductIconBinding(
             "bar_shop.item.bottom_deal",
-            LoadTexture(IconOverhaulUi050ArtRoot + "item_bottom_deal_western_64_0_5_0.png")),
+            LoadTexture(IconOverhaulUi051ArtRoot + "item_bottom_deal_popup_80_0_5_1.png")),
           new BarShopProductIconBinding(
             "bar_shop.item.hype_man",
-            LoadTexture(IconOverhaulUi050ArtRoot + "item_hype_man_western_64_0_5_0.png")),
+            LoadTexture(IconOverhaulUi051ArtRoot + "item_hype_man_popup_80_0_5_1.png")),
           new BarShopProductIconBinding(
             "bar_shop.item.health_recovery",
-            LoadTexture(IconOverhaulUi050ArtRoot + "item_heal_tonic_western_64_0_5_0.png")),
+            LoadTexture(IconOverhaulUi051ArtRoot + "item_heal_tonic_popup_80_0_5_1.png")),
           new BarShopProductIconBinding(
             "bar_shop.item.wild_ink",
-            LoadTexture(ItemExpansionUi052ArtRoot + "item_wild_ink_default_64_0_5_2.png")),
+            LoadTexture(ItemExpansionUi052ArtRoot + "item_wild_ink_popup_80_0_5_2.png")),
           new BarShopProductIconBinding(
             "bar_shop.item.barrel",
-            LoadTexture(ItemExpansionUi052ArtRoot + "item_barrel_default_64_0_5_2.png")),
+            LoadTexture(ItemExpansionUi052ArtRoot + "item_barrel_popup_80_0_5_2.png")),
           new BarShopProductIconBinding(
             "bar_shop.item.prediction_insurance",
-            LoadTexture(ItemExpansionUi052ArtRoot + "item_prediction_insurance_default_64_0_5_2.png")),
+            LoadTexture(ItemExpansionUi052ArtRoot + "item_prediction_insurance_popup_80_0_5_2.png")),
           new BarShopProductIconBinding(
             "bar_shop.item.mercenary",
-            LoadTexture(ItemExpansionUi052ArtRoot + "item_mercenary_default_64_0_5_2.png")),
+            LoadTexture(ItemExpansionUi052ArtRoot + "item_mercenary_popup_80_0_5_2.png")),
           new BarShopProductIconBinding(
             "item.ammo_pouch.loose_rounds",
             LoadTexture(BarShopUi038ArtRoot + "ammo_pouch_loose_rounds_64_0_1_0.png"))
@@ -262,7 +275,13 @@ namespace CodexGame.Editor
         bulletCoinFlipSheet: LoadTexture(
           BarShopUi038ArtRoot + "bar_shop_bullet_coin_flip_glint_8f_512x64_0_3_8.png"),
         bulletPourSheet: LoadTexture(
-          BarShopUi038ArtRoot + "bar_shop_bullet_pour_table_8f_1280x120_0_3_8.png"));
+          BarShopUi038ArtRoot + "bar_shop_bullet_pour_table_8f_1280x120_0_3_8.png"),
+        itemIconPlateIdle: LoadTexture(
+          ShopItemIconsUi056ArtRoot + "bar_shop_item_icon_plate_idle_88x88_0_5_6.png"),
+        itemIconPlateHover: LoadTexture(
+          ShopItemIconsUi056ArtRoot + "bar_shop_item_icon_plate_hover_88x88_0_5_6.png"),
+        itemIconPlateDisabled: LoadTexture(
+          ShopItemIconsUi056ArtRoot + "bar_shop_item_icon_plate_disabled_88x88_0_5_6.png"));
       var stageTransitionUiArtSet = new StageTransitionUiArtSet(
         LoadTexture(StageTransitionUiArtRoot
           + "stage_exit_background_closed_unlit_960x540_0_3_1.png"),
@@ -289,9 +308,9 @@ namespace CodexGame.Editor
           "stage_transition_loading_{0:00}_64_0_3_1.png",
           8));
       var economyUiArtSet = new EconomyUiArtSet(
-        LoadOptionalTexture(IconOverhaulUi050ArtRoot + "currency_basic_bullet_western_40_0_5_0.png"),
-        LoadOptionalTexture(IconOverhaulUi050ArtRoot + "currency_temporary_cracked_round_40_0_5_0.png"),
-        LoadOptionalTexture(IconOverhaulUi050ArtRoot + "shop_price_bullet_western_24_0_5_0.png"),
+        LoadOptionalTexture(ShopItemIconsUi056ArtRoot + "currency_basic_bullet_western_48_0_5_6.png"),
+        LoadOptionalTexture(ShopItemIconsUi056ArtRoot + "currency_temporary_cracked_round_48_0_5_6.png"),
+        LoadOptionalTexture(ShopItemIconsUi056ArtRoot + "shop_price_bullet_western_28_0_5_6.png"),
         LoadOptionalTexture(TextlessCurrencyUi040ArtRoot + "battle_currency_basic_panel_112x52_0_4_0.png"),
         LoadOptionalTexture(TextlessCurrencyUi040ArtRoot + "battle_currency_temporary_panel_112x52_0_4_0.png"),
         LoadOptionalTexture(EconomyUi012ArtRoot + "stage_reward_base_frame_240x96_0_1_2.png"),
@@ -343,7 +362,8 @@ namespace CodexGame.Editor
         stageTransitionUiArtSet: stageTransitionUiArtSet,
         pokerItemUiArtSet: pokerItemUiArtSet,
         economyUiArtSet: economyUiArtSet,
-        presentationUiArtSet: presentationUiArtSet);
+        presentationUiArtSet: presentationUiArtSet,
+        pokerResultUiArtSet: pokerResultUiArtSet);
       var presentationRig = gameObject.AddComponent<TableScenePresentationRig>();
       var backdropShader = AssetDatabase.LoadAssetAtPath<Shader>(BackdropShaderPath);
       if (backdropShader == null)
