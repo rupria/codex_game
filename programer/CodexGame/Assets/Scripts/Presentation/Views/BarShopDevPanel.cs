@@ -58,7 +58,11 @@ namespace CodexGame.Presentation.Views
         styles.Heading);
       for (var index = 0; index < SlotXPositions.Length; index++)
       {
-        var slotRect = new Rect(SlotXPositions[index], 146f, 190f, 174f);
+        var slotRect = new Rect(
+          SlotXPositions[index],
+          146f,
+          BarShopSlotLayout.Width,
+          BarShopSlotLayout.Height);
         if (index >= shop.Slots.Count)
         {
           DrawEmptySlot(slotRect, art, styles, localization);
@@ -137,8 +141,27 @@ namespace CodexGame.Presentation.Views
         GUI.DrawTexture(rect, art.SlotFrame, ScaleMode.StretchToFill, true);
       }
       else GUI.Box(rect, GUIContent.none);
+      if (art?.ItemIconPlateDisabled != null)
+      {
+        GUI.DrawTexture(
+          new Rect(
+            rect.x + BarShopSlotLayout.IconPlateX,
+            rect.y + BarShopSlotLayout.IconPlateY,
+            BarShopSlotLayout.IconPlateSize,
+            BarShopSlotLayout.IconPlateSize),
+          art.ItemIconPlateDisabled,
+          ScaleMode.ScaleToFit,
+          true);
+      }
       GUI.color = previous;
-      GUI.Label(rect, localization.Get("UI_ITEM_EMPTY_SLOT"), styles.Small);
+      GUI.Label(
+        new Rect(
+          rect.x + BarShopSlotLayout.NameX,
+          rect.y + BarShopSlotLayout.NameY,
+          BarShopSlotLayout.NameWidth,
+          BarShopSlotLayout.NameHeight),
+        localization.Get("UI_ITEM_EMPTY_SLOT"),
+        styles.Small);
     }
 
     private static bool DrawSlot(
@@ -164,7 +187,30 @@ namespace CodexGame.Presentation.Views
         GUI.color = previous;
       }
 
-      var iconRect = new Rect(rect.x + 67f, rect.y + 14f, 56f, 56f);
+      var hovered = enabled && rect.Contains(Event.current.mousePosition);
+      var iconPlate = !enabled
+        ? art?.ItemIconPlateDisabled
+        : hovered
+          ? art?.ItemIconPlateHover ?? art?.ItemIconPlateIdle
+          : art?.ItemIconPlateIdle;
+      if (iconPlate != null)
+      {
+        GUI.DrawTexture(
+          new Rect(
+            rect.x + BarShopSlotLayout.IconPlateX,
+            rect.y + BarShopSlotLayout.IconPlateY,
+            BarShopSlotLayout.IconPlateSize,
+            BarShopSlotLayout.IconPlateSize),
+          iconPlate,
+          ScaleMode.ScaleToFit,
+          true);
+      }
+
+      var iconRect = new Rect(
+        rect.x + BarShopSlotLayout.IconX,
+        rect.y + BarShopSlotLayout.IconY,
+        BarShopSlotLayout.IconSize,
+        BarShopSlotLayout.IconSize);
       var icon = art?.FindProductIcon(iconKey);
       if (icon != null)
       {
@@ -176,17 +222,29 @@ namespace CodexGame.Presentation.Views
       }
 
       GUI.Label(
-        new Rect(rect.x + 12f, rect.y + 84f, 166f, 20f),
+        new Rect(
+          rect.x + BarShopSlotLayout.NameX,
+          rect.y + BarShopSlotLayout.NameY,
+          BarShopSlotLayout.NameWidth,
+          BarShopSlotLayout.NameHeight),
         localization.Get(nameKey),
         styles.Small);
       EconomyUiRenderer.DrawPrice(
-        new Rect(rect.x + 60f, rect.y + 106f, 70f, 22f),
+        new Rect(
+          rect.x + BarShopSlotLayout.PriceX,
+          rect.y + BarShopSlotLayout.PriceY,
+          BarShopSlotLayout.PriceWidth,
+          BarShopSlotLayout.PriceHeight),
         price,
         economyArt,
         styles.Small);
       GUI.enabled = enabled;
       var clicked = GUI.Button(
-        new Rect(rect.x + 24f, rect.y + 138f, 142f, 28f),
+        new Rect(
+          rect.x + BarShopSlotLayout.PurchaseX,
+          rect.y + BarShopSlotLayout.PurchaseY,
+          BarShopSlotLayout.PurchaseWidth,
+          BarShopSlotLayout.PurchaseHeight),
         localization.Get("UI_BAR_PURCHASE"));
       GUI.enabled = true;
       return clicked;

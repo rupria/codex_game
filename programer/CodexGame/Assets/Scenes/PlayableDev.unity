@@ -119,7 +119,7 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
---- !u!1 &410247030
+--- !u!1 &514219226
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -127,8 +127,8 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 410247032}
-  - component: {fileID: 410247031}
+  - component: {fileID: 514219228}
+  - component: {fileID: 514219227}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -136,13 +136,13 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!20 &410247031
+--- !u!20 &514219227
 Camera:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 410247030}
+  m_GameObject: {fileID: 514219226}
   m_Enabled: 1
   serializedVersion: 2
   m_ClearFlags: 2
@@ -187,13 +187,13 @@ Camera:
   m_OcclusionCulling: 1
   m_StereoConvergence: 10
   m_StereoSeparation: 0.022
---- !u!4 &410247032
+--- !u!4 &514219228
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 410247030}
+  m_GameObject: {fileID: 514219226}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: -10}
@@ -202,7 +202,7 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &783942673
+--- !u!1 &1520723585
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -210,10 +210,10 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 783942677}
-  - component: {fileID: 783942676}
-  - component: {fileID: 783942675}
-  - component: {fileID: 783942674}
+  - component: {fileID: 1520723589}
+  - component: {fileID: 1520723588}
+  - component: {fileID: 1520723587}
+  - component: {fileID: 1520723586}
   m_Layer: 0
   m_Name: CodexGame.PlayableDev
   m_TagString: Untagged
@@ -221,43 +221,43 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &783942674
+--- !u!114 &1520723586
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 783942673}
+  m_GameObject: {fileID: 1520723585}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: e01485696a2a0564f8908e12ee526b34, type: 3}
   m_Name: 
   m_EditorClassIdentifier: CodexGame.Bootstrap::CodexGame.Bootstrap.PlayableDevGameController
---- !u!114 &783942675
+--- !u!114 &1520723587
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 783942673}
+  m_GameObject: {fileID: 1520723585}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 63fa6614e8e1444eb69d2c8ca6814cb3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: CodexGame.Presentation::CodexGame.Presentation.Views.TableScenePresentationRig
-  _sceneCamera: {fileID: 410247031}
-  _view: {fileID: 783942676}
+  _sceneCamera: {fileID: 514219227}
+  _view: {fileID: 1520723588}
   _battleBackdrop: {fileID: 2800000, guid: 263d2d00d83c60947acaa998c8961e7a, type: 3}
   _introBackdrop: {fileID: 2800000, guid: 4fffdd8f5e45fa4cd921945ef9042957, type: 3}
   _barShopBackdrop: {fileID: 2800000, guid: c6f4b89d92a14e188cf5f1c1ae903002, type: 3}
   _backdropShader: {fileID: 4800000, guid: 9b3acbe23ca64a43b7c17fce4b297763, type: 3}
---- !u!114 &783942676
+--- !u!114 &1520723588
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 783942673}
+  m_GameObject: {fileID: 1520723585}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: bdb4d81e9bb4ec94681bf2457196d90b, type: 3}
@@ -1446,9 +1446,20 @@ MonoBehaviour:
     _mercenaryExchangeSheet: {fileID: 2800000, guid: e29b377696206715da4b7b9e0014df9e, type: 3}
     _mercenaryPlayerTargetMarker: {fileID: 2800000, guid: 3486e6f977c2bd1d1d3bef98b853cbbd, type: 3}
     _mercenaryAiHiddenMarker: {fileID: 2800000, guid: 495b5b93719b4e9e3a4b390199101803, type: 3}
+  _pokerResultUiArtSet:
+    _successCompact: {fileID: 2800000, guid: aaf864d5b83f5528959a25500acedf2c, type: 3}
+    _successStandard: {fileID: 2800000, guid: 8225901fdda0f4135f901cc1140d2743, type: 3}
+    _successExpanded: {fileID: 2800000, guid: 62a8ecf47eb914a71856d82812bfc23e, type: 3}
+    _failureCompact: {fileID: 2800000, guid: 19032ca056ace4f326473d2ef65f56bd, type: 3}
+    _failureStandard: {fileID: 2800000, guid: f732cdceba74943449c31bd90d32a589, type: 3}
+    _failureExpanded: {fileID: 2800000, guid: 0ba22e092c59fde684d42dfa9c2f22ef, type: 3}
+    _neutralCompact: {fileID: 2800000, guid: f17be393c06d021caf7cbc727ff348ea, type: 3}
+    _neutralStandard: {fileID: 2800000, guid: 6d3c79840dfa2c20cdd24ac5af39a7fd, type: 3}
+    _neutralExpanded: {fileID: 2800000, guid: ca30b3a4950034eae442c1f8929ad281, type: 3}
+    _itemStatusChip: {fileID: 2800000, guid: 38ade5c6c1dbe21ed137987e06d63fd3, type: 3}
   _barShopUiArtSet:
     _background: {fileID: 2800000, guid: c6f4b89d92a14e188cf5f1c1ae903002, type: 3}
-    _slotFrame: {fileID: 2800000, guid: c6f4b89d92a14e188cf5f1c1ae90300d, type: 3}
+    _slotFrame: {fileID: 2800000, guid: 09bf8b8784eb0e5cd6e9edaff3b908bb, type: 3}
     _rerollIdle: {fileID: 2800000, guid: 92afdf5628a875eceabcf4bc29cbdf96, type: 3}
     _rerollHover: {fileID: 2800000, guid: 5625648cbc17d3d1509ee86f5a269fff, type: 3}
     _rerollPressed: {fileID: 2800000, guid: 8fad1c818a639fc3b2d1ab4ef6855609, type: 3}
@@ -1467,23 +1478,26 @@ MonoBehaviour:
     _ammoPouchHandCover: {fileID: 0}
     _bulletCoinFlipSheet: {fileID: 2800000, guid: b0380000000000000000000000000005, type: 3}
     _bulletPourSheet: {fileID: 2800000, guid: b0380000000000000000000000000006, type: 3}
+    _itemIconPlateIdle: {fileID: 2800000, guid: e9a909f05e3294bac3b39241074639d5, type: 3}
+    _itemIconPlateHover: {fileID: 2800000, guid: be56ebdcf731b34554eb0ed939672bfe, type: 3}
+    _itemIconPlateDisabled: {fileID: 2800000, guid: dfb3a53b6b719641a8caae4d51b143cd, type: 3}
     _productIcons:
     - _iconKey: bar_shop.item.reload
-      _texture: {fileID: 2800000, guid: d392ecb6fdf5caa3095266430e05786e, type: 3}
+      _texture: {fileID: 2800000, guid: 71094dd0c3fe1b1dfe7ed36a4304135c, type: 3}
     - _iconKey: bar_shop.item.bottom_deal
-      _texture: {fileID: 2800000, guid: b7e2f8643e2d26c83b1622c8931e7096, type: 3}
+      _texture: {fileID: 2800000, guid: e19acfe624cdb4006ae52c64e030e7af, type: 3}
     - _iconKey: bar_shop.item.hype_man
-      _texture: {fileID: 2800000, guid: eb9de234e341c088cd7c31d04e5a3194, type: 3}
+      _texture: {fileID: 2800000, guid: 0898d97caba226716f3524b2ba0b67db, type: 3}
     - _iconKey: bar_shop.item.health_recovery
-      _texture: {fileID: 2800000, guid: c0847953be7032b699be76db5140fff2, type: 3}
+      _texture: {fileID: 2800000, guid: f5b0534ad168b2df72a927f1238eb0b7, type: 3}
     - _iconKey: bar_shop.item.wild_ink
-      _texture: {fileID: 2800000, guid: 3afb6e7c25093ac8bf7e9493c667e0b9, type: 3}
+      _texture: {fileID: 2800000, guid: 33120b8d73a00226c239cc5741d9e920, type: 3}
     - _iconKey: bar_shop.item.barrel
-      _texture: {fileID: 2800000, guid: b001427310817c4ba3f8c62f217d7c96, type: 3}
+      _texture: {fileID: 2800000, guid: 945ec010a57c2c55fd6cd1bd7229904b, type: 3}
     - _iconKey: bar_shop.item.prediction_insurance
-      _texture: {fileID: 2800000, guid: 996e6dfe9d9c9407e00b112239b3ed2d, type: 3}
+      _texture: {fileID: 2800000, guid: b16145e5e6e14273e1c38886709518af, type: 3}
     - _iconKey: bar_shop.item.mercenary
-      _texture: {fileID: 2800000, guid: de1d7499a30fb5f9ff8801fb436fed68, type: 3}
+      _texture: {fileID: 2800000, guid: ac479d3b8ae2a0d83fc2a7d58f9116f9, type: 3}
     - _iconKey: item.ammo_pouch.loose_rounds
       _texture: {fileID: 2800000, guid: b0380000000000000000000000000008, type: 3}
   _stageTransitionUiArtSet:
@@ -1516,9 +1530,9 @@ MonoBehaviour:
     - {fileID: 2800000, guid: 33705d6ad662ee44e9108e0f081e656c, type: 3}
     - {fileID: 2800000, guid: d29e3b1a331bb8a45b49fc64c6c1d93c, type: 3}
   _economyUiArtSet:
-    _baseCurrencyIcon: {fileID: 2800000, guid: 51740208a8bdc4da3b172ed8a2ebf075, type: 3}
-    _temporaryCurrencyIcon: {fileID: 2800000, guid: 613fe1b1e0d5fd1b7c0fe9e35209fe66, type: 3}
-    _priceIcon: {fileID: 2800000, guid: ea2aa3cd99b5a05bcf6314051fd601d5, type: 3}
+    _baseCurrencyIcon: {fileID: 2800000, guid: f85f99ed16d65da912f3dfaf39c21ec3, type: 3}
+    _temporaryCurrencyIcon: {fileID: 2800000, guid: 5b5eff85d37cf0da40a0f76f8ba95f1d, type: 3}
+    _priceIcon: {fileID: 2800000, guid: a21500386b37c810b5303a666a36b1df, type: 3}
     _baseBalanceFrame: {fileID: 2800000, guid: 32c33f211b3acd4d1f3c859a5c7b9319, type: 3}
     _temporaryBalanceFrame: {fileID: 2800000, guid: a11d11d7088e33f9e32ddbd554f9e254, type: 3}
     _baseRewardFrame: {fileID: 2800000, guid: 1f21ebcd1bdd76dcd56b11b60064cb36, type: 3}
@@ -1575,13 +1589,13 @@ MonoBehaviour:
     - {fileID: 2800000, guid: 12d4a963a9e74b47aa067f74bdca0104, type: 3}
   _useSceneBackdrop: 1
   _useIntroArtLayout: 1
---- !u!4 &783942677
+--- !u!4 &1520723589
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 783942673}
+  m_GameObject: {fileID: 1520723585}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
@@ -1594,5 +1608,5 @@ Transform:
 SceneRoots:
   m_ObjectHideFlags: 0
   m_Roots:
-  - {fileID: 410247032}
-  - {fileID: 783942677}
+  - {fileID: 514219228}
+  - {fileID: 1520723589}

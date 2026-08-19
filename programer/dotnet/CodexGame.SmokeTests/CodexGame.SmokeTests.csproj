@@ -38,6 +38,12 @@
       Include="..\..\CodexGame\Assets\Scripts\Presentation\Views\PokerResultOverlayState.cs"
       Link="Presentation\PokerResultOverlayState.cs" />
     <Compile
+      Include="..\..\CodexGame\Assets\Scripts\Presentation\Views\PokerResultPanelLayout.cs"
+      Link="Presentation\PokerResultPanelLayout.cs" />
+    <Compile
+      Include="..\..\CodexGame\Assets\Scripts\Presentation\Views\BarShopSlotLayout.cs"
+      Link="Presentation\BarShopSlotLayout.cs" />
+    <Compile
       Include="..\..\CodexGame\Assets\Scripts\Presentation\Views\AcquiredCardFanLayout.cs"
       Link="Presentation\AcquiredCardFanLayout.cs" />
     <Compile

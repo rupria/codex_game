@@ -28,6 +28,7 @@ namespace CodexGame.Presentation.Views
       HealthUiArtSet healthArt,
       PokerUiArtSet pokerArt,
       PokerItemUiArtSet pokerItemArt,
+      PokerResultUiArtSet pokerResultArt,
       PredictionRewardSnapshot predictionReward,
       PredictionInsuranceActivationSnapshot insuranceActivation,
       LocalizationRuntime localization,
@@ -66,12 +67,26 @@ namespace CodexGame.Presentation.Views
       {
         if (snapshot.ResultPresentationStep == PokerResultPresentationStep.Outcome)
         {
-          DrawResult(snapshot, pokerArt, pokerItemArt, predictionReward, styles, localization);
+          DrawResult(
+            snapshot,
+            pokerArt,
+            pokerItemArt,
+            pokerResultArt,
+            predictionReward,
+            styles,
+            localization);
         }
       }
       else
       {
-        DrawResult(snapshot, pokerArt, pokerItemArt, predictionReward, styles, localization);
+        DrawResult(
+          snapshot,
+          pokerArt,
+          pokerItemArt,
+          pokerResultArt,
+          predictionReward,
+          styles,
+          localization);
       }
 
       var canPredict = snapshot.Phase == PokerRoundPhase.AwaitingPrediction;
@@ -450,6 +465,7 @@ namespace CodexGame.Presentation.Views
       PokerRoundSnapshot snapshot,
       PokerUiArtSet pokerArt,
       PokerItemUiArtSet pokerItemArt,
+      PokerResultUiArtSet pokerResultArt,
       PredictionRewardSnapshot predictionReward,
       PlayableDevStyles styles,
       LocalizationRuntime localization)
@@ -476,33 +492,35 @@ namespace CodexGame.Presentation.Views
         new LocalizationArgument("prediction", prediction),
         new LocalizationArgument("playerHp", snapshot.Health.Player),
         new LocalizationArgument("aiHp", snapshot.Health.Ai));
+      string itemStatus = null;
       if (snapshot.Result.WasHandConfirmationTimeout
         || insuranceApplied
         || snapshot.Result.WasPlayerDamagePrevented)
       {
-        var resultStatus = snapshot.Result.WasHandConfirmationTimeout
+        itemStatus = snapshot.Result.WasHandConfirmationTimeout
           ? localization.Get("UI_ITEM_CONFIRM_TIMEOUT")
           : snapshot.Result.WasPlayerDamagePrevented
             ? localization.Get("UI_BARREL_DAMAGE_PREVENTED")
             : localization.Get("UI_ITEM_INSURANCE_APPLIED");
-        message += "\n" + resultStatus;
       }
 
-      PokerResultOverlayRenderer.Draw(
-        new Rect(86f, 204f, 788f, 92f),
-        message,
-        true,
-        predictionSucceeded || insuranceApplied,
-        styles);
       var predictionBadge = insuranceApplied
         ? pokerItemArt?.PredictionInsuredSuccess
         : predictionSucceeded
           ? pokerItemArt?.PredictionActualSuccess ?? pokerArt?.PredictionResultFilled
           : pokerArt?.PredictionResultEmpty;
-      if (predictionBadge != null)
-      {
-        GUI.DrawTexture(new Rect(102f, 236f, 28f, 28f), predictionBadge, ScaleMode.ScaleToFit, true);
-      }
+      var visualState = snapshot.Result.WasHandConfirmationTimeout
+        ? PokerResultPanelVisualState.Neutral
+        : predictionSucceeded || insuranceApplied
+          ? PokerResultPanelVisualState.Success
+          : PokerResultPanelVisualState.Failure;
+      PokerResultOverlayRenderer.Draw(
+        message,
+        itemStatus,
+        visualState,
+        predictionBadge,
+        pokerResultArt,
+        styles);
       DrawBarrelDefenseResult(snapshot, pokerItemArt, localization, styles);
     }
 
