@@ -197,6 +197,7 @@ namespace CodexGame.Application.Playable
         _currentRevealStep?.RelativeSide,
         _currentRevealStep?.PhysicalPile,
         _currentRevealCard,
+        _currentRevealCommitted,
         revealProgress,
         _firstPublicCard,
         left,
