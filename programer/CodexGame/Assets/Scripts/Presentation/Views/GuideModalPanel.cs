@@ -27,7 +27,7 @@ namespace CodexGame.Presentation.Views
     private static readonly Rect PreviousButton = new Rect(299f, 451f, 56f, 58f);
     private static readonly Rect NextButton = new Rect(602f, 451f, 56f, 58f);
     private static readonly Rect CloseButton = new Rect(800f, 451f, 56f, 58f);
-    private static readonly Rect TutorialSkipButton = new Rect(774f, 476f, 150f, 42f);
+    private static readonly Rect PageIndicatorMask = new Rect(401f, 461f, 152f, 28f);
     private static readonly Rect PageIndicatorPlate = new Rect(430f, 449f, 100f, 33f);
 
     public void Draw(
@@ -71,14 +71,6 @@ namespace CodexGame.Presentation.Views
       }
       if (!state.IsFirstStartTutorial
         && DrawIconHitTarget(CloseButton, true, art?.CloseIcon)) close();
-      if (state.IsFirstStartTutorial
-        && GUI.Button(
-          TutorialSkipButton,
-          localization.Get("UI_GUIDE_TUTORIAL_SKIP"),
-          styles.Heading))
-      {
-        completeTutorial();
-      }
     }
 
     private static void DrawOpaqueBackground(GuideUiArtSet art)
@@ -130,6 +122,9 @@ namespace CodexGame.Presentation.Views
     private static void DrawPageDots(int pageIndex, Texture2D plate)
     {
       var previousColor = GUI.color;
+      UiPixelSurfaceRenderer.Fill(
+        PageIndicatorMask,
+        new Color(0.055f, 0.047f, 0.039f, 1f));
       GUI.color = Color.white;
       if (plate != null)
       {
@@ -145,18 +140,11 @@ namespace CodexGame.Presentation.Views
       const float gap = 21f;
       for (var index = 0; index < GuideModalState.PageCount; index++)
       {
-        GUI.color = index == pageIndex
+        var color = index == pageIndex
           ? new Color(0.95f, 0.63f, 0.18f, 1f)
           : new Color(0.24f, 0.21f, 0.17f, 1f);
         var center = new Vector2(startX + gap * index, 466f);
-        var previousMatrix = GUI.matrix;
-        GUIUtility.RotateAroundPivot(45f, center);
-        GUI.DrawTexture(
-          new Rect(center.x - 4f, center.y - 4f, 8f, 8f),
-          Texture2D.whiteTexture,
-          ScaleMode.StretchToFill,
-          true);
-        GUI.matrix = previousMatrix;
+        UiPixelSurfaceRenderer.DrawDiamond(center, color);
       }
       GUI.color = previousColor;
     }
