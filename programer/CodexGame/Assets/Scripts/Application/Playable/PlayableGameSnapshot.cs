@@ -29,6 +29,7 @@ namespace CodexGame.Application.Playable
       PredictionInsuranceActivationSnapshot predictionInsuranceActivation,
       IReadOnlyList<GameItemId> inventory,
       bool cheatUsed,
+      bool jokerAwardCheatEnabled,
       IReadOnlyList<CheatCommandEntry> cheatHistory,
       ItemQaPresetResult? lastItemQaPresetResult,
       long inactivityRemainingMicroseconds,
@@ -64,6 +65,7 @@ namespace CodexGame.Application.Playable
         ?? throw new ArgumentNullException(nameof(predictionInsuranceActivation));
       Inventory = Copy(inventory);
       CheatUsed = cheatUsed;
+      JokerAwardCheatEnabled = jokerAwardCheatEnabled;
       CheatHistory = Copy(cheatHistory);
       LastItemQaPresetResult = lastItemQaPresetResult;
       InactivityRemainingMicroseconds = inactivityRemainingMicroseconds;
@@ -95,6 +97,7 @@ namespace CodexGame.Application.Playable
     public PredictionInsuranceActivationSnapshot PredictionInsuranceActivation { get; }
     public IReadOnlyList<GameItemId> Inventory { get; }
     public bool CheatUsed { get; }
+    public bool JokerAwardCheatEnabled { get; }
     public IReadOnlyList<CheatCommandEntry> CheatHistory { get; }
     public ItemQaPresetResult? LastItemQaPresetResult { get; }
     public long InactivityRemainingMicroseconds { get; }

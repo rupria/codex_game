@@ -15,6 +15,7 @@ namespace CodexGame.Presentation.Views
       PlayableGameSnapshot snapshot,
       PlayableDevStyles styles,
       Action completeStage,
+      Action<bool> setJokerAwardGuaranteed,
       Action<GameItemId> grantItem,
       Action<PokerCheatPreset> setPoker,
       Action<ItemQaPreset> runItemPreset,
@@ -31,11 +32,18 @@ namespace CodexGame.Presentation.Views
         new Rect(48f, 70f, 840f, 24f),
         $"STAGE {snapshot.StageNumber} / ROUND {snapshot.CombatRoundNumber} / {snapshot.Phase} / HP {snapshot.Health.Player}:{snapshot.Health.Ai}",
         styles.Small);
-      if (GUI.Button(new Rect(48f, 108f, 190f, 38f), "COMPLETE STAGE")) completeStage();
-      if (GUI.Button(new Rect(258f, 108f, 42f, 38f), "<")) MoveItemPreset(-1);
-      GUI.Label(new Rect(306f, 108f, 330f, 38f), _selectedItemPreset.ToString(), styles.Small);
-      if (GUI.Button(new Rect(640f, 108f, 42f, 38f), ">")) MoveItemPreset(1);
-      if (GUI.Button(new Rect(692f, 108f, 204f, 38f), "RUN ITEM QA PRESET"))
+      if (GUI.Button(new Rect(48f, 108f, 150f, 38f), "COMPLETE STAGE")) completeStage();
+      var jokerCheatLabel = snapshot.JokerAwardCheatEnabled
+        ? "JOKER 100%: ON"
+        : "JOKER 100%: OFF";
+      if (GUI.Button(new Rect(208f, 108f, 190f, 38f), jokerCheatLabel))
+      {
+        setJokerAwardGuaranteed(!snapshot.JokerAwardCheatEnabled);
+      }
+      if (GUI.Button(new Rect(408f, 108f, 38f, 38f), "<")) MoveItemPreset(-1);
+      GUI.Label(new Rect(452f, 108f, 220f, 38f), _selectedItemPreset.ToString(), styles.Small);
+      if (GUI.Button(new Rect(678f, 108f, 38f, 38f), ">")) MoveItemPreset(1);
+      if (GUI.Button(new Rect(726f, 108f, 170f, 38f), "RUN ITEM QA"))
       {
         runItemPreset(_selectedItemPreset);
       }

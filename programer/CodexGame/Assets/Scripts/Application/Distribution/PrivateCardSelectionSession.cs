@@ -40,7 +40,8 @@ namespace CodexGame.Application.Distribution
       int combatRoundNumber,
       long combatRoundSeed,
       GameTimestamp now,
-      bool pairAssistEnabled = false)
+      bool pairAssistEnabled = false,
+      int jokerAwardPercent = GameRules.JokerAwardPercent)
     {
       Begin(
         playerAcquiredCards,
@@ -51,7 +52,8 @@ namespace CodexGame.Application.Distribution
         combatRoundSeed,
         null,
         now,
-        pairAssistEnabled);
+        pairAssistEnabled,
+        jokerAwardPercent);
     }
 
     public void Begin(
@@ -63,7 +65,8 @@ namespace CodexGame.Application.Distribution
       long combatRoundSeed,
       Card? firstPublicCard,
       GameTimestamp now,
-      bool pairAssistEnabled = false)
+      bool pairAssistEnabled = false,
+      int jokerAwardPercent = GameRules.JokerAwardPercent)
     {
       if (Phase != PrivateCardSelectionPhase.NotStarted)
       {
@@ -90,10 +93,12 @@ namespace CodexGame.Application.Distribution
 
       var playerAwarded = JokerAwardResolver.Roll(
         retainedPlayer.Count,
-        DeterministicRandomFactory.Create(combatRoundSeed, RandomChannel.PlayerJokerAward));
+        DeterministicRandomFactory.Create(combatRoundSeed, RandomChannel.PlayerJokerAward),
+        jokerAwardPercent);
       var aiAwarded = JokerAwardResolver.Roll(
         retainedAi.Count,
-        DeterministicRandomFactory.Create(combatRoundSeed, RandomChannel.AiJokerAward));
+        DeterministicRandomFactory.Create(combatRoundSeed, RandomChannel.AiJokerAward),
+        jokerAwardPercent);
       _playerAcquiredCards = AppendJoker(
         retainedPlayer,
         playerAwarded,

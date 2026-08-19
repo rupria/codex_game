@@ -213,7 +213,8 @@ namespace CodexGame.Application.Playable
 
     public PrivateCardSelectionSession BeginPrivateCardDistribution(
       GameTimestamp now,
-      bool pairAssistEnabled = false)
+      bool pairAssistEnabled = false,
+      int jokerAwardPercent = GameRules.JokerAwardPercent)
     {
       if (Phase != PrototypeSessionPhase.Finished)
       {
@@ -244,7 +245,8 @@ namespace CodexGame.Application.Playable
         _combatRoundSeed,
         _firstPublicCard,
         now,
-        pairAssistEnabled);
+        pairAssistEnabled,
+        jokerAwardPercent);
       return selection;
     }
 

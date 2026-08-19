@@ -110,6 +110,7 @@ namespace CodexGame.Presentation.Views
     public event Action InactivityAcknowledgedRequested;
 #if UNITY_EDITOR || ENABLE_GAMEPLAY_CHEATS
     public event Action CheatStagePassRequested;
+    public event Action<bool> CheatJokerAwardRequested;
     public event Action<GameItemId> CheatGrantItemRequested;
     public event Action<PokerCheatPreset> CheatPokerPresetRequested;
     public event Action<ItemQaPreset> CheatItemQaPresetRequested;
@@ -327,6 +328,7 @@ namespace CodexGame.Presentation.Views
           _snapshot,
           _styles,
           () => CheatStagePassRequested?.Invoke(),
+          enabled => CheatJokerAwardRequested?.Invoke(enabled),
           itemId => CheatGrantItemRequested?.Invoke(itemId),
           preset => CheatPokerPresetRequested?.Invoke(preset),
           preset => CheatItemQaPresetRequested?.Invoke(preset),

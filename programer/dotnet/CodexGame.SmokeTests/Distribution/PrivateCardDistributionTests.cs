@@ -19,6 +19,7 @@ namespace CodexGame.SmokeTests.Distribution
       CheckBothActorsSelectOverflow(tests);
       CheckSeededFillAndTimeout(tests);
       CheckSelectionSession(tests);
+      CheckGuaranteedJokerAward(tests);
       CheckPairAssistHealthRule(tests);
       CheckPairAssistRecommendation(tests);
       CheckPairAssistFill(tests);
@@ -196,6 +197,29 @@ namespace CodexGame.SmokeTests.Distribution
         "Pair assistance must use combined remaining health and stop at four or battle end.");
     }
 
+    private static void CheckGuaranteedJokerAward(TestHarness tests)
+    {
+      var cards = TestCardSet.Create();
+      var session = new PrivateCardSelectionSession();
+      session.Begin(
+        Slice(cards, 0, 4),
+        Slice(cards, 0, 0),
+        Slice(cards, 5, 20),
+        HalliStageWinner.Player,
+        1,
+        20260819,
+        cards[4],
+        new GameTimestamp(0),
+        pairAssistEnabled: false,
+        jokerAwardPercent: 100);
+      var snapshot = session.GetSnapshot(new GameTimestamp(0));
+
+      tests.Check(
+        snapshot.WinnerCandidates.Count == 5
+          && ContainsJoker(snapshot.WinnerCandidates),
+        "The private-card selection boundary must append a Joker when the eligible winner uses the 100% QA rate.");
+    }
+
     private static void CheckPairAssistRecommendation(TestHarness tests)
     {
       var cards = TestCardSet.Create();
@@ -315,6 +339,15 @@ namespace CodexGame.SmokeTests.Distribution
     private static bool Contains(IReadOnlyList<Card> cards, CardId id)
     {
       for (var index = 0; index < cards.Count; index++) if (cards[index].Id == id) return true;
+      return false;
+    }
+
+    private static bool ContainsJoker(IReadOnlyList<Card> cards)
+    {
+      for (var index = 0; index < cards.Count; index++)
+      {
+        if (cards[index].IsJoker) return true;
+      }
       return false;
     }
 
