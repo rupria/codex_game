@@ -22,6 +22,14 @@
     "frontReadableAndAccent": [0.35, 0.85],
     "settle": [0.85, 1.00]
   },
+  "playerTrigger": {
+    "phase": "PrivateSelection",
+    "condition": "The player's WinnerCandidates contains a Joker and this selection screen has not revealed it yet.",
+    "initialCardState": "Draw the Joker candidate as a card back until the reveal flip begins.",
+    "target": "The actual Joker candidate card rect inside the PrivateSelection 0.5.5 grid.",
+    "inputLockUntilSeconds": 0.85,
+    "noJokerDelaySeconds": 0.0
+  },
   "aiShowdownTimelineSeconds": 0.50,
   "privacy": {
     "player": "Play only after the player actually receives a Joker.",
@@ -30,6 +38,9 @@
   },
   "guardrails": [
     "Replace the current white rectangle focus treatment; do not layer both treatments.",
+    "The player reveal belongs to the first PrivateSelection screen that exposes the Joker, not to the later PokerRound PlayerJokerPresentation phase.",
+    "After settling, render the normal PrivateSelection 0.5.5 candidate state at the exact same card rect.",
+    "Do not replay the reveal after focus changes, localization refreshes or ordinary view redraws.",
     "Do not alter card ownership, draw order, result timing or poker evaluation.",
     "Keep all player-facing words in localized Unity text.",
     "Do not duplicate or redraw the approved Joker card front."
