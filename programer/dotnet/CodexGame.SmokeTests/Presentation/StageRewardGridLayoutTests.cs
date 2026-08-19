@@ -19,7 +19,17 @@ namespace CodexGame.SmokeTests.Presentation
           && fourth.Y >= 0f
           && fourth.X + StageRewardGridLayout.RowWidth <= StageRewardGridLayout.ContentWidth
           && fourth.Y + StageRewardGridLayout.RowHeight <= StageRewardGridLayout.ContentHeight,
-        "Every visible reward row must fit inside the 672 by 198 safe content region.");
+        "Every visible reward row must fit inside the 632 by 154 safe content region.");
+      tests.Check(
+        StageRewardGridLayout.PopupX == 140f
+          && StageRewardGridLayout.PopupY == 90f
+          && StageRewardGridLayout.PopupWidth == 680f
+          && StageRewardGridLayout.PopupHeight == 360f
+          && StageRewardGridLayout.ContentX + StageRewardGridLayout.ContentWidth <= StageRewardGridLayout.PopupWidth
+          && StageRewardGridLayout.ContentY + StageRewardGridLayout.ContentHeight <= StageRewardGridLayout.PopupHeight
+          && StageRewardGridLayout.ContinueX + StageRewardGridLayout.ContinueWidth <= StageRewardGridLayout.PopupWidth
+          && StageRewardGridLayout.ContinueY + StageRewardGridLayout.ContinueHeight <= StageRewardGridLayout.PopupHeight,
+        "Stage reward title, rewards, and continue button must remain inside the 680 by 360 popup.");
     }
   }
 }

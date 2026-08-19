@@ -33,7 +33,7 @@ namespace CodexGame.Editor
     private const string BarShopUi034ArtRoot = UiArtRoot + "BarShop_0_3_4/";
     private const string BarShopUi038ArtRoot = UiArtRoot + "BarShop_0_3_8/";
     private const string EconomyUi012ArtRoot = UiArtRoot + "Economy_0_1_2/";
-    private const string StageRewardUi054ArtRoot = UiArtRoot + "StageReward_0_5_4/";
+    private const string StageRewardUi055ArtRoot = UiArtRoot + "StageReward_0_5_5/";
     private const string PresentationUi0124ArtRoot = UiArtRoot + "Presentation_0_1_2_4/";
     private const string TextlessCurrencyUi040ArtRoot = UiArtRoot + "Textless_Currency_0_4_0/";
     private const string StageOpponentUi0124ArtRoot = UiArtRoot + "StageOpponents_0_1_2_4/";
@@ -342,11 +342,11 @@ namespace CodexGame.Editor
         LoadOptionalTexture(IconOverhaulUi050ArtRoot + "currency_temporary_expire_western_8f_320x40_0_5_0.png"),
         LoadOptionalTexture(IconOverhaulUi050ArtRoot + "shop_exit_warning_pulse_western_6f_144x24_0_5_0.png"),
         stageRewardSummaryPanel: LoadTexture(
-          StageRewardUi054ArtRoot + "stage_reward_summary_panel_720x300_0_5_4.png"),
+          StageRewardUi055ArtRoot + "stage_reward_summary_panel_680x360_0_5_5.png"),
         stageRewardRowFrame: LoadTexture(
-          StageRewardUi054ArtRoot + "stage_reward_row_frame_320x64_0_5_4.png"),
-        stageRewardOverflowFade: LoadTexture(
-          StageRewardUi054ArtRoot + "stage_reward_overflow_fade_640x32_0_5_4.png"));
+          StageRewardUi055ArtRoot + "stage_reward_row_frame_304x64_0_5_5.png"),
+        stageRewardContentBackground: LoadTexture(
+          StageRewardUi055ArtRoot + "stage_reward_content_opaque_632x154_0_5_5.png"));
       var presentationUiArtSet = new PresentationUiArtSet(
         fileName => LoadTexture(PresentationUi0124ArtRoot + fileName),
         new[]

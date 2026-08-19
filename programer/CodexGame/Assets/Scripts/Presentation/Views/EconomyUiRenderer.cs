@@ -75,11 +75,19 @@ namespace CodexGame.Presentation.Views
       else GUI.Box(popupRect, GUIContent.none);
 
       var contentRect = new Rect(
-        popupRect.x + 24f,
-        popupRect.y + 58f,
+        popupRect.x + StageRewardGridLayout.ContentX,
+        popupRect.y + StageRewardGridLayout.ContentY,
         StageRewardGridLayout.ContentWidth,
         StageRewardGridLayout.ContentHeight);
       GUI.BeginGroup(contentRect);
+      if (art?.StageRewardContentBackground != null)
+      {
+        GUI.DrawTexture(
+          new Rect(0f, 0f, contentRect.width, contentRect.height),
+          art.StageRewardContentBackground,
+          ScaleMode.StretchToFill,
+          true);
+      }
       var first = StageRewardGridLayout.Slot(2, 0, 0);
       DrawRewardRow(
         new Rect(first.X, first.Y, StageRewardGridLayout.RowWidth, StageRewardGridLayout.RowHeight),

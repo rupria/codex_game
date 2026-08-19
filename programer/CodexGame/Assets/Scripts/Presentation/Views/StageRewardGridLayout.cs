@@ -18,15 +18,29 @@ namespace CodexGame.Presentation.Views
 
   internal static class StageRewardGridLayout
   {
+    public const float PopupX = 140f;
+    public const float PopupY = 90f;
+    public const float PopupWidth = 680f;
+    public const float PopupHeight = 360f;
+    public const float TitleX = 24f;
+    public const float TitleY = 20f;
+    public const float TitleWidth = 632f;
+    public const float TitleHeight = 52f;
+    public const float ContentX = 24f;
+    public const float ContentY = 88f;
+    public const float ContinueX = 220f;
+    public const float ContinueY = 288f;
+    public const float ContinueWidth = 240f;
+    public const float ContinueHeight = 52f;
     public const int Columns = 2;
     public const int Rows = 2;
     public const int PageCapacity = Columns * Rows;
-    public const float ContentWidth = 672f;
-    public const float ContentHeight = 198f;
-    public const float RowWidth = 320f;
+    public const float ContentWidth = 632f;
+    public const float ContentHeight = 154f;
+    public const float RowWidth = 304f;
     public const float RowHeight = 64f;
-    public const float GapX = 32f;
-    public const float GapY = 8f;
+    public const float GapX = 24f;
+    public const float GapY = 12f;
 
     public static int PageCount(int itemCount)
     {
