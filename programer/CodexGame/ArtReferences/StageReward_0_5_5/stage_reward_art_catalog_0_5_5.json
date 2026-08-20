@@ -2,7 +2,7 @@
   "package": "StageReward_0_5_5",
   "revision": "0.5.5",
   "issues": [49],
-  "status": "art_complete_programmer_binding_required",
+  "status": "connected_in_dev_builder_scene_regeneration_required",
   "runtimeRoot": "Assets/Art/Prototype/UI/StageReward_0_5_5",
   "referenceResolution": [960, 540],
   "import": {

@@ -41,6 +41,25 @@ foreach ($entry in $manifest.pendingProgrammerBindings) {
   }
 }
 
+Write-Output "PENDING_PROGRAMMER_LAYOUT_CONTRACTS"
+foreach ($entry in $manifest.pendingProgrammerLayoutContracts) {
+  $layoutPath = Join-Path $assetsRoot "Scripts\Presentation\Views\HalliPileOverlapLayout.cs"
+  $layoutText = Get-Content -LiteralPath $layoutPath -Raw
+  $maximumMatch = [regex]::Match(
+    $layoutText,
+    "MaximumPileCards\s*=\s*(\d+)")
+  $actualMaximum = if ($maximumMatch.Success) {
+    [int]$maximumMatch.Groups[1].Value
+  } else {
+    -1
+  }
+  Write-Output ("issue={0} package={1} expectedMax={2} currentMax={3}" -f `
+    $entry.issue,
+    $entry.package,
+    $entry.expectedMaximumVisiblePerPile,
+    $actualMaximum)
+}
+
 Write-Output "ARCHIVED_RUNTIME_GUARD"
 foreach ($entry in $manifest.archivedSupersededRuntime) {
   $restoredRuntime = Join-Path $assetsRoot ("Art\Prototype\UI\" + [string]$entry.package)

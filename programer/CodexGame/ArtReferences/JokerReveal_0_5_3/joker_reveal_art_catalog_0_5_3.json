@@ -1,11 +1,12 @@
 {
   "artSetId": "joker_reveal_0_5_3",
   "specRevision": "0.1.2.5",
-  "status": "art_complete_programmer_binding_ready",
+  "status": "archived_superseded_by_0_5_4",
   "issue": 32,
   "license": "project-owned generated artwork; commercial use and modification allowed",
+  "useInstead": "Assets/Art/Prototype/UI/JokerReveal_0_5_4/",
   "production": {
-    "runtimeRoot": "Assets/Art/Prototype/UI/JokerReveal_0_5_3/",
+    "runtimeRoot": "ArtReferences/Archive/LegacyRuntime/JokerReveal_0_5_3_Runtime/",
     "sourceRoot": "ArtReferences/JokerReveal_0_5_3/source/",
     "previewRoot": "ArtReferences/JokerReveal_0_5_3/preview/",
     "cardFronts": [

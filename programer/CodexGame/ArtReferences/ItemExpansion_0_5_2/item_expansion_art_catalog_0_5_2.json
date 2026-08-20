@@ -2,7 +2,7 @@
   "version": "0.5.2",
   "spec": "게임진행플로우 0.1.2.5",
   "specRevision": "2026-08-17-02",
-  "status": "dev_shared_art_unconnected",
+  "status": "connected_in_dev_builder_view_and_scene",
   "authoringTool": "Aseprite",
   "runtimeRoot": "Assets/Art/Prototype/UI/ItemExpansion_0_5_2",
   "referenceRoot": "ArtReferences/ItemExpansion_0_5_2",
