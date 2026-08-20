@@ -1,0 +1,65 @@
+{
+  "artSetId": "poker_prediction_clean_0_6_0",
+  "issue": 73,
+  "status": "art_complete_programmer_binding_required",
+  "runtimeRoot": "Assets/Art/Prototype/UI/PokerPredictionClean_0_6_0/",
+  "sourceRoot": "ArtReferences/PokerPredictionClean_0_6_0/source/",
+  "previewRoot": "ArtReferences/PokerPredictionClean_0_6_0/preview/",
+  "referenceResolution": [960, 540],
+  "rules": {
+    "communityCardMaximum": 2,
+    "bakedText": false,
+    "placeholderRules": false,
+    "allLabels": "runtime localized text"
+  },
+  "layout960x540": {
+    "titlePlateRect": [320, 20, 320, 48],
+    "titleEmblemRect": [332, 24, 40, 40],
+    "titleTextSafeRect": [384, 30, 232, 28],
+    "aiCardFirstRect": [384, 80, 56, 78],
+    "aiCardStepX": 68,
+    "communityCardFirstRect": [416, 218, 56, 78],
+    "communityCardStepX": 72,
+    "communityCardMaximum": 2,
+    "playerCardFirstRect": [380, 338, 56, 78],
+    "playerCardStepX": 72,
+    "insuranceRemainingIconRect": [690, 112, 28, 28],
+    "insuranceRemainingTextRect": [724, 112, 118, 28],
+    "itemChestRect": [650, 350, 88, 76],
+    "predictionSuccessIconRect": [624, 428, 28, 28],
+    "predictionSuccessTextRect": [660, 428, 132, 28],
+    "playerPredictionVisualRect": [139, 456, 232, 64],
+    "playerPredictionTextRect": [201, 474, 150, 28],
+    "playerPredictionHitRect": [131, 448, 248, 80],
+    "aiPredictionVisualRect": [589, 456, 232, 64],
+    "aiPredictionTextRect": [609, 474, 150, 28],
+    "aiPredictionHitRect": [581, 448, 248, 80],
+    "continueVisualRect": [398, 490, 164, 44],
+    "continueTextRect": [424, 498, 112, 28],
+    "continueHitRect": [390, 482, 180, 56]
+  },
+  "localizedText": {
+    "title": "UI_POKER_PREDICTION_TITLE",
+    "playerWins": "UI_POKER_PLAYER_WINS",
+    "aiWins": "UI_POKER_PLAYER_LOSES",
+    "insuranceRemaining": "UI_PREDICTION_INSURANCE_REMAINING",
+    "predictionSuccess": "UI_PREDICTION_SUCCESS_COUNT",
+    "continue": "UI_COMMON_CONTINUE"
+  },
+  "binding": {
+    "layout": "PokerTableLayout",
+    "view": "PokerDevPanel",
+    "artSet": "PokerUiArtSet",
+    "builder": "PlayableDevSceneBuilder.pokerUiArtSet",
+    "removeRuntimeRoot": "Assets/Art/Prototype/UI/PokerPredictionResult_0_5_7/",
+    "removeLegacyPlayerPrefix": "Assets/Art/Prototype/UI/IconOverhaul_0_5_0/poker_predict_player_portrait_",
+    "removeLegacyAiPrefix": "Assets/Art/Prototype/UI/IconOverhaul_0_5_0/poker_predict_ai_portrait_"
+  },
+  "guardrails": [
+    "Never render more than two community cards.",
+    "Do not draw decorative horizontal rules in a text-safe rectangle.",
+    "Draw localized labels over the text-safe rectangles; textures contain no text.",
+    "Do not restore the large rectangular result modal.",
+    "Do not change prediction, insurance, timeout, HP, reward, or card rules."
+  ]
+}

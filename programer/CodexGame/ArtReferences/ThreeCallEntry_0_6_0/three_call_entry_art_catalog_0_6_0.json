@@ -1,0 +1,44 @@
+{
+  "artSetId": "three_call_entry_0_6_0",
+  "issue": 72,
+  "status": "art_complete_programmer_binding_required",
+  "runtimeRoot": "Assets/Art/Prototype/UI/ThreeCallEntry_0_6_0/",
+  "sourceRoot": "ArtReferences/ThreeCallEntry_0_6_0/source/",
+  "previewRoot": "ArtReferences/ThreeCallEntry_0_6_0/preview/",
+  "referenceResolution": [960, 540],
+  "layout960x540": {
+    "plaqueRect": [290, 214, 380, 112],
+    "bellPulseFrameRect": [307, 238, 64, 64],
+    "localizedTitleSafeRect": [405, 246, 240, 32],
+    "communityCardReservedRect": [424, 42, 64, 90],
+    "lockedCardReservedRect": [510, 61, 48, 56]
+  },
+  "timingSeconds": {
+    "total": 1.55,
+    "compact": [0.00, 0.12],
+    "scaleIn": [0.12, 0.32],
+    "hold": [0.32, 1.25],
+    "fadeOut": [1.25, 1.55]
+  },
+  "localizedText": {
+    "title": "UI_THREE_CALL_ENTRY"
+  },
+  "assets": [
+    {"id":"centerPlaque","file":"three_call_entry_center_plaque_380x112_0_6_0.png","size":[380,112]},
+    {"id":"bellPulseSheet","file":"three_call_bell_pulse_8f_512x64_0_6_0.png","frameSize":[64,64],"frameCount":8}
+  ],
+  "binding": {
+    "view": "Presentation0124Panel.DrawThreeCallEntry",
+    "artSet": "PresentationUiArtSet",
+    "removeRuntimeReference": "Assets/Art/Prototype/UI/IconOverhaul_0_5_0/phase_three_call_western_64_0_5_0.png",
+    "replaceBuilderLoad": "PlayableDevSceneBuilder.presentationUiArtSet.threeCallIcon",
+    "doNotChange": ["showdown entry layout", "game rules", "input handling"]
+  },
+  "import": {
+    "textureType": "Sprite (2D and UI)",
+    "filterMode": "Point",
+    "compression": "Uncompressed",
+    "mipMaps": false,
+    "alphaIsTransparency": true
+  }
+}
