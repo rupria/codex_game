@@ -1,0 +1,26 @@
+{
+  "package": "GuideNav_0_6_0",
+  "issue": 65,
+  "artRevision": "0.6.0",
+  "baselineDev": "f6584d0b41d9f0efc09d8a0b2dd361520276b9c1",
+  "supersedes": "GuideNav_0_5_6",
+  "designResolution": "960x540",
+  "runtimeRoot": "Assets/Art/Prototype/UI/GuideNav_0_6_0/",
+  "layout": {
+    "rail": [0, 436, 960, 104],
+    "previous": [352, 451, 56, 58],
+    "pageIndicator": [414, 461, 132, 38],
+    "next": [552, 451, 56, 58],
+    "close": [850, 451, 56, 58]
+  },
+  "states": ["idle", "hover", "pressed", "disabled"],
+  "change": "Remove the stray yellow horizontal mark inside previous/next arrows only. Preserve all geometry, hit rectangles, state colors and close button artwork from 0.5.6.",
+  "assets": [
+    {"file": "guide_nav_rail_960x104_0_6_0.png", "size": "960x104"},
+    {"file": "guide_page_indicator_plate_132x38_0_6_0.png", "size": "132x38"},
+    {"pattern": "guide_nav_{previous|next|close}_{idle|hover|pressed|disabled}_56x58_0_6_0.png", "size": "56x58", "count": 12}
+  ],
+  "bindingRequired": true,
+  "dropInGeometry": true,
+  "note": "Switch the entire GuideNav binding from 0.5.6 to 0.6.0 together; never mix state sprites from the two revisions."
+}
