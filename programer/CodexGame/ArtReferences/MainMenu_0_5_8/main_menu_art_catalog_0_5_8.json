@@ -1,0 +1,54 @@
+{
+  "package": "MainMenu_0_5_8",
+  "issue": 64,
+  "artRevision": "0.5.8",
+  "approvedAt": "2026-08-20",
+  "baseline": {
+    "branch": "dev",
+    "sha": "db443a7c7c0bdb37614b77c63f945f1b1991a78e",
+    "rule": "Integrate only after rebasing or fast-forwarding to this SHA or a newer origin/dev."
+  },
+  "supersedesForIssue64": "MainMenu_0_5_6",
+  "doNotBindAfterUpgrade": [
+    "Assets/Art/Prototype/UI/MainMenu_0_5_6/"
+  ],
+  "theme": [
+    "western saloon",
+    "high-resolution pixel art",
+    "brass skull-bell sheriff crest",
+    "carved walnut and dark leather"
+  ],
+  "runtimeRoot": "Assets/Art/Prototype/UI/MainMenu_0_5_8/",
+  "assets": [
+    {"file": "start_screen_background_960x540_0_5_8.png", "size": "960x540", "alpha": false, "usage": "main screen composite without baked labels"},
+    {"file": "main_menu_duel_crest_300x190_0_5_8.png", "size": "300x190", "alpha": true, "usage": "approved central crest"},
+    {"file": "main_menu_start_idle_380x84_0_5_8.png", "size": "380x84", "alpha": true, "usage": "START idle"},
+    {"file": "main_menu_start_hover_380x84_0_5_8.png", "size": "380x84", "alpha": true, "usage": "START hover/focus"},
+    {"file": "main_menu_start_pressed_380x84_0_5_8.png", "size": "380x84", "alpha": true, "usage": "START pressed"},
+    {"file": "main_menu_guide_idle_380x84_0_5_8.png", "size": "380x84", "alpha": true, "usage": "GUIDE idle"},
+    {"file": "main_menu_guide_hover_380x84_0_5_8.png", "size": "380x84", "alpha": true, "usage": "GUIDE hover/focus"},
+    {"file": "main_menu_guide_pressed_380x84_0_5_8.png", "size": "380x84", "alpha": true, "usage": "GUIDE pressed"}
+  ],
+  "layout960x540": {
+    "crest": [330, 60, 300, 190],
+    "start": [290, 264, 380, 84],
+    "guide": [290, 354, 380, 84],
+    "languageControls": "Preserve the current live language controls and behavior."
+  },
+  "liveText": {
+    "required": true,
+    "keys": ["UI_MAIN_START", "UI_MAIN_GUIDE"],
+    "rule": "Preview text is review-only. Do not bake localized labels into runtime textures."
+  },
+  "source": {
+    "approvedReference": "source/main_menu_approved_reference_1672x941_0_5_8.png",
+    "imagegenCutout": "source/main_menu_duel_crest_imagegen_source_1536x1024_0_5_8.png",
+    "asepriteComposite": "source/main_menu_approved_composite_960x540_0_5_8.aseprite",
+    "asepriteButtonStates": "source/main_menu_button_states_380x84_0_5_8.aseprite",
+    "generator": "source/generate_main_menu_0_5_8.lua"
+  },
+  "preview": [
+    "preview/main_menu_approved_layout_preview_960x540_0_5_8.png",
+    "preview/main_menu_button_states_960x360_0_5_8.png"
+  ]
+}
