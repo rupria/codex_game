@@ -2,7 +2,9 @@
   "version": "0.3.2",
   "tool": "Aseprite 1.3.18.1",
   "issues": [19, 23],
-  "runtimeRoot": "Assets/Art/Prototype/UI/Halli_0_3_2",
+  "status": "archived_legacy_unreferenced",
+  "runtimeRoot": null,
+  "archiveRuntimeRoot": "ArtReferences/Archive/LegacyRuntime/Halli_0_3_2_Runtime",
   "assets": [
     {"file": "hp_heart_player_filled_24_0_3_2.png", "size": [24, 24], "role": "player_hp_filled"},
     {"file": "hp_heart_player_empty_24_0_3_2.png", "size": [24, 24], "role": "player_hp_empty"},

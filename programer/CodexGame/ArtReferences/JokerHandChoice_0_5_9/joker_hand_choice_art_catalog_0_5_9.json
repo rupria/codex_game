@@ -2,6 +2,7 @@
   "package": "JokerHandChoice_0_5_9",
   "issue": 70,
   "artRevision": "0.5.9",
+  "status": "art_complete_programmer_binding_required",
   "approvedAt": "2026-08-20",
   "baseline": {
     "branch": "dev",

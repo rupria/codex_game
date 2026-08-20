@@ -2,6 +2,7 @@
   "package": "MainMenu_0_5_8",
   "issue": 64,
   "artRevision": "0.5.8",
+  "status": "art_complete_programmer_binding_required",
   "approvedAt": "2026-08-20",
   "baseline": {
     "branch": "dev",
