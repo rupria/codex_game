@@ -1,0 +1,33 @@
+{
+  "artSetId": "halli_layout_contract_0_4_2",
+  "specRevision": "0.6.2",
+  "status": "canonical_runtime_contract_no_new_png",
+  "sourceIssue": 54,
+  "supersedes": {
+    "issue": 46,
+    "package": "Halli_0_4_1",
+    "archiveRoot": "ArtReferences/Archive/LegacyContract/Halli_0_4_1_ConflictingThreeCard/"
+  },
+  "newRuntimePng": false,
+  "layoutAt960x540": {
+    "cardSize": [64, 90],
+    "maximumVisiblePerPile": 2,
+    "horizontalStep": 59,
+    "horizontalOverlapPixels": 5,
+    "horizontalOverlapRatio": 0.078125,
+    "verticalStep": 3,
+    "drawOrder": "latest revealed card is drawn last and stays visually on top; the immediately previous card stays below"
+  },
+  "runtimeContract": {
+    "maximumConstant": "HalliPileOverlapLayout.MaximumPileCards = 2",
+    "historyTrim": "remove the oldest visible history entry before appending the latest one",
+    "topLayer": "latest_revealed",
+    "visibleHistory": ["latest_revealed", "immediately_previous"]
+  },
+  "guardrails": [
+    "Do not restore the three-card Halli_0_4_1 contract.",
+    "Do not place the oldest card above the latest card.",
+    "Do not reorder card IDs, reveal actor mapping, relative-side mapping or bell judgement logic.",
+    "Run audit_runtime_art_bindings_0_6_2.ps1 before accepting any layout change."
+  ]
+}

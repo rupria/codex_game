@@ -12,7 +12,7 @@ if ([string]::IsNullOrWhiteSpace($CodexGameRoot)) {
 }
 
 $assetsRoot = Join-Path $CodexGameRoot "Assets"
-$manifestPath = Join-Path $PSScriptRoot "current_art_runtime_manifest_0_6_1.json"
+$manifestPath = Join-Path $PSScriptRoot "current_art_runtime_manifest_0_6_2.json"
 $builderPath = Join-Path $assetsRoot "Editor\PlayableDevSceneBuilder.cs"
 $scenePath = Join-Path $assetsRoot "Scenes\PlayableDev.unity"
 
@@ -41,10 +41,12 @@ foreach ($entry in $manifest.pendingProgrammerBindings) {
   }
 }
 
-Write-Output "PENDING_PROGRAMMER_LAYOUT_CONTRACTS"
-foreach ($entry in $manifest.pendingProgrammerLayoutContracts) {
+Write-Output "CANONICAL_LAYOUT_CONTRACTS"
+foreach ($entry in $manifest.canonicalLayoutContracts) {
   $layoutPath = Join-Path $assetsRoot "Scripts\Presentation\Views\HalliPileOverlapLayout.cs"
   $layoutText = Get-Content -LiteralPath $layoutPath -Raw
+  $panelPath = Join-Path $assetsRoot "Scripts\Presentation\Views\HalliDevPanel.cs"
+  $panelText = Get-Content -LiteralPath $panelPath -Raw
   $maximumMatch = [regex]::Match(
     $layoutText,
     "MaximumPileCards\s*=\s*(\d+)")
@@ -53,11 +55,40 @@ foreach ($entry in $manifest.pendingProgrammerLayoutContracts) {
   } else {
     -1
   }
-  Write-Output ("issue={0} package={1} expectedMax={2} currentMax={3}" -f `
+  $widthMatch = [regex]::Match($layoutText, "CardWidth\s*=\s*([0-9.]+)f")
+  $stepMatch = [regex]::Match($layoutText, "CardStepX\s*=\s*([0-9.]+)f")
+  $actualOverlapRatio = if ($widthMatch.Success -and $stepMatch.Success) {
+    $width = [double]$widthMatch.Groups[1].Value
+    $step = [double]$stepMatch.Groups[1].Value
+    ($width - $step) / $width
+  } else {
+    1.0
+  }
+  $newestDrawnLast = $layoutText.Contains("return drawIndex;") `
+    -and $panelText.Contains("history.RemoveAt(0);") `
+    -and $panelText.Contains("history.Add(card);")
+  Write-Output ("issue={0} package={1} expectedMax={2} currentMax={3} overlapRatio={4:N3} newestTop={5}" -f `
     $entry.issue,
     $entry.package,
     $entry.expectedMaximumVisiblePerPile,
-    $actualMaximum)
+    $actualMaximum,
+    $actualOverlapRatio,
+    $newestDrawnLast)
+  if ($actualMaximum -ne [int]$entry.expectedMaximumVisiblePerPile `
+    -or $actualOverlapRatio -gt [double]$entry.maximumHorizontalOverlapRatio `
+    -or -not $newestDrawnLast) {
+    $failed = $true
+  }
+}
+
+Write-Output "ARCHIVED_CONFLICTING_CONTRACTS"
+foreach ($entry in $manifest.archivedConflictingContracts) {
+  $restoredContract = Join-Path $CodexGameRoot ("ArtReferences\" + [string]$entry.package)
+  $restored = Test-Path -LiteralPath $restoredContract
+  Write-Output ("package={0} restoredAsCurrent={1}" -f $entry.package, $restored)
+  if ($restored) {
+    $failed = $true
+  }
 }
 
 Write-Output "ARCHIVED_RUNTIME_GUARD"
