@@ -2,6 +2,7 @@
   "package": "PokerItemAction_0_6_0",
   "issue": 71,
   "artRevision": "0.6.0",
+  "status": "art_complete_programmer_binding_required",
   "baselineDev": "f6584d0b41d9f0efc09d8a0b2dd361520276b9c1",
   "supersedes": "Poker_0_3_7 action-button sprites only",
   "runtimeRoot": "Assets/Art/Prototype/UI/PokerItemAction_0_6_0/",

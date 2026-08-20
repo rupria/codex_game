@@ -1,0 +1,103 @@
+{
+  "manifestRevision": "0.6.1",
+  "auditedAt": "2026-08-20",
+  "branch": "dev",
+  "baselineDev": "aedb3bd44df5943491ba58be25c9d86df7f9d056",
+  "policy": {
+    "oneRuntimeRevisionPerSlot": true,
+    "archiveSupersededArt": true,
+    "neverRestoreArchivedRuntimeToAssets": true,
+    "updateBuilderAndRegeneratePlayableSceneTogether": true
+  },
+  "pendingProgrammerBindings": [
+    {
+      "issue": 64,
+      "package": "MainMenu_0_5_8",
+      "runtimeRoot": "Assets/Art/Prototype/UI/MainMenu_0_5_8/",
+      "replaces": "Assets/Art/Prototype/UI/MainMenu_0_5_6/",
+      "symbols": ["PlayableDevSceneBuilder", "MainMenuUiArtSet", "PlayableDevView.DrawIntroArtLayout"]
+    },
+    {
+      "issue": 65,
+      "package": "GuideNav_0_6_0",
+      "runtimeRoot": "Assets/Art/Prototype/UI/GuideNav_0_6_0/",
+      "replaces": "Assets/Art/Prototype/UI/GuideNav_0_5_6/",
+      "symbols": ["PlayableDevSceneBuilder.GuideNavUi056ArtRoot", "GuideUiArtSet", "GuideModalPanel"]
+    },
+    {
+      "issue": 70,
+      "package": "JokerHandChoice_0_5_9",
+      "runtimeRoot": "Assets/Art/Prototype/UI/JokerHandChoice_0_5_9/",
+      "replaces": "Assets/Art/Prototype/UI/JokerHandChoice_0_5_8/",
+      "symbols": ["PokerDevPanel.DrawJokerHandChoice", "PlayableDevView", "PlayableDevSceneBuilder"]
+    },
+    {
+      "issue": 71,
+      "package": "PokerItemAction_0_6_0",
+      "runtimeRoot": "Assets/Art/Prototype/UI/PokerItemAction_0_6_0/",
+      "replaces": "Poker_0_3_7 action button sprites only",
+      "symbols": ["PlayableDevSceneBuilder.pokerItemUiArtSet", "PokerItemUiArtSet.ActionButtonIdle", "PokerItemDevPanel.DrawActionButton"]
+    },
+    {
+      "issue": 72,
+      "package": "ThreeCallEntry_0_6_0",
+      "runtimeRoot": "Assets/Art/Prototype/UI/ThreeCallEntry_0_6_0/",
+      "replaces": "IconOverhaul_0_5_0/phase_three_call_western_64_0_5_0.png",
+      "symbols": ["Presentation0124Panel.DrawThreeCallEntry", "PresentationUiArtSet", "PlayableDevSceneBuilder"]
+    },
+    {
+      "issue": 73,
+      "package": "PokerPredictionClean_0_6_0",
+      "runtimeRoot": "Assets/Art/Prototype/UI/PokerPredictionClean_0_6_0/",
+      "replaces": "IconOverhaul_0_5_0 poker prediction portraits and PokerPredictionResult_0_5_7",
+      "symbols": ["PokerTableLayout", "PokerDevPanel", "PokerUiArtSet", "PlayableDevSceneBuilder"]
+    }
+  ],
+  "verifiedBuilderConnected": [
+    "JokerReveal_0_5_4",
+    "PrivateSelection_0_5_5",
+    "PokerResultLabel_0_5_6",
+    "ShopItemIcons_0_5_6",
+    "StageReward_0_5_5"
+  ],
+  "archivedSupersededRuntime": [
+    {
+      "package": "PokerPredictionResult_0_5_7",
+      "archiveRoot": "ArtReferences/Archive/PokerPredictionResult_0_5_7_Runtime/",
+      "useInstead": "Assets/Art/Prototype/UI/PokerPredictionClean_0_6_0/"
+    },
+    {
+      "package": "JokerHandChoice_0_5_8",
+      "archiveRoot": "ArtReferences/Archive/LegacyRuntime/JokerHandChoice_0_5_8_Runtime/",
+      "useInstead": "Assets/Art/Prototype/UI/JokerHandChoice_0_5_9/"
+    },
+    {
+      "package": "Halli_0_3_2",
+      "archiveRoot": "ArtReferences/Archive/LegacyRuntime/Halli_0_3_2_Runtime/",
+      "useInstead": "current Halli, health and acquired-card art sets bound by PlayableDevSceneBuilder"
+    }
+  ],
+  "serializedLegacyBindings": [
+    {
+      "package": "MainMenu_0_5_6",
+      "currentSceneReferenceCount": 6,
+      "removeWithIssue": 64
+    },
+    {
+      "package": "GuideNav_0_5_6",
+      "currentSceneReferenceCount": 14,
+      "removeWithIssue": 65
+    },
+    {
+      "package": "StageReward_0_5_4",
+      "currentSceneReferenceCount": 3,
+      "replaceWith": "StageReward_0_5_5"
+    }
+  ],
+  "sceneRegenerationRequired": {
+    "scene": "Assets/Scenes/PlayableDev.unity",
+    "reason": "The serialized scene currently retains old GUID bindings such as MainMenu_0_5_6, GuideNav_0_5_6 and StageReward_0_5_4.",
+    "commandEntry": "Codex Game/Playable Dev/Create Scene",
+    "gate": "After all pending bindings are implemented, regenerate and save the scene, then verify that archived or superseded GUIDs are absent."
+  }
+}

@@ -2,6 +2,7 @@
   "package": "GuideNav_0_6_0",
   "issue": 65,
   "artRevision": "0.6.0",
+  "status": "art_complete_programmer_binding_required",
   "baselineDev": "f6584d0b41d9f0efc09d8a0b2dd361520276b9c1",
   "supersedes": "GuideNav_0_5_6",
   "designResolution": "960x540",
