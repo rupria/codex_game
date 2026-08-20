@@ -1,7 +1,8 @@
 {
   "artSetId": "halli_layout_review_0_4_1",
   "specRevision": "0.1.2.5",
-  "status": "visual_contract_programmer_binding_ready",
+  "status": "archived_conflicting_contract_superseded_by_0_4_2_issue_54",
+  "useInstead": "ArtReferences/Halli_0_4_2/",
   "issue": 46,
   "preview": "preview/halli_combined_improved_mock_960x540_0_4_1.png",
   "source": "source/halli_combined_improved_mock_0_4_1.aseprite",

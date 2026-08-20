@@ -1,5 +1,5 @@
 {
-  "manifestRevision": "0.6.1",
+  "manifestRevision": "0.6.2",
   "auditedAt": "2026-08-20",
   "branch": "dev",
   "baselineDev": "1718b90b5eed9822621af53f433096f1d9e497f7",
@@ -7,7 +7,8 @@
     "oneRuntimeRevisionPerSlot": true,
     "archiveSupersededArt": true,
     "neverRestoreArchivedRuntimeToAssets": true,
-    "updateBuilderAndRegeneratePlayableSceneTogether": true
+    "updateBuilderAndRegeneratePlayableSceneTogether": true,
+    "reopenedExplicitAcceptanceCriteriaOverridesOlderArtMock": true
   },
   "pendingProgrammerBindings": [
     {
@@ -53,15 +54,25 @@
       "symbols": ["PokerTableLayout", "PokerDevPanel", "PokerUiArtSet", "PlayableDevSceneBuilder"]
     }
   ],
-  "pendingProgrammerLayoutContracts": [
+  "canonicalLayoutContracts": [
+    {
+      "issue": 54,
+      "package": "Halli_0_4_2",
+      "referenceRoot": "ArtReferences/Halli_0_4_2/",
+      "supersedesIssue": 46,
+      "expectedMaximumVisiblePerPile": 2,
+      "maximumHorizontalOverlapRatio": 0.10,
+      "topCard": "latest_revealed",
+      "symbols": ["HalliPileOverlapLayout.MaximumPileCards", "HalliPileOverlapLayout.DrawOrderIndex", "HalliDevPanel.AppendRecent"]
+    }
+  ],
+  "archivedConflictingContracts": [
     {
       "issue": 46,
       "package": "Halli_0_4_1",
-      "referenceRoot": "ArtReferences/Halli_0_4_1/",
-      "expectedMaximumVisiblePerPile": 3,
-      "currentMaximumVisiblePerPile": 2,
-      "maximumHorizontalOverlapRatio": 0.10,
-      "symbols": ["HalliPileOverlapLayout.MaximumPileCards", "HalliDevPanel._leftPileHistory", "HalliDevPanel._rightPileHistory"]
+      "archiveRoot": "ArtReferences/Archive/LegacyContract/Halli_0_4_1_ConflictingThreeCard/",
+      "useInstead": "ArtReferences/Halli_0_4_2/",
+      "reason": "The three-card and oldest-on-top contract conflicts with reopened P0 issue 54."
     }
   ],
   "verifiedRuntimeConnections": [
