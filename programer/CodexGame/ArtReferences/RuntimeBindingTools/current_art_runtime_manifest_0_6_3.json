@@ -1,8 +1,8 @@
 {
-  "manifestRevision": "0.6.2",
-  "auditedAt": "2026-08-20",
+  "manifestRevision": "0.6.3",
+  "auditedAt": "2026-08-21",
   "branch": "dev",
-  "baselineDev": "1718b90b5eed9822621af53f433096f1d9e497f7",
+  "baselineDev": "884a1afb98baeff3343b7c385f92817219f37765",
   "policy": {
     "oneRuntimeRevisionPerSlot": true,
     "archiveSupersededArt": true,
@@ -26,10 +26,11 @@
       "symbols": ["PlayableDevSceneBuilder.GuideNavUi056ArtRoot", "GuideUiArtSet", "GuideModalPanel"]
     },
     {
-      "issue": 70,
-      "package": "JokerHandChoice_0_5_9",
-      "runtimeRoot": "Assets/Art/Prototype/UI/JokerHandChoice_0_5_9/",
-      "replaces": "Assets/Art/Prototype/UI/JokerHandChoice_0_5_8/",
+      "issue": 74,
+      "relatedIssues": [70, 74],
+      "package": "JokerHandChoice_0_6_0",
+      "runtimeRoot": "Assets/Art/Prototype/UI/JokerHandChoice_0_6_0/",
+      "replaces": "Assets/Art/Prototype/UI/JokerHandChoice_0_5_9/ and JokerHandChoice_0_5_8/",
       "symbols": ["PokerDevPanel.DrawJokerHandChoice", "PlayableDevView", "PlayableDevSceneBuilder"]
     },
     {
@@ -48,9 +49,10 @@
     },
     {
       "issue": 73,
-      "package": "PokerPredictionClean_0_6_0",
-      "runtimeRoot": "Assets/Art/Prototype/UI/PokerPredictionClean_0_6_0/",
-      "replaces": "IconOverhaul_0_5_0 poker prediction portraits and PokerPredictionResult_0_5_7",
+      "relatedIssues": [67, 68, 73],
+      "package": "PokerPredictionClean_0_6_1",
+      "runtimeRoot": "Assets/Art/Prototype/UI/PokerPredictionClean_0_6_1/",
+      "replaces": "PokerPredictionClean_0_6_0, IconOverhaul_0_5_0 poker prediction portraits and PokerPredictionResult_0_5_7",
       "symbols": ["PokerTableLayout", "PokerDevPanel", "PokerUiArtSet", "PlayableDevSceneBuilder"]
     }
   ],
@@ -90,12 +92,22 @@
     {
       "package": "PokerPredictionResult_0_5_7",
       "archiveRoot": "ArtReferences/Archive/PokerPredictionResult_0_5_7_Runtime/",
-      "useInstead": "Assets/Art/Prototype/UI/PokerPredictionClean_0_6_0/"
+      "useInstead": "Assets/Art/Prototype/UI/PokerPredictionClean_0_6_1/"
     },
     {
       "package": "JokerHandChoice_0_5_8",
       "archiveRoot": "ArtReferences/Archive/LegacyRuntime/JokerHandChoice_0_5_8_Runtime/",
-      "useInstead": "Assets/Art/Prototype/UI/JokerHandChoice_0_5_9/"
+      "useInstead": "Assets/Art/Prototype/UI/JokerHandChoice_0_6_0/"
+    },
+    {
+      "package": "JokerHandChoice_0_5_9",
+      "archiveRoot": "ArtReferences/Archive/LegacyRuntime/JokerHandChoice_0_5_9_Runtime/",
+      "useInstead": "Assets/Art/Prototype/UI/JokerHandChoice_0_6_0/"
+    },
+    {
+      "package": "PokerPredictionClean_0_6_0",
+      "archiveRoot": "ArtReferences/Archive/LegacyRuntime/PokerPredictionClean_0_6_0_Runtime/",
+      "useInstead": "Assets/Art/Prototype/UI/PokerPredictionClean_0_6_1/"
     },
     {
       "package": "Halli_0_3_2",

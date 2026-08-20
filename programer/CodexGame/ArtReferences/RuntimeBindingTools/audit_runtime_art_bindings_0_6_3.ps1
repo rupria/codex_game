@@ -12,7 +12,7 @@ if ([string]::IsNullOrWhiteSpace($CodexGameRoot)) {
 }
 
 $assetsRoot = Join-Path $CodexGameRoot "Assets"
-$manifestPath = Join-Path $PSScriptRoot "current_art_runtime_manifest_0_6_2.json"
+$manifestPath = Join-Path $PSScriptRoot "current_art_runtime_manifest_0_6_3.json"
 $builderPath = Join-Path $assetsRoot "Editor\PlayableDevSceneBuilder.cs"
 $scenePath = Join-Path $assetsRoot "Scenes\PlayableDev.unity"
 
@@ -25,6 +25,10 @@ foreach ($required in @($manifestPath, $builderPath, $scenePath)) {
 $manifest = Get-Content -LiteralPath $manifestPath -Raw | ConvertFrom-Json
 $builderText = Get-Content -LiteralPath $builderPath -Raw
 $sceneText = Get-Content -LiteralPath $scenePath -Raw
+$pokerPanelPath = Join-Path $assetsRoot "Scripts\Presentation\Views\PokerDevPanel.cs"
+$pokerLayoutPath = Join-Path $assetsRoot "Scripts\Presentation\Views\PokerTableLayout.cs"
+$pokerPanelText = Get-Content -LiteralPath $pokerPanelPath -Raw
+$pokerLayoutText = Get-Content -LiteralPath $pokerLayoutPath -Raw
 $failed = $false
 
 Write-Output "ART_RUNTIME_AUDIT revision=$($manifest.manifestRevision)"
@@ -40,6 +44,20 @@ foreach ($entry in $manifest.pendingProgrammerBindings) {
     $failed = $true
   }
 }
+
+Write-Output "ISSUE_67_68_73_74_BINDING_STATUS"
+$predictionPackageBound = $builderText.Contains('PokerPredictionClean_0_6_1')
+$jokerPackageBound = $builderText.Contains('JokerHandChoice_0_6_0')
+$predictionLabelsDrawn = $pokerPanelText.Contains('UI_POKER_PREDICTION_TITLE') `
+  -and -not $pokerPanelText.Contains('new GUIContent(string.Empty, label)')
+$largeResultModalRemoved = -not $pokerPanelText.Contains('PokerResultOverlayRenderer.Draw(')
+$predictionLayoutUpdated = $pokerLayoutText.Contains('new Rect(139f, 456f, 232f, 64f)') `
+  -and $pokerLayoutText.Contains('new Rect(589f, 456f, 232f, 64f)')
+$jokerTwoColumnFallbackRemoved = -not $pokerPanelText.Contains('var column = index % 2;')
+Write-Output ("predictionPackageBound={0} labelsDrawn={1} layout232x64={2} largeResultModalRemoved={3}" -f `
+  $predictionPackageBound, $predictionLabelsDrawn, $predictionLayoutUpdated, $largeResultModalRemoved)
+Write-Output ("jokerPackageBound={0} twoColumnFallbackRemoved={1}" -f `
+  $jokerPackageBound, $jokerTwoColumnFallbackRemoved)
 
 Write-Output "CANONICAL_LAYOUT_CONTRACTS"
 foreach ($entry in $manifest.canonicalLayoutContracts) {
