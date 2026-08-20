@@ -1,0 +1,63 @@
+{
+  "package": "JokerHandChoice_0_5_8",
+  "issue": 70,
+  "artRevision": "0.5.8",
+  "approvedAt": "2026-08-20",
+  "baseline": {
+    "branch": "dev",
+    "sha": "db443a7c7c0bdb37614b77c63f945f1b1991a78e",
+    "rule": "Integrate only after rebasing or fast-forwarding to this SHA or a newer origin/dev."
+  },
+  "doNotReuse": [
+    "Assets/Art/Prototype/UI/PrivateSelection_0_5_5/",
+    "ArtReferences/JokerReveal_0_5_3/",
+    "ArtReferences/JokerReveal_0_5_4/"
+  ],
+  "reason": "Those packages belong to private-card selection or Joker reveal animation, not the poker-hand category modal.",
+  "runtimeRoot": "Assets/Art/Prototype/UI/JokerHandChoice_0_5_8/",
+  "assets": [
+    {"file": "joker_hand_choice_dim_960x540_0_5_8.png", "size": "960x540", "alpha": true, "usage": "blocks and dims the table behind the modal"},
+    {"file": "joker_hand_choice_panel_760x420_0_5_8.png", "size": "760x420", "alpha": true, "usage": "fully opaque western modal"},
+    {"file": "joker_hand_option_idle_340x44_0_5_8.png", "size": "340x44", "alpha": true, "usage": "legal hand option idle"},
+    {"file": "joker_hand_option_hover_340x44_0_5_8.png", "size": "340x44", "alpha": true, "usage": "mouse/keyboard focus"},
+    {"file": "joker_hand_option_selected_340x44_0_5_8.png", "size": "340x44", "alpha": true, "usage": "chosen category confirmation"},
+    {"file": "joker_hand_option_disabled_340x44_0_5_8.png", "size": "340x44", "alpha": true, "usage": "unavailable option"}
+  ],
+  "layout960x540": {
+    "dim": [0, 0, 960, 540],
+    "panel": [100, 60, 760, 420],
+    "titleCenter": [480, 198],
+    "guideCenter": [480, 220],
+    "optionGrid": {
+      "columns": 2,
+      "rows": 5,
+      "first": [130, 236, 340, 44],
+      "columnGap": 20,
+      "rowPitch": 46,
+      "maximumOptions": 10
+    }
+  },
+  "liveText": {
+    "required": true,
+    "existingKeys": ["UI_POKER_JOKER_CHOICE_TITLE", "UI_POKER_JOKER_CHOICE_GUIDE"],
+    "categorySource": "CategoryName(option.Category, localization)",
+    "rule": "No Korean or English label is baked into runtime textures."
+  },
+  "behaviorGuardrails": [
+    "Keep snapshot.LegalPlayerJokerOptions as the only option source.",
+    "Keep the existing immediate chooseJokerHand(option.Category) action; do not add a confirm step.",
+    "Block all background pointer and keyboard input while the modal is open.",
+    "Do not change Joker resolution or poker comparison rules."
+  ],
+  "source": {
+    "before": "source/joker_hand_choice_before_852x599_0_5_8.png",
+    "imagegenPanel": "source/joker_hand_choice_panel_imagegen_source_1672x941_0_5_8.png",
+    "asepritePanel": "source/joker_hand_choice_panel_760x420_0_5_8.aseprite",
+    "asepriteOptionStates": "source/joker_hand_option_states_340x44_0_5_8.aseprite",
+    "generator": "source/generate_joker_hand_choice_0_5_8.lua"
+  },
+  "preview": [
+    "preview/joker_hand_choice_opaque_preview_960x540_0_5_8.png",
+    "preview/joker_hand_option_states_960x260_0_5_8.png"
+  ]
+}
