@@ -1,0 +1,17 @@
+{
+  "package": "PokerItemAction_0_6_0",
+  "issue": 71,
+  "artRevision": "0.6.0",
+  "baselineDev": "f6584d0b41d9f0efc09d8a0b2dd361520276b9c1",
+  "supersedes": "Poker_0_3_7 action-button sprites only",
+  "runtimeRoot": "Assets/Art/Prototype/UI/PokerItemAction_0_6_0/",
+  "liveTextRequired": true,
+  "assets": [
+    {"file": "poker_item_action_button_idle_172x44_0_6_0.png", "size": "172x44"},
+    {"file": "poker_item_action_button_hover_172x44_0_6_0.png", "size": "172x44"},
+    {"file": "poker_item_action_button_disabled_172x44_0_6_0.png", "size": "172x44"}
+  ],
+  "change": "Remove the baked center rule and all baked labels so localized live text has an unobstructed 128x20 safe area.",
+  "bindingRequired": true,
+  "note": "Keep the existing item popup, item icons, button rectangles, input callbacks and localization keys. Replace only the three action-button textures."
+}
