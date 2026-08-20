@@ -46,8 +46,9 @@ namespace CodexGame.Presentation.Views
       UpdateRevealHistory(snapshot);
       _remainingCardCountdown.Observe(
         snapshot.CombatRoundSeed,
-        snapshot.RemainingFlipCount,
+        snapshot.RemainingPlayerFlipInputCount,
         snapshot.RevealCommitted,
+        gamePhase == PlayableGamePhase.Halli,
         Time.unscaledTime);
       _flipReadyPrompt.Observe(
         gamePhase == PlayableGamePhase.Halli && snapshot.CanFlip,
