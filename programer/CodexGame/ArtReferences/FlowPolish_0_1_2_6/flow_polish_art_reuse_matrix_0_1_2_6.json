@@ -31,7 +31,7 @@
       "id": "F-06",
       "name": "joker award reveal",
       "verdict": "reuse_with_latest_timing_override",
-      "runtimeRoot": "Assets/Art/Prototype/UI/JokerReveal_0_5_3",
+      "runtimeRoot": "Assets/Art/Prototype/UI/JokerReveal_0_5_4",
       "player": {
         "totalSeconds": 1.0,
         "unskippable": true,
@@ -87,8 +87,8 @@
     "ArtReferences/ItemExpansion_0_5_2_1/preview/insurance_activation_review_960x540_0_5_2_1.png",
     "ArtReferences/ItemExpansion_0_5_2_1/preview/insurance_activation_review_1280x720_0_5_2_1.png",
     "ArtReferences/ItemExpansion_0_5_2_1/preview/insurance_activation_review_1920x1080_0_5_2_1.png",
-    "ArtReferences/JokerReveal_0_5_3/preview/joker_reveal_safe_960x540_0_5_3.png",
-    "ArtReferences/JokerReveal_0_5_3/preview/joker_reveal_safe_1280x720_0_5_3.png",
-    "ArtReferences/JokerReveal_0_5_3/preview/joker_reveal_safe_1920x1080_0_5_3.png"
+    "ArtReferences/JokerReveal_0_5_4/preview/joker_reveal_focus_960x540_0_5_4.png",
+    "ArtReferences/JokerReveal_0_5_4/preview/joker_reveal_settle_960x540_0_5_4.png",
+    "ArtReferences/JokerReveal_0_5_4/preview/joker_reveal_storyboard_4cut_1920x1080_0_5_4.png"
   ]
 }

@@ -1,7 +1,7 @@
 {
   "artSetId": "shop_item_icons_0_5_6",
   "specRevision": "0.1.2.6",
-  "status": "art_complete_programmer_binding_required",
+  "status": "connected_in_dev_builder_view_and_scene",
   "issues": [60],
   "license": "project-owned generated artwork; commercial use and modification allowed",
   "runtimeRoot": "Assets/Art/Prototype/UI/ShopItemIcons_0_5_6/",

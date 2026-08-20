@@ -1,7 +1,7 @@
 {
   "artSetId": "poker_result_label_0_5_6",
   "specRevision": "0.1.2.6",
-  "status": "art_complete_programmer_binding_required",
+  "status": "connected_in_dev_builder_view_and_scene",
   "issues": [58],
   "license": "project-owned generated artwork; commercial use and modification allowed",
   "runtimeRoot": "Assets/Art/Prototype/UI/PokerResultLabel_0_5_6/",

@@ -1,7 +1,7 @@
 {
   "artSetId": "private_selection_0_5_5",
   "specRevision": "0.1.2.6",
-  "status": "art_complete_programmer_binding_required",
+  "status": "connected_in_dev_builder_view_and_scene",
   "issues": [32, 47],
   "license": "project-owned generated artwork; commercial use and modification allowed",
   "runtimeRoot": "Assets/Art/Prototype/UI/PrivateSelection_0_5_5/",

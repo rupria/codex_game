@@ -1,7 +1,7 @@
 {
   "version": "0.5.0",
   "baseDevCommit": "00b389c36610b1669b1f2415cbb81229b6df787c",
-  "status": "dev_shared_art_unconnected",
+  "status": "connected_in_dev_builder_view_and_scene",
   "authoringTool": "Aseprite",
   "runtimeRoot": "Assets/Art/Prototype/UI/IconOverhaul_0_5_0",
   "rules": {

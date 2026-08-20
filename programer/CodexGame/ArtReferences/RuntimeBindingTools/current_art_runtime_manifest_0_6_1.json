@@ -2,7 +2,7 @@
   "manifestRevision": "0.6.1",
   "auditedAt": "2026-08-20",
   "branch": "dev",
-  "baselineDev": "aedb3bd44df5943491ba58be25c9d86df7f9d056",
+  "baselineDev": "1718b90b5eed9822621af53f433096f1d9e497f7",
   "policy": {
     "oneRuntimeRevisionPerSlot": true,
     "archiveSupersededArt": true,
@@ -53,12 +53,27 @@
       "symbols": ["PokerTableLayout", "PokerDevPanel", "PokerUiArtSet", "PlayableDevSceneBuilder"]
     }
   ],
-  "verifiedBuilderConnected": [
-    "JokerReveal_0_5_4",
-    "PrivateSelection_0_5_5",
-    "PokerResultLabel_0_5_6",
-    "ShopItemIcons_0_5_6",
-    "StageReward_0_5_5"
+  "pendingProgrammerLayoutContracts": [
+    {
+      "issue": 46,
+      "package": "Halli_0_4_1",
+      "referenceRoot": "ArtReferences/Halli_0_4_1/",
+      "expectedMaximumVisiblePerPile": 3,
+      "currentMaximumVisiblePerPile": 2,
+      "maximumHorizontalOverlapRatio": 0.10,
+      "symbols": ["HalliPileOverlapLayout.MaximumPileCards", "HalliDevPanel._leftPileHistory", "HalliDevPanel._rightPileHistory"]
+    }
+  ],
+  "verifiedRuntimeConnections": [
+    {"package": "IconOverhaul_0_5_0", "builder": true, "view": true, "savedScene": true},
+    {"package": "IconOverhaul_0_5_1", "builder": true, "view": true, "savedScene": true},
+    {"package": "Bell_UI_0_1_2_4", "builder": true, "view": true, "savedScene": true},
+    {"package": "JokerReveal_0_5_4", "builder": true, "view": true, "savedScene": true},
+    {"package": "PrivateSelection_0_5_5", "builder": true, "view": true, "savedScene": true},
+    {"package": "PokerResultLabel_0_5_6", "builder": true, "view": true, "savedScene": true},
+    {"package": "ShopItemIcons_0_5_6", "builder": true, "view": true, "savedScene": true},
+    {"package": "ItemExpansion_0_5_2", "builder": true, "view": true, "savedScene": true},
+    {"package": "StageReward_0_5_5", "builder": true, "view": true, "savedScene": false}
   ],
   "archivedSupersededRuntime": [
     {
@@ -75,6 +90,11 @@
       "package": "Halli_0_3_2",
       "archiveRoot": "ArtReferences/Archive/LegacyRuntime/Halli_0_3_2_Runtime/",
       "useInstead": "current Halli, health and acquired-card art sets bound by PlayableDevSceneBuilder"
+    },
+    {
+      "package": "JokerReveal_0_5_3",
+      "archiveRoot": "ArtReferences/Archive/LegacyRuntime/JokerReveal_0_5_3_Runtime/",
+      "useInstead": "Assets/Art/Prototype/UI/JokerReveal_0_5_4/"
     }
   ],
   "serializedLegacyBindings": [
