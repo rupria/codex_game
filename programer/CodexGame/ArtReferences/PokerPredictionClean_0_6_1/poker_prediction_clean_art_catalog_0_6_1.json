@@ -1,0 +1,95 @@
+{
+  "artSetId": "poker_prediction_clean_0_6_1",
+  "issues": [67, 68, 73],
+  "artRevision": "0.6.1",
+  "status": "art_complete_programmer_binding_required",
+  "runtimeRoot": "Assets/Art/Prototype/UI/PokerPredictionClean_0_6_1/",
+  "sourceRoot": "ArtReferences/PokerPredictionClean_0_6_1/source/",
+  "previewRoot": "ArtReferences/PokerPredictionClean_0_6_1/preview/",
+  "supersedes": [
+    "Assets/Art/Prototype/UI/PokerPredictionClean_0_6_0/",
+    "ArtReferences/Archive/PokerPredictionResult_0_5_7_Runtime/"
+  ],
+  "referenceResolution": [960, 540],
+  "rules": {
+    "communityCardMaximum": 2,
+    "bakedText": false,
+    "legacyButtonPictograms": false,
+    "largeResultModal": false,
+    "allLabels": "runtime localized text"
+  },
+  "runtimeAssets": [
+    {"pattern": "poker_prediction_player_{idle|hover|selected|disabled}_232x64_0_6_1.png", "usage": "left win prediction tab"},
+    {"pattern": "poker_prediction_ai_{idle|hover|selected|disabled}_232x64_0_6_1.png", "usage": "right lose prediction tab"},
+    {"file": "poker_prediction_title_plate_320x48_0_6_1.png", "usage": "prediction phase or result title"},
+    {"pattern": "poker_result_continue_{idle|hover}_164x44_0_6_1.png", "usage": "result continue action"},
+    {"file": "poker_prediction_stage_emblem_40_0_6_1.png", "usage": "title emblem"},
+    {"file": "poker_insurance_remaining_icon_28_0_6_1.png", "usage": "insurance remaining only when insurance was used"},
+    {"file": "poker_prediction_success_icon_28_0_6_1.png", "usage": "prediction success count beside item chest"}
+  ],
+  "layout960x540": {
+    "titlePlateRect": [320, 20, 320, 48],
+    "titleEmblemRect": [332, 24, 40, 40],
+    "titleTextSafeRect": [384, 30, 232, 28],
+    "aiCardFirstRect": [384, 80, 56, 78],
+    "aiCardStepX": 68,
+    "communityCardFirstRect": [416, 218, 56, 78],
+    "communityCardStepX": 72,
+    "communityCardMaximum": 2,
+    "playerCardFirstRect": [380, 338, 56, 78],
+    "playerCardStepX": 72,
+    "insuranceRemainingIconRect": [690, 112, 28, 28],
+    "insuranceRemainingTextRect": [724, 112, 118, 28],
+    "itemChestRect": [650, 350, 88, 76],
+    "predictionSuccessIconRect": [624, 428, 28, 28],
+    "predictionSuccessTextRect": [660, 428, 132, 28],
+    "playerPredictionVisualRect": [139, 456, 232, 64],
+    "playerPredictionTextRect": [161, 467, 188, 38],
+    "playerPredictionHitRect": [131, 448, 248, 80],
+    "aiPredictionVisualRect": [589, 456, 232, 64],
+    "aiPredictionTextRect": [611, 467, 188, 38],
+    "aiPredictionHitRect": [581, 448, 248, 80],
+    "continueVisualRect": [398, 490, 164, 44],
+    "continueTextRect": [424, 498, 112, 28],
+    "continueHitRect": [390, 482, 180, 56]
+  },
+  "liveTextStyle": {
+    "font": "NotoSansKR-Regular",
+    "fontSize": 15,
+    "color": "#CDC7BB",
+    "shadowColor": "#18110C",
+    "shadowOffset": [1, 1],
+    "alignment": "MiddleCenter"
+  },
+  "localizedText": {
+    "predictionTitle": "UI_POKER_PREDICTION_TITLE",
+    "playerWins": "UI_POKER_PLAYER_WINS",
+    "playerLoses": "UI_POKER_PLAYER_LOSES",
+    "insuranceRemaining": "UI_PREDICTION_INSURANCE_REMAINING",
+    "predictionSuccess": "UI_PREDICTION_SUCCESS_COUNT",
+    "continue": "UI_COMMON_CONTINUE"
+  },
+  "binding": {
+    "layout": "PokerTableLayout",
+    "view": "PokerDevPanel",
+    "artSet": "PokerUiArtSet",
+    "builder": "PlayableDevSceneBuilder.pokerUiArtSet",
+    "resultOverlayToRemove": "PokerResultOverlayRenderer.Draw",
+    "legacyPlayerPrefixToRemove": "Assets/Art/Prototype/UI/IconOverhaul_0_5_0/poker_predict_player_portrait_",
+    "legacyAiPrefixToRemove": "Assets/Art/Prototype/UI/IconOverhaul_0_5_0/poker_predict_ai_portrait_"
+  },
+  "previews": [
+    "preview/poker_prediction_phase_approved_960x540_0_6_1.png",
+    "preview/poker_result_no_modal_approved_960x540_0_6_1.png",
+    "preview/poker_prediction_button_text_approved_960x540_0_6_1.png",
+    "preview/poker_prediction_clean_asset_states_960x360_0_6_1.png"
+  ],
+  "guardrails": [
+    "Never render more than two community cards.",
+    "Do not restore PokerPredictionClean_0_6_0 or PokerPredictionResult_0_5_7 as active runtime art.",
+    "Do not draw the old 60x60 portrait buttons or their unclear pictograms.",
+    "Do not restore the central large rectangular result modal.",
+    "Draw localized labels over the text-safe rectangles; textures contain no text.",
+    "Do not change prediction, insurance, timeout, HP, reward, or card rules."
+  ]
+}

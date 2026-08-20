@@ -1,0 +1,60 @@
+{
+  "package": "JokerHandChoice_0_6_0",
+  "issues": [70, 74],
+  "artRevision": "0.6.0",
+  "status": "art_complete_programmer_binding_required",
+  "runtimeRoot": "Assets/Art/Prototype/UI/JokerHandChoice_0_6_0/",
+  "sourceRoot": "ArtReferences/JokerHandChoice_0_6_0/source/",
+  "previewRoot": "ArtReferences/JokerHandChoice_0_6_0/preview/",
+  "supersedes": [
+    "Assets/Art/Prototype/UI/JokerHandChoice_0_5_9/",
+    "Assets/Art/Prototype/UI/JokerHandChoice_0_5_8/"
+  ],
+  "changes": [
+    "The obsolete vertical brass rule behind the option list is removed.",
+    "The approved one-column legal-hand list and all existing state colors are preserved."
+  ],
+  "assets": [
+    {"file": "joker_hand_choice_dim_960x540_0_6_0.png", "size": [960, 540], "usage": "input-blocking dim"},
+    {"file": "joker_hand_choice_panel_compact_600x420_0_6_0.png", "size": [600, 420], "usage": "opaque panel without the vertical center rule"},
+    {"pattern": "joker_hand_option_{idle|hover|selected|disabled}_440x44_0_6_0.png", "size": [440, 44], "usage": "legal hand option states"}
+  ],
+  "layout960x540": {
+    "dim": [0, 0, 960, 540],
+    "panel": [180, 60, 600, 420],
+    "titleCenter": [480, 198],
+    "guideCenter": [480, 220],
+    "optionList": {
+      "columns": 1,
+      "first": [260, 236, 440, 44],
+      "rowPitch": 46,
+      "directVisibleMaximum": 5,
+      "overflowRule": "Keep one column and scroll; never return to a two-column grid.",
+      "emptySlotRule": "Render no placeholder for a missing option."
+    }
+  },
+  "liveText": {
+    "required": true,
+    "keys": ["UI_POKER_JOKER_CHOICE_TITLE", "UI_POKER_JOKER_CHOICE_GUIDE"],
+    "categorySource": "CategoryName(option.Category, localization)",
+    "rule": "No Korean or English label is baked into runtime textures."
+  },
+  "binding": {
+    "view": "PokerDevPanel.DrawJokerHandChoice",
+    "builder": "PlayableDevSceneBuilder",
+    "replaceFallback": "GUI.Box and the two-column 208x36 grid"
+  },
+  "previews": [
+    "preview/joker_hand_choice_panel_no_vertical_line_600x420_0_6_0.png",
+    "preview/joker_hand_choice_vertical_4_preview_960x540_0_6_0.png",
+    "preview/joker_hand_option_states_960x260_0_6_0.png"
+  ],
+  "guardrails": [
+    "Use snapshot.LegalPlayerJokerOptions as the only option source.",
+    "Keep one column and render no empty placeholders.",
+    "Do not restore JokerHandChoice_0_5_9 or JokerHandChoice_0_5_8 as active runtime art.",
+    "Keep chooseJokerHand(option.Category) as the immediate action.",
+    "Block background input while the modal is open.",
+    "Do not change Joker resolution or poker comparison rules."
+  ]
+}
