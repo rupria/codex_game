@@ -1,0 +1,79 @@
+{
+  "artSetId": "poker_prediction_result_0_5_7",
+  "specRevision": "0.1.2.6",
+  "status": "art_complete_programmer_binding_required",
+  "issues": [67, 68],
+  "license": "project-owned generated artwork; commercial use and modification allowed",
+  "runtimeRoot": "Assets/Art/Prototype/UI/PokerPredictionResult_0_5_7/",
+  "sourceRoot": "ArtReferences/PokerPredictionResult_0_5_7/source/",
+  "previewRoot": "ArtReferences/PokerPredictionResult_0_5_7/preview/",
+  "referenceResolution": [960, 540],
+  "rules": {
+    "communityCardMaximum": 2,
+    "playerPrivateCardCount": 3,
+    "aiPrivateCardCount": 3,
+    "predictionSuccessMaximum": 5,
+    "insuranceDisplay": "show only remaining charges after insurance item activation",
+    "resultOverlay": "remove large rectangular result popup and place content directly on the round table"
+  },
+  "layout960x540": {
+    "predictionStageEmblemRect": [460, 22, 40, 40],
+    "aiCardFirstRect": [384, 80, 56, 78],
+    "aiCardStepX": 68,
+    "communityCardFirstRect": [416, 218, 56, 78],
+    "communityCardStepX": 72,
+    "communityCardMaximum": 2,
+    "playerCardFirstRect": [380, 338, 56, 78],
+    "playerCardStepX": 72,
+    "insuranceRemainingIconRect": [690, 112, 28, 28],
+    "insuranceRemainingTextRect": [724, 112, 118, 28],
+    "itemChestRect": [650, 350, 88, 76],
+    "predictionSuccessIconRect": [624, 428, 28, 28],
+    "predictionSuccessTextRect": [660, 428, 132, 28],
+    "playerPredictionVisualRect": [139, 456, 232, 64],
+    "playerPredictionHitRect": [131, 448, 248, 80],
+    "aiPredictionVisualRect": [589, 456, 232, 64],
+    "aiPredictionHitRect": [581, 448, 248, 80],
+    "continueVisualRect": [398, 490, 164, 44],
+    "continueHitRect": [390, 482, 180, 56]
+  },
+  "localizedText": {
+    "predictionTitle": "UI_POKER_PREDICTION_TITLE",
+    "playerWins": "UI_POKER_PLAYER_WINS",
+    "aiWins": "UI_POKER_PLAYER_LOSES",
+    "insuranceRemaining": "UI_PREDICTION_INSURANCE_REMAINING",
+    "predictionSuccess": "UI_PREDICTION_SUCCESS_COUNT",
+    "continue": "UI_COMMON_CONTINUE"
+  },
+  "assets": [
+    {"id":"player_idle","file":"poker_prediction_player_idle_232x64_0_5_7.png","size":[232,64]},
+    {"id":"player_hover","file":"poker_prediction_player_hover_232x64_0_5_7.png","size":[232,64]},
+    {"id":"player_selected","file":"poker_prediction_player_selected_232x64_0_5_7.png","size":[232,64]},
+    {"id":"player_disabled","file":"poker_prediction_player_disabled_232x64_0_5_7.png","size":[232,64]},
+    {"id":"ai_idle","file":"poker_prediction_ai_idle_232x64_0_5_7.png","size":[232,64]},
+    {"id":"ai_hover","file":"poker_prediction_ai_hover_232x64_0_5_7.png","size":[232,64]},
+    {"id":"ai_selected","file":"poker_prediction_ai_selected_232x64_0_5_7.png","size":[232,64]},
+    {"id":"ai_disabled","file":"poker_prediction_ai_disabled_232x64_0_5_7.png","size":[232,64]},
+    {"id":"continue_idle","file":"poker_result_continue_idle_164x44_0_5_7.png","size":[164,44]},
+    {"id":"continue_hover","file":"poker_result_continue_hover_164x44_0_5_7.png","size":[164,44]},
+    {"id":"insurance_remaining_icon","file":"poker_insurance_remaining_icon_28_0_5_7.png","size":[28,28]},
+    {"id":"prediction_success_icon","file":"poker_prediction_success_icon_28_0_5_7.png","size":[28,28]},
+    {"id":"prediction_stage_emblem","file":"poker_prediction_stage_emblem_40_0_5_7.png","size":[40,40]}
+  ],
+  "import": {
+    "textureType": "Sprite (2D and UI)",
+    "filterMode": "Point",
+    "compression": "Uncompressed",
+    "mipMaps": false,
+    "alphaIsTransparency": true
+  },
+  "guardrails": [
+    "Never render more than two community cards.",
+    "Do not restore the large rectangular result panel or old fixed result popup.",
+    "Show the insurance status only when the insurance item was activated in the current stage, and display remaining charges only.",
+    "Use PredictionRewardSnapshot.RewardSuccessCount for the chest-side success counter and cap the label at 5.",
+    "Keep localized text out of textures and draw it inside the catalog text rectangles.",
+    "Preserve a larger invisible hit rectangle than the visible prediction control.",
+    "Do not change prediction calculation, insurance consumption, timeout, HP, reward, or card rules."
+  ]
+}
