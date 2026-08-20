@@ -22,6 +22,7 @@ namespace CodexGame.Application.Playable
       IReadOnlyList<Card> aiAcquiredCards,
       int winTarget,
       int flipCount,
+      int remainingPlayerFlipInputCount,
       int remainingDeckCards,
       long remainingMicroseconds,
       HalliActor leadActor,
@@ -57,6 +58,7 @@ namespace CodexGame.Application.Playable
       AiAcquiredCards = Copy(aiAcquiredCards);
       WinTarget = winTarget;
       FlipCount = flipCount;
+      RemainingPlayerFlipInputCount = remainingPlayerFlipInputCount;
       RemainingDeckCards = remainingDeckCards;
       RemainingMicroseconds = remainingMicroseconds;
       LeadActor = leadActor;
@@ -93,7 +95,7 @@ namespace CodexGame.Application.Playable
     public IReadOnlyList<Card> AiAcquiredCards { get; }
     public int WinTarget { get; }
     public int FlipCount { get; }
-    public int RemainingFlipCount => Math.Max(0, GameRules.HalliDistributionLimit - FlipCount);
+    public int RemainingPlayerFlipInputCount { get; }
     public int RemainingDeckCards { get; }
     public long RemainingMicroseconds { get; }
     public HalliActor LeadActor { get; }

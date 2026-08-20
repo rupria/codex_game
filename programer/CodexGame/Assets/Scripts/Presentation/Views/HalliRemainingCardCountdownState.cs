@@ -9,41 +9,67 @@ namespace CodexGame.Presentation.Views
     public const double FadeOutSeconds = 0.20d;
     public const double TotalDurationSeconds = PopInSeconds + HoldSeconds + FadeOutSeconds;
 
-    private long _roundSeed = long.MinValue;
-    private int _previousRemainingFlips = -1;
+    private long _entryToken = long.MinValue;
+    private int _previousRemainingPlayerInputs = -1;
+    private bool _wasActive;
     private double _startedAtSeconds = double.NegativeInfinity;
 
     public int ActiveValue { get; private set; }
     public int FrameIndex => 5 - ActiveValue;
 
     public bool Observe(
-      long roundSeed,
-      int remainingFlips,
+      long entryToken,
+      int remainingPlayerInputs,
       bool revealCommitted,
+      bool isThreeCallActive,
       double nowSeconds)
     {
-      if (remainingFlips < 0) throw new ArgumentOutOfRangeException(nameof(remainingFlips));
+      if (remainingPlayerInputs < 0)
+      {
+        throw new ArgumentOutOfRangeException(nameof(remainingPlayerInputs));
+      }
       if (nowSeconds < 0d) throw new ArgumentOutOfRangeException(nameof(nowSeconds));
 
-      if (_roundSeed != roundSeed || _previousRemainingFlips < 0)
+      if (_entryToken != entryToken || _previousRemainingPlayerInputs < 0)
       {
-        _roundSeed = roundSeed;
-        _previousRemainingFlips = remainingFlips;
+        _entryToken = entryToken;
+        _previousRemainingPlayerInputs = remainingPlayerInputs;
+        _wasActive = false;
+        ActiveValue = 0;
+        _startedAtSeconds = double.NegativeInfinity;
+      }
+
+      if (!isThreeCallActive)
+      {
+        _wasActive = false;
         ActiveValue = 0;
         _startedAtSeconds = double.NegativeInfinity;
         return false;
       }
 
-      // The remaining distribution count drops when the player starts a flip.
-      // Wait until the reveal is committed so the full alert is visible alongside
-      // the readable face-up card instead of being consumed by its motion.
+      if (!_wasActive)
+      {
+        _wasActive = true;
+        _previousRemainingPlayerInputs = remainingPlayerInputs;
+        if (remainingPlayerInputs < 1 || remainingPlayerInputs > 5) return false;
+
+        ActiveValue = remainingPlayerInputs;
+        _startedAtSeconds = nowSeconds;
+        return true;
+      }
+
+      // The count drops when the player input is accepted. Wait for that player's
+      // face-up reveal to commit so the badge is not consumed by card motion.
       if (!revealCommitted) return false;
 
-      var decreased = remainingFlips < _previousRemainingFlips;
-      _previousRemainingFlips = remainingFlips;
-      if (!decreased || remainingFlips < 1 || remainingFlips > 5) return false;
+      var decreased = remainingPlayerInputs < _previousRemainingPlayerInputs;
+      _previousRemainingPlayerInputs = remainingPlayerInputs;
+      if (!decreased || remainingPlayerInputs < 1 || remainingPlayerInputs > 5)
+      {
+        return false;
+      }
 
-      ActiveValue = remainingFlips;
+      ActiveValue = remainingPlayerInputs;
       _startedAtSeconds = nowSeconds;
       return true;
     }

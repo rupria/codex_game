@@ -82,9 +82,9 @@ namespace CodexGame.SmokeTests.Playable
         ready.Phase == PrototypeSessionPhase.ReadyToFlip
           && ready.CanFlip
           && ready.CanRing
-          && ready.RemainingFlipCount == GameRules.HalliDistributionLimit
+          && ready.RemainingPlayerFlipInputCount == GameRules.HalliDistributionLimit * 2
           && ready.RemainingMicroseconds == GameRules.BellInputTimeoutMicroseconds,
-        "The opening must expose all 12 remaining distributions and start a 30-second bell window.");
+        "The opening must expose all 24 player flip inputs and start a 30-second bell window.");
 
       var startedAt = new GameTimestamp(1);
       session.Advance(startedAt);
@@ -94,10 +94,10 @@ namespace CodexGame.SmokeTests.Playable
           && moving.FlipCount == 1
           && moving.RevealStepNumber == 1
           && !moving.RevealCommitted
-          && moving.RemainingFlipCount == GameRules.HalliDistributionLimit - 1
+          && moving.RemainingPlayerFlipInputCount == GameRules.HalliDistributionLimit * 2 - 1
           && moving.LeftPile.Count == 0
           && moving.CanRing,
-        "The first W input must consume one distribution, expose 11 remaining, and keep the moving card ineligible.");
+        "The first W input must consume one player input, expose 23 remaining, and keep the moving card ineligible.");
 
       var firstFaceUpAt = new GameTimestamp(startedAt.Microseconds + 221_000);
       session.Tick(firstFaceUpAt);
@@ -114,6 +114,7 @@ namespace CodexGame.SmokeTests.Playable
       tests.Check(
         waiting.Phase == PrototypeSessionPhase.ReadyToFlip
           && waiting.CanFlip
+          && waiting.RemainingPlayerFlipInputCount == GameRules.HalliDistributionLimit * 2 - 1
           && waiting.LeftPile.Count == 1
           && waiting.RightPile.Count == 1
           && waiting.RemainingDeckCards == 49,
@@ -123,6 +124,7 @@ namespace CodexGame.SmokeTests.Playable
       var secondInput = session.GetSnapshot(new GameTimestamp(pairFinishedAt.Microseconds + 1));
       tests.Check(
         secondInput.RevealStepNumber == 3
+          && secondInput.RemainingPlayerFlipInputCount == GameRules.HalliDistributionLimit * 2 - 2
           && secondInput.RevealingActor == HalliActor.Player
           && secondInput.RevealingRelativeSide == HalliRelativeSide.Right
           && secondInput.RevealingPile == PileSide.Right,

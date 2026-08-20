@@ -23,6 +23,7 @@ HalliRuleTests.Run(tests);
 HalliStageTests.Run(tests);
 HalliRevealSequenceTests.Run(tests);
 PrototypeHalliSessionTests.Run(tests);
+HalliRemainingPlayerFlipCounterTests.Run(tests);
 PrivateCardDistributionTests.Run(tests);
 PokerEvaluatorTests.Run(tests);
 PokerJokerRulesTests.Run(tests);

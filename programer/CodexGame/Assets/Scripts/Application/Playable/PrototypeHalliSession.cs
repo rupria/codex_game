@@ -169,8 +169,10 @@ namespace CodexGame.Application.Playable
         ? EmptyCards
         : _ledger.GetCards(CardZone.AiAcquired);
       var remaining = GetRemainingMicroseconds(now);
+      var remainingPlayerFlipInputCount = GetRemainingPlayerFlipInputCount();
       var canFlip = (Phase == PrototypeSessionPhase.ReadyToFlip
-          || Phase == PrototypeSessionPhase.BellOpen);
+          || Phase == PrototypeSessionPhase.BellOpen)
+        && remainingPlayerFlipInputCount > 0;
       var canRing = CanAcceptBell();
       var revealProgress = GetRevealProgress(now);
 
@@ -187,6 +189,7 @@ namespace CodexGame.Application.Playable
         aiAcquired,
         HalliStageRules.GetWinTarget(_combatRoundNumber),
         _flipCount,
+        remainingPlayerFlipInputCount,
         _deck == null ? 0 : _deck.RemainingCount,
         remaining,
         _turnOrder.LeadActor,
@@ -252,6 +255,12 @@ namespace CodexGame.Application.Playable
 
     private void StartFlip(GameTimestamp now)
     {
+      if (GetRemainingPlayerFlipInputCount() <= 0)
+      {
+        Finish(HalliStageEndReason.InsufficientCards);
+        return;
+      }
+
       if (_nextRevealStepIndex == 0)
       {
         var endReason = ResolveEndReason();
@@ -722,6 +731,34 @@ namespace CodexGame.Application.Playable
         _flipCount,
         _deck.RemainingCount,
         _combatRoundNumber);
+    }
+
+    private int GetRemainingPlayerFlipInputCount()
+    {
+      if (_deck == null || Phase == PrototypeSessionPhase.Finished) return 0;
+
+      var revealStep = _currentRevealStep;
+      var currentDistributionHasSecondPlayerInput =
+        (Phase == PrototypeSessionPhase.ReadyToFlip
+          || Phase == PrototypeSessionPhase.BellOpen)
+          && _nextRevealStepIndex == 2;
+      if (Phase == PrototypeSessionPhase.SequentialReveal
+        && revealStep.HasValue
+        && revealStep.Value.Number <= 2)
+      {
+        currentDistributionHasSecondPlayerInput = true;
+      }
+
+      var currentPlayerInputAwaitsAiResponse =
+        Phase == PrototypeSessionPhase.SequentialReveal
+        && revealStep.HasValue
+        && revealStep.Value.Actor == HalliActor.Player;
+
+      return HalliRemainingPlayerFlipCounter.Calculate(
+        _flipCount,
+        currentDistributionHasSecondPlayerInput,
+        _deck.RemainingCount,
+        currentPlayerInputAwaitsAiResponse);
     }
 
     private void Finish(HalliStageEndReason endReason)
