@@ -1,0 +1,68 @@
+{
+  "package": "JokerHandChoice_0_5_9",
+  "issue": 70,
+  "artRevision": "0.5.9",
+  "approvedAt": "2026-08-20",
+  "baseline": {
+    "branch": "dev",
+    "sha": "f8be7eb11d3f4dfe8b8d836aeb67c1e89e5dba27",
+    "rule": "Integrate only after fast-forwarding to this SHA or a newer origin/dev."
+  },
+  "supersedes": [
+    "Assets/Art/Prototype/UI/JokerHandChoice_0_5_8/"
+  ],
+  "doNotReuse": [
+    "Assets/Art/Prototype/UI/PrivateSelection_0_5_5/",
+    "ArtReferences/JokerReveal_0_5_3/",
+    "ArtReferences/JokerReveal_0_5_4/"
+  ],
+  "runtimeRoot": "Assets/Art/Prototype/UI/JokerHandChoice_0_5_9/",
+  "assets": [
+    {"file": "joker_hand_choice_dim_960x540_0_5_9.png", "size": "960x540", "alpha": true, "usage": "blocks and dims the table behind the modal"},
+    {"file": "joker_hand_choice_panel_compact_600x420_0_5_9.png", "size": "600x420", "alpha": true, "usage": "compact fully opaque western modal"},
+    {"file": "joker_hand_option_idle_440x44_0_5_9.png", "size": "440x44", "alpha": true, "usage": "legal hand option idle"},
+    {"file": "joker_hand_option_hover_440x44_0_5_9.png", "size": "440x44", "alpha": true, "usage": "mouse or keyboard focus"},
+    {"file": "joker_hand_option_selected_440x44_0_5_9.png", "size": "440x44", "alpha": true, "usage": "chosen category confirmation"},
+    {"file": "joker_hand_option_disabled_440x44_0_5_9.png", "size": "440x44", "alpha": true, "usage": "temporarily unavailable legal option only"}
+  ],
+  "layout960x540": {
+    "dim": [0, 0, 960, 540],
+    "panel": [180, 60, 600, 420],
+    "titleCenter": [480, 198],
+    "guideCenter": [480, 220],
+    "optionList": {
+      "columns": 1,
+      "first": [260, 236, 440, 44],
+      "rowPitch": 46,
+      "directVisibleMaximum": 5,
+      "overflowRule": "Keep one column and scroll; never return to a two-column grid.",
+      "emptySlotRule": "Render no placeholder for a missing option."
+    }
+  },
+  "liveText": {
+    "required": true,
+    "existingKeys": ["UI_POKER_JOKER_CHOICE_TITLE", "UI_POKER_JOKER_CHOICE_GUIDE"],
+    "categorySource": "CategoryName(option.Category, localization)",
+    "rule": "No Korean or English label is baked into runtime textures."
+  },
+  "behaviorGuardrails": [
+    "Use snapshot.LegalPlayerJokerOptions as the only option source.",
+    "Draw legal options in one vertical column in source order.",
+    "Do not draw empty or unavailable-category placeholders.",
+    "Keep chooseJokerHand(option.Category) as the immediate action; do not add a confirm step.",
+    "Block all background pointer and keyboard input while the modal is open.",
+    "Do not change Joker resolution or poker comparison rules."
+  ],
+  "source": {
+    "before": "source/joker_hand_choice_before_852x599_0_5_9.png",
+    "approvedDirection": "source/joker_hand_choice_vertical_reference_1672x941_0_5_9.png",
+    "panelBase": "source/joker_hand_choice_panel_base_760x420_0_5_9.png",
+    "asepritePanel": "source/joker_hand_choice_panel_compact_600x420_0_5_9.aseprite",
+    "asepriteOptionStates": "source/joker_hand_option_states_440x44_0_5_9.aseprite",
+    "generator": "source/generate_joker_hand_choice_0_5_9.lua"
+  },
+  "preview": [
+    "preview/joker_hand_choice_vertical_4_preview_960x540_0_5_9.png",
+    "preview/joker_hand_option_states_960x260_0_5_9.png"
+  ]
+}
