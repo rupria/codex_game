@@ -1,0 +1,194 @@
+{
+  "manifestRevision": "0.6.4",
+  "auditedAt": "2026-08-21",
+  "branch": "dev",
+  "baselineDev": "6df799c79b613404284338a4e86364112941ac92",
+  "supersedes": "current_art_runtime_manifest_0_6_3.json",
+  "incident": "0.1.2.07.02-runtime-art-regression",
+  "policy": {
+    "oneRuntimeRevisionPerSlot": true,
+    "archiveSupersededArt": true,
+    "neverRestoreArchivedRuntimeToAssets": true,
+    "updateBuilderAndRegeneratePlayableSceneTogether": true,
+    "reopenedExplicitAcceptanceCriteriaOverridesOlderArtMock": true,
+    "failBuildOnMissingRuntimeRoot": true,
+    "failBuildOnMissingBuilderBinding": true,
+    "failBuildOnMissingSceneBinding": true,
+    "failBuildOnLegacyBuilderBinding": true,
+    "failBuildOnLegacySceneBinding": true,
+    "assetApprovalDoesNotMeanRuntimeApplied": true,
+    "issueClosureDoesNotMeanBuildVerified": true
+  },
+  "requiredRuntimeBindings": [
+    {
+      "issue": 64,
+      "package": "MainMenu_0_5_8",
+      "runtimeRoot": "Assets/Art/Prototype/UI/MainMenu_0_5_8/",
+      "replaces": ["MainMenu_0_5_6"],
+      "requireBuilderBinding": true,
+      "requireSceneBinding": true
+    },
+    {
+      "issue": 65,
+      "package": "GuideNav_0_6_0",
+      "runtimeRoot": "Assets/Art/Prototype/UI/GuideNav_0_6_0/",
+      "replaces": ["GuideNav_0_5_6"],
+      "requireBuilderBinding": true,
+      "requireSceneBinding": true
+    },
+    {
+      "issue": 74,
+      "relatedIssues": [70, 74],
+      "package": "JokerHandChoice_0_6_0",
+      "runtimeRoot": "Assets/Art/Prototype/UI/JokerHandChoice_0_6_0/",
+      "replaces": ["JokerHandChoice_0_5_8", "JokerHandChoice_0_5_9"],
+      "requireBuilderBinding": true,
+      "requireSceneBinding": true
+    },
+    {
+      "issue": 71,
+      "package": "PokerItemAction_0_6_0",
+      "runtimeRoot": "Assets/Art/Prototype/UI/PokerItemAction_0_6_0/",
+      "replaces": [],
+      "requireBuilderBinding": true,
+      "requireSceneBinding": true
+    },
+    {
+      "issue": 72,
+      "package": "ThreeCallEntry_0_6_0",
+      "runtimeRoot": "Assets/Art/Prototype/UI/ThreeCallEntry_0_6_0/",
+      "replaces": [],
+      "requireBuilderBinding": true,
+      "requireSceneBinding": true
+    },
+    {
+      "issue": 73,
+      "relatedIssues": [67, 68, 73],
+      "package": "PokerPredictionClean_0_6_1",
+      "runtimeRoot": "Assets/Art/Prototype/UI/PokerPredictionClean_0_6_1/",
+      "replaces": ["PokerPredictionClean_0_6_0", "PokerPredictionResult_0_5_7"],
+      "requireBuilderBinding": true,
+      "requireSceneBinding": true
+    }
+  ],
+  "canonicalLayoutContracts": [
+    {
+      "issue": 54,
+      "package": "Halli_0_4_2",
+      "referenceRoot": "ArtReferences/Halli_0_4_2/",
+      "supersedesIssue": 46,
+      "expectedMaximumVisiblePerPile": 2,
+      "maximumHorizontalOverlapRatio": 0.10,
+      "topCard": "latest_revealed"
+    }
+  ],
+  "archivedConflictingContracts": [
+    {
+      "issue": 46,
+      "package": "Halli_0_4_1",
+      "archiveRoot": "ArtReferences/Archive/LegacyContract/Halli_0_4_1_ConflictingThreeCard/",
+      "useInstead": "ArtReferences/Halli_0_4_2/",
+      "reason": "The three-card and oldest-on-top contract conflicts with reopened P0 issue 54."
+    }
+  ],
+  "archivedSupersededRuntime": [
+    {
+      "package": "PokerPredictionResult_0_5_7",
+      "archiveRoot": "ArtReferences/Archive/PokerPredictionResult_0_5_7_Runtime/"
+    },
+    {
+      "package": "JokerHandChoice_0_5_8",
+      "archiveRoot": "ArtReferences/Archive/LegacyRuntime/JokerHandChoice_0_5_8_Runtime/"
+    },
+    {
+      "package": "JokerHandChoice_0_5_9",
+      "archiveRoot": "ArtReferences/Archive/LegacyRuntime/JokerHandChoice_0_5_9_Runtime/"
+    },
+    {
+      "package": "PokerPredictionClean_0_6_0",
+      "archiveRoot": "ArtReferences/Archive/LegacyRuntime/PokerPredictionClean_0_6_0_Runtime/"
+    },
+    {
+      "package": "Halli_0_3_2",
+      "archiveRoot": "ArtReferences/Archive/LegacyRuntime/Halli_0_3_2_Runtime/"
+    },
+    {
+      "package": "JokerReveal_0_5_3",
+      "archiveRoot": "ArtReferences/Archive/LegacyRuntime/JokerReveal_0_5_3_Runtime/"
+    }
+  ],
+  "forbiddenLegacyBindings": [
+    {
+      "package": "MainMenu_0_5_6",
+      "removedByIssue": 64,
+      "knownSceneGuids": [
+        "5d7fd0db85a04e2e7db320671dc018ce",
+        "c60d2a2b1d9b1a9b175fef452230be85",
+        "a1306ca2f4471162a549625e65b96e5d",
+        "28bbe414ba2dcb5a3ca8db11762dce90",
+        "c4b76c29a6021867bb77018cfc94d230",
+        "b1d54d97c1180b558b9973b5c16f627b",
+        "05543c34874d93d266c6f1918ac96216",
+        "3391d107cdd62ede4e77717f12b9ddb4"
+      ]
+    },
+    {
+      "package": "GuideNav_0_5_6",
+      "removedByIssue": 65,
+      "knownSceneGuids": [
+        "96516c1a949f98975789e004ae05c8c5",
+        "e7e3cc5b4528dda4ad4bc32ebd726d23",
+        "fb7425426dd6861147317b619c781b7f",
+        "e5f36aec27f9360be5bf659d6bcef5f1",
+        "ff8dd4c83159ea7c8ff01cc435cbd0bf",
+        "b1d51b72e17d953f49a53ac6a710d97f",
+        "683eede2bf62b2b1b374dd48f29c2f8e",
+        "473127bb124ac222a93fab22bcb06839",
+        "f97f974a8b221c927a7281b1f0165ec8",
+        "521d18ee11aea316a15450fe7b1675ae",
+        "c6a31c75794018da067599f4cd67fafd",
+        "07b456e292a95006236d2552cc73a3b9",
+        "be22e25ace23c52fa37e77ac7565f9e8",
+        "dfd225ba8c533d861d27ba943d7d5372"
+      ]
+    },
+    {
+      "package": "StageReward_0_5_4",
+      "useInstead": "StageReward_0_5_5",
+      "knownSceneGuids": [
+        "df6ba2791d739295468c9a95e1776cd4",
+        "ce6af05a0404bae6846c15725cac1a06",
+        "343bdd7822f70828cd671a69ded2bb8f"
+      ]
+    },
+    {
+      "package": "PokerPredictionResult_0_5_7",
+      "useInstead": "PokerPredictionClean_0_6_1"
+    },
+    {
+      "package": "JokerHandChoice_0_5_8",
+      "useInstead": "JokerHandChoice_0_6_0"
+    },
+    {
+      "package": "JokerHandChoice_0_5_9",
+      "useInstead": "JokerHandChoice_0_6_0"
+    },
+    {
+      "package": "PokerPredictionClean_0_6_0",
+      "useInstead": "PokerPredictionClean_0_6_1"
+    }
+  ],
+  "releaseGate": {
+    "script": "audit_runtime_art_bindings_0_6_4.ps1",
+    "successToken": "ART_RUNTIME_RELEASE_GATE_OK",
+    "failureToken": "ART_RUNTIME_RELEASE_GATE_FAILED",
+    "failureMeans": "Do not create or distribute a WebGL or local play build.",
+    "requiredEvidence": [
+      "exact full dev SHA",
+      "manifest revision 0.6.4",
+      "scene regenerated and saved",
+      "zero forbidden legacy bindings",
+      "960x540 visual evidence for main, guide, Halli, poker and shop"
+    ]
+  }
+}
