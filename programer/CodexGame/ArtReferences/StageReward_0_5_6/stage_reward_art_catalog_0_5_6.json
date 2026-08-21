@@ -1,0 +1,100 @@
+{
+  "package": "StageReward_0_5_6",
+  "revision": "0.5.6",
+  "issues": [
+    49
+  ],
+  "integrationId": "ART-RUNTIME-0.6.5-UI-POLISH",
+  "baseGitCommit": "28b0528fec8ce4b04e2e95619dc1c7c5416018bb",
+  "status": "art_produced_user_approved_programmer_binding_required",
+  "runtimeRoot": "Assets/Art/Prototype/UI/StageReward_0_5_6/",
+  "supersedes": [
+    "Assets/Art/Prototype/UI/StageReward_0_5_5/"
+  ],
+  "referenceResolution": [
+    960,
+    540
+  ],
+  "layout": {
+    "popupRect": [
+      140,
+      90,
+      680,
+      360
+    ],
+    "titleSafeRectLocal": [
+      24,
+      20,
+      632,
+      52
+    ],
+    "contentSafeRectLocal": [
+      24,
+      88,
+      632,
+      154
+    ],
+    "rewardGrid": {
+      "columns": 2,
+      "rows": 2,
+      "gapX": 24,
+      "gapY": 12
+    },
+    "rowSize": [
+      304,
+      64
+    ],
+    "rowLabelSafeRectLocal": [
+      48,
+      14,
+      148,
+      36
+    ],
+    "rowValueSafeRectLocal": [
+      208,
+      14,
+      76,
+      36
+    ],
+    "totalRowRect": [
+      178,
+      170,
+      324,
+      48
+    ],
+    "continueButtonRect": [
+      220,
+      288,
+      240,
+      52
+    ],
+    "overflowRule": "Hard clip to content safe rectangle; page or scroll after four rows."
+  },
+  "runtimeAssets": [
+    {
+      "pattern": "stage_reward_row_{base|prediction|neutral}_304x64_0_5_6.png",
+      "usage": "high contrast reward rows"
+    },
+    {
+      "file": "stage_reward_total_row_324x48_0_5_6.png",
+      "usage": "total gained summary"
+    },
+    {
+      "pattern": "stage_reward_continue_{idle|hover|pressed|disabled}_240x52_0_5_6.png",
+      "usage": "contained continue action"
+    }
+  ],
+  "localizedText": {
+    "title": "reward settlement",
+    "base": "base reward",
+    "prediction": "prediction bonus",
+    "total": "total gained",
+    "continue": "UI_COMMON_CONTINUE"
+  },
+  "guardrails": [
+    "Do not bake localized words into PNG files.",
+    "Do not change currency calculation, reward values, or save order.",
+    "Never draw reward rows outside the 632x154 content safe area.",
+    "Do not restore StageReward_0_5_5 as active after 0.5.6 is bound."
+  ]
+}

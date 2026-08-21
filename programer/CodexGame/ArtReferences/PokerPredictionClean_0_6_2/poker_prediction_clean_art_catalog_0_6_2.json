@@ -1,0 +1,138 @@
+{
+  "artSetId": "poker_prediction_clean_0_6_2",
+  "issues": [
+    68,
+    73
+  ],
+  "artRevision": "0.6.2",
+  "integrationId": "ART-RUNTIME-0.6.5-UI-POLISH",
+  "baseGitCommit": "28b0528fec8ce4b04e2e95619dc1c7c5416018bb",
+  "status": "art_produced_user_approved_programmer_binding_required",
+  "runtimeRoot": "Assets/Art/Prototype/UI/PokerPredictionClean_0_6_2/",
+  "sourceRoot": "ArtReferences/PokerPredictionClean_0_6_2/source/",
+  "previewRoot": "ArtReferences/PokerPredictionClean_0_6_2/preview/",
+  "supersedes": [
+    "Assets/Art/Prototype/UI/PokerPredictionClean_0_6_1/"
+  ],
+  "referenceResolution": [
+    960,
+    540
+  ],
+  "rules": {
+    "communityCardMaximum": 2,
+    "bakedText": false,
+    "largeResultModal": false,
+    "winnerAndHandRows": 2
+  },
+  "runtimeAssets": [
+    {
+      "pattern": "poker_prediction_player_{idle|hover|selected|disabled}_244x66_0_6_2.png",
+      "usage": "player prediction button"
+    },
+    {
+      "pattern": "poker_prediction_ai_{idle|hover|selected|disabled}_244x66_0_6_2.png",
+      "usage": "AI prediction button"
+    },
+    {
+      "file": "poker_prediction_title_plate_308x52_0_6_2.png",
+      "usage": "prediction title"
+    },
+    {
+      "pattern": "poker_result_summary_{player|ai|neutral}_328x76_0_6_2.png",
+      "usage": "winner and winning-hand two-row plaque"
+    },
+    {
+      "pattern": "poker_result_continue_{idle|hover|pressed|disabled}_164x44_0_6_2.png",
+      "usage": "result continue action"
+    }
+  ],
+  "layout960x540": {
+    "titlePlateRect": [
+      326,
+      24,
+      308,
+      52
+    ],
+    "playerPredictionVisualRect": [
+      132,
+      454,
+      244,
+      66
+    ],
+    "playerPredictionTextRect": [
+      154,
+      466,
+      200,
+      40
+    ],
+    "playerPredictionHitRect": [
+      124,
+      446,
+      260,
+      82
+    ],
+    "aiPredictionVisualRect": [
+      584,
+      454,
+      244,
+      66
+    ],
+    "aiPredictionTextRect": [
+      606,
+      466,
+      200,
+      40
+    ],
+    "aiPredictionHitRect": [
+      576,
+      446,
+      260,
+      82
+    ],
+    "resultSummaryRect": [
+      316,
+      18,
+      328,
+      76
+    ],
+    "resultWinnerTextRect": [
+      344,
+      25,
+      272,
+      31
+    ],
+    "resultHandTextRect": [
+      344,
+      56,
+      272,
+      25
+    ],
+    "continueVisualRect": [
+      398,
+      492,
+      164,
+      44
+    ],
+    "continueTextRect": [
+      424,
+      500,
+      112,
+      28
+    ],
+    "communityCardMaximum": 2
+  },
+  "localizedText": {
+    "predictionTitle": "UI_POKER_PREDICTION_TITLE",
+    "playerWins": "UI_POKER_PLAYER_WINS",
+    "aiWins": "UI_POKER_AI_WINS",
+    "winningHand": "runtime poker hand label and high-card detail",
+    "continue": "UI_COMMON_CONTINUE"
+  },
+  "guardrails": [
+    "Never render more than two community cards.",
+    "Do not restore PokerPredictionClean_0_6_1 as an active runtime package after 0.6.2 is bound.",
+    "Do not restore the central large grey result modal.",
+    "Draw localized labels over text-safe rectangles; textures contain no text.",
+    "Do not change prediction, insurance, timeout, HP, reward, or card rules."
+  ]
+}

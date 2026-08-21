@@ -1,0 +1,44 @@
+{
+  "integrationId": "ART-RUNTIME-0.6.5-UI-POLISH",
+  "baseGitCommit": "28b0528fec8ce4b04e2e95619dc1c7c5416018bb",
+  "status": "art_produced_user_approved_programmer_binding_required",
+  "handoffDoc": "project_docs/programer/26.08.21_아트인계_UI보완_이슈49_66_68_73_0.6.5.md",
+  "issues": [49, 66, 68, 73],
+  "packages": [
+    {
+      "id": "PokerPredictionClean_0_6_2",
+      "catalog": "../PokerPredictionClean_0_6_2/poker_prediction_clean_art_catalog_0_6_2.json",
+      "supersedes": "PokerPredictionClean_0_6_1"
+    },
+    {
+      "id": "PrivateSelection_0_6_0",
+      "catalog": "../PrivateSelection_0_6_0/private_selection_art_catalog_0_6_0.json",
+      "supersedes": "PrivateSelection_0_5_5"
+    },
+    {
+      "id": "StageReward_0_5_6",
+      "catalog": "../StageReward_0_5_6/stage_reward_art_catalog_0_5_6.json",
+      "supersedes": "StageReward_0_5_5"
+    }
+  ],
+  "fixedContracts": {
+    "communityCardMaximum": 2,
+    "localizedTextBakedIntoPng": false,
+    "largePokerResultModal": false,
+    "privateSelectionConfirmButtonCount": 1,
+    "stageRewardGrid": "2x2 hard-clipped; page or scroll after four rows"
+  },
+  "runtimeBindingRequired": true,
+  "sceneRegenerationRequired": true,
+  "buildAllowed": false,
+  "qa": {
+    "runtimePngCount": 42,
+    "pngMetaCount": 42,
+    "guidCountIncludingFolders": 45,
+    "guidCollisions": 0,
+    "dimensionMismatches": 0,
+    "approvedHashFailures": 0,
+    "deterministicRegenerationChangedFiles": 0,
+    "unityImportContract": "Sprite Single / Point / MipMap Off / Alpha On / Uncompressed on all platforms"
+  }
+}
