@@ -188,6 +188,32 @@ function Assert-UnityImportSettings([string]$runtimeRoot) {
   }
 }
 
+function Ensure-FolderMetaFinalNewline([string]$runtimeRoot) {
+  $folderMeta = $runtimeRoot + '.meta'
+  if (-not (Test-Path -LiteralPath $folderMeta)) {
+    throw "Missing Unity folder meta: $folderMeta"
+  }
+  $bytes = [System.IO.File]::ReadAllBytes($folderMeta)
+  if ($bytes.Length -eq 0) {
+    throw "Empty Unity folder meta: $folderMeta"
+  }
+  $lastByte = $bytes[$bytes.Length - 1]
+  if ($lastByte -ne 10 -and $lastByte -ne 13) {
+    [System.IO.File]::AppendAllText($folderMeta, "`n", $utf8)
+  }
+}
+
+function Assert-FolderMetaFinalNewline([string]$runtimeRoot) {
+  $folderMeta = $runtimeRoot + '.meta'
+  if (-not (Test-Path -LiteralPath $folderMeta)) {
+    throw "Missing Unity folder meta: $folderMeta"
+  }
+  $bytes = [System.IO.File]::ReadAllBytes($folderMeta)
+  if ($bytes.Length -eq 0 -or ($bytes[$bytes.Length - 1] -ne 10 -and $bytes[$bytes.Length - 1] -ne 13)) {
+    throw "Unity folder meta must end with a newline: $folderMeta"
+  }
+}
+
 function Write-SourceWrapper([string]$sourceRoot, [string]$packageName) {
   New-Item -ItemType Directory -Force -Path $sourceRoot | Out-Null
   $wrapper = @"
@@ -271,6 +297,7 @@ function Generate-PokerPrediction {
 
   & $metaGenerator -ProjectAssetsRoot $assetsRoot -RuntimeDirectory $runtimeRoot -TemplateMeta $templateMeta
   Normalize-UnityImportSettings $runtimeRoot
+  Ensure-FolderMetaFinalNewline $runtimeRoot
 
   $catalog = [ordered]@{
     artSetId = 'poker_prediction_clean_0_6_2'
@@ -371,6 +398,7 @@ function Generate-PrivateSelection {
   Ensure-ApprovedPreview 'issue_66_single_large_confirm_review_960x540_0_6_0.png' (Join-Path $previewRoot 'private_selection_single_confirm_approved_960x540_0_6_0.png')
   & $metaGenerator -ProjectAssetsRoot $assetsRoot -RuntimeDirectory $runtimeRoot -TemplateMeta $templateMeta
   Normalize-UnityImportSettings $runtimeRoot
+  Ensure-FolderMetaFinalNewline $runtimeRoot
 
   $catalog = [ordered]@{
     artSetId = 'private_selection_0_6_0'
@@ -468,6 +496,7 @@ function Generate-StageReward {
   Ensure-ApprovedPreview 'issue_49_reward_readability_review_960x540_0_5_6.png' (Join-Path $previewRoot 'stage_reward_readability_approved_960x540_0_5_6.png')
   & $metaGenerator -ProjectAssetsRoot $assetsRoot -RuntimeDirectory $runtimeRoot -TemplateMeta $templateMeta
   Normalize-UnityImportSettings $runtimeRoot
+  Ensure-FolderMetaFinalNewline $runtimeRoot
 
   $catalog = [ordered]@{
     package = 'StageReward_0_5_6'
@@ -528,5 +557,6 @@ foreach ($package in @('PokerPredictionClean_0_6_2', 'PrivateSelection_0_6_0', '
   $hashLines = @(Get-Content -LiteralPath (Join-Path $referenceRoot 'APPROVED.sha256')).Count
   if ($pngCount -ne $metaCount) { throw "$package png/meta mismatch: $pngCount/$metaCount" }
   Assert-UnityImportSettings $runtimeRoot
+  Assert-FolderMetaFinalNewline $runtimeRoot
   Write-Output ("{0}: png={1} meta={2} approvedHashes={3}" -f $package, $pngCount, $metaCount, $hashLines)
 }

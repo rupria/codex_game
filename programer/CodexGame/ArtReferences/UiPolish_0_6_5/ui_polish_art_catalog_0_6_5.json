@@ -39,6 +39,7 @@
     "dimensionMismatches": 0,
     "approvedHashFailures": 0,
     "deterministicRegenerationChangedFiles": 0,
+    "folderMetaFinalNewlineFailures": 0,
     "unityImportContract": "Sprite Single / Point / MipMap Off / Alpha On / Uncompressed on all platforms"
   }
 }
