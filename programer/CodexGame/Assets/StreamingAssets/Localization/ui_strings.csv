@@ -88,6 +88,8 @@ UI_POKER_LOCK_HAND,패 확정 / 아이템 건너뛰기  [ENTER / SPACE],LOCK HAN
 UI_POKER_PREDICTION_GUIDE,패가 확정됐습니다. AI 카드는 비공개입니다. {seconds}초 안에 예측하세요.,HAND LOCKED. AI cards are concealed. Predict within {seconds}s.
 UI_POKER_PLAYER_WINS,승리,WIN
 UI_POKER_PLAYER_LOSES,패배,LOSE
+UI_POKER_PREDICTION_TITLE,승패 예측,PREDICTION
+UI_PREDICTION_SUCCESS_COUNT,예측 성공 {count}/5,PREDICTION SUCCESS {count}/5
 UI_POKER_RESULT_PENDING,포커 결과 계산 중... 1초 안에 공개됩니다.,Calculating poker result... announcement within one second.
 UI_COMMON_CONTINUE,계속  [ENTER / SPACE],CONTINUE  [ENTER / SPACE]
 UI_POKER_RESULT_SUMMARY,"승자: {winner}

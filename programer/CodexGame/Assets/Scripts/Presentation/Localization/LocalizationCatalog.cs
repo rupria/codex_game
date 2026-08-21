@@ -11,7 +11,13 @@ namespace CodexGame.Presentation.Localization
   {
     public const string DefaultLanguage = "ko";
     public const string FallbackLanguage = "en";
-    public const int RequiredKeyCount = 203;
+    public const int RequiredKeyCount = 205;
+
+    private static readonly string[] RequiredPokerPrediction061Keys =
+    {
+      "UI_POKER_PREDICTION_TITLE",
+      "UI_PREDICTION_SUCCESS_COUNT"
+    };
 
     private static readonly string[] RequiredJokerKeys =
     {
@@ -239,6 +245,15 @@ namespace CodexGame.Presentation.Localization
         {
           throw new FormatException(
             "Missing required Joker localization key: " + RequiredJokerKeys[index]);
+        }
+      }
+      for (var index = 0; index < RequiredPokerPrediction061Keys.Length; index++)
+      {
+        if (!entries.ContainsKey(RequiredPokerPrediction061Keys[index]))
+        {
+          throw new FormatException(
+            "Missing required 0.6.1 poker localization key: "
+              + RequiredPokerPrediction061Keys[index]);
         }
       }
       return new LocalizationCatalog(entries, warning ?? (_ => { }));

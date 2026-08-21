@@ -6,7 +6,8 @@ namespace CodexGame.Presentation.Art
   [Serializable]
   public sealed class PresentationUiArtSet
   {
-    [SerializeField] private Texture2D _threeCallIcon;
+    [SerializeField] private Texture2D _threeCallPlaque;
+    [SerializeField] private Texture2D _threeCallBellPulseSheet;
     [SerializeField] private Texture2D _showdownIcon;
     [SerializeField] private Texture2D _entryLabelFrame;
     [SerializeField] private Texture2D _skipIdle;
@@ -46,7 +47,8 @@ namespace CodexGame.Presentation.Art
       Func<string, Texture2D> load,
       Texture2D[] opponentCutouts = null,
       Texture2D[] opponentPortraits = null,
-      Texture2D threeCallIcon = null,
+      Texture2D threeCallPlaque = null,
+      Texture2D threeCallBellPulseSheet = null,
       Texture2D showdownIcon = null,
       Texture2D limitOne = null,
       Texture2D limitTwo = null,
@@ -56,7 +58,6 @@ namespace CodexGame.Presentation.Art
       Texture2D cardRestricted = null)
     {
       if (load == null) throw new ArgumentNullException(nameof(load));
-      _threeCallIcon = Require(load, "phase_three_call_icon_64_0_1_2_4.png");
       _showdownIcon = Require(load, "phase_showdown_icon_64_0_1_2_4.png");
       _entryLabelFrame = Require(load, "phase_entry_label_frame_288x80_0_1_2_4.png");
       _skipIdle = Require(load, "stage_entry_skip_button_idle_120x44_0_1_2_4.png");
@@ -91,7 +92,10 @@ namespace CodexGame.Presentation.Art
       _aiDamageFlash = Require(load, "hp_damage_flash_ai_96_0_1_2_4.png");
       _opponentCutouts = opponentCutouts ?? Array.Empty<Texture2D>();
       _opponentPortraits = opponentPortraits ?? Array.Empty<Texture2D>();
-      _threeCallIcon = threeCallIcon ?? _threeCallIcon;
+      _threeCallPlaque = threeCallPlaque
+        ?? throw new ArgumentNullException(nameof(threeCallPlaque));
+      _threeCallBellPulseSheet = threeCallBellPulseSheet
+        ?? throw new ArgumentNullException(nameof(threeCallBellPulseSheet));
       _showdownIcon = showdownIcon ?? _showdownIcon;
       _limitOne = limitOne ?? _limitOne;
       _limitTwo = limitTwo ?? _limitTwo;
@@ -101,7 +105,8 @@ namespace CodexGame.Presentation.Art
       _cardRestricted = cardRestricted ?? _cardRestricted;
     }
 
-    public Texture2D ThreeCallIcon => _threeCallIcon;
+    public Texture2D ThreeCallPlaque => _threeCallPlaque;
+    public Texture2D ThreeCallBellPulseSheet => _threeCallBellPulseSheet;
     public Texture2D ShowdownIcon => _showdownIcon;
     public Texture2D EntryLabelFrame => _entryLabelFrame;
     public Texture2D SkipIdle => _skipIdle;

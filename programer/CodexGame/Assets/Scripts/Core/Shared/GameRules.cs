@@ -33,7 +33,7 @@ namespace CodexGame.Core.Shared
     public const int PredictionInsuranceCharges = 2;
 
     public const long StageEntryPresentationMicroseconds = 6_000_000;
-    public const long ThreeCallEntryPresentationMicroseconds = 5_000_000;
+    public const long ThreeCallEntryPresentationMicroseconds = 1_550_000;
     public const long ThreeCallToSelectionPresentationMicroseconds = 2_000_000;
     public const long HalliResultLockMicroseconds = 2_000_000;
     public const long PrivateSelectionTimeoutMicroseconds = 60_000_000;

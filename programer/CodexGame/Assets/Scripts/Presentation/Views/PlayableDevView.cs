@@ -65,6 +65,9 @@ namespace CodexGame.Presentation.Views
     private JokerRevealUiArtSet _jokerRevealUiArtSet;
 
     [SerializeField]
+    private JokerHandChoiceUiArtSet _jokerHandChoiceUiArtSet;
+
+    [SerializeField]
     private bool _useSceneBackdrop;
 
     [SerializeField]
@@ -93,6 +96,7 @@ namespace CodexGame.Presentation.Views
     private PlayableCardRenderer _halliCards;
     private PlayableCardRenderer _pokerCards;
     private int _selectionFocus = -1;
+    private int _jokerChoiceFocus = -1;
     private long _selectionSessionSerial;
     private LocalizationRuntime _localization;
     private float _playerDamageUntil = float.NegativeInfinity;
@@ -179,6 +183,7 @@ namespace CodexGame.Presentation.Views
       PokerResultUiArtSet pokerResultUiArtSet = null,
       PrivateSelectionUiArtSet privateSelectionUiArtSet = null,
       JokerRevealUiArtSet jokerRevealUiArtSet = null,
+      JokerHandChoiceUiArtSet jokerHandChoiceUiArtSet = null,
       MainMenuUiArtSet mainMenuUiArtSet = null)
     {
       _boardTexture = boardTexture;
@@ -196,6 +201,7 @@ namespace CodexGame.Presentation.Views
       _presentationUiArtSet = presentationUiArtSet;
       _privateSelectionUiArtSet = privateSelectionUiArtSet;
       _jokerRevealUiArtSet = jokerRevealUiArtSet;
+      _jokerHandChoiceUiArtSet = jokerHandChoiceUiArtSet;
       _mainMenuUiArtSet = mainMenuUiArtSet;
       _useSceneBackdrop = useSceneBackdrop;
       _useIntroArtLayout = useIntroArtLayout;
@@ -224,6 +230,7 @@ namespace CodexGame.Presentation.Views
       if (_snapshot == null || _snapshot.Phase != snapshot.Phase)
       {
         _selectionFocus = -1;
+        _jokerChoiceFocus = -1;
       }
 
       _snapshot = snapshot;
@@ -282,8 +289,13 @@ namespace CodexGame.Presentation.Views
           }
           break;
         case PlayableGamePhase.PokerPrediction:
-          if (_snapshot.Poker != null
-            && _snapshot.Poker.Phase == Application.Poker.PokerRoundPhase.AwaitingPrediction)
+          if (_snapshot.Poker?.Phase
+            == Application.Poker.PokerRoundPhase.AwaitingPlayerJokerChoice)
+          {
+            HandleJokerChoiceInput();
+          }
+          else if (_snapshot.Poker?.Phase
+            == Application.Poker.PokerRoundPhase.AwaitingPrediction)
           {
             if (Input.GetKeyDown(KeyCode.Alpha1)) PredictionRequested?.Invoke(PredictionChoice.PlayerWins);
             else if (Input.GetKeyDown(KeyCode.Alpha2)) PredictionRequested?.Invoke(PredictionChoice.PlayerLoses);
@@ -426,6 +438,7 @@ namespace CodexGame.Presentation.Views
         if (_snapshot.Phase == PlayableGamePhase.HalliOpening)
         {
           _presentation0124Panel.DrawThreeCallEntry(
+            _snapshot.Transition,
             _presentationUiArtSet,
             _styles,
             _localization);
@@ -462,11 +475,17 @@ namespace CodexGame.Presentation.Views
           _localization,
           Time.unscaledTime < _playerDamageUntil,
           Time.unscaledTime < _aiDamageUntil,
-          category => JokerHandRequested?.Invoke(category),
           prediction => PredictionRequested?.Invoke(prediction),
           () => AdvanceRequested?.Invoke());
         DrawOpponentPortrait();
         DrawBattleEconomyHud();
+        _pokerPanel.DrawJokerHandChoiceOverlay(
+          _snapshot.Poker,
+          _jokerHandChoiceUiArtSet,
+          _styles,
+          _localization,
+          _jokerChoiceFocus,
+          category => JokerHandRequested?.Invoke(category));
         return;
       }
 
@@ -612,8 +631,16 @@ namespace CodexGame.Presentation.Views
 
     private void DrawIntroArtLayout()
     {
+      if (_mainMenuUiArtSet?.Crest != null)
+      {
+        GUI.DrawTexture(
+          new Rect(330f, 60f, 300f, 190f),
+          _mainMenuUiArtSet.Crest,
+          ScaleMode.ScaleToFit,
+          true);
+      }
       if (DrawIntroArtButton(
-        new Rect(312f, 266f, 336f, 76f),
+        new Rect(290f, 264f, 380f, 84f),
         L("UI_MAIN_START"),
         _mainMenuUiArtSet?.StartButton,
         "MainMenuStart"))
@@ -621,7 +648,7 @@ namespace CodexGame.Presentation.Views
         RequestStart();
       }
       if (DrawIntroArtButton(
-        new Rect(312f, 354f, 336f, 78f),
+        new Rect(290f, 354f, 380f, 84f),
         L("UI_MAIN_GUIDE"),
         _mainMenuUiArtSet?.GuideButton,
         "MainMenuGuide"))
@@ -892,6 +919,29 @@ namespace CodexGame.Presentation.Views
     {
       _halliCards = null;
       _pokerCards = null;
+    }
+
+    private void HandleJokerChoiceInput()
+    {
+      var options = _snapshot.Poker?.LegalPlayerJokerOptions;
+      if (options == null || options.Count == 0) return;
+
+      if (Input.GetKeyDown(KeyCode.DownArrow))
+      {
+        _jokerChoiceFocus = _jokerChoiceFocus < 0
+          ? 0
+          : (_jokerChoiceFocus + 1) % options.Count;
+      }
+      else if (Input.GetKeyDown(KeyCode.UpArrow))
+      {
+        _jokerChoiceFocus = _jokerChoiceFocus < 0
+          ? options.Count - 1
+          : (_jokerChoiceFocus - 1 + options.Count) % options.Count;
+      }
+      else if (Pressed(KeyCode.Return, KeyCode.Space) && _jokerChoiceFocus >= 0)
+      {
+        JokerHandRequested?.Invoke(options[_jokerChoiceFocus].Category);
+      }
     }
 
     private static bool Pressed(KeyCode first, KeyCode second)

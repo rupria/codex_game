@@ -29,21 +29,31 @@ namespace CodexGame.Presentation.Art
   [Serializable]
   public sealed class MainMenuUiArtSet
   {
+    [SerializeField] private Texture2D _background;
+    [SerializeField] private Texture2D _crest;
     [SerializeField] private MainMenuButtonArtSet _startButton;
     [SerializeField] private MainMenuButtonArtSet _guideButton;
 
     public MainMenuUiArtSet(
+      Texture2D background,
+      Texture2D crest,
       MainMenuButtonArtSet startButton,
       MainMenuButtonArtSet guideButton)
     {
+      _background = background ?? throw new ArgumentNullException(nameof(background));
+      _crest = crest ?? throw new ArgumentNullException(nameof(crest));
       _startButton = startButton ?? throw new ArgumentNullException(nameof(startButton));
       _guideButton = guideButton ?? throw new ArgumentNullException(nameof(guideButton));
     }
 
+    public Texture2D Background => _background;
+    public Texture2D Crest => _crest;
     public MainMenuButtonArtSet StartButton => _startButton;
     public MainMenuButtonArtSet GuideButton => _guideButton;
 
-    public bool IsComplete => _startButton != null
+    public bool IsComplete => _background != null
+      && _crest != null
+      && _startButton != null
       && _startButton.IsComplete
       && _guideButton != null
       && _guideButton.IsComplete;
