@@ -14,8 +14,10 @@ namespace CodexGame.Presentation.Views
     private static readonly Rect TitleRect = new Rect(68f, 58f, 824f, 28f);
     private static readonly Rect GuideRect = new Rect(68f, 86f, 824f, 24f);
     private static readonly Rect PublicRect = new Rect(68f, 124f, 190f, 226f);
-    private static readonly Rect StatusRect = new Rect(68f, 362f, 190f, 42f);
-    private static readonly Rect ConfirmRect = new Rect(73f, 418f, 180f, 52f);
+    private static readonly Rect SelectionCountRect = new Rect(72f, 408f, 184f, 64f);
+    private static readonly Rect ConfirmVisualRect = new Rect(580f, 424f, 280f, 60f);
+    private static readonly Rect ConfirmTextRect = new Rect(604f, 436f, 232f, 36f);
+    private static readonly Rect ConfirmHitRect = new Rect(568f, 412f, 304f, 84f);
     private const float GridX = 270f;
     private const float GridY = 124f;
     private const float CellWidth = 112f;
@@ -77,12 +79,10 @@ namespace CodexGame.Presentation.Views
         styles.Small);
       DrawPublicCards(snapshot, cards, selectionArt, styles, localization);
 
+      DrawTexture(SelectionCountRect, selectionArt?.SelectionCountPanel);
       GUI.Label(
-        StatusRect,
-        localization.Get(
-          "UI_PRIVATE_CONFIRM",
-          new LocalizationArgument("selected", snapshot.SelectedCards.Count),
-          new LocalizationArgument("required", snapshot.RequiredSelectionCount)),
+        SelectionCountRect,
+        snapshot.SelectedCards.Count + " / " + snapshot.RequiredSelectionCount,
         styles.Small);
 
       for (var index = 0; index < snapshot.WinnerCandidates.Count && index < 8; index++)
@@ -252,20 +252,25 @@ namespace CodexGame.Presentation.Views
       Action confirm)
     {
       var enabled = snapshot.CanConfirm && !inputLocked;
-      var hovered = ConfirmRect.Contains(Event.current.mousePosition);
+      var hovered = enabled && ConfirmHitRect.Contains(Event.current.mousePosition);
+      var pressed = hovered && Input.GetMouseButton(0);
       DrawTexture(
-        ConfirmRect,
-        enabled
-          ? hovered ? art?.ConfirmActive : art?.ConfirmIdle
-          : art?.ConfirmDisabled);
+        ConfirmVisualRect,
+        !enabled
+          ? art?.ConfirmDisabled
+          : pressed
+            ? art?.ConfirmActive
+            : hovered
+              ? art?.ConfirmHover
+              : art?.ConfirmIdle);
       GUI.Label(
-        ConfirmRect,
+        ConfirmTextRect,
         localization.Get(
           "UI_PRIVATE_CONFIRM",
           new LocalizationArgument("selected", snapshot.SelectedCards.Count),
           new LocalizationArgument("required", snapshot.RequiredSelectionCount)),
         styles.Small);
-      if (enabled && GUI.Button(ConfirmRect, GUIContent.none, GUIStyle.none))
+      if (enabled && GUI.Button(ConfirmHitRect, GUIContent.none, GUIStyle.none))
       {
         confirm();
       }

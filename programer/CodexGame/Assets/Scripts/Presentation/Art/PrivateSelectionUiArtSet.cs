@@ -15,8 +15,10 @@ namespace CodexGame.Presentation.Art
     [SerializeField] private Texture2D _candidateConfirmed;
     [SerializeField] private Texture2D _candidateDisabled;
     [SerializeField] private Texture2D _confirmIdle;
+    [SerializeField] private Texture2D _confirmHover;
     [SerializeField] private Texture2D _confirmActive;
     [SerializeField] private Texture2D _confirmDisabled;
+    [SerializeField] private Texture2D _selectionCountPanel;
 
     public PrivateSelectionUiArtSet(
       Texture2D modalDim,
@@ -28,8 +30,10 @@ namespace CodexGame.Presentation.Art
       Texture2D candidateConfirmed,
       Texture2D candidateDisabled,
       Texture2D confirmIdle,
+      Texture2D confirmHover,
       Texture2D confirmActive,
-      Texture2D confirmDisabled)
+      Texture2D confirmDisabled,
+      Texture2D selectionCountPanel)
     {
       _modalDim = Require(modalDim, nameof(modalDim));
       _modalPanel = Require(modalPanel, nameof(modalPanel));
@@ -40,8 +44,10 @@ namespace CodexGame.Presentation.Art
       _candidateConfirmed = Require(candidateConfirmed, nameof(candidateConfirmed));
       _candidateDisabled = Require(candidateDisabled, nameof(candidateDisabled));
       _confirmIdle = Require(confirmIdle, nameof(confirmIdle));
+      _confirmHover = Require(confirmHover, nameof(confirmHover));
       _confirmActive = Require(confirmActive, nameof(confirmActive));
       _confirmDisabled = Require(confirmDisabled, nameof(confirmDisabled));
+      _selectionCountPanel = Require(selectionCountPanel, nameof(selectionCountPanel));
     }
 
     public Texture2D ModalDim => _modalDim;
@@ -53,8 +59,10 @@ namespace CodexGame.Presentation.Art
     public Texture2D CandidateConfirmed => _candidateConfirmed;
     public Texture2D CandidateDisabled => _candidateDisabled;
     public Texture2D ConfirmIdle => _confirmIdle;
+    public Texture2D ConfirmHover => _confirmHover;
     public Texture2D ConfirmActive => _confirmActive;
     public Texture2D ConfirmDisabled => _confirmDisabled;
+    public Texture2D SelectionCountPanel => _selectionCountPanel;
     public bool IsComplete => _modalDim != null
       && _modalPanel != null
       && _publicFrame != null
@@ -64,8 +72,10 @@ namespace CodexGame.Presentation.Art
       && _candidateConfirmed != null
       && _candidateDisabled != null
       && _confirmIdle != null
+      && _confirmHover != null
       && _confirmActive != null
-      && _confirmDisabled != null;
+      && _confirmDisabled != null
+      && _selectionCountPanel != null;
 
     private static Texture2D Require(Texture2D texture, string parameterName)
     {

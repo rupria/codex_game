@@ -27,6 +27,11 @@ namespace CodexGame.Presentation.Art
     [SerializeField] private Texture2D _predictionSuccessIcon;
     [SerializeField] private Texture2D _resultContinueIdle;
     [SerializeField] private Texture2D _resultContinueHover;
+    [SerializeField] private Texture2D _resultContinuePressed;
+    [SerializeField] private Texture2D _resultContinueDisabled;
+    [SerializeField] private Texture2D _resultSummaryPlayer;
+    [SerializeField] private Texture2D _resultSummaryAi;
+    [SerializeField] private Texture2D _resultSummaryNeutral;
 
     public PokerUiArtSet(
       Texture2D winIdle,
@@ -49,7 +54,12 @@ namespace CodexGame.Presentation.Art
       Texture2D insuranceRemainingIcon = null,
       Texture2D predictionSuccessIcon = null,
       Texture2D resultContinueIdle = null,
-      Texture2D resultContinueHover = null)
+      Texture2D resultContinueHover = null,
+      Texture2D resultContinuePressed = null,
+      Texture2D resultContinueDisabled = null,
+      Texture2D resultSummaryPlayer = null,
+      Texture2D resultSummaryAi = null,
+      Texture2D resultSummaryNeutral = null)
     {
       _winIdle = winIdle ?? throw new ArgumentNullException(nameof(winIdle));
       _winHover = winHover ?? throw new ArgumentNullException(nameof(winHover));
@@ -72,6 +82,11 @@ namespace CodexGame.Presentation.Art
       _predictionSuccessIcon = predictionSuccessIcon;
       _resultContinueIdle = resultContinueIdle;
       _resultContinueHover = resultContinueHover;
+      _resultContinuePressed = resultContinuePressed;
+      _resultContinueDisabled = resultContinueDisabled;
+      _resultSummaryPlayer = resultSummaryPlayer;
+      _resultSummaryAi = resultSummaryAi;
+      _resultSummaryNeutral = resultSummaryNeutral;
     }
 
     public Texture2D WinIdle => _winIdle;
@@ -95,6 +110,11 @@ namespace CodexGame.Presentation.Art
     public Texture2D PredictionSuccessIcon => _predictionSuccessIcon;
     public Texture2D ResultContinueIdle => _resultContinueIdle;
     public Texture2D ResultContinueHover => _resultContinueHover;
+    public Texture2D ResultContinuePressed => _resultContinuePressed ?? ResultContinueHover;
+    public Texture2D ResultContinueDisabled => _resultContinueDisabled ?? ResultContinueIdle;
+    public Texture2D ResultSummaryPlayer => _resultSummaryPlayer;
+    public Texture2D ResultSummaryAi => _resultSummaryAi;
+    public Texture2D ResultSummaryNeutral => _resultSummaryNeutral;
 
     public bool IsComplete => _winIdle != null
       && _winHover != null

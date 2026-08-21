@@ -803,12 +803,10 @@ namespace CodexGame.Presentation.Views
           new LocalizationArgument("success", _snapshot.PredictionReward.RewardSuccessCount),
           new LocalizationArgument("total", _snapshot.LastStageReward)),
         _styles.Small);
-      if (GUI.Button(
-        new Rect(
-          popupRect.x + StageRewardGridLayout.ContinueX,
-          popupRect.y + StageRewardGridLayout.ContinueY,
-          StageRewardGridLayout.ContinueWidth,
-          StageRewardGridLayout.ContinueHeight),
+      if (EconomyUiRenderer.DrawStageRewardContinue(
+        popupRect,
+        _economyUiArtSet,
+        _styles.Status,
         L("UI_COMMON_CONTINUE")))
       {
         AdvanceRequested?.Invoke();
