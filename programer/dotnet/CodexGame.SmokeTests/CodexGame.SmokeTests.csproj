@@ -55,6 +55,9 @@
     <Compile
       Include="..\..\CodexGame\Assets\Scripts\Presentation\Views\PrivateSelectionJokerRevealState.cs"
       Link="Presentation\PrivateSelectionJokerRevealState.cs" />
+    <Compile
+      Include="..\..\CodexGame\Assets\Scripts\Presentation\Views\ThreeCallEntryAnimationState.cs"
+      Link="Presentation\ThreeCallEntryAnimationState.cs" />
     <None
       Include="..\..\CodexGame\Assets\StreamingAssets\Localization\ui_strings.csv"
       Link="Localization\ui_strings.csv"

@@ -20,6 +20,7 @@ namespace CodexGame.Presentation.Views
     private float _aiRevealStartedAt = float.NegativeInfinity;
     private bool _wasOutcomeVisible;
     private float _resultOverlayStartedAt = float.NegativeInfinity;
+    private Vector2 _jokerOptionScroll;
 
     public void Draw(
       PokerRoundSnapshot snapshot,
@@ -35,7 +36,6 @@ namespace CodexGame.Presentation.Views
       LocalizationRuntime localization,
       bool playerDamage,
       bool aiDamage,
-      Action<PokerHandCategory> chooseJokerHand,
       Action<PredictionChoice> predict,
       Action advance)
     {
@@ -47,18 +47,14 @@ namespace CodexGame.Presentation.Views
       DrawPredictionReward(
         predictionReward,
         insuranceActivation,
-        pokerItemArt,
+        pokerArt,
         styles,
         localization);
       DrawCards(snapshot, cards, pokerItemArt, jokerRevealArt);
 
-      if (snapshot.Phase == PokerRoundPhase.AwaitingPlayerJokerChoice)
+      if (snapshot.Phase == PokerRoundPhase.AwaitingPrediction)
       {
-        DrawJokerHandChoice(snapshot, styles, localization, chooseJokerHand);
-      }
-      else if (snapshot.Phase == PokerRoundPhase.AwaitingPrediction)
-      {
-        DrawPredictionTimer(snapshot, styles, localization);
+        DrawPredictionTimer(snapshot, styles);
       }
       else if (snapshot.Phase == PokerRoundPhase.ResultPending)
       {
@@ -66,10 +62,7 @@ namespace CodexGame.Presentation.Views
         {
           DrawResult(
             snapshot,
-            pokerArt,
             pokerItemArt,
-            pokerResultArt,
-            predictionReward,
             styles,
             localization);
         }
@@ -78,34 +71,41 @@ namespace CodexGame.Presentation.Views
       {
         DrawResult(
           snapshot,
-          pokerArt,
           pokerItemArt,
-          pokerResultArt,
-          predictionReward,
           styles,
           localization);
       }
 
+      DrawPredictionHeader(snapshot, pokerArt, styles, localization);
       var canPredict = snapshot.Phase == PokerRoundPhase.AwaitingPrediction;
+      var selectedPrediction = snapshot.Result?.Prediction.Choice ?? PredictionChoice.Skipped;
       if (DrawPredictionButton(
         PokerTableLayout.WinVisual,
         PokerTableLayout.WinHit,
+        PokerTableLayout.WinText,
         pokerArt?.PlayerPredictionIdle,
         pokerArt?.PlayerPredictionHover,
+        pokerArt?.PlayerPredictionSelected,
+        pokerArt?.PlayerPredictionDisabled,
         localization.Get("UI_POKER_PLAYER_WINS"),
         canPredict,
+        selectedPrediction == PredictionChoice.PlayerWins,
         styles)) predict(PredictionChoice.PlayerWins);
       if (DrawPredictionButton(
         PokerTableLayout.LoseVisual,
         PokerTableLayout.LoseHit,
+        PokerTableLayout.LoseText,
         pokerArt?.AiPredictionIdle,
         pokerArt?.AiPredictionHover,
+        pokerArt?.AiPredictionSelected,
+        pokerArt?.AiPredictionDisabled,
         localization.Get("UI_POKER_PLAYER_LOSES"),
         canPredict,
+        selectedPrediction == PredictionChoice.PlayerLoses,
         styles)) predict(PredictionChoice.PlayerLoses);
 
       if (snapshot.Phase == PokerRoundPhase.Resolved
-        && GUI.Button(new Rect(748f, 470f, 164f, 48f), localization.Get("UI_COMMON_CONTINUE")))
+        && DrawContinueButton(pokerArt, styles, localization))
       {
         advance();
       }
@@ -115,6 +115,89 @@ namespace CodexGame.Presentation.Views
         pokerItemArt,
         styles,
         localization);
+    }
+
+    public void DrawJokerHandChoiceOverlay(
+      PokerRoundSnapshot snapshot,
+      JokerHandChoiceUiArtSet art,
+      PlayableDevStyles styles,
+      LocalizationRuntime localization,
+      int focusedIndex,
+      Action<PokerHandCategory> chooseJokerHand)
+    {
+      if (snapshot?.Phase != PokerRoundPhase.AwaitingPlayerJokerChoice) return;
+
+      var dimRect = new Rect(0f, 0f, 960f, 540f);
+      var panelRect = new Rect(180f, 60f, 600f, 420f);
+      if (art?.Dim != null)
+      {
+        GUI.DrawTexture(dimRect, art.Dim, ScaleMode.StretchToFill, true);
+      }
+      else
+      {
+        var previous = GUI.color;
+        GUI.color = new Color(0f, 0f, 0f, 0.78f);
+        GUI.DrawTexture(dimRect, Texture2D.whiteTexture, ScaleMode.StretchToFill, true);
+        GUI.color = previous;
+      }
+
+      if (art?.Panel != null)
+      {
+        GUI.DrawTexture(panelRect, art.Panel, ScaleMode.StretchToFill, true);
+      }
+      else
+      {
+        GUI.Box(panelRect, GUIContent.none);
+      }
+
+      GUI.Label(
+        new Rect(220f, 178f, 520f, 40f),
+        localization.Get("UI_POKER_JOKER_CHOICE_TITLE"),
+        styles.Heading);
+      GUI.Label(
+        new Rect(220f, 208f, 520f, 24f),
+        localization.Get("UI_POKER_JOKER_CHOICE_GUIDE"),
+        styles.Small);
+
+      var options = snapshot.LegalPlayerJokerOptions;
+      if (options.Count <= 5)
+      {
+        _jokerOptionScroll = Vector2.zero;
+        for (var index = 0; index < options.Count; index++)
+        {
+          DrawJokerOptionButton(
+            new Rect(260f, 236f + index * 46f, 440f, 44f),
+            options[index],
+            index == focusedIndex,
+            art,
+            styles,
+            localization,
+            chooseJokerHand);
+        }
+        return;
+      }
+
+      const float viewportHeight = 230f;
+      var contentHeight = options.Count * 46f - 2f;
+      KeepFocusedJokerOptionVisible(focusedIndex, viewportHeight, contentHeight);
+      _jokerOptionScroll = GUI.BeginScrollView(
+        new Rect(260f, 236f, 460f, viewportHeight),
+        _jokerOptionScroll,
+        new Rect(0f, 0f, 440f, contentHeight),
+        false,
+        true);
+      for (var index = 0; index < options.Count; index++)
+      {
+        DrawJokerOptionButton(
+          new Rect(0f, index * 46f, 440f, 44f),
+          options[index],
+          index == focusedIndex,
+          art,
+          styles,
+          localization,
+          chooseJokerHand);
+      }
+      GUI.EndScrollView();
     }
 
     private void UpdateRevealState(PokerRoundSnapshot snapshot)
@@ -192,11 +275,7 @@ namespace CodexGame.Presentation.Views
       if (pokerItemArt?.CrateClosed != null)
       {
         GUI.DrawTexture(
-          new Rect(
-            PokerTableLayout.PlayerItem.x - 16f,
-            PokerTableLayout.PlayerItem.y - 16f,
-            PokerTableLayout.PlayerItem.width + 32f,
-            PokerTableLayout.PlayerItem.height + 32f),
+          PokerTableLayout.PlayerItem,
           pokerItemArt.CrateClosed,
           ScaleMode.ScaleToFit,
           true);
@@ -285,45 +364,45 @@ namespace CodexGame.Presentation.Views
     private static void DrawPredictionReward(
       PredictionRewardSnapshot reward,
       PredictionInsuranceActivationSnapshot activation,
-      PokerItemUiArtSet art,
+      PokerUiArtSet art,
       PlayableDevStyles styles,
       LocalizationRuntime localization)
     {
       if (reward == null) return;
-      var x = 720f;
       var displayedCharges = activation?.IsActive == true
         ? activation.DisplayedCharges
         : reward.InsuranceChargesRemaining;
-      var charge = art?.FindInsuranceCharges(displayedCharges);
-      if (reward.InsuranceActivatedThisStage && charge != null)
+      if (reward.InsuranceActivatedThisStage)
       {
-        GUI.DrawTexture(new Rect(x, 94f, 32f, 32f), charge, ScaleMode.ScaleToFit, true);
+        if (art?.InsuranceRemainingIcon != null)
+        {
+          GUI.DrawTexture(
+            PokerTableLayout.InsuranceRemainingIcon,
+            art.InsuranceRemainingIcon,
+            ScaleMode.ScaleToFit,
+            true);
+        }
+        GUI.Label(
+          PokerTableLayout.InsuranceRemainingText,
+          localization.Get(
+            "UI_PREDICTION_CHARGES",
+            new LocalizationArgument("count", displayedCharges)),
+          styles.Small);
       }
-      if (art?.PredictionActualSuccess != null)
+
+      if (art?.PredictionSuccessIcon != null)
       {
-        GUI.DrawTexture(new Rect(x, 132f, 28f, 28f), art.PredictionActualSuccess, ScaleMode.ScaleToFit, true);
-      }
-      if (art?.PredictionInsuredSuccess != null)
-      {
-        GUI.DrawTexture(new Rect(x, 164f, 28f, 28f), art.PredictionInsuredSuccess, ScaleMode.ScaleToFit, true);
+        GUI.DrawTexture(
+          PokerTableLayout.PredictionSuccessIcon,
+          art.PredictionSuccessIcon,
+          ScaleMode.ScaleToFit,
+          true);
       }
       GUI.Label(
-        new Rect(x + 34f, 98f, 190f, 22f),
+        PokerTableLayout.PredictionSuccessText,
         localization.Get(
-          "UI_PREDICTION_CHARGES",
-          new LocalizationArgument("count", displayedCharges)),
-        styles.Small);
-      GUI.Label(
-        new Rect(x + 34f, 136f, 190f, 22f),
-        localization.Get(
-          "UI_PREDICTION_ACTUAL_COUNT",
-          new LocalizationArgument("count", reward.ActualSuccessCount)),
-        styles.Small);
-      GUI.Label(
-        new Rect(x + 34f, 168f, 190f, 22f),
-        localization.Get(
-          "UI_PREDICTION_INSURED_COUNT",
-          new LocalizationArgument("count", reward.InsuredSuccessCount)),
+          "UI_PREDICTION_SUCCESS_COUNT",
+          new LocalizationArgument("count", reward.RewardSuccessCount)),
         styles.Small);
     }
 
@@ -356,138 +435,184 @@ namespace CodexGame.Presentation.Views
 
     private static void DrawPredictionTimer(
       PokerRoundSnapshot snapshot,
-      PlayableDevStyles styles,
-      LocalizationRuntime localization)
+      PlayableDevStyles styles)
     {
       var seconds = Math.Ceiling(snapshot.RemainingMicroseconds / 1_000_000d);
       GUI.Label(
-        new Rect(120f, 18f, 720f, 38f),
-        localization.Get(
-          "UI_POKER_PREDICTION_GUIDE",
-          new LocalizationArgument("seconds", seconds.ToString("0"))),
+        PokerTableLayout.PredictionTimerText,
+        seconds.ToString("0") + "s",
         styles.Small);
     }
 
-    private static void DrawJokerHandChoice(
+    private static void DrawPredictionHeader(
       PokerRoundSnapshot snapshot,
+      PokerUiArtSet art,
+      PlayableDevStyles styles,
+      LocalizationRuntime localization)
+    {
+      if (snapshot.Phase != PokerRoundPhase.AwaitingPrediction
+        && snapshot.Phase != PokerRoundPhase.ResultPending
+        && snapshot.Phase != PokerRoundPhase.Resolved)
+      {
+        return;
+      }
+
+      if (art?.PredictionTitlePlate != null)
+      {
+        GUI.DrawTexture(
+          PokerTableLayout.PredictionTitlePlate,
+          art.PredictionTitlePlate,
+          ScaleMode.StretchToFill,
+          true);
+      }
+      if (art?.PredictionStageEmblem != null)
+      {
+        GUI.DrawTexture(
+          PokerTableLayout.PredictionStageEmblem,
+          art.PredictionStageEmblem,
+          ScaleMode.ScaleToFit,
+          true);
+      }
+      var title = localization.Get("UI_POKER_PREDICTION_TITLE");
+      if (snapshot.Result != null)
+      {
+        var winner = localization.Get(
+          snapshot.Result.Comparison.Winner == PokerWinner.Player
+            ? "UI_ACTOR_PLAYER"
+            : "UI_ACTOR_AI");
+        title = winner + " " + localization.Get("UI_POKER_PLAYER_WINS");
+      }
+      GUI.Label(
+        PokerTableLayout.PredictionTitleText,
+        title,
+        styles.Small);
+    }
+
+    private void KeepFocusedJokerOptionVisible(
+      int focusedIndex,
+      float viewportHeight,
+      float contentHeight)
+    {
+      if (focusedIndex < 0) return;
+      var optionTop = focusedIndex * 46f;
+      var optionBottom = optionTop + 44f;
+      if (optionTop < _jokerOptionScroll.y)
+      {
+        _jokerOptionScroll.y = optionTop;
+      }
+      else if (optionBottom > _jokerOptionScroll.y + viewportHeight)
+      {
+        _jokerOptionScroll.y = optionBottom - viewportHeight;
+      }
+      _jokerOptionScroll.y = Mathf.Clamp(
+        _jokerOptionScroll.y,
+        0f,
+        Mathf.Max(0f, contentHeight - viewportHeight));
+    }
+
+    private static void DrawJokerOptionButton(
+      Rect rect,
+      JokerHandOption option,
+      bool focused,
+      JokerHandChoiceUiArtSet art,
       PlayableDevStyles styles,
       LocalizationRuntime localization,
       Action<PokerHandCategory> chooseJokerHand)
     {
-      var panel = new Rect(238f, 110f, 484f, 300f);
-      GUI.Box(panel, GUIContent.none);
-      GUI.Label(
-        new Rect(panel.x + 22f, panel.y + 14f, panel.width - 44f, 34f),
-        localization.Get("UI_POKER_JOKER_CHOICE_TITLE"),
-        styles.Status);
-      GUI.Label(
-        new Rect(panel.x + 22f, panel.y + 48f, panel.width - 44f, 30f),
-        localization.Get("UI_POKER_JOKER_CHOICE_GUIDE"),
-        styles.Small);
-
-      for (var index = 0; index < snapshot.LegalPlayerJokerOptions.Count; index++)
+      var hovered = rect.Contains(Event.current.mousePosition);
+      var selected = focused || (hovered && Input.GetMouseButton(0));
+      var texture = art?.GetOptionTexture(true, hovered, selected);
+      if (texture != null)
       {
-        var option = snapshot.LegalPlayerJokerOptions[index];
-        var column = index % 2;
-        var row = index / 2;
-        var button = new Rect(
-          panel.x + 22f + column * 222f,
-          panel.y + 86f + row * 44f,
-          208f,
-          36f);
-        if (GUI.Button(button, CategoryName(option.Category, localization)))
-        {
-          chooseJokerHand(option.Category);
-        }
+        GUI.DrawTexture(rect, texture, ScaleMode.StretchToFill, true);
+      }
+      else
+      {
+        GUI.Box(rect, GUIContent.none);
+      }
+      var label = CategoryName(option.Category, localization);
+      GUI.Label(rect, label, styles.Small);
+      if (GUI.Button(rect, GUIContent.none, GUIStyle.none))
+      {
+        chooseJokerHand(option.Category);
       }
     }
 
     private static bool DrawPredictionButton(
       Rect visualRect,
       Rect hitRect,
+      Rect textRect,
       Texture2D idle,
       Texture2D hover,
+      Texture2D selected,
+      Texture2D disabled,
       string label,
       bool enabled,
+      bool isSelected,
       PlayableDevStyles styles)
     {
       var hovered = enabled && hitRect.Contains(Event.current.mousePosition);
       var pressed = hovered && Input.GetMouseButton(0);
-      var previousColor = GUI.color;
-      if (!enabled) GUI.color = new Color(0.42f, 0.42f, 0.44f, 0.76f);
-      var texture = hovered && hover != null ? hover : idle;
+      var texture = isSelected && selected != null
+        ? selected
+        : !enabled && disabled != null
+          ? disabled
+          : hovered && hover != null
+            ? hover
+            : idle;
       var drawRect = pressed
         ? new Rect(visualRect.x, visualRect.y + 2f, visualRect.width, visualRect.height)
         : visualRect;
       if (texture != null) GUI.DrawTexture(drawRect, texture, ScaleMode.ScaleToFit, true);
       else GUI.Box(drawRect, GUIContent.none);
-      GUI.color = previousColor;
+      var drawTextRect = pressed
+        ? new Rect(textRect.x, textRect.y + 2f, textRect.width, textRect.height)
+        : textRect;
+      GUI.Label(drawTextRect, label, styles.Small);
       GUI.enabled = enabled;
-      var clicked = GUI.Button(hitRect, new GUIContent(string.Empty, label), GUIStyle.none);
+      var clicked = GUI.Button(hitRect, GUIContent.none, GUIStyle.none);
       GUI.enabled = true;
       return clicked;
     }
 
+    private static bool DrawContinueButton(
+      PokerUiArtSet art,
+      PlayableDevStyles styles,
+      LocalizationRuntime localization)
+    {
+      var hovered = PokerTableLayout.ContinueHit.Contains(Event.current.mousePosition);
+      var texture = hovered && art?.ResultContinueHover != null
+        ? art.ResultContinueHover
+        : art?.ResultContinueIdle;
+      if (texture != null)
+      {
+        GUI.DrawTexture(
+          PokerTableLayout.ContinueVisual,
+          texture,
+          ScaleMode.ScaleToFit,
+          true);
+      }
+      else
+      {
+        GUI.Box(PokerTableLayout.ContinueVisual, GUIContent.none);
+      }
+      GUI.Label(
+        PokerTableLayout.ContinueText,
+        localization.Get("UI_COMMON_CONTINUE"),
+        styles.Small);
+      return GUI.Button(
+        PokerTableLayout.ContinueHit,
+        new GUIContent(string.Empty, localization.Get("UI_COMMON_CONTINUE")),
+        GUIStyle.none);
+    }
+
     private void DrawResult(
       PokerRoundSnapshot snapshot,
-      PokerUiArtSet pokerArt,
       PokerItemUiArtSet pokerItemArt,
-      PokerResultUiArtSet pokerResultArt,
-      PredictionRewardSnapshot predictionReward,
       PlayableDevStyles styles,
       LocalizationRuntime localization)
     {
       if (snapshot.Result == null) return;
-      var comparison = snapshot.Result.Comparison;
-      var winner = localization.Get(
-        comparison.Winner == PokerWinner.Player ? "UI_ACTOR_PLAYER" : "UI_ACTOR_AI");
-      var predictionSucceeded = snapshot.Result.Prediction.IsCorrect;
-      var insuranceApplied = !snapshot.Result.WasHandConfirmationTimeout
-        && predictionReward?.LastResultWasInsured == true;
-      var prediction = snapshot.Result.WasHandConfirmationTimeout
-        ? localization.Get("UI_ITEM_CONFIRM_TIMEOUT")
-        : insuranceApplied
-          ? localization.Get("UI_ITEM_INSURANCE_APPLIED")
-        : snapshot.Result.Prediction.Choice == PredictionChoice.Skipped
-        ? localization.Get("UI_PREDICTION_SKIPPED")
-        : localization.Get(predictionSucceeded ? "UI_PREDICTION_CORRECT" : "UI_PREDICTION_WRONG");
-      var message = localization.Get(
-        "UI_POKER_RESULT_SUMMARY",
-        new LocalizationArgument("winner", winner),
-        new LocalizationArgument("playerHand", CategoryName(comparison.PlayerValue.Category, localization)),
-        new LocalizationArgument("aiHand", CategoryName(comparison.AiValue.Category, localization)),
-        new LocalizationArgument("prediction", prediction),
-        new LocalizationArgument("playerHp", snapshot.Health.Player),
-        new LocalizationArgument("aiHp", snapshot.Health.Ai));
-      string itemStatus = null;
-      if (snapshot.Result.WasHandConfirmationTimeout
-        || insuranceApplied
-        || snapshot.Result.WasPlayerDamagePrevented)
-      {
-        itemStatus = snapshot.Result.WasHandConfirmationTimeout
-          ? localization.Get("UI_ITEM_CONFIRM_TIMEOUT")
-          : snapshot.Result.WasPlayerDamagePrevented
-            ? localization.Get("UI_BARREL_DAMAGE_PREVENTED")
-            : localization.Get("UI_ITEM_INSURANCE_APPLIED");
-      }
-
-      var predictionBadge = insuranceApplied
-        ? pokerItemArt?.PredictionInsuredSuccess
-        : predictionSucceeded
-          ? pokerItemArt?.PredictionActualSuccess ?? pokerArt?.PredictionResultFilled
-          : pokerArt?.PredictionResultEmpty;
-      var visualState = snapshot.Result.WasHandConfirmationTimeout
-        ? PokerResultPanelVisualState.Neutral
-        : predictionSucceeded || insuranceApplied
-          ? PokerResultPanelVisualState.Success
-          : PokerResultPanelVisualState.Failure;
-      PokerResultOverlayRenderer.Draw(
-        message,
-        itemStatus,
-        visualState,
-        predictionBadge,
-        pokerResultArt,
-        styles);
       DrawBarrelDefenseResult(snapshot, pokerItemArt, localization, styles);
     }
 

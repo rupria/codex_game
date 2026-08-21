@@ -11,6 +11,9 @@ namespace CodexGame.Presentation.Views
   {
     private static readonly Rect FullScreen = new Rect(0f, 0f, 960f, 540f);
     private static readonly Rect EntryLabel = new Rect(336f, 34f, 288f, 80f);
+    private static readonly Rect ThreeCallPlaque = new Rect(290f, 214f, 380f, 112f);
+    private static readonly Rect ThreeCallBell = new Rect(307f, 238f, 64f, 64f);
+    private static readonly Rect ThreeCallTitle = new Rect(405f, 246f, 240f, 32f);
     private static readonly Rect SkipButton = new Rect(816f, 476f, 120f, 44f);
     private static readonly Rect OpponentIntroFrame = new Rect(300f, 184f, 360f, 152f);
     private static readonly Rect OpponentDescriptionMask = new Rect(454f, 243f, 182f, 47f);
@@ -62,11 +65,35 @@ namespace CodexGame.Presentation.Views
     }
 
     public void DrawThreeCallEntry(
+      PlayableTransitionSnapshot transition,
       PresentationUiArtSet art,
       PlayableDevStyles styles,
       LocalizationRuntime localization)
     {
-      DrawPhaseLabel(art?.ThreeCallIcon, localization.Get("UI_THREE_CALL_ENTRY"), art, styles);
+      var frame = ThreeCallEntryAnimationState.Evaluate(transition?.Progress ?? 1f);
+      var previousColor = GUI.color;
+      GUI.color = new Color(0f, 0f, 0f, 0.42f * frame.Alpha);
+      GUI.DrawTexture(FullScreen, Texture2D.whiteTexture, ScaleMode.StretchToFill, true);
+      GUI.color = new Color(1f, 1f, 1f, frame.Alpha);
+
+      var plaqueRect = ScaleFromCenter(ThreeCallPlaque, frame.Scale);
+      if (art?.ThreeCallPlaque != null)
+      {
+        GUI.DrawTexture(plaqueRect, art.ThreeCallPlaque, ScaleMode.StretchToFill, true);
+      }
+      DrawSheetFrame(
+        art?.ThreeCallBellPulseSheet,
+        8,
+        frame.BellFrameIndex,
+        ScaleFromCenter(ThreeCallBell, frame.Scale));
+      if (frame.ShowTitle)
+      {
+        GUI.Label(
+          ScaleFromCenter(ThreeCallTitle, frame.Scale),
+          localization.Get("UI_THREE_CALL_ENTRY"),
+          styles.Heading);
+      }
+      GUI.color = previousColor;
     }
 
     public void DrawThreeCallToSelection(
@@ -126,6 +153,28 @@ namespace CodexGame.Presentation.Views
       }
       if (icon != null) GUI.DrawTexture(new Rect(348f, 42f, 64f, 64f), icon, ScaleMode.ScaleToFit, true);
       GUI.Label(new Rect(420f, 50f, 188f, 48f), label, styles.Heading);
+    }
+
+    private static Rect ScaleFromCenter(Rect rect, float scale)
+    {
+      var width = rect.width * scale;
+      var height = rect.height * scale;
+      return new Rect(
+        rect.center.x - width * 0.5f,
+        rect.center.y - height * 0.5f,
+        width,
+        height);
+    }
+
+    private static void DrawSheetFrame(Texture2D sheet, int frameCount, int frameIndex, Rect rect)
+    {
+      if (sheet == null || frameCount <= 0) return;
+      var safeIndex = Mathf.Clamp(frameIndex, 0, frameCount - 1);
+      GUI.DrawTextureWithTexCoords(
+        rect,
+        sheet,
+        new Rect(safeIndex / (float)frameCount, 0f, 1f / frameCount, 1f),
+        true);
     }
 
     private static void DrawRestriction(

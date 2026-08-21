@@ -19,6 +19,14 @@ namespace CodexGame.Presentation.Art
     [SerializeField] private Texture2D _aiPredictionSelected;
     [SerializeField] private Texture2D _predictionResultEmpty;
     [SerializeField] private Texture2D _predictionResultFilled;
+    [SerializeField] private Texture2D _playerPredictionDisabled;
+    [SerializeField] private Texture2D _aiPredictionDisabled;
+    [SerializeField] private Texture2D _predictionTitlePlate;
+    [SerializeField] private Texture2D _predictionStageEmblem;
+    [SerializeField] private Texture2D _insuranceRemainingIcon;
+    [SerializeField] private Texture2D _predictionSuccessIcon;
+    [SerializeField] private Texture2D _resultContinueIdle;
+    [SerializeField] private Texture2D _resultContinueHover;
 
     public PokerUiArtSet(
       Texture2D winIdle,
@@ -33,7 +41,15 @@ namespace CodexGame.Presentation.Art
       Texture2D aiPredictionHover = null,
       Texture2D aiPredictionSelected = null,
       Texture2D predictionResultEmpty = null,
-      Texture2D predictionResultFilled = null)
+      Texture2D predictionResultFilled = null,
+      Texture2D playerPredictionDisabled = null,
+      Texture2D aiPredictionDisabled = null,
+      Texture2D predictionTitlePlate = null,
+      Texture2D predictionStageEmblem = null,
+      Texture2D insuranceRemainingIcon = null,
+      Texture2D predictionSuccessIcon = null,
+      Texture2D resultContinueIdle = null,
+      Texture2D resultContinueHover = null)
     {
       _winIdle = winIdle ?? throw new ArgumentNullException(nameof(winIdle));
       _winHover = winHover ?? throw new ArgumentNullException(nameof(winHover));
@@ -48,6 +64,14 @@ namespace CodexGame.Presentation.Art
       _aiPredictionSelected = aiPredictionSelected;
       _predictionResultEmpty = predictionResultEmpty;
       _predictionResultFilled = predictionResultFilled;
+      _playerPredictionDisabled = playerPredictionDisabled;
+      _aiPredictionDisabled = aiPredictionDisabled;
+      _predictionTitlePlate = predictionTitlePlate;
+      _predictionStageEmblem = predictionStageEmblem;
+      _insuranceRemainingIcon = insuranceRemainingIcon;
+      _predictionSuccessIcon = predictionSuccessIcon;
+      _resultContinueIdle = resultContinueIdle;
+      _resultContinueHover = resultContinueHover;
     }
 
     public Texture2D WinIdle => _winIdle;
@@ -63,6 +87,14 @@ namespace CodexGame.Presentation.Art
     public Texture2D AiPredictionSelected => _aiPredictionSelected ?? AiPredictionHover;
     public Texture2D PredictionResultEmpty => _predictionResultEmpty;
     public Texture2D PredictionResultFilled => _predictionResultFilled;
+    public Texture2D PlayerPredictionDisabled => _playerPredictionDisabled ?? PlayerPredictionIdle;
+    public Texture2D AiPredictionDisabled => _aiPredictionDisabled ?? AiPredictionIdle;
+    public Texture2D PredictionTitlePlate => _predictionTitlePlate;
+    public Texture2D PredictionStageEmblem => _predictionStageEmblem;
+    public Texture2D InsuranceRemainingIcon => _insuranceRemainingIcon;
+    public Texture2D PredictionSuccessIcon => _predictionSuccessIcon;
+    public Texture2D ResultContinueIdle => _resultContinueIdle;
+    public Texture2D ResultContinueHover => _resultContinueHover;
 
     public bool IsComplete => _winIdle != null
       && _winHover != null

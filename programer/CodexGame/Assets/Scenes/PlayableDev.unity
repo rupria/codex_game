@@ -119,7 +119,7 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
---- !u!1 &279925058
+--- !u!1 &61849266
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -127,93 +127,10 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 279925060}
-  - component: {fileID: 279925059}
-  m_Layer: 0
-  m_Name: Main Camera
-  m_TagString: MainCamera
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!20 &279925059
-Camera:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 279925058}
-  m_Enabled: 1
-  serializedVersion: 2
-  m_ClearFlags: 2
-  m_BackGroundColor: {r: 0.035, g: 0.055, b: 0.08, a: 1}
-  m_projectionMatrixMode: 1
-  m_GateFitMode: 2
-  m_FOVAxisMode: 0
-  m_Iso: 200
-  m_ShutterSpeed: 0.005
-  m_Aperture: 16
-  m_FocusDistance: 10
-  m_FocalLength: 50
-  m_BladeCount: 5
-  m_Curvature: {x: 2, y: 11}
-  m_BarrelClipping: 0.25
-  m_Anamorphism: 0
-  m_SensorSize: {x: 36, y: 24}
-  m_LensShift: {x: 0, y: 0}
-  m_NormalizedViewPortRect:
-    serializedVersion: 2
-    x: 0
-    y: 0
-    width: 1
-    height: 1
-  near clip plane: 0.3
-  far clip plane: 1000
-  field of view: 60
-  orthographic: 0
-  orthographic size: 5
-  m_Depth: 0
-  m_CullingMask:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_RenderingPath: -1
-  m_TargetTexture: {fileID: 0}
-  m_TargetDisplay: 0
-  m_TargetEye: 3
-  m_HDR: 1
-  m_AllowMSAA: 1
-  m_AllowDynamicResolution: 0
-  m_ForceIntoRT: 0
-  m_OcclusionCulling: 1
-  m_StereoConvergence: 10
-  m_StereoSeparation: 0.022
---- !u!4 &279925060
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 279925058}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: -10}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &643178791
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 643178795}
-  - component: {fileID: 643178794}
-  - component: {fileID: 643178793}
-  - component: {fileID: 643178792}
+  - component: {fileID: 61849270}
+  - component: {fileID: 61849269}
+  - component: {fileID: 61849268}
+  - component: {fileID: 61849267}
   m_Layer: 0
   m_Name: CodexGame.PlayableDev
   m_TagString: Untagged
@@ -221,43 +138,43 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &643178792
+--- !u!114 &61849267
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 643178791}
+  m_GameObject: {fileID: 61849266}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: e01485696a2a0564f8908e12ee526b34, type: 3}
   m_Name: 
   m_EditorClassIdentifier: CodexGame.Bootstrap::CodexGame.Bootstrap.PlayableDevGameController
---- !u!114 &643178793
+--- !u!114 &61849268
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 643178791}
+  m_GameObject: {fileID: 61849266}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 63fa6614e8e1444eb69d2c8ca6814cb3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: CodexGame.Presentation::CodexGame.Presentation.Views.TableScenePresentationRig
-  _sceneCamera: {fileID: 279925059}
-  _view: {fileID: 643178794}
+  _sceneCamera: {fileID: 1598857919}
+  _view: {fileID: 61849269}
   _battleBackdrop: {fileID: 2800000, guid: 263d2d00d83c60947acaa998c8961e7a, type: 3}
-  _introBackdrop: {fileID: 2800000, guid: 4fffdd8f5e45fa4cd921945ef9042957, type: 3}
+  _introBackdrop: {fileID: 2800000, guid: 4af2605936d71a4270b671a8aadf4fef, type: 3}
   _barShopBackdrop: {fileID: 2800000, guid: c6f4b89d92a14e188cf5f1c1ae903002, type: 3}
   _backdropShader: {fileID: 4800000, guid: 9b3acbe23ca64a43b7c17fce4b297763, type: 3}
---- !u!114 &643178794
+--- !u!114 &61849269
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 643178791}
+  m_GameObject: {fileID: 61849266}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: bdb4d81e9bb4ec94681bf2457196d90b, type: 3}
@@ -1351,33 +1268,35 @@ MonoBehaviour:
     _halliPage: {fileID: 2800000, guid: 12c2660b974cb6ffa31d6cb123865dac, type: 3}
     _cardsPage: {fileID: 2800000, guid: bf2ab90e80b2153da9a332bf025f949e, type: 3}
     _resultPage: {fileID: 2800000, guid: 29b5746388f705e2b692c3dced0a78f8, type: 3}
-    _navRail: {fileID: 2800000, guid: be22e25ace23c52fa37e77ac7565f9e8, type: 3}
-    _pageIndicatorPlate: {fileID: 2800000, guid: dfd225ba8c533d861d27ba943d7d5372, type: 3}
+    _navRail: {fileID: 2800000, guid: cdc1194f0d718080d4fc5674425525e4, type: 3}
+    _pageIndicatorPlate: {fileID: 2800000, guid: 1a99009df03bc85ed39094055e45f30a, type: 3}
     _previousButton:
-      _idle: {fileID: 2800000, guid: c6a31c75794018da067599f4cd67fafd, type: 3}
-      _hover: {fileID: 2800000, guid: 521d18ee11aea316a15450fe7b1675ae, type: 3}
-      _pressed: {fileID: 2800000, guid: 07b456e292a95006236d2552cc73a3b9, type: 3}
-      _disabled: {fileID: 2800000, guid: f97f974a8b221c927a7281b1f0165ec8, type: 3}
+      _idle: {fileID: 2800000, guid: 8b29714ea55094af038d25b6fadc61db, type: 3}
+      _hover: {fileID: 2800000, guid: d31f1ce5a212d86c578cf88ba210bea9, type: 3}
+      _pressed: {fileID: 2800000, guid: 6b3862456394b1a7099edfaaa93dcc48, type: 3}
+      _disabled: {fileID: 2800000, guid: 15f42781444e751c9719b481a01a1ed5, type: 3}
     _nextButton:
-      _idle: {fileID: 2800000, guid: 683eede2bf62b2b1b374dd48f29c2f8e, type: 3}
-      _hover: {fileID: 2800000, guid: b1d51b72e17d953f49a53ac6a710d97f, type: 3}
-      _pressed: {fileID: 2800000, guid: 473127bb124ac222a93fab22bcb06839, type: 3}
-      _disabled: {fileID: 2800000, guid: ff8dd4c83159ea7c8ff01cc435cbd0bf, type: 3}
+      _idle: {fileID: 2800000, guid: fde49059621c482308e1817f8ad1dbba, type: 3}
+      _hover: {fileID: 2800000, guid: 074f02999e8d537310ab9fd18a16a1d2, type: 3}
+      _pressed: {fileID: 2800000, guid: db1f55e1c2be8a3c1a9879006d3097d4, type: 3}
+      _disabled: {fileID: 2800000, guid: 2ab3f7d31fb23a5dbd4cf95a55f69b5a, type: 3}
     _closeButton:
-      _idle: {fileID: 2800000, guid: fb7425426dd6861147317b619c781b7f, type: 3}
-      _hover: {fileID: 2800000, guid: e7e3cc5b4528dda4ad4bc32ebd726d23, type: 3}
-      _pressed: {fileID: 2800000, guid: e5f36aec27f9360be5bf659d6bcef5f1, type: 3}
-      _disabled: {fileID: 2800000, guid: 96516c1a949f98975789e004ae05c8c5, type: 3}
-  _introTexture: {fileID: 2800000, guid: 4fffdd8f5e45fa4cd921945ef9042957, type: 3}
+      _idle: {fileID: 2800000, guid: 103cb5216ff6587ee44407199feada7d, type: 3}
+      _hover: {fileID: 2800000, guid: 91dfaae86b120b362e89457689d6693c, type: 3}
+      _pressed: {fileID: 2800000, guid: 081477472e90d1708d9998fa40ba7294, type: 3}
+      _disabled: {fileID: 2800000, guid: fac3fa34474d50e53637877de23cbacd, type: 3}
+  _introTexture: {fileID: 2800000, guid: 4af2605936d71a4270b671a8aadf4fef, type: 3}
   _mainMenuUiArtSet:
+    _background: {fileID: 2800000, guid: 4af2605936d71a4270b671a8aadf4fef, type: 3}
+    _crest: {fileID: 2800000, guid: 4d355eeb3eae07328cddf7aa2abe1561, type: 3}
     _startButton:
-      _idle: {fileID: 2800000, guid: b1d54d97c1180b558b9973b5c16f627b, type: 3}
-      _hover: {fileID: 2800000, guid: c4b76c29a6021867bb77018cfc94d230, type: 3}
-      _pressed: {fileID: 2800000, guid: 05543c34874d93d266c6f1918ac96216, type: 3}
+      _idle: {fileID: 2800000, guid: f72a187194a18f01a8ad82044d17155a, type: 3}
+      _hover: {fileID: 2800000, guid: 85cbf714fb34c7aa9f7a07e8f0249842, type: 3}
+      _pressed: {fileID: 2800000, guid: 5d29074ea523540525ee076b7e74b1bc, type: 3}
     _guideButton:
-      _idle: {fileID: 2800000, guid: a1306ca2f4471162a549625e65b96e5d, type: 3}
-      _hover: {fileID: 2800000, guid: c60d2a2b1d9b1a9b175fef452230be85, type: 3}
-      _pressed: {fileID: 2800000, guid: 28bbe414ba2dcb5a3ca8db11762dce90, type: 3}
+      _idle: {fileID: 2800000, guid: 120fd6ccccd6d7b3e8ac5da07483ef47, type: 3}
+      _hover: {fileID: 2800000, guid: 0e8080c5f90e3b39389f3556d5e314b9, type: 3}
+      _pressed: {fileID: 2800000, guid: 2056366319e30976beba0eb77aeec32b, type: 3}
   _healthUiArtSet:
     _playerFilled: {fileID: 2800000, guid: b34aa310633a40255fdff9250399da23, type: 3}
     _playerEmpty: {fileID: 2800000, guid: bb7ea2e37a02023612150466f5ea0399, type: 3}
@@ -1386,19 +1305,27 @@ MonoBehaviour:
     _playerDamage: {fileID: 2800000, guid: 23f52c880faf67e47708be192b4102e6, type: 3}
     _aiDamage: {fileID: 2800000, guid: 3e9377ae1bb56149962fd237f70b73c2, type: 3}
   _pokerUiArtSet:
-    _winIdle: {fileID: 2800000, guid: 8e6a09010529cee4ebcbb599a5dec4e3, type: 3}
-    _winHover: {fileID: 2800000, guid: edc294827ec830b489aa947875b8891d, type: 3}
-    _loseIdle: {fileID: 2800000, guid: 5c499eaf1bdfdd34286628c15e6488a8, type: 3}
-    _loseHover: {fileID: 2800000, guid: f3803198dc1460c46802143fd11ff707, type: 3}
+    _winIdle: {fileID: 2800000, guid: 5e8ccf34a2c46b325fc819d91ef9a10e, type: 3}
+    _winHover: {fileID: 2800000, guid: 7e3879575323ad85b52449c766d9144e, type: 3}
+    _loseIdle: {fileID: 2800000, guid: 4976c793f4d0b77a40697b9922a72fcd, type: 3}
+    _loseHover: {fileID: 2800000, guid: 5411fa7baca1a12ebda38c5d2032684b, type: 3}
     _itemSlot: {fileID: 2800000, guid: e354f1f5eed544668d5546ce72fde6e4, type: 3}
-    _playerPredictionIdle: {fileID: 2800000, guid: ecd71f2537f695c8406f5b775ba39f5b, type: 3}
-    _playerPredictionHover: {fileID: 2800000, guid: 76ef2520f6650add4dbe9949edcdf5a9, type: 3}
-    _playerPredictionSelected: {fileID: 2800000, guid: 8cd9abecc484cd45240259eb98c14744, type: 3}
-    _aiPredictionIdle: {fileID: 2800000, guid: 7b9675a04f8ba0addb2fc6b5636b9076, type: 3}
-    _aiPredictionHover: {fileID: 2800000, guid: 6a71144a6bb4a615b8c1ce0e283f6796, type: 3}
-    _aiPredictionSelected: {fileID: 2800000, guid: 2400eeaa24e0013f0f39c8cc871c99b7, type: 3}
-    _predictionResultEmpty: {fileID: 2800000, guid: 257b809a355e0d8f50b5e2e494b993be, type: 3}
-    _predictionResultFilled: {fileID: 2800000, guid: 7f4a1c327b290cf1ce16d31987a80351, type: 3}
+    _playerPredictionIdle: {fileID: 2800000, guid: 5e8ccf34a2c46b325fc819d91ef9a10e, type: 3}
+    _playerPredictionHover: {fileID: 2800000, guid: 7e3879575323ad85b52449c766d9144e, type: 3}
+    _playerPredictionSelected: {fileID: 2800000, guid: 143b265a1598a2fcdda017072716e97a, type: 3}
+    _aiPredictionIdle: {fileID: 2800000, guid: 4976c793f4d0b77a40697b9922a72fcd, type: 3}
+    _aiPredictionHover: {fileID: 2800000, guid: 5411fa7baca1a12ebda38c5d2032684b, type: 3}
+    _aiPredictionSelected: {fileID: 2800000, guid: 02f7ad041811e69ea05d0072dc1ef43e, type: 3}
+    _predictionResultEmpty: {fileID: 0}
+    _predictionResultFilled: {fileID: 0}
+    _playerPredictionDisabled: {fileID: 2800000, guid: e479e6773ab31c0d1bc04c90d02d80be, type: 3}
+    _aiPredictionDisabled: {fileID: 2800000, guid: 5181eea5b7561d5af740739a751c1f49, type: 3}
+    _predictionTitlePlate: {fileID: 2800000, guid: 8d90498e2ded4277555aa9f3837f140d, type: 3}
+    _predictionStageEmblem: {fileID: 2800000, guid: 1baf9804bfb13a8d72c8a40bb1192437, type: 3}
+    _insuranceRemainingIcon: {fileID: 2800000, guid: a3ae7238eb2b7363b3108e00863650a0, type: 3}
+    _predictionSuccessIcon: {fileID: 2800000, guid: f84a8bbdfab1d940635e747ea5dcb9e7, type: 3}
+    _resultContinueIdle: {fileID: 2800000, guid: 6a271d3564d8e8fc78021000a1b1e84c, type: 3}
+    _resultContinueHover: {fileID: 2800000, guid: 1d20f6521851dd1c375a6f5ecdbc1b0f, type: 3}
   _pokerItemUiArtSet:
     _crateClosed: {fileID: 2800000, guid: 5ff898e9500227ffc6515efef3c86956, type: 3}
     _crateOpenEmpty: {fileID: 2800000, guid: ed2010af0d3a3b85accbe94fd0f38bfc, type: 3}
@@ -1415,9 +1342,9 @@ MonoBehaviour:
     _healthRecoveryIcon: {fileID: 2800000, guid: c1ab5e9d95ca7c6d1356a5b7d74b7ec9, type: 3}
     _selectionPanel: {fileID: 2800000, guid: a0370000000000000000000000000006, type: 3}
     _detailPanel: {fileID: 2800000, guid: a0370000000000000000000000000007, type: 3}
-    _actionButtonIdle: {fileID: 2800000, guid: a0370000000000000000000000000008, type: 3}
-    _actionButtonHover: {fileID: 2800000, guid: a0370000000000000000000000000009, type: 3}
-    _actionButtonDisabled: {fileID: 2800000, guid: a037000000000000000000000000000a, type: 3}
+    _actionButtonIdle: {fileID: 2800000, guid: 6f95a574ba3bbd9768b8f3e1896b4835, type: 3}
+    _actionButtonHover: {fileID: 2800000, guid: ca5a132de4f7a9ee96daaeac119ab79e, type: 3}
+    _actionButtonDisabled: {fileID: 2800000, guid: 877ba4b39ab9d830a319e9072c0898cc, type: 3}
     _reloadPopupIcon: {fileID: 2800000, guid: 71094dd0c3fe1b1dfe7ed36a4304135c, type: 3}
     _bottomDealPopupIcon: {fileID: 2800000, guid: e19acfe624cdb4006ae52c64e030e7af, type: 3}
     _hypeManPopupIcon: {fileID: 2800000, guid: 0898d97caba226716f3524b2ba0b67db, type: 3}
@@ -1559,11 +1486,12 @@ MonoBehaviour:
     _exitWarningIcon: {fileID: 2800000, guid: 05e93088c660ff3fd7de6314579178c1, type: 3}
     _temporaryExpireSheet: {fileID: 2800000, guid: 3af2ef6413231e47178a1a2786904f7e, type: 3}
     _exitWarningPulseSheet: {fileID: 2800000, guid: ece6aa18e0b9e9739ad5d95481db5a92, type: 3}
-    _stageRewardSummaryPanel: {fileID: 2800000, guid: 343bdd7822f70828cd671a69ded2bb8f, type: 3}
-    _stageRewardRowFrame: {fileID: 2800000, guid: ce6af05a0404bae6846c15725cac1a06, type: 3}
-    _stageRewardOverflowFade: {fileID: 2800000, guid: df6ba2791d739295468c9a95e1776cd4, type: 3}
+    _stageRewardSummaryPanel: {fileID: 2800000, guid: eb64ddaba258f6571fa221b185d62927, type: 3}
+    _stageRewardRowFrame: {fileID: 2800000, guid: 58001fc2a3f5001f05422f56a5218471, type: 3}
+    _stageRewardContentBackground: {fileID: 2800000, guid: 124b3eb8c3ce92898a158af3ab35943e, type: 3}
   _presentationUiArtSet:
-    _threeCallIcon: {fileID: 2800000, guid: 3e9538adadcfe2329798ca5b8a85af98, type: 3}
+    _threeCallPlaque: {fileID: 2800000, guid: bcba555f5fd0349d4fd7f2786d1bf521, type: 3}
+    _threeCallBellPulseSheet: {fileID: 2800000, guid: 7cb9deadf8e3b6791a7c1e678e15d404, type: 3}
     _showdownIcon: {fileID: 2800000, guid: 4e6ee9d615ec9a48070169cda89a468d, type: 3}
     _entryLabelFrame: {fileID: 2800000, guid: 40a330f9ab19434388767e5be16ffaf3, type: 3}
     _skipIdle: {fileID: 2800000, guid: a9ebeb97a49148d0ab8bbd0b03e5b76b, type: 3}
@@ -1625,18 +1553,108 @@ MonoBehaviour:
     _muzzleFlashSheet: {fileID: 2800000, guid: 8dc6c472731523692c89e42571d33008, type: 3}
     _cardGlintSheet: {fileID: 2800000, guid: b9dbadc45d6a239e40b5f01f1812172f, type: 3}
     _settleGlintSheet: {fileID: 2800000, guid: 019f29f064aba850f4e4e3a0b56b4efe, type: 3}
+  _jokerHandChoiceUiArtSet:
+    _dim: {fileID: 2800000, guid: f12355b6bcb1c1a8dc9cce65581d5faf, type: 3}
+    _panel: {fileID: 2800000, guid: c206bdf041ae2d8fafb9d2ed01468ff1, type: 3}
+    _optionIdle: {fileID: 2800000, guid: a7cda347fd096b447cb2a675e16eb4e1, type: 3}
+    _optionHover: {fileID: 2800000, guid: 64d2b582dcd1839bf32174a9cb2e3843, type: 3}
+    _optionSelected: {fileID: 2800000, guid: 87edd64d2a29e7ead3bf01c85b4aff80, type: 3}
+    _optionDisabled: {fileID: 2800000, guid: f6b6ed5aee8591462ad875f070a1d544, type: 3}
   _useSceneBackdrop: 1
   _useIntroArtLayout: 1
---- !u!4 &643178795
+--- !u!4 &61849270
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 643178791}
+  m_GameObject: {fileID: 61849266}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1598857918
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1598857920}
+  - component: {fileID: 1598857919}
+  m_Layer: 0
+  m_Name: Main Camera
+  m_TagString: MainCamera
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!20 &1598857919
+Camera:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1598857918}
+  m_Enabled: 1
+  serializedVersion: 2
+  m_ClearFlags: 2
+  m_BackGroundColor: {r: 0.035, g: 0.055, b: 0.08, a: 1}
+  m_projectionMatrixMode: 1
+  m_GateFitMode: 2
+  m_FOVAxisMode: 0
+  m_Iso: 200
+  m_ShutterSpeed: 0.005
+  m_Aperture: 16
+  m_FocusDistance: 10
+  m_FocalLength: 50
+  m_BladeCount: 5
+  m_Curvature: {x: 2, y: 11}
+  m_BarrelClipping: 0.25
+  m_Anamorphism: 0
+  m_SensorSize: {x: 36, y: 24}
+  m_LensShift: {x: 0, y: 0}
+  m_NormalizedViewPortRect:
+    serializedVersion: 2
+    x: 0
+    y: 0
+    width: 1
+    height: 1
+  near clip plane: 0.3
+  far clip plane: 1000
+  field of view: 60
+  orthographic: 0
+  orthographic size: 5
+  m_Depth: 0
+  m_CullingMask:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_RenderingPath: -1
+  m_TargetTexture: {fileID: 0}
+  m_TargetDisplay: 0
+  m_TargetEye: 3
+  m_HDR: 1
+  m_AllowMSAA: 1
+  m_AllowDynamicResolution: 0
+  m_ForceIntoRT: 0
+  m_OcclusionCulling: 1
+  m_StereoConvergence: 10
+  m_StereoSeparation: 0.022
+--- !u!4 &1598857920
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1598857918}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -1646,5 +1664,5 @@ Transform:
 SceneRoots:
   m_ObjectHideFlags: 0
   m_Roots:
-  - {fileID: 279925060}
-  - {fileID: 643178795}
+  - {fileID: 1598857920}
+  - {fileID: 61849270}
