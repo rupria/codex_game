@@ -457,6 +457,16 @@ namespace CodexGame.Presentation.Views
         return;
       }
 
+      var resultVisible = snapshot.Result != null
+        && (snapshot.Phase == PokerRoundPhase.Resolved
+          || snapshot.ResultPresentationStep == PokerResultPresentationStep.Outcome
+          || snapshot.ResultPresentationStep == PokerResultPresentationStep.Complete);
+      if (resultVisible)
+      {
+        DrawResultSummary(snapshot, art, styles, localization);
+        return;
+      }
+
       if (art?.PredictionTitlePlate != null)
       {
         GUI.DrawTexture(
@@ -473,19 +483,54 @@ namespace CodexGame.Presentation.Views
           ScaleMode.ScaleToFit,
           true);
       }
-      var title = localization.Get("UI_POKER_PREDICTION_TITLE");
-      if (snapshot.Result != null)
-      {
-        var winner = localization.Get(
-          snapshot.Result.Comparison.Winner == PokerWinner.Player
-            ? "UI_ACTOR_PLAYER"
-            : "UI_ACTOR_AI");
-        title = winner + " " + localization.Get("UI_POKER_PLAYER_WINS");
-      }
       GUI.Label(
         PokerTableLayout.PredictionTitleText,
-        title,
+        localization.Get("UI_POKER_PREDICTION_TITLE"),
         styles.Small);
+    }
+
+    private static void DrawResultSummary(
+      PokerRoundSnapshot snapshot,
+      PokerUiArtSet art,
+      PlayableDevStyles styles,
+      LocalizationRuntime localization)
+    {
+      var comparison = snapshot.Result.Comparison;
+      var playerWon = comparison.Winner == PokerWinner.Player;
+      var texture = playerWon ? art?.ResultSummaryPlayer : art?.ResultSummaryAi;
+      if (texture == null) texture = art?.ResultSummaryNeutral;
+      if (texture != null)
+      {
+        GUI.DrawTexture(PokerTableLayout.ResultSummary, texture, ScaleMode.StretchToFill, true);
+      }
+      else
+      {
+        GUI.Box(PokerTableLayout.ResultSummary, GUIContent.none);
+      }
+
+      var actor = localization.Get(playerWon ? "UI_ACTOR_PLAYER" : "UI_ACTOR_AI");
+      GUI.Label(
+        PokerTableLayout.ResultWinnerText,
+        actor + " " + localization.Get("UI_POKER_PLAYER_WINS"),
+        styles.Small);
+      var winningValue = playerWon ? comparison.PlayerValue : comparison.AiValue;
+      GUI.Label(
+        PokerTableLayout.ResultHandText,
+        CategoryName(winningValue.Category, localization) + " · " + FormatPrimaryRank(winningValue),
+        styles.Small);
+    }
+
+    private static string FormatPrimaryRank(PokerHandValue hand)
+    {
+      if (hand?.RankVector == null || hand.RankVector.Count == 0) return "-";
+      switch (hand.RankVector[0])
+      {
+        case 14: return "A";
+        case 13: return "K";
+        case 12: return "Q";
+        case 11: return "J";
+        default: return hand.RankVector[0].ToString();
+      }
     }
 
     private void KeepFocusedJokerOptionVisible(
@@ -581,9 +626,12 @@ namespace CodexGame.Presentation.Views
       LocalizationRuntime localization)
     {
       var hovered = PokerTableLayout.ContinueHit.Contains(Event.current.mousePosition);
-      var texture = hovered && art?.ResultContinueHover != null
-        ? art.ResultContinueHover
-        : art?.ResultContinueIdle;
+      var pressed = hovered && Input.GetMouseButton(0);
+      var texture = pressed
+        ? art?.ResultContinuePressed
+        : hovered
+          ? art?.ResultContinueHover
+          : art?.ResultContinueIdle;
       if (texture != null)
       {
         GUI.DrawTexture(

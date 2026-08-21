@@ -37,6 +37,10 @@ namespace CodexGame.Presentation.Views
     public const int PageCapacity = Columns * Rows;
     public const float ContentWidth = 632f;
     public const float ContentHeight = 154f;
+    public const float TotalX = 178f;
+    public const float TotalY = 170f;
+    public const float TotalWidth = 324f;
+    public const float TotalHeight = 48f;
     public const float RowWidth = 304f;
     public const float RowHeight = 64f;
     public const float GapX = 24f;

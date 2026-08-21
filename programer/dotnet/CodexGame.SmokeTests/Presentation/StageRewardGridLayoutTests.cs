@@ -9,7 +9,11 @@ namespace CodexGame.SmokeTests.Presentation
       var fourth = StageRewardGridLayout.Slot(5, 0, 3);
       var fifth = StageRewardGridLayout.Slot(5, 1, 0);
       tests.Check(
-        StageRewardGridLayout.PageCount(5) == 2
+        StageRewardGridLayout.PageCount(0) == 1
+          && StageRewardGridLayout.VisibleCount(0, 0) == 0
+          && StageRewardGridLayout.VisibleCount(1, 0) == 1
+          && StageRewardGridLayout.VisibleCount(4, 0) == 4
+          && StageRewardGridLayout.PageCount(5) == 2
           && StageRewardGridLayout.VisibleCount(5, 0) == 4
           && StageRewardGridLayout.VisibleCount(5, 1) == 1
           && fifth.ItemIndex == 4,
@@ -27,6 +31,8 @@ namespace CodexGame.SmokeTests.Presentation
           && StageRewardGridLayout.PopupHeight == 360f
           && StageRewardGridLayout.ContentX + StageRewardGridLayout.ContentWidth <= StageRewardGridLayout.PopupWidth
           && StageRewardGridLayout.ContentY + StageRewardGridLayout.ContentHeight <= StageRewardGridLayout.PopupHeight
+          && StageRewardGridLayout.TotalX + StageRewardGridLayout.TotalWidth <= StageRewardGridLayout.PopupWidth
+          && StageRewardGridLayout.TotalY + StageRewardGridLayout.TotalHeight <= StageRewardGridLayout.PopupHeight
           && StageRewardGridLayout.ContinueX + StageRewardGridLayout.ContinueWidth <= StageRewardGridLayout.PopupWidth
           && StageRewardGridLayout.ContinueY + StageRewardGridLayout.ContinueHeight <= StageRewardGridLayout.PopupHeight,
         "Stage reward title, rewards, and continue button must remain inside the 680 by 360 popup.");

@@ -93,7 +93,7 @@ namespace CodexGame.Presentation.Views
         new Rect(first.X, first.Y, StageRewardGridLayout.RowWidth, StageRewardGridLayout.RowHeight),
         baseReward,
         art?.BaseCurrencyIcon,
-        art?.StageRewardRowFrame,
+        art?.StageRewardBaseRow,
         BaseFallback,
         "●",
         countStyle);
@@ -102,11 +102,56 @@ namespace CodexGame.Presentation.Views
         new Rect(second.X, second.Y, StageRewardGridLayout.RowWidth, StageRewardGridLayout.RowHeight),
         temporaryReward,
         art?.TemporaryCurrencyIcon,
-        art?.StageRewardRowFrame,
+        art?.StageRewardPredictionRow,
         TemporaryFallback,
         "◇",
         countStyle);
       GUI.EndGroup();
+
+      var totalRect = new Rect(
+        popupRect.x + StageRewardGridLayout.TotalX,
+        popupRect.y + StageRewardGridLayout.TotalY,
+        StageRewardGridLayout.TotalWidth,
+        StageRewardGridLayout.TotalHeight);
+      if (art?.StageRewardTotalRow != null)
+      {
+        GUI.DrawTexture(totalRect, art.StageRewardTotalRow, ScaleMode.StretchToFill, true);
+      }
+      else GUI.Box(totalRect, GUIContent.none);
+      GUI.Label(
+        new Rect(totalRect.x + 184f, totalRect.y + 6f, 116f, 36f),
+        "+" + (baseReward + temporaryReward),
+        countStyle);
+    }
+
+    public static bool DrawStageRewardContinue(
+      Rect popupRect,
+      EconomyUiArtSet art,
+      GUIStyle style,
+      string label,
+      bool enabled = true)
+    {
+      var visualRect = new Rect(
+        popupRect.x + StageRewardGridLayout.ContinueX,
+        popupRect.y + StageRewardGridLayout.ContinueY,
+        StageRewardGridLayout.ContinueWidth,
+        StageRewardGridLayout.ContinueHeight);
+      var hovered = enabled && visualRect.Contains(Event.current.mousePosition);
+      var pressed = hovered && Input.GetMouseButton(0);
+      var texture = !enabled
+        ? art?.StageRewardContinueDisabled
+        : pressed
+          ? art?.StageRewardContinuePressed
+          : hovered
+            ? art?.StageRewardContinueHover
+            : art?.StageRewardContinueIdle;
+      if (texture != null) GUI.DrawTexture(visualRect, texture, ScaleMode.StretchToFill, true);
+      else GUI.Box(visualRect, GUIContent.none);
+      GUI.Label(new Rect(visualRect.x + 24f, visualRect.y + 8f, 192f, 36f), label, style);
+      GUI.enabled = enabled;
+      var clicked = GUI.Button(visualRect, GUIContent.none, GUIStyle.none);
+      GUI.enabled = true;
+      return clicked;
     }
 
     public static void DrawPrice(Rect rect, int price, EconomyUiArtSet art, GUIStyle countStyle)
