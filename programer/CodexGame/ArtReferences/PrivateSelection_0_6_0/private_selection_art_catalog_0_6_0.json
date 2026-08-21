@@ -1,0 +1,73 @@
+{
+  "artSetId": "private_selection_0_6_0",
+  "issues": [
+    66
+  ],
+  "artRevision": "0.6.0",
+  "integrationId": "ART-RUNTIME-0.6.5-UI-POLISH",
+  "baseGitCommit": "28b0528fec8ce4b04e2e95619dc1c7c5416018bb",
+  "status": "art_produced_user_approved_programmer_binding_required",
+  "runtimeRoot": "Assets/Art/Prototype/UI/PrivateSelection_0_6_0/",
+  "supersedes": [
+    "Assets/Art/Prototype/UI/PrivateSelection_0_5_5/"
+  ],
+  "referenceResolution": [
+    960,
+    540
+  ],
+  "layout": {
+    "panelRect": [
+      50,
+      42,
+      860,
+      456
+    ],
+    "selectionCountRect": [
+      72,
+      408,
+      184,
+      64
+    ],
+    "confirmVisualRect": [
+      580,
+      424,
+      280,
+      60
+    ],
+    "confirmTextRect": [
+      620,
+      438,
+      200,
+      32
+    ],
+    "confirmHitRect": [
+      568,
+      412,
+      304,
+      84
+    ],
+    "confirmButtonCount": 1
+  },
+  "runtimeAssets": [
+    {
+      "file": "private_selection_count_panel_184x64_0_6_0.png",
+      "usage": "selection count only; never confirm input"
+    },
+    {
+      "pattern": "private_selection_confirm_{idle|hover|active|disabled}_280x60_0_6_0.png",
+      "usage": "single confirm button"
+    }
+  ],
+  "binding": {
+    "view": "PrivateSelectionDevPanel",
+    "onlyConfirmEvent": "PrivateCardsConfirmRequested",
+    "keyboard": "Enter",
+    "canConfirm": "snapshot.CanConfirm"
+  },
+  "guardrails": [
+    "Render exactly one confirm button.",
+    "The 184x64 left panel is selection count information and must not receive confirm input.",
+    "Do not restore the 180x52 confirm textures after 0.6.0 is bound.",
+    "Keep localized words out of art textures."
+  ]
+}
