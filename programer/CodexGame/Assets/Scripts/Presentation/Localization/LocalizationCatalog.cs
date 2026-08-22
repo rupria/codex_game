@@ -11,7 +11,13 @@ namespace CodexGame.Presentation.Localization
   {
     public const string DefaultLanguage = "ko";
     public const string FallbackLanguage = "en";
-    public const int RequiredKeyCount = 207;
+    public const int RequiredKeyCount = 209;
+
+    private static readonly string[] RequiredPrivateSelectionKeys =
+    {
+      "UI_PRIVATE_CONFIRM_ACTION",
+      "UI_PRIVATE_CONFIRM_PROGRESS"
+    };
 
     private static readonly string[] RequiredPokerPrediction061Keys =
     {
@@ -190,6 +196,15 @@ namespace CodexGame.Presentation.Localization
       {
         throw new FormatException(
           "Localization CSV must contain " + RequiredKeyCount + " keys, but found " + entries.Count + ".");
+      }
+      for (var index = 0; index < RequiredPrivateSelectionKeys.Length; index++)
+      {
+        if (!entries.ContainsKey(RequiredPrivateSelectionKeys[index]))
+        {
+          throw new FormatException(
+            "Missing required private-selection localization key: "
+              + RequiredPrivateSelectionKeys[index]);
+        }
       }
       for (var index = 0; index < RequiredGuideKeys.Length; index++)
       {

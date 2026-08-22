@@ -118,6 +118,15 @@ namespace CodexGame.SmokeTests.Localization
           && catalog.Get("UI_POKER_PREDICT_PLAYER_LOSS", "en") == "PREDICT LOSS",
         "Prediction buttons must name the prediction action while result labels remain concise.");
       tests.Check(
+        catalog.Get("UI_PRIVATE_CONFIRM_ACTION", "ko") == "패 확정"
+          && catalog.Get("UI_PRIVATE_CONFIRM_ACTION", "en") == "LOCK HAND"
+          && catalog.Get(
+            "UI_PRIVATE_CONFIRM_PROGRESS",
+            "ko",
+            new LocalizationArgument("selected", 2),
+            new LocalizationArgument("required", 3)) == "선택 2/3 · ENTER",
+        "Private selection must expose one localized left-side hand-lock action with integrated progress.");
+      tests.Check(
         catalog.Get(
           "UI_POKER_RESULT_SUMMARY",
           "ko",
