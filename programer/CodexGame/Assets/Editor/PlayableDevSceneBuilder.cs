@@ -496,7 +496,19 @@ namespace CodexGame.Editor
     [MenuItem("Codex Game/Playable Dev/Build WebGL Development")]
     public static void BuildWebGlDevelopment()
     {
-      BuildWebGl(BuildOptions.Development);
+      var previousDefines = PlayerSettings.GetScriptingDefineSymbols(NamedBuildTarget.WebGL);
+
+      try
+      {
+        PlayerSettings.SetScriptingDefineSymbols(
+          NamedBuildTarget.WebGL,
+          AddDefine(previousDefines, "ENABLE_GAMEPLAY_CHEATS"));
+        BuildWebGl(BuildOptions.Development);
+      }
+      finally
+      {
+        PlayerSettings.SetScriptingDefineSymbols(NamedBuildTarget.WebGL, previousDefines);
+      }
     }
 
     [MenuItem("Codex Game/Playable Dev/Build WebGL Cloudflare Preview")]
