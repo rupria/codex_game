@@ -14,16 +14,16 @@ namespace CodexGame.Presentation.Views
     private static readonly Rect TitleRect = new Rect(68f, 58f, 824f, 28f);
     private static readonly Rect GuideRect = new Rect(68f, 86f, 824f, 24f);
     private static readonly Rect PublicRect = new Rect(68f, 124f, 190f, 226f);
-    private static readonly Rect SelectionCountRect = new Rect(72f, 408f, 184f, 64f);
-    private static readonly Rect ConfirmVisualRect = new Rect(580f, 424f, 280f, 60f);
-    private static readonly Rect ConfirmTextRect = new Rect(604f, 436f, 232f, 36f);
-    private static readonly Rect ConfirmHitRect = new Rect(568f, 412f, 304f, 84f);
+    private static readonly Rect ConfirmVisualRect = new Rect(72f, 412f, 280f, 60f);
+    private static readonly Rect ConfirmTitleRect = new Rect(96f, 417f, 232f, 28f);
+    private static readonly Rect ConfirmProgressRect = new Rect(96f, 444f, 232f, 20f);
+    private static readonly Rect ConfirmHitRect = new Rect(60f, 400f, 304f, 84f);
     private const float GridX = 270f;
     private const float GridY = 124f;
     private const float CellWidth = 112f;
     private const float CellHeight = 150f;
-    private const float GapX = 20f;
-    private const float GapY = 10f;
+    private const float GapX = 12f;
+    private const int MaximumCandidateCount = 5;
     private readonly PrivateSelectionJokerRevealState _jokerReveal =
       new PrivateSelectionJokerRevealState();
 
@@ -79,13 +79,9 @@ namespace CodexGame.Presentation.Views
         styles.Small);
       DrawPublicCards(snapshot, cards, selectionArt, styles, localization);
 
-      DrawTexture(SelectionCountRect, selectionArt?.SelectionCountPanel);
-      GUI.Label(
-        SelectionCountRect,
-        snapshot.SelectedCards.Count + " / " + snapshot.RequiredSelectionCount,
-        styles.Small);
-
-      for (var index = 0; index < snapshot.WinnerCandidates.Count && index < 8; index++)
+      for (var index = 0;
+        index < snapshot.WinnerCandidates.Count && index < MaximumCandidateCount;
+        index++)
       {
         DrawCandidate(
           snapshot,
@@ -264,9 +260,13 @@ namespace CodexGame.Presentation.Views
               ? art?.ConfirmHover
               : art?.ConfirmIdle);
       GUI.Label(
-        ConfirmTextRect,
+        ConfirmTitleRect,
+        localization.Get("UI_PRIVATE_CONFIRM_ACTION"),
+        styles.Heading);
+      GUI.Label(
+        ConfirmProgressRect,
         localization.Get(
-          "UI_PRIVATE_CONFIRM",
+          "UI_PRIVATE_CONFIRM_PROGRESS",
           new LocalizationArgument("selected", snapshot.SelectedCards.Count),
           new LocalizationArgument("required", snapshot.RequiredSelectionCount)),
         styles.Small);
@@ -278,11 +278,9 @@ namespace CodexGame.Presentation.Views
 
     private static Rect CandidateCell(int index)
     {
-      var column = index % 4;
-      var row = index / 4;
       return new Rect(
-        GridX + column * (CellWidth + GapX),
-        GridY + row * (CellHeight + GapY),
+        GridX + index * (CellWidth + GapX),
+        GridY,
         CellWidth,
         CellHeight);
     }
