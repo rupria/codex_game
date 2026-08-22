@@ -458,9 +458,12 @@ namespace CodexGame.Presentation.Views
           || _snapshot.Phase == PlayableGamePhase.PokerResult)
         && _snapshot.Poker != null)
       {
-        _presentation0124Panel.DrawShowdownFrame(
-          _snapshot.Phase == PlayableGamePhase.PokerResult,
-          _presentationUiArtSet);
+        if (_snapshot.Phase == PlayableGamePhase.PokerPrediction)
+        {
+          _presentation0124Panel.DrawShowdownFrame(
+            false,
+            _presentationUiArtSet);
+        }
         _pokerPanel.Draw(
           _snapshot.Poker,
           _styles,

@@ -17,6 +17,7 @@ $builderPath = Join-Path $assetsRoot "Editor\PlayableDevSceneBuilder.cs"
 $scenePath = Join-Path $assetsRoot "Scenes\PlayableDev.unity"
 $pokerPanelPath = Join-Path $assetsRoot "Scripts\Presentation\Views\PokerDevPanel.cs"
 $pokerLayoutPath = Join-Path $assetsRoot "Scripts\Presentation\Views\PokerTableLayout.cs"
+$playableDevViewPath = Join-Path $assetsRoot "Scripts\Presentation\Views\PlayableDevView.cs"
 $halliLayoutPath = Join-Path $assetsRoot "Scripts\Presentation\Views\HalliPileOverlapLayout.cs"
 $halliPanelPath = Join-Path $assetsRoot "Scripts\Presentation\Views\HalliDevPanel.cs"
 $privatePanelPath = Join-Path $assetsRoot "Scripts\Presentation\Views\PrivateSelectionDevPanel.cs"
@@ -31,6 +32,7 @@ foreach ($required in @(
   $scenePath,
   $pokerPanelPath,
   $pokerLayoutPath,
+  $playableDevViewPath,
   $halliLayoutPath,
   $halliPanelPath,
   $privatePanelPath,
@@ -49,6 +51,7 @@ $builderText = Get-Content -LiteralPath $builderPath -Raw
 $sceneText = Get-Content -LiteralPath $scenePath -Raw
 $pokerPanelText = Get-Content -LiteralPath $pokerPanelPath -Raw
 $pokerLayoutText = Get-Content -LiteralPath $pokerLayoutPath -Raw
+$playableDevViewText = Get-Content -LiteralPath $playableDevViewPath -Raw
 $halliLayoutText = Get-Content -LiteralPath $halliLayoutPath -Raw
 $halliPanelText = Get-Content -LiteralPath $halliPanelPath -Raw
 $privatePanelText = Get-Content -LiteralPath $privatePanelPath -Raw
@@ -272,6 +275,8 @@ $jokerPackageBound = $builderText.Contains("JokerHandChoice_0_6_0")
 $predictionLabelsDrawn = $pokerPanelText.Contains("UI_POKER_PREDICTION_TITLE") `
   -and -not $pokerPanelText.Contains("new GUIContent(string.Empty, label)")
 $largeResultModalRemoved = -not $pokerPanelText.Contains("PokerResultOverlayRenderer.Draw(")
+$legacyResultBackdropRemoved = $playableDevViewText -match '(?s)if \(_snapshot\.Phase == PlayableGamePhase\.PokerPrediction\)\s*\{\s*_presentation0124Panel\.DrawShowdownFrame\(\s*false,\s*_presentationUiArtSet\);' `
+  -and $playableDevViewText -notmatch '(?s)DrawShowdownFrame\(\s*_snapshot\.Phase == PlayableGamePhase\.PokerResult'
 $predictionLayoutUpdated = $pokerLayoutText.Contains("new Rect(132f, 454f, 244f, 66f)") `
   -and $pokerLayoutText.Contains("new Rect(584f, 454f, 244f, 66f)")
 $resultSummaryBound = $pokerArtText.Contains("ResultSummaryPlayer") `
@@ -279,12 +284,13 @@ $resultSummaryBound = $pokerArtText.Contains("ResultSummaryPlayer") `
   -and $pokerLayoutText.Contains("new Rect(316f, 18f, 328f, 76f)")
 $jokerTwoColumnFallbackRemoved = -not $pokerPanelText.Contains("var column = index % 2;")
 
-Write-Output ("predictionPackageBound={0} labelsDrawn={1} layout244x66={2} resultSummaryBound={3} largeResultModalRemoved={4}" -f `
+Write-Output ("predictionPackageBound={0} labelsDrawn={1} layout244x66={2} resultSummaryBound={3} largeResultModalRemoved={4} legacyResultBackdropRemoved={5}" -f `
   $predictionPackageBound,
   $predictionLabelsDrawn,
   $predictionLayoutUpdated,
   $resultSummaryBound,
-  $largeResultModalRemoved)
+  $largeResultModalRemoved,
+  $legacyResultBackdropRemoved)
 Write-Output ("jokerPackageBound={0} twoColumnFallbackRemoved={1}" -f `
   $jokerPackageBound,
   $jokerTwoColumnFallbackRemoved)
@@ -303,6 +309,9 @@ if (-not $resultSummaryBound) {
 }
 if (-not $largeResultModalRemoved) {
   Add-GateFailure "issue 68: obsolete large result modal remains"
+}
+if (-not $legacyResultBackdropRemoved) {
+  Add-GateFailure "issues 68/73: legacy Presentation_0_1_2_4 result backdrop remains connected"
 }
 if (-not $jokerPackageBound) {
   Add-GateFailure "issue 74: joker hand-choice package is not bound"
