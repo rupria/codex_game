@@ -26,8 +26,8 @@ namespace CodexGame.Presentation.Views
     public static readonly Rect PredictionTimerText = new Rect(690f, 24f, 150f, 32f);
     public static readonly Rect InsuranceRemainingIcon = new Rect(690f, 112f, 28f, 28f);
     public static readonly Rect InsuranceRemainingText = new Rect(724f, 112f, 118f, 28f);
-    public static readonly Rect PredictionSuccessIcon = new Rect(624f, 428f, 28f, 28f);
-    public static readonly Rect PredictionSuccessText = new Rect(660f, 428f, 132f, 28f);
+    public static readonly Rect PredictionSuccessIcon = new Rect(746f, 374f, 28f, 28f);
+    public static readonly Rect PredictionSuccessText = new Rect(780f, 374f, 170f, 28f);
 
     public static Rect AiCard(int index) => new Rect(384f + index * 68f, 80f, 56f, 78f);
     public static Rect CommunityCard(int index) => new Rect(416f + index * 72f, 218f, 56f, 78f);
