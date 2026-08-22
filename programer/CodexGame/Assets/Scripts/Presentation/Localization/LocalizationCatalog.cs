@@ -11,11 +11,13 @@ namespace CodexGame.Presentation.Localization
   {
     public const string DefaultLanguage = "ko";
     public const string FallbackLanguage = "en";
-    public const int RequiredKeyCount = 205;
+    public const int RequiredKeyCount = 207;
 
     private static readonly string[] RequiredPokerPrediction061Keys =
     {
       "UI_POKER_PREDICTION_TITLE",
+      "UI_POKER_PREDICT_PLAYER_WIN",
+      "UI_POKER_PREDICT_PLAYER_LOSS",
       "UI_PREDICTION_SUCCESS_COUNT"
     };
 

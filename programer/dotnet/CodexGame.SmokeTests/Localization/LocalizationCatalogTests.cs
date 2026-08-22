@@ -111,8 +111,12 @@ namespace CodexGame.SmokeTests.Localization
         catalog.Get("UI_POKER_PLAYER_WINS", "ko") == "승리"
           && catalog.Get("UI_POKER_PLAYER_LOSES", "ko") == "패배"
           && catalog.Get("UI_POKER_PLAYER_WINS", "en") == "WIN"
-          && catalog.Get("UI_POKER_PLAYER_LOSES", "en") == "LOSE",
-        "Prediction medal labels must stay short enough to render inside the round buttons.");
+          && catalog.Get("UI_POKER_PLAYER_LOSES", "en") == "LOSE"
+          && catalog.Get("UI_POKER_PREDICT_PLAYER_WIN", "ko") == "승리 예측"
+          && catalog.Get("UI_POKER_PREDICT_PLAYER_LOSS", "ko") == "패배 예측"
+          && catalog.Get("UI_POKER_PREDICT_PLAYER_WIN", "en") == "PREDICT WIN"
+          && catalog.Get("UI_POKER_PREDICT_PLAYER_LOSS", "en") == "PREDICT LOSS",
+        "Prediction buttons must name the prediction action while result labels remain concise.");
       tests.Check(
         catalog.Get(
           "UI_POKER_RESULT_SUMMARY",

@@ -48,6 +48,24 @@ namespace CodexGame.Presentation.Views
         alignment = TextAnchor.MiddleCenter,
         wordWrap = true
       };
+      PredictionButton = new GUIStyle(GUI.skin.label)
+      {
+        fontSize = 16,
+        fontStyle = FontStyle.Bold,
+        alignment = TextAnchor.MiddleCenter,
+        wordWrap = false
+      };
+      PredictionButton.normal.textColor = new Color(0.96f, 0.91f, 0.76f);
+      PredictionButton.hover.textColor = Color.white;
+      PredictionButton.active.textColor = new Color(1f, 0.78f, 0.34f);
+      PredictionMetric = new GUIStyle(GUI.skin.label)
+      {
+        fontSize = 13,
+        fontStyle = FontStyle.Bold,
+        alignment = TextAnchor.MiddleLeft,
+        wordWrap = false
+      };
+      PredictionMetric.normal.textColor = new Color(1f, 0.82f, 0.42f);
       IntroButton = new GUIStyle(GUI.skin.label)
       {
         fontSize = 28,
@@ -66,6 +84,8 @@ namespace CodexGame.Presentation.Views
     public GUIStyle SelectedCard { get; }
     public GUIStyle Status { get; }
     public GUIStyle Small { get; }
+    public GUIStyle PredictionButton { get; }
+    public GUIStyle PredictionMetric { get; }
     public GUIStyle IntroButton { get; }
   }
 }

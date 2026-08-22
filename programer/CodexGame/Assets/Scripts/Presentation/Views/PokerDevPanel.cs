@@ -87,7 +87,7 @@ namespace CodexGame.Presentation.Views
         pokerArt?.PlayerPredictionHover,
         pokerArt?.PlayerPredictionSelected,
         pokerArt?.PlayerPredictionDisabled,
-        localization.Get("UI_POKER_PLAYER_WINS"),
+        localization.Get("UI_POKER_PREDICT_PLAYER_WIN"),
         canPredict,
         selectedPrediction == PredictionChoice.PlayerWins,
         styles)) predict(PredictionChoice.PlayerWins);
@@ -99,7 +99,7 @@ namespace CodexGame.Presentation.Views
         pokerArt?.AiPredictionHover,
         pokerArt?.AiPredictionSelected,
         pokerArt?.AiPredictionDisabled,
-        localization.Get("UI_POKER_PLAYER_LOSES"),
+        localization.Get("UI_POKER_PREDICT_PLAYER_LOSS"),
         canPredict,
         selectedPrediction == PredictionChoice.PlayerLoses,
         styles)) predict(PredictionChoice.PlayerLoses);
@@ -403,7 +403,7 @@ namespace CodexGame.Presentation.Views
         localization.Get(
           "UI_PREDICTION_SUCCESS_COUNT",
           new LocalizationArgument("count", reward.RewardSuccessCount)),
-        styles.Small);
+        styles.PredictionMetric);
     }
 
     private static void DrawFaceCards(
@@ -613,7 +613,7 @@ namespace CodexGame.Presentation.Views
       var drawTextRect = pressed
         ? new Rect(textRect.x, textRect.y + 2f, textRect.width, textRect.height)
         : textRect;
-      GUI.Label(drawTextRect, label, styles.Small);
+      GUI.Label(drawTextRect, label, styles.PredictionButton);
       GUI.enabled = enabled;
       var clicked = GUI.Button(hitRect, GUIContent.none, GUIStyle.none);
       GUI.enabled = true;
