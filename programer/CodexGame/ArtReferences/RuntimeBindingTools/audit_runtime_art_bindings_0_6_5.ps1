@@ -322,16 +322,18 @@ if (-not $jokerTwoColumnFallbackRemoved) {
 
 Write-Output "UI_POLISH_ACCEPTANCE_CONTRACTS"
 $privatePackageBound = $builderText.Contains("PrivateSelection_0_6_0")
-$singleConfirmHit = $privatePanelText.Contains("ConfirmHitRect = new Rect(60f, 400f, 304f, 84f)") `
-  -and $privatePanelText.Contains("ConfirmVisualRect = new Rect(72f, 412f, 280f, 60f)") `
+$singleConfirmHit = $privatePanelText.Contains("ConfirmHitRect = new Rect(568f, 412f, 304f, 84f)") `
+  -and $privatePanelText.Contains("ConfirmVisualRect = new Rect(580f, 424f, 280f, 60f)") `
   -and ([regex]::Matches($privatePanelText, "GUI\.Button\(ConfirmHitRect")).Count -eq 1 `
   -and -not $privatePanelText.Contains("ConfirmRect = new Rect(73f, 418f, 180f, 52f)")
-$selectionCountIntegrated = $privatePanelText.Contains('"UI_PRIVATE_CONFIRM_PROGRESS"') `
-  -and -not $privatePanelText.Contains("SelectionCountRect")
-$candidateRowBound = $privatePanelText.Contains("private const float GapX = 12f;") `
-  -and $privatePanelText.Contains("private const int MaximumCandidateCount = 5;") `
-  -and $privatePanelText.Contains("GridX + index * (CellWidth + GapX)") `
-  -and -not $privatePanelText.Contains("index % 4")
+$selectionCountIntegrated = $privatePanelText.Contains("SelectionCountRect = new Rect(72f, 408f, 184f, 64f)") `
+  -and $privatePanelText.Contains("selectionArt?.SelectionCountPanel") `
+  -and $privatePanelText.Contains('"UI_PRIVATE_CONFIRM"')
+$candidateGridBound = $privatePanelText.Contains("private const float GapX = 20f;") `
+  -and $privatePanelText.Contains("private const float GapY = 10f;") `
+  -and $privatePanelText.Contains("index % 4") `
+  -and $privatePanelText.Contains("index / 4") `
+  -and $privatePanelText.Contains("index < 8")
 $stageRewardPackageBound = $builderText.Contains("StageReward_0_5_6")
 $stageRewardStatesBound = $economyArtText.Contains("StageRewardBaseRow") `
   -and $economyArtText.Contains("StageRewardPredictionRow") `
@@ -339,18 +341,18 @@ $stageRewardStatesBound = $economyArtText.Contains("StageRewardBaseRow") `
   -and $economyRendererText.Contains("DrawStageRewardContinue(")
 $communityMaximumTwo = $pokerPanelText.Contains("DrawFaceCards(snapshot.PublicCards, PokerTableLayout.CommunityCard, 2, cards);")
 
-Write-Output ("privatePackageBound={0} singleConfirmHit={1} selectionCountIntegrated={2} candidateRowBound={3}" -f `
+Write-Output ("privatePackageBound={0} singleConfirmHit={1} selectionCountIntegrated={2} candidateGridBound={3}" -f `
   $privatePackageBound,
   $singleConfirmHit,
   $selectionCountIntegrated,
-  $candidateRowBound)
+  $candidateGridBound)
 Write-Output ("stageRewardPackageBound={0} rewardStatesBound={1} communityMaximumTwo={2}" -f `
   $stageRewardPackageBound,
   $stageRewardStatesBound,
   $communityMaximumTwo)
 
-if (-not $privatePackageBound -or -not $singleConfirmHit -or -not $selectionCountIntegrated -or -not $candidateRowBound) {
-  Add-GateFailure "issue 66: private-selection must keep one left confirm hit, integrated progress, and five candidate frames in one row"
+if (-not $privatePackageBound -or -not $singleConfirmHit -or -not $selectionCountIntegrated -or -not $candidateGridBound) {
+  Add-GateFailure "issue 66: private-selection must keep one right confirm hit, dedicated selection count, and a four-column wrapped candidate grid"
 }
 if (-not $stageRewardPackageBound -or -not $stageRewardStatesBound) {
   Add-GateFailure "issue 49: stage-reward 0.5.6 rows, total and continue states are not fully bound"
