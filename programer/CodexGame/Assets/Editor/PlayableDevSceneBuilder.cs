@@ -661,6 +661,13 @@ namespace CodexGame.Editor
         Debug.LogWarning($"Missing sample audio clip: {fileName}");
       }
 
+      foreach (var fileName in ApprovedOriginalAudioFileNames)
+      {
+        if (FindAudioClip(fileName) != null) continue;
+        missing++;
+        Debug.LogError($"Missing approved original audio clip: {fileName}");
+      }
+
       if (missing == 0)
       {
         Debug.Log("Unity Open Project #1 sample clips are ready.");
@@ -686,6 +693,14 @@ namespace CodexGame.Editor
       "Swing_Cane_01.wav"
     };
 
+    private static readonly string[] ApprovedOriginalAudioFileNames =
+    {
+      "Western_Reference_Bed_Loop_12.wav",
+      "Prediction_Lock_03.wav",
+      "Round_Win_06.wav",
+      "Round_Lose_05.wav"
+    };
+
     private static void ConfigureSampleAudio(PlayableAudioDirector audio)
     {
       audio.Configure(
@@ -699,9 +714,18 @@ namespace CodexGame.Editor
         reroll: FindAudioClip("Swing_Cane_01.wav"),
         purchase: FindAudioClip("Grabbing_01.wav"),
         damage: FindAudioClip("AttackLanding_Rock.wav"),
-        win: FindAudioClip("Interface_05.wav"),
-        lose: FindAudioClip("Interface_07.wav"),
-        transition: FindAudioClip("Interface_05.wav"));
+        win: FindRequiredAudioClip("Round_Win_06.wav"),
+        lose: FindRequiredAudioClip("Round_Lose_05.wav"),
+        transition: FindAudioClip("Interface_05.wav"),
+        musicLoop: FindRequiredAudioClip("Western_Reference_Bed_Loop_12.wav"),
+        predictionLock: FindRequiredAudioClip("Prediction_Lock_03.wav"));
+    }
+
+    private static AudioClip FindRequiredAudioClip(string fileName)
+    {
+      var clip = FindAudioClip(fileName);
+      if (clip != null) return clip;
+      throw new FileNotFoundException("Approved original audio was not imported.", fileName);
     }
 
     private static AudioClip FindAudioClip(string fileName)
