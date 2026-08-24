@@ -31,6 +31,7 @@ namespace CodexGame.Presentation.Views
       PlayableTransitionSnapshot transition,
       int playerHealth,
       int aiHealth,
+      int stageNumber,
       bool playerDamage,
       bool aiDamage,
       PlayableDevStyles styles,
@@ -60,6 +61,7 @@ namespace CodexGame.Presentation.Views
           transition.Progress,
           playerHealth,
           aiHealth,
+          stageNumber,
           playerDamage,
           aiDamage,
           styles,
@@ -79,6 +81,7 @@ namespace CodexGame.Presentation.Views
       DrawScoreboard(
         playerHealth,
         aiHealth,
+        stageNumber,
         playerDamage,
         aiDamage,
         styles,
@@ -113,6 +116,7 @@ namespace CodexGame.Presentation.Views
       float progress,
       int playerHealth,
       int aiHealth,
+      int stageNumber,
       bool playerDamage,
       bool aiDamage,
       PlayableDevStyles styles,
@@ -123,6 +127,7 @@ namespace CodexGame.Presentation.Views
       DrawScoreboard(
         playerHealth,
         aiHealth,
+        stageNumber,
         playerDamage,
         aiDamage,
         styles,
@@ -141,6 +146,7 @@ namespace CodexGame.Presentation.Views
     private void DrawScoreboard(
       int playerHealth,
       int aiHealth,
+      int stageNumber,
       bool playerDamage,
       bool aiDamage,
       PlayableDevStyles styles,
@@ -161,7 +167,7 @@ namespace CodexGame.Presentation.Views
       GUI.Box(HalliBoardLayout.AiScore, GUIContent.none);
       GUI.Label(
         new Rect(674f, 24f, 250f, 26f),
-        L("UI_ACTOR_AI"),
+        L(StageOpponentNameKeys.ForStage(stageNumber)),
         styles.Small);
       HealthHeartRenderer.Draw(
         new Rect(674f, 48f, 250f, 30f),
