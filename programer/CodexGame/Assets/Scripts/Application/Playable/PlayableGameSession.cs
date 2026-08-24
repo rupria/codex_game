@@ -607,7 +607,9 @@ namespace CodexGame.Application.Playable
           || Phase == PlayableGamePhase.HalliTransition
             ? _halli.GetSnapshot(now)
             : null,
-        Phase == PlayableGamePhase.PrivateSelection && _selection != null
+        (Phase == PlayableGamePhase.HalliTransition
+          || Phase == PlayableGamePhase.PrivateSelection)
+          && _selection != null
           ? _selection.GetSnapshot(now)
           : null,
         Phase == PlayableGamePhase.PokerItems && _items != null
@@ -671,13 +673,8 @@ namespace CodexGame.Application.Playable
         PlayableTransitionKind.ThreeCallToSelection,
         now,
         GameRules.ThreeCallToSelectionPresentationMicroseconds);
-      Phase = PlayableGamePhase.HalliTransition;
-    }
 
-    private void BeginPrivateSelection(
-      GameTimestamp now,
-      PrototypeHalliSnapshot halliSnapshot)
-    {
+      var halliSnapshot = _halli.GetSnapshot(now);
       if (!halliSnapshot.FirstPublicCard.HasValue)
       {
         throw new InvalidOperationException("Halli stage has no first public card.");
@@ -685,9 +682,25 @@ namespace CodexGame.Application.Playable
 
       _firstPublicCard = halliSnapshot.FirstPublicCard.Value;
       _selection = _halli.BeginPrivateCardDistribution(
-        now,
+        _transition.EndsAt,
         pairAssistEnabled: PrivateCardDistributionRules.IsPairAssistEnabled(_health),
         jokerAwardPercent: _jokerAwardCheat.EffectiveAwardPercent);
+      Phase = PlayableGamePhase.HalliTransition;
+    }
+
+    private void BeginPrivateSelection(
+      GameTimestamp now,
+      PrototypeHalliSnapshot halliSnapshot)
+    {
+      if (!halliSnapshot.FirstPublicCard.HasValue || !_firstPublicCard.HasValue)
+      {
+        throw new InvalidOperationException("Halli stage has no first public card.");
+      }
+      if (_selection == null)
+      {
+        throw new InvalidOperationException(
+          "Private-card distribution was not prepared for the Showdown transition.");
+      }
       Phase = PlayableGamePhase.PrivateSelection;
       var selectionSnapshot = _selection.GetSnapshot(now);
 

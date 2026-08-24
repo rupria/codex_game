@@ -1,4 +1,5 @@
 using CodexGame.Application.Playable;
+using CodexGame.Core.Halli;
 using CodexGame.Core.Shared;
 
 namespace CodexGame.SmokeTests.Playable
@@ -10,6 +11,7 @@ namespace CodexGame.SmokeTests.Playable
       CheckNormalEntryTiming(tests);
       CheckSkipPreservesGameState(tests);
       CheckTransitionRuleConstants(tests);
+      CheckShowdownPreparesTwoCommunityCards(tests);
     }
 
     private static void CheckNormalEntryTiming(TestHarness tests)
@@ -68,6 +70,42 @@ namespace CodexGame.SmokeTests.Playable
     {
       tests.Check(GameRules.ThreeCallToSelectionPresentationMicroseconds == 2_000_000,
         "Three Call completion must keep input locked for exactly two seconds before selection.");
+    }
+
+    private static void CheckShowdownPreparesTwoCommunityCards(TestHarness tests)
+    {
+      var game = new PlayableGameSession();
+      game.StartNewBattle(new GameTimestamp(0), 20260824);
+      var current = new GameTimestamp(
+        GameRules.StageEntryPresentationMicroseconds
+          + GameRules.ThreeCallEntryPresentationMicroseconds);
+      game.Tick(current);
+
+      for (var loss = 0; loss < HalliStageRules.GetWinTarget(1); loss++)
+      {
+        var ringAt = new GameTimestamp(current.Microseconds + 1);
+        game.Ring(PileSide.Left, ringAt);
+        current = new GameTimestamp(
+          ringAt.Microseconds + GameRules.HalliResultLockMicroseconds);
+        game.Tick(current);
+      }
+
+      var transition = game.GetSnapshot(current);
+      tests.Check(
+        transition.Phase == PlayableGamePhase.HalliTransition
+          && transition.Transition.RemainingMicroseconds
+            == GameRules.ThreeCallToSelectionPresentationMicroseconds
+          && transition.Selection != null
+          && transition.Selection.FirstPublicCard.HasValue
+          && transition.Selection.SecondPublicCard.HasValue,
+        "Showdown transition must lock input and expose exactly the two prepared community cards.");
+
+      var beforeEnd = new GameTimestamp(
+        current.Microseconds + GameRules.ThreeCallToSelectionPresentationMicroseconds - 1);
+      game.Tick(beforeEnd);
+      tests.Check(
+        game.Phase == PlayableGamePhase.HalliTransition,
+        "Private-card selection must not open before the full two-second Showdown transition ends.");
     }
   }
 }
