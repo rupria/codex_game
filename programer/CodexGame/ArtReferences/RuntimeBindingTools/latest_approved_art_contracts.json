@@ -51,10 +51,10 @@
     },
     {
       "issue": 66,
-      "approvedAtUtc": "2026-08-24T08:08:54Z",
+      "approvedAtUtc": "2026-08-24T11:45:49Z",
       "approvalKind": "human-issue-comment-and-image",
       "approvalSourceUrl": "https://github.com/rupria/codex_game/issues/66#issuecomment-5392402938",
-      "baseGitSha": "51499849445311b1651a18388afafed215476b80",
+      "baseGitSha": "17e0c5158a3fdb1f19a47f58ae2598baac25d805",
       "activeDocument": "project_docs/programer/26.08.22_구현결과_이슈66_개인카드선택_UI_최신배치.md",
       "supersededSources": [
         "https://github.com/rupria/codex_game/issues/66#issuecomment-5388789887",
@@ -64,20 +64,33 @@
         {
           "path": "programer/CodexGame/Assets/Scripts/Presentation/Views/PrivateSelectionDevPanel.cs",
           "requiredTokens": [
-            "ConfirmVisualRect = new Rect(72f, 412f, 280f, 60f)",
-            "ConfirmHitRect = new Rect(60f, 400f, 304f, 84f)",
-            "private const int MaximumCandidateCount = 5;",
-            "GridX + index * (CellWidth + GapX)",
+            "SelectionCountRect = new Rect(",
+            "art?.SelectionCountPanel",
+            "PrivateSelectionPanelLayout.CandidateX(index, candidateCount)",
+            "PrivateSelectionPanelLayout.MaximumCandidateCount",
             "UI_PRIVATE_CONFIRM_ACTION",
             "UI_PRIVATE_CONFIRM_PROGRESS"
           ],
           "forbiddenTokens": [
-            "ConfirmVisualRect = new Rect(580f, 424f, 280f, 60f)",
-            "ConfirmHitRect = new Rect(568f, 412f, 304f, 84f)",
-            "SelectionCountRect",
-            "index % 4",
-            "index / 4",
+            "ConfirmVisualRect = new Rect(72f, 412f, 280f, 60f)",
+            "ConfirmHitRect = new Rect(60f, 400f, 304f, 84f)",
             "index < 8"
+          ]
+        },
+        {
+          "path": "programer/CodexGame/Assets/Scripts/Presentation/Views/PrivateSelectionPanelLayout.cs",
+          "requiredTokens": [
+            "CandidateColumns = 4;",
+            "MaximumCandidateCount = 5;",
+            "CandidateBottomY = 294f;",
+            "ConfirmVisualX = 580f;",
+            "ConfirmHitX = 568f;",
+            "return 452f;"
+          ],
+          "forbiddenTokens": [
+            "MaximumCandidateCount = 8;",
+            "ConfirmVisualX = 72f;",
+            "ConfirmHitX = 60f;"
           ]
         }
       ]
