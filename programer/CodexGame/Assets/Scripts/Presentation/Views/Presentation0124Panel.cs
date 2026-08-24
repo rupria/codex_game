@@ -45,14 +45,10 @@ namespace CodexGame.Presentation.Views
       {
         DrawPortraitFallback(new Rect(320f, 206f, 108f, 108f));
       }
-      var opponentNameKey = OpponentNameKey(snapshot.StageNumber);
-      if (opponentNameKey != null)
-      {
-        GUI.Label(
-          new Rect(448f, 206f, 194f, 30f),
-          localization.Get(opponentNameKey),
-          styles.Heading);
-      }
+      GUI.Label(
+        new Rect(448f, 206f, 194f, 30f),
+        localization.Get(StageOpponentNameKeys.ForStage(snapshot.StageNumber)),
+        styles.Heading);
       DrawStagePips(snapshot.StageNumber);
       DrawRestriction(snapshot.StageItemRestriction, art, styles, localization, new Rect(320f, 344f, 320f, 84f));
 
@@ -213,18 +209,6 @@ namespace CodexGame.Presentation.Views
       GUI.color = new Color(0.04f, 0.035f, 0.03f, 0.94f);
       GUI.DrawTexture(rect, Texture2D.whiteTexture, ScaleMode.StretchToFill, true);
       GUI.color = previous;
-    }
-
-    private static string OpponentNameKey(int stageNumber)
-    {
-      return stageNumber switch
-      {
-        1 => "UI_OPPONENT_STAGE_1_NAME",
-        2 => "UI_OPPONENT_STAGE_2_NAME",
-        3 => "UI_OPPONENT_STAGE_3_NAME",
-        4 => "UI_OPPONENT_STAGE_4_NAME",
-        _ => null
-      };
     }
 
     private static void DrawStagePips(int stageNumber)
