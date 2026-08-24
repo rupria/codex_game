@@ -39,6 +39,13 @@ namespace CodexGame.SmokeTests.Presentation
           && aiBacks.X(0) >= 714f
           && NearlyEqual(aiBacks.X(23) + cardWidth, 914f),
         "AI acquired-card backs must fit inside the bottom-right tray without exposing faces.");
+
+      tests.Check(
+        AcquiredCardFanLayout.NewestVisibleStart(1, 3) == 0
+          && AcquiredCardFanLayout.NewestVisibleStart(3, 3) == 0
+          && AcquiredCardFanLayout.NewestVisibleStart(4, 3) == 1
+          && AcquiredCardFanLayout.NewestVisibleStart(8, 3) == 5,
+        "A fixed three-slot tray must display the newest three acquired cards.");
     }
 
     private static bool NearlyEqual(float left, float right)

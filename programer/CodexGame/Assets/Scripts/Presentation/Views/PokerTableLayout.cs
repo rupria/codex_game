@@ -8,21 +8,21 @@ namespace CodexGame.Presentation.Views
     public static readonly Rect AiItem = new Rect(638f, 108f, 64f, 64f);
     public static readonly Rect PlayerHealth = new Rect(252f, 372f, 116f, 52f);
     public static readonly Rect PlayerItem = new Rect(650f, 350f, 88f, 76f);
-    public static readonly Rect WinVisual = new Rect(132f, 454f, 244f, 66f);
-    public static readonly Rect LoseVisual = new Rect(584f, 454f, 244f, 66f);
-    public static readonly Rect WinText = new Rect(154f, 466f, 200f, 40f);
-    public static readonly Rect LoseText = new Rect(606f, 466f, 200f, 40f);
-    public static readonly Rect WinHit = new Rect(124f, 446f, 260f, 82f);
-    public static readonly Rect LoseHit = new Rect(576f, 446f, 260f, 82f);
+    public static readonly Rect WinVisual = new Rect(236f, 456f, 212f, 64f);
+    public static readonly Rect LoseVisual = new Rect(512f, 456f, 212f, 64f);
+    public static readonly Rect WinText = WinVisual;
+    public static readonly Rect LoseText = LoseVisual;
+    public static readonly Rect WinHit = new Rect(228f, 448f, 228f, 80f);
+    public static readonly Rect LoseHit = new Rect(504f, 448f, 228f, 80f);
     // #77: keep the resolved-state action on the same visual baseline as the
     // prediction buttons. The former y=492 placement clipped against the
     // 540p safe area and made CONTINUE look detached from the result flow.
     public static readonly Rect ContinueVisual = new Rect(388f, 461f, 184f, 50f);
     public static readonly Rect ContinueText = new Rect(414f, 471f, 132f, 30f);
     public static readonly Rect ContinueHit = new Rect(378f, 451f, 204f, 70f);
-    public static readonly Rect PredictionTitlePlate = new Rect(326f, 24f, 308f, 52f);
-    public static readonly Rect PredictionStageEmblem = new Rect(338f, 30f, 40f, 40f);
-    public static readonly Rect PredictionTitleText = new Rect(390f, 36f, 220f, 28f);
+    public static readonly Rect PredictionTitlePlate = new Rect(350f, 20f, 260f, 52f);
+    public static readonly Rect PredictionStageEmblem = new Rect(360f, 26f, 40f, 40f);
+    public static readonly Rect PredictionTitleText = new Rect(410f, 32f, 180f, 28f);
     public static readonly Rect ResultSummary = new Rect(316f, 18f, 328f, 76f);
     public static readonly Rect ResultWinnerText = new Rect(344f, 25f, 272f, 31f);
     public static readonly Rect ResultHandText = new Rect(344f, 56f, 272f, 25f);
@@ -33,8 +33,8 @@ namespace CodexGame.Presentation.Views
     public static readonly Rect PredictionSuccessIcon = new Rect(730f, 374f, 28f, 28f);
     public static readonly Rect PredictionSuccessText = new Rect(766f, 374f, 160f, 28f);
 
-    public static Rect AiCard(int index) => new Rect(384f + index * 68f, 80f, 56f, 78f);
-    public static Rect CommunityCard(int index) => new Rect(416f + index * 72f, 218f, 56f, 78f);
-    public static Rect PlayerCard(int index) => new Rect(380f + index * 72f, 338f, 56f, 78f);
+    public static Rect AiCard(int index) => new Rect(374f + index * 74f, 78f, 64f, 90f);
+    public static Rect CommunityCard(int index) => new Rect(411f + index * 74f, 196f, 64f, 90f);
+    public static Rect PlayerCard(int index) => new Rect(374f + index * 74f, 326f, 64f, 90f);
   }
 }
