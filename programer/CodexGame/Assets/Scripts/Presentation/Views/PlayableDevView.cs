@@ -784,7 +784,11 @@ namespace CodexGame.Presentation.Views
         _snapshot.LastStageBaseReward,
         _snapshot.LastStageBonusReward,
         _economyUiArtSet,
-        _styles.Status);
+        _styles.Heading,
+        _styles.Status,
+        L("UI_STAGE_REWARD_BASE_LABEL"),
+        L("UI_STAGE_REWARD_PREDICTION_LABEL"),
+        L("UI_STAGE_REWARD_TOTAL_LABEL"));
       GUI.Label(
         new Rect(
           popupRect.x + StageRewardGridLayout.TitleX,

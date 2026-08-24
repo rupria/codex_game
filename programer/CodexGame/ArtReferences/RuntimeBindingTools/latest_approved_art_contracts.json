@@ -3,6 +3,53 @@
   "policy": "latest-human-approval-wins",
   "contracts": [
     {
+      "issue": 49,
+      "approvedAtUtc": "2026-08-24T08:24:49Z",
+      "approvalKind": "human-issue-comment-and-image",
+      "approvalSourceUrl": "https://github.com/rupria/codex_game/issues/49#issuecomment-5392579050",
+      "baseGitSha": "f12a8655c072f3fbe316b06b2835d2433e3f83b7",
+      "activeDocument": "project_docs/programer/26.08.24_이슈49_보상정산_라벨가독성_회귀수정.md",
+      "supersededSources": [
+        "https://github.com/rupria/codex_game/issues/49#issuecomment-5388789968"
+      ],
+      "runtimeChecks": [
+        {
+          "path": "programer/CodexGame/Assets/Scripts/Presentation/Views/EconomyUiRenderer.cs",
+          "requiredTokens": [
+            "StageRewardGridLayout.RowLabelX",
+            "StageRewardGridLayout.RowValueX",
+            "StageRewardGridLayout.TotalLabelX",
+            "StageRewardGridLayout.TotalValueX",
+            "baseLabel",
+            "predictionLabel",
+            "totalLabel"
+          ],
+          "forbiddenTokens": [
+            "new Rect(rect.x + 16f, rect.y + 12f, 40f, 40f)",
+            "new Rect(totalRect.x + 184f, totalRect.y + 6f, 116f, 36f)"
+          ]
+        },
+        {
+          "path": "programer/CodexGame/Assets/Scripts/Presentation/Views/PlayableDevView.cs",
+          "requiredTokens": [
+            "UI_STAGE_REWARD_BASE_LABEL",
+            "UI_STAGE_REWARD_PREDICTION_LABEL",
+            "UI_STAGE_REWARD_TOTAL_LABEL"
+          ],
+          "forbiddenTokens": []
+        },
+        {
+          "path": "programer/CodexGame/Assets/StreamingAssets/Localization/ui_strings.csv",
+          "requiredTokens": [
+            "UI_STAGE_REWARD_BASE_LABEL,기본 보상,BASE REWARD",
+            "UI_STAGE_REWARD_PREDICTION_LABEL,예측 보너스,PREDICTION BONUS",
+            "UI_STAGE_REWARD_TOTAL_LABEL,총 획득,TOTAL GAINED"
+          ],
+          "forbiddenTokens": []
+        }
+      ]
+    },
+    {
       "issue": 66,
       "approvedAtUtc": "2026-08-24T08:08:54Z",
       "approvalKind": "human-issue-comment-and-image",

@@ -11,7 +11,7 @@ namespace CodexGame.Presentation.Localization
   {
     public const string DefaultLanguage = "ko";
     public const string FallbackLanguage = "en";
-    public const int RequiredKeyCount = 209;
+    public const int RequiredKeyCount = 212;
 
     private static readonly string[] RequiredPrivateSelectionKeys =
     {
@@ -54,6 +54,9 @@ namespace CodexGame.Presentation.Localization
       "UI_STAGE_REWARD_TITLE",
       "UI_STAGE_REWARD_FORMULA",
       "UI_STAGE_REWARD_DETAIL",
+      "UI_STAGE_REWARD_BASE_LABEL",
+      "UI_STAGE_REWARD_PREDICTION_LABEL",
+      "UI_STAGE_REWARD_TOTAL_LABEL",
       "UI_BULLET_BALANCE",
       "UI_BAR_TITLE",
       "UI_BAR_CONTINUE",
