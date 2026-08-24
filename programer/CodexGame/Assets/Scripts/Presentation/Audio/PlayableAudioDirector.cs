@@ -122,7 +122,7 @@ namespace CodexGame.Presentation.Audio
       _uiConfirm = uiConfirm;
       _uiBack = uiBack;
       _uiError = uiError;
-      _cardFlip = cardFlip;
+      _cardFlip = LoadPreferred(cardFlip, "Swing_Cane_03");
       _bell = bell;
       _itemUse = itemUse;
       _reroll = reroll;
@@ -141,7 +141,9 @@ namespace CodexGame.Presentation.Audio
       _uiConfirm = LoadIfMissing(_uiConfirm, "Interface_06");
       _uiBack = LoadIfMissing(_uiBack, "Interface_07");
       _uiError = LoadIfMissing(_uiError, "AttackLanding_Rock");
-      _cardFlip = LoadIfMissing(_cardFlip, "PhoenixChick_Flap");
+      // Prefer the approved card-swing sample even when an older scene serialized
+      // PhoenixChick_Flap into this slot. The fallback keeps pre-import scenes safe.
+      _cardFlip = LoadPreferred(_cardFlip, "Swing_Cane_03");
       _bell = LoadIfMissing(_bell, "Env_Pots_09");
       _itemUse = LoadIfMissing(_itemUse, "Grabbing_01");
       _reroll = LoadIfMissing(_reroll, "Swing_Cane_01");
@@ -159,6 +161,12 @@ namespace CodexGame.Presentation.Audio
         : Resources.Load<AudioClip>(BundledSampleRoot + resourceName);
     }
 
+    private static AudioClip LoadPreferred(AudioClip fallback, string resourceName)
+    {
+      var preferred = Resources.Load<AudioClip>(BundledSampleRoot + resourceName);
+      return preferred != null ? preferred : fallback;
+    }
+
     private void BuildCueProfiles()
     {
       _uiSelectCue = CreateCue(0.98f, 1.05f, 0.68f, 0.88f, 0.04f, 0.035f,
@@ -170,8 +178,9 @@ namespace CodexGame.Presentation.Audio
       _uiErrorCue = CreateCue(0.9f, 0.98f, 0.82f, 1f, 0.015f, 0.1f,
         _uiError);
 
-      _cardFlipCue = CreateCue(0.91f, 1.09f, 0.68f, 0.94f, 0.1f, 0.055f,
-        _cardFlip, _uiSelect, _uiConfirm);
+      // Card reveal must never rotate into tonal UI clips or the bell cue.
+      _cardFlipCue = CreateCue(0.97f, 1.03f, 0.86f, 1f, 0.05f, 0.055f,
+        _cardFlip);
       _bellCue = CreateCue(0.94f, 1.04f, 0.88f, 1f, 0.035f, 0.08f,
         _bell);
       _itemCue = CreateCue(0.93f, 1.07f, 0.72f, 0.98f, 0.08f, 0.07f,

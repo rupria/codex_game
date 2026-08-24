@@ -20,16 +20,26 @@
 | `Grabbing_01.wav` | `UOP1_Project/Assets/Audio/SFX/Characters/Actions/PigChef/Grabbing_01.wav` | `2D3BC5B8B944AC78C6BA0732D36C57F1A1EB8E1E75861A83A73BBD4B85D601E0` |
 | `AttackLanding_Rock.wav` | `UOP1_Project/Assets/Audio/SFX/Characters/Actions/Critters/AttackLanding_Rock.wav` | `983E84819E729F7AB60524879E663D8625F5768CFB30359E01019B27BF2FCE9D` |
 | `Swing_Cane_01.wav` | `UOP1_Project/Assets/Audio/SFX/Characters/Actions/PigChef/Swing_Cane_01.wav` | `783B9E7270486AB86A6DAA69BE9647FDB36F46FF40F8E86172F493BA4AFDCC40` |
+| `Swing_Cane_03.wav` | `UOP1_Project/Assets/Audio/SFX/Characters/Actions/PigChef/Swing_Cane_03.wav` | `53EBB0BBAA38C7FBC96BA5F21ED0D4225048ACA5C0792F58374E2EFF7DBE8D01` |
 
 ## Runtime cue decision
 
-- DecisionId: `SOUND-DYNAMICS-0.1.1`
+- DecisionId: `SOUND-CARD-FLIP-0.1.2-20260825`
+- Supersedes: the `SOUND-DYNAMICS-0.1.1` card-flip pool only. Other cue pools remain unchanged.
 - Primary implementation: `PlayableAudioDirector.cs`
 - The original WAV files remain unmodified. Variation is applied only at playback time.
-- High-frequency UI, card and item cues use 2-3 clip pools with immediate-repeat prevention.
+- High-frequency UI and item cues use 2-3 clip pools with immediate-repeat prevention.
+- Card reveal uses only `Swing_Cane_03.wav`; it no longer rotates into tonal UI clips.
+- Runtime loading prefers `Swing_Cane_03.wav` over an older scene-serialized card clip,
+  while retaining the older clip only as an import fallback.
+- Card reveal playback uses a restrained `0.97-1.03` pitch range and the slightly louder
+  `0.86-1.00` cue-volume range requested during listening review.
 - Each cue owns a constrained pitch, volume, stereo-pan and cooldown range.
 - Bell, error and terminal cues use narrower ranges so their gameplay meaning stays recognizable.
 - Four rotating SFX voices limit stacking while allowing short cues to overlap.
 - Music remains intentionally unassigned.
 
-This is `CODE_BOUND` only. `SCENE_BOUND` and `BUILD_EXPOSED` are owned by the lead integration pass, and human listening approval is still required.
+Current formal state on `sound` is `SOURCE_PRESENT=YES · SOUND_BRANCH_CODE_READY=YES ·
+CODE_BOUND=NO · SCENE_BOUND=NO · BUILD_EXPOSED=NO · LISTENING_QA_PENDING`.
+The lead integration pass owns the new AudioImporter `.meta`, `dev` integration, saved-scene
+verification and build exposure.
