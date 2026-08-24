@@ -390,6 +390,14 @@ namespace CodexGame.Presentation.Views
           styles.Small);
       }
 
+      if (art?.PredictionTitlePlate != null)
+      {
+        GUI.DrawTexture(
+          PokerTableLayout.PredictionSuccessPlate,
+          art.PredictionTitlePlate,
+          ScaleMode.StretchToFill,
+          true);
+      }
       if (art?.PredictionSuccessIcon != null)
       {
         GUI.DrawTexture(
@@ -509,15 +517,33 @@ namespace CodexGame.Presentation.Views
       }
 
       var actor = localization.Get(playerWon ? "UI_ACTOR_PLAYER" : "UI_ACTOR_AI");
+      var winnerStyle = new GUIStyle(styles.Heading)
+      {
+        alignment = TextAnchor.MiddleCenter,
+        fontSize = 20,
+        fontStyle = FontStyle.Bold,
+        wordWrap = false
+      };
+      winnerStyle.normal.textColor = playerWon
+        ? new Color(0.36f, 0.96f, 0.95f, 1f)
+        : new Color(1f, 0.42f, 0.4f, 1f);
       GUI.Label(
         PokerTableLayout.ResultWinnerText,
         actor + " " + localization.Get("UI_POKER_PLAYER_WINS"),
-        styles.Small);
+        winnerStyle);
       var winningValue = playerWon ? comparison.PlayerValue : comparison.AiValue;
+      var handStyle = new GUIStyle(styles.Small)
+      {
+        alignment = TextAnchor.MiddleCenter,
+        fontSize = 15,
+        fontStyle = FontStyle.Bold,
+        wordWrap = false
+      };
+      handStyle.normal.textColor = new Color(0.96f, 0.86f, 0.65f, 1f);
       GUI.Label(
         PokerTableLayout.ResultHandText,
         CategoryName(winningValue.Category, localization) + " · " + FormatPrimaryRank(winningValue),
-        styles.Small);
+        handStyle);
     }
 
     private static string FormatPrimaryRank(PokerHandValue hand)

@@ -1,0 +1,75 @@
+{
+  "schemaVersion": 1,
+  "policy": "latest-human-approval-wins",
+  "contracts": [
+    {
+      "issue": 66,
+      "approvedAtUtc": "2026-08-24T08:08:54Z",
+      "approvalKind": "human-issue-comment-and-image",
+      "approvalSourceUrl": "https://github.com/rupria/codex_game/issues/66#issuecomment-5392402938",
+      "baseGitSha": "51499849445311b1651a18388afafed215476b80",
+      "activeDocument": "project_docs/programer/26.08.22_구현결과_이슈66_개인카드선택_UI_최신배치.md",
+      "supersededSources": [
+        "https://github.com/rupria/codex_game/issues/66#issuecomment-5388789887",
+        "https://github.com/rupria/codex_game/issues/66#issuecomment-5366762147"
+      ],
+      "runtimeChecks": [
+        {
+          "path": "programer/CodexGame/Assets/Scripts/Presentation/Views/PrivateSelectionDevPanel.cs",
+          "requiredTokens": [
+            "ConfirmVisualRect = new Rect(72f, 412f, 280f, 60f)",
+            "ConfirmHitRect = new Rect(60f, 400f, 304f, 84f)",
+            "private const int MaximumCandidateCount = 5;",
+            "GridX + index * (CellWidth + GapX)",
+            "UI_PRIVATE_CONFIRM_ACTION",
+            "UI_PRIVATE_CONFIRM_PROGRESS"
+          ],
+          "forbiddenTokens": [
+            "ConfirmVisualRect = new Rect(580f, 424f, 280f, 60f)",
+            "ConfirmHitRect = new Rect(568f, 412f, 304f, 84f)",
+            "SelectionCountRect",
+            "index % 4",
+            "index / 4",
+            "index < 8"
+          ]
+        }
+      ]
+    },
+    {
+      "issue": 77,
+      "approvedAtUtc": "2026-08-24T07:50:31Z",
+      "approvalKind": "human-issue-and-image",
+      "approvalSourceUrl": "https://github.com/rupria/codex_game/issues/77",
+      "baseGitSha": "51499849445311b1651a18388afafed215476b80",
+      "activeDocument": "project_docs/programer/26.08.24_이슈66_77_UI_최신승인_회귀방지_인계.md",
+      "supersededSources": [],
+      "runtimeChecks": [
+        {
+          "path": "programer/CodexGame/Assets/Scripts/Presentation/Views/PokerTableLayout.cs",
+          "requiredTokens": [
+            "ContinueVisual = new Rect(388f, 461f, 184f, 50f)",
+            "ContinueHit = new Rect(378f, 451f, 204f, 70f)",
+            "PredictionSuccessPlate = new Rect(716f, 366f, 224f, 44f)",
+            "PredictionSuccessIcon = new Rect(730f, 374f, 28f, 28f)",
+            "PredictionSuccessText = new Rect(766f, 374f, 160f, 28f)"
+          ],
+          "forbiddenTokens": [
+            "ContinueVisual = new Rect(398f, 492f, 164f, 44f)",
+            "ContinueHit = new Rect(390f, 482f, 180f, 56f)",
+            "PredictionSuccessIcon = new Rect(746f, 374f, 28f, 28f)",
+            "PredictionSuccessText = new Rect(780f, 374f, 170f, 28f)"
+          ]
+        },
+        {
+          "path": "programer/CodexGame/Assets/Scripts/Presentation/Views/PokerDevPanel.cs",
+          "requiredTokens": [
+            "PokerTableLayout.PredictionSuccessPlate",
+            "fontSize = 20",
+            "fontSize = 15"
+          ],
+          "forbiddenTokens": []
+        }
+      ]
+    }
+  ]
+}
