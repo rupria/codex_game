@@ -10,20 +10,31 @@ namespace CodexGame.Presentation.Views
 {
   internal sealed class PrivateSelectionDevPanel
   {
-    private static readonly Rect PanelRect = new Rect(50f, 42f, 860f, 456f);
+    private static readonly Rect PanelRect = new Rect(
+      PrivateSelectionPanelLayout.PanelX,
+      PrivateSelectionPanelLayout.PanelY,
+      PrivateSelectionPanelLayout.PanelWidth,
+      PrivateSelectionPanelLayout.PanelHeight);
     private static readonly Rect TitleRect = new Rect(68f, 58f, 824f, 28f);
     private static readonly Rect GuideRect = new Rect(68f, 86f, 824f, 24f);
     private static readonly Rect PublicRect = new Rect(68f, 124f, 190f, 226f);
-    private static readonly Rect ConfirmVisualRect = new Rect(72f, 412f, 280f, 60f);
-    private static readonly Rect ConfirmTitleRect = new Rect(96f, 417f, 232f, 28f);
-    private static readonly Rect ConfirmProgressRect = new Rect(96f, 444f, 232f, 20f);
-    private static readonly Rect ConfirmHitRect = new Rect(60f, 400f, 304f, 84f);
-    private const float GridX = 270f;
-    private const float GridY = 124f;
-    private const float CellWidth = 112f;
-    private const float CellHeight = 150f;
-    private const float GapX = 12f;
-    private const int MaximumCandidateCount = 5;
+    private static readonly Rect SelectionCountRect = new Rect(
+      PrivateSelectionPanelLayout.SelectionCountX,
+      PrivateSelectionPanelLayout.SelectionCountY,
+      PrivateSelectionPanelLayout.SelectionCountWidth,
+      PrivateSelectionPanelLayout.SelectionCountHeight);
+    private static readonly Rect SelectionCountLabelRect = new Rect(80f, 429f, 168f, 22f);
+    private static readonly Rect ConfirmVisualRect = new Rect(
+      PrivateSelectionPanelLayout.ConfirmVisualX,
+      PrivateSelectionPanelLayout.ConfirmVisualY,
+      PrivateSelectionPanelLayout.ConfirmVisualWidth,
+      PrivateSelectionPanelLayout.ConfirmVisualHeight);
+    private static readonly Rect ConfirmTitleRect = new Rect(604f, 428f, 232f, 28f);
+    private static readonly Rect ConfirmHitRect = new Rect(
+      PrivateSelectionPanelLayout.ConfirmHitX,
+      PrivateSelectionPanelLayout.ConfirmHitY,
+      PrivateSelectionPanelLayout.ConfirmHitWidth,
+      PrivateSelectionPanelLayout.ConfirmHitHeight);
     private readonly PrivateSelectionJokerRevealState _jokerReveal =
       new PrivateSelectionJokerRevealState();
 
@@ -80,7 +91,8 @@ namespace CodexGame.Presentation.Views
       DrawPublicCards(snapshot, cards, selectionArt, styles, localization);
 
       for (var index = 0;
-        index < snapshot.WinnerCandidates.Count && index < MaximumCandidateCount;
+        index < snapshot.WinnerCandidates.Count
+          && index < PrivateSelectionPanelLayout.MaximumCandidateCount;
         index++)
       {
         DrawCandidate(
@@ -97,6 +109,7 @@ namespace CodexGame.Presentation.Views
           toggle);
       }
 
+      DrawSelectionCount(snapshot, selectionArt, styles, localization);
       DrawConfirm(snapshot, inputLocked, selectionArt, styles, localization, confirm);
     }
 
@@ -113,7 +126,7 @@ namespace CodexGame.Presentation.Views
       Action<int> focus,
       Action<CardId> toggle)
     {
-      var cell = CandidateCell(index);
+      var cell = CandidateCell(index, snapshot.WinnerCandidates.Count);
       var cardRect = new Rect(cell.x + 14f, cell.y + 13f, 84f, 117f);
       var card = snapshot.WinnerCandidates[index];
       var selected = Contains(snapshot.SelectedCards, card.Id);
@@ -263,26 +276,35 @@ namespace CodexGame.Presentation.Views
         ConfirmTitleRect,
         localization.Get("UI_PRIVATE_CONFIRM_ACTION"),
         styles.Heading);
-      GUI.Label(
-        ConfirmProgressRect,
-        localization.Get(
-          "UI_PRIVATE_CONFIRM_PROGRESS",
-          new LocalizationArgument("selected", snapshot.SelectedCards.Count),
-          new LocalizationArgument("required", snapshot.RequiredSelectionCount)),
-        styles.Small);
       if (enabled && GUI.Button(ConfirmHitRect, GUIContent.none, GUIStyle.none))
       {
         confirm();
       }
     }
 
-    private static Rect CandidateCell(int index)
+    private static void DrawSelectionCount(
+      PrivateCardSelectionSnapshot snapshot,
+      PrivateSelectionUiArtSet art,
+      PlayableDevStyles styles,
+      LocalizationRuntime localization)
+    {
+      DrawTexture(SelectionCountRect, art?.SelectionCountPanel);
+      GUI.Label(
+        SelectionCountLabelRect,
+        localization.Get(
+          "UI_PRIVATE_CONFIRM_PROGRESS",
+          new LocalizationArgument("selected", snapshot.SelectedCards.Count),
+          new LocalizationArgument("required", snapshot.RequiredSelectionCount)),
+        styles.Small);
+    }
+
+    private static Rect CandidateCell(int index, int candidateCount)
     {
       return new Rect(
-        GridX + index * (CellWidth + GapX),
-        GridY,
-        CellWidth,
-        CellHeight);
+        PrivateSelectionPanelLayout.CandidateX(index, candidateCount),
+        PrivateSelectionPanelLayout.CandidateY(index),
+        PrivateSelectionPanelLayout.CandidateWidth,
+        PrivateSelectionPanelLayout.CandidateHeight);
     }
 
     private static long CreateSessionKey(

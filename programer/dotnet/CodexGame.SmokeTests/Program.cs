@@ -43,6 +43,7 @@ AcquiredCardFanLayoutTests.Run(tests);
 HalliPileOverlapLayoutTests.Run(tests);
 PokerItemActionAvailabilityTests.Run(tests);
 PrivateSelectionJokerRevealStateTests.Run(tests);
+PrivateSelectionPanelLayoutTests.Run(tests);
 ThreeCallEntryAnimationStateTests.Run(tests);
 StageFlowPlanTests.Run(tests);
 BarShopSessionTests.Run(tests);

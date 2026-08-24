@@ -23,6 +23,7 @@ $playableDevViewPath = Join-Path $assetsRoot "Scripts\Presentation\Views\Playabl
 $halliLayoutPath = Join-Path $assetsRoot "Scripts\Presentation\Views\HalliPileOverlapLayout.cs"
 $halliPanelPath = Join-Path $assetsRoot "Scripts\Presentation\Views\HalliDevPanel.cs"
 $privatePanelPath = Join-Path $assetsRoot "Scripts\Presentation\Views\PrivateSelectionDevPanel.cs"
+$privateLayoutPath = Join-Path $assetsRoot "Scripts\Presentation\Views\PrivateSelectionPanelLayout.cs"
 $privateArtPath = Join-Path $assetsRoot "Scripts\Presentation\Art\PrivateSelectionUiArtSet.cs"
 $economyRendererPath = Join-Path $assetsRoot "Scripts\Presentation\Views\EconomyUiRenderer.cs"
 $economyArtPath = Join-Path $assetsRoot "Scripts\Presentation\Art\EconomyUiArtSet.cs"
@@ -39,6 +40,7 @@ foreach ($required in @(
   $halliLayoutPath,
   $halliPanelPath,
   $privatePanelPath,
+  $privateLayoutPath,
   $privateArtPath,
   $economyRendererPath,
   $economyArtPath,
@@ -59,6 +61,7 @@ $playableDevViewText = Get-Content -LiteralPath $playableDevViewPath -Raw
 $halliLayoutText = Get-Content -LiteralPath $halliLayoutPath -Raw
 $halliPanelText = Get-Content -LiteralPath $halliPanelPath -Raw
 $privatePanelText = Get-Content -LiteralPath $privatePanelPath -Raw
+$privateLayoutText = Get-Content -LiteralPath $privateLayoutPath -Raw
 $privateArtText = Get-Content -LiteralPath $privateArtPath -Raw
 $economyRendererText = Get-Content -LiteralPath $economyRendererPath -Raw
 $economyArtText = Get-Content -LiteralPath $economyArtPath -Raw
@@ -390,24 +393,23 @@ if (-not $jokerTwoColumnFallbackRemoved) {
 
 Write-Output "UI_POLISH_ACCEPTANCE_CONTRACTS"
 $privatePackageBound = $builderText.Contains("PrivateSelection_0_6_0")
-$singleConfirmHit = $privatePanelText.Contains("ConfirmHitRect = new Rect(60f, 400f, 304f, 84f)") `
-  -and $privatePanelText.Contains("ConfirmVisualRect = new Rect(72f, 412f, 280f, 60f)") `
+$singleConfirmHit = $privateLayoutText.Contains("ConfirmHitX = 568f;") `
+  -and $privateLayoutText.Contains("ConfirmVisualX = 580f;") `
   -and ([regex]::Matches($privatePanelText, "GUI\.Button\(ConfirmHitRect")).Count -eq 1 `
   -and -not $privatePanelText.Contains("ConfirmRect = new Rect(73f, 418f, 180f, 52f)") `
-  -and -not $privatePanelText.Contains("ConfirmVisualRect = new Rect(580f, 424f, 280f, 60f)") `
-  -and -not $privatePanelText.Contains("ConfirmHitRect = new Rect(568f, 412f, 304f, 84f)")
-$selectionCountIntegrated = $privatePanelText.Contains("ConfirmTitleRect = new Rect(96f, 417f, 232f, 28f)") `
-  -and $privatePanelText.Contains("ConfirmProgressRect = new Rect(96f, 444f, 232f, 20f)") `
+  -and -not $privatePanelText.Contains("ConfirmVisualRect = new Rect(72f, 412f, 280f, 60f)") `
+  -and -not $privatePanelText.Contains("ConfirmHitRect = new Rect(60f, 400f, 304f, 84f)")
+$selectionCountIntegrated = $privatePanelText.Contains("SelectionCountRect = new Rect(") `
+  -and $privatePanelText.Contains("art?.SelectionCountPanel") `
   -and $privatePanelText.Contains('"UI_PRIVATE_CONFIRM_ACTION"') `
   -and $privatePanelText.Contains('"UI_PRIVATE_CONFIRM_PROGRESS"') `
-  -and -not $privatePanelText.Contains("SelectionCountRect")
-$candidateRowBound = $privatePanelText.Contains("private const float GapX = 12f;") `
-  -and $privatePanelText.Contains("private const int MaximumCandidateCount = 5;") `
-  -and $privatePanelText.Contains("index < MaximumCandidateCount") `
-  -and $privatePanelText.Contains("GridX + index * (CellWidth + GapX)") `
-  -and -not $privatePanelText.Contains("index % 4") `
-  -and -not $privatePanelText.Contains("index / 4") `
-  -and -not $privatePanelText.Contains("index < 8")
+  -and -not $privatePanelText.Contains("ConfirmProgressRect")
+$candidateGridBound = $privateLayoutText.Contains("CandidateColumns = 4;") `
+  -and $privateLayoutText.Contains("MaximumCandidateCount = 5;") `
+  -and $privateLayoutText.Contains("CandidateBottomY = 294f;") `
+  -and $privateLayoutText.Contains("return 452f;") `
+  -and $privatePanelText.Contains("PrivateSelectionPanelLayout.CandidateX(index, candidateCount)") `
+  -and -not $privateLayoutText.Contains("MaximumCandidateCount = 8;")
 $stageRewardPackageBound = $builderText.Contains("StageReward_0_5_6")
 $stageRewardStatesBound = $economyArtText.Contains("StageRewardBaseRow") `
   -and $economyArtText.Contains("StageRewardPredictionRow") `
@@ -415,17 +417,17 @@ $stageRewardStatesBound = $economyArtText.Contains("StageRewardBaseRow") `
   -and $economyRendererText.Contains("DrawStageRewardContinue(")
 $communityMaximumTwo = $pokerPanelText.Contains("DrawFaceCards(snapshot.PublicCards, PokerTableLayout.CommunityCard, 2, cards);")
 
-Write-Output ("privatePackageBound={0} singleConfirmHit={1} selectionCountIntegrated={2} candidateRowBound={3}" -f `
+Write-Output ("privatePackageBound={0} singleConfirmHit={1} selectionCountIntegrated={2} candidateGridBound={3}" -f `
   $privatePackageBound,
   $singleConfirmHit,
   $selectionCountIntegrated,
-  $candidateRowBound)
+  $candidateGridBound)
 Write-Output ("stageRewardPackageBound={0} rewardStatesBound={1} communityMaximumTwo={2}" -f `
   $stageRewardPackageBound,
   $stageRewardStatesBound,
   $communityMaximumTwo)
 
-if (-not $privatePackageBound -or -not $singleConfirmHit -or -not $selectionCountIntegrated -or -not $candidateRowBound) {
+if (-not $privatePackageBound -or -not $singleConfirmHit -or -not $selectionCountIntegrated -or -not $candidateGridBound) {
   Add-GateFailure "issue 66: private-selection must keep one left confirm with integrated progress and at most five candidate frames in one row"
 }
 if (-not $stageRewardPackageBound -or -not $stageRewardStatesBound) {
