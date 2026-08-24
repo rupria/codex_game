@@ -230,9 +230,8 @@ namespace CodexGame.Presentation.Views
 
     private static void DrawGroupLabels(PlayableDevStyles styles, LocalizationRuntime localization)
     {
-      GUI.Label(new Rect(382f, 62f, 196f, 24f), localization.Get("UI_POKER_AI_PRIVATE"), styles.Small);
-      GUI.Label(new Rect(416f, 192f, 130f, 24f), localization.Get("UI_POKER_PUBLIC"), styles.Small);
-      GUI.Label(new Rect(382f, 316f, 196f, 24f), localization.Get("UI_POKER_PLAYER_PRIVATE"), styles.Small);
+      GUI.Label(new Rect(411f, 170f, 138f, 24f), localization.Get("UI_POKER_PUBLIC"), styles.Small);
+      GUI.Label(new Rect(374f, 300f, 212f, 24f), localization.Get("UI_POKER_PLAYER_PRIVATE"), styles.Small);
     }
 
     private static void DrawHealth(
