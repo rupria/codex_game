@@ -53,6 +53,7 @@ ItemExpansion0125Tests.Run(tests);
 ItemUsePresentationSessionTests.Run(tests);
 StageItemRestrictionSessionTests.Run(tests);
 PresentationFlow0124Tests.Run(tests);
+PredictionCommitTimingTests.Run(tests);
 FirstStartTutorialSessionTests.Run(tests);
 StageRewardTests.Run(tests);
 DevelopmentCheatTests.Run(tests);
