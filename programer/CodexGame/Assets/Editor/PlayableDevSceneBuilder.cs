@@ -55,9 +55,9 @@ namespace CodexGame.Editor
     private const string IntroArtPath =
       MainMenuUi058ArtRoot + "start_screen_background_960x540_0_5_8.png";
     private const string BackdropShaderPath = "Assets/Shaders/RuntimeBackdropLit.shader";
-    private const string SampleAudioPackName = "Free UI Click Sound Pack";
+    private const string SampleAudioPackName = "Unity Open Project #1: Chop Chop";
     private const string SampleAudioPackUrl =
-      "https://assetstore.unity.com/packages/audio/sound-fx/free-ui-click-sound-pack-244644";
+      "https://github.com/UnityTechnologies/open-project-1";
 
     [MenuItem("Codex Game/Playable Dev/Create Scene")]
     public static void CreateScene()
@@ -600,7 +600,7 @@ namespace CodexGame.Editor
       }
     }
 
-    [MenuItem("Codex Game/Audio/Validate Free UI Click Sound Pack")]
+    [MenuItem("Codex Game/Audio/Validate Unity Open Project Samples")]
     public static void ValidateSampleAudio()
     {
       var missing = 0;
@@ -613,47 +613,45 @@ namespace CodexGame.Editor
 
       if (missing == 0)
       {
-        Debug.Log("Free UI Click Sound Pack sample clips are ready.");
+        Debug.Log("Unity Open Project #1 sample clips are ready.");
         return;
       }
 
       Debug.LogWarning(
         $"Sample audio is running in silent-fallback mode. Missing clips: {missing}. "
-        + $"Import {SampleAudioPackName}, then recreate the playable dev scene. "
+        + $"Restore the selected clips from {SampleAudioPackName}. "
         + SampleAudioPackUrl);
     }
 
     private static readonly string[] SampleAudioFileNames =
     {
-      "SFX_UI_Click_Organic_Wooden_Thin_1.wav",
-      "SFX_UI_Click_Organic_Wooden_Select_1.wav",
-      "SFX_UI_Click_Organic_Wooden_Plastic_Negative_Back_1.wav",
-      "SFX_UI_Click_Designed_Metallic_Pop_Negative_Locked_1.wav",
-      "SFX_UI_Click_Organic_Crispy_Thick_Generic_1.wav",
-      "SFX_UI_Click_Organic_Metallic_Plastic_Select_1.wav",
-      "SFX_UI_Click_Organic_Crispy_Generic_Select_1.wav",
-      "SFX_UI_Click_Organic_Crispy_Pop_Generic_Open_1.wav",
-      "SFX_UI_Click_Organic_Metallic_Thin_Select_1.wav",
-      "SFX_UI_Click_Designed_Metallic_Dirty_Negative_1.wav",
-      "SFX_UI_Click_Organic_Crispy_Negative_Error_1.wav"
+      "Interface_05.wav",
+      "Interface_06.wav",
+      "Interface_07.wav",
+      "Interface_08.wav",
+      "PhoenixChick_Flap.wav",
+      "Env_Pots_09.wav",
+      "Grabbing_01.wav",
+      "AttackLanding_Rock.wav",
+      "Swing_Cane_01.wav"
     };
 
     private static void ConfigureSampleAudio(PlayableAudioDirector audio)
     {
       audio.Configure(
-        uiSelect: FindAudioClip("SFX_UI_Click_Organic_Wooden_Thin_1.wav"),
-        uiConfirm: FindAudioClip("SFX_UI_Click_Organic_Wooden_Select_1.wav"),
-        uiBack: FindAudioClip("SFX_UI_Click_Organic_Wooden_Plastic_Negative_Back_1.wav"),
-        uiError: FindAudioClip("SFX_UI_Click_Designed_Metallic_Pop_Negative_Locked_1.wav"),
-        cardFlip: FindAudioClip("SFX_UI_Click_Organic_Crispy_Thick_Generic_1.wav"),
-        bell: FindAudioClip("SFX_UI_Click_Organic_Metallic_Plastic_Select_1.wav"),
-        itemUse: FindAudioClip("SFX_UI_Click_Organic_Crispy_Generic_Select_1.wav"),
-        reroll: FindAudioClip("SFX_UI_Click_Organic_Crispy_Pop_Generic_Open_1.wav"),
-        purchase: FindAudioClip("SFX_UI_Click_Organic_Metallic_Thin_Select_1.wav"),
-        damage: FindAudioClip("SFX_UI_Click_Designed_Metallic_Dirty_Negative_1.wav"),
-        win: FindAudioClip("SFX_UI_Click_Organic_Crispy_Generic_Select_1.wav"),
-        lose: FindAudioClip("SFX_UI_Click_Organic_Crispy_Negative_Error_1.wav"),
-        transition: FindAudioClip("SFX_UI_Click_Organic_Crispy_Pop_Generic_Open_1.wav"));
+        uiSelect: FindAudioClip("Interface_08.wav"),
+        uiConfirm: FindAudioClip("Interface_06.wav"),
+        uiBack: FindAudioClip("Interface_07.wav"),
+        uiError: FindAudioClip("AttackLanding_Rock.wav"),
+        cardFlip: FindAudioClip("PhoenixChick_Flap.wav"),
+        bell: FindAudioClip("Env_Pots_09.wav"),
+        itemUse: FindAudioClip("Grabbing_01.wav"),
+        reroll: FindAudioClip("Swing_Cane_01.wav"),
+        purchase: FindAudioClip("Grabbing_01.wav"),
+        damage: FindAudioClip("AttackLanding_Rock.wav"),
+        win: FindAudioClip("Interface_05.wav"),
+        lose: FindAudioClip("Interface_07.wav"),
+        transition: FindAudioClip("Interface_05.wav"));
     }
 
     private static AudioClip FindAudioClip(string fileName)

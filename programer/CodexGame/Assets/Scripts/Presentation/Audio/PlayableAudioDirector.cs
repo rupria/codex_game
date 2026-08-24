@@ -10,6 +10,8 @@ namespace CodexGame.Presentation.Audio
   [DisallowMultipleComponent]
   public sealed class PlayableAudioDirector : MonoBehaviour
   {
+    private const string BundledSampleRoot = "Audio/UnityOpenProject1/";
+
     [Header("Mix")]
     [SerializeField, Range(0f, 1f)] private float _sfxVolume = 0.8f;
     [SerializeField, Range(0f, 1f)] private float _musicVolume = 0.35f;
@@ -41,6 +43,7 @@ namespace CodexGame.Presentation.Audio
 
     private void Awake()
     {
+      LoadBundledSamples();
       EnsureListener();
       EnsureSources();
     }
@@ -80,6 +83,30 @@ namespace CodexGame.Presentation.Audio
       _lose = lose;
       _transition = transition;
       _musicLoop = musicLoop;
+    }
+
+    private void LoadBundledSamples()
+    {
+      _uiSelect = LoadIfMissing(_uiSelect, "Interface_08");
+      _uiConfirm = LoadIfMissing(_uiConfirm, "Interface_06");
+      _uiBack = LoadIfMissing(_uiBack, "Interface_07");
+      _uiError = LoadIfMissing(_uiError, "AttackLanding_Rock");
+      _cardFlip = LoadIfMissing(_cardFlip, "PhoenixChick_Flap");
+      _bell = LoadIfMissing(_bell, "Env_Pots_09");
+      _itemUse = LoadIfMissing(_itemUse, "Grabbing_01");
+      _reroll = LoadIfMissing(_reroll, "Swing_Cane_01");
+      _purchase = LoadIfMissing(_purchase, "Grabbing_01");
+      _damage = LoadIfMissing(_damage, "AttackLanding_Rock");
+      _win = LoadIfMissing(_win, "Interface_05");
+      _lose = LoadIfMissing(_lose, "Interface_07");
+      _transition = LoadIfMissing(_transition, "Interface_05");
+    }
+
+    private static AudioClip LoadIfMissing(AudioClip current, string resourceName)
+    {
+      return current != null
+        ? current
+        : Resources.Load<AudioClip>(BundledSampleRoot + resourceName);
     }
 
     public void Bind(PlayableDevView view)
