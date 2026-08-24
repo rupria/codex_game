@@ -136,10 +136,6 @@ namespace CodexGame.Presentation.Views
         cards.DrawAt(cardRect, snapshot.FirstPublicCard.Value);
       }
 
-      if (progress >= 0.55f)
-      {
-        DrawLockedPublicSlot(styles, uiArt);
-      }
     }
 
     private void DrawScoreboard(
@@ -264,7 +260,6 @@ namespace CodexGame.Presentation.Views
       {
         cards.DrawAt(HalliBoardLayout.PublicCard, snapshot.FirstPublicCard.Value);
       }
-      DrawLockedPublicSlot(styles, uiArt);
     }
 
     private static void DrawAiDeck(PlayableCardRenderer cards)
@@ -278,22 +273,6 @@ namespace CodexGame.Presentation.Views
             HalliBoardLayout.AiDeck.width,
             HalliBoardLayout.AiDeck.height),
           180f);
-      }
-    }
-
-    private void DrawLockedPublicSlot(PlayableDevStyles styles, HalliUiArtSet uiArt)
-    {
-      if (uiArt != null && uiArt.PublicCardLockedSlot != null)
-      {
-        GUI.DrawTexture(
-          HalliBoardLayout.LockedPublicCard,
-          uiArt.PublicCardLockedSlot,
-          ScaleMode.ScaleToFit,
-          true);
-      }
-      else
-      {
-        GUI.Box(HalliBoardLayout.LockedPublicCard, L("UI_COMMON_LOCKED"), styles.Card);
       }
     }
 
