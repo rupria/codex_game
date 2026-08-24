@@ -10,7 +10,6 @@ namespace CodexGame.Presentation.Views
     public static readonly Rect PlayerScore = new Rect(36f, 24f, 250f, 58f);
     public static readonly Rect AiScore = new Rect(674f, 24f, 250f, 58f);
     public static readonly Rect PublicCard = new Rect(344f, 46f, 64f, 90f);
-    public static readonly Rect LockedPublicCard = new Rect(552f, 46f, 64f, 90f);
     public static readonly Rect AiDeck = new Rect(440f, 40f, 80f, 100f);
     public static readonly Rect Status = new Rect(300f, 142f, 360f, 42f);
 

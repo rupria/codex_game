@@ -392,6 +392,8 @@ if (-not $jokerTwoColumnFallbackRemoved) {
 }
 
 Write-Output "UI_POLISH_ACCEPTANCE_CONTRACTS"
+$halliLockedPublicSlotRemoved = -not $halliPanelText.Contains("DrawLockedPublicSlot") `
+  -and -not $halliPanelText.Contains("HalliBoardLayout.LockedPublicCard")
 $privatePackageBound = $builderText.Contains("PrivateSelection_0_6_0")
 $singleConfirmHit = $privateLayoutText.Contains("ConfirmHitX = 568f;") `
   -and $privateLayoutText.Contains("ConfirmVisualX = 580f;") `
@@ -417,6 +419,7 @@ $stageRewardStatesBound = $economyArtText.Contains("StageRewardBaseRow") `
   -and $economyRendererText.Contains("DrawStageRewardContinue(")
 $communityMaximumTwo = $pokerPanelText.Contains("DrawFaceCards(snapshot.PublicCards, PokerTableLayout.CommunityCard, 2, cards);")
 
+Write-Output ("halliLockedPublicSlotRemoved={0}" -f $halliLockedPublicSlotRemoved)
 Write-Output ("privatePackageBound={0} singleConfirmHit={1} selectionCountIntegrated={2} candidateGridBound={3}" -f `
   $privatePackageBound,
   $singleConfirmHit,
@@ -427,8 +430,11 @@ Write-Output ("stageRewardPackageBound={0} rewardStatesBound={1} communityMaximu
   $stageRewardStatesBound,
   $communityMaximumTwo)
 
+if (-not $halliLockedPublicSlotRemoved) {
+  Add-GateFailure "Halli presentation: obsolete second-community-card lock slot returned"
+}
 if (-not $privatePackageBound -or -not $singleConfirmHit -or -not $selectionCountIntegrated -or -not $candidateGridBound) {
-  Add-GateFailure "issue 66: private-selection must keep one left confirm with integrated progress and at most five candidate frames in one row"
+  Add-GateFailure "issue 66: private-selection must keep a count-only left panel, one right confirm and the maximum-five four-plus-one candidate layout"
 }
 if (-not $stageRewardPackageBound -or -not $stageRewardStatesBound) {
   Add-GateFailure "issue 49: stage-reward 0.5.6 rows, total and continue states are not fully bound"
