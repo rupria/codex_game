@@ -1,0 +1,60 @@
+{
+  "integrationId": "HALLI-PREDICTION-UI-0.6.9",
+  "decisionId": "D-ART-POKER-PREDICTION-TABLE-2026-08-24-01",
+  "package": "PokerPredictionTable_0_6_3",
+  "baseGitCommit": "3005bc8121530657ffd0e5627ae5bd1017244c21",
+  "integratedReferenceCommit": "12aa900094388f96c11329d3d05adbbb1b5e9bf3",
+  "status": {
+    "artProduced": true,
+    "artHandoffReady": true,
+    "artApproved": true,
+    "runtimeBound": false,
+    "sceneSaved": false,
+    "buildVerified": false
+  },
+  "preview": {
+    "path": "preview/poker_prediction_table_approved_960x540_0_6_3.png",
+    "width": 960,
+    "height": 540,
+    "sha256": "42654a68547a1c6cc2d31d41bfa7a85d886de9117edf787128f46adf817a2ef5"
+  },
+  "cardContract": {
+    "aiPrivateMaximum": 3,
+    "communityMaximum": 2,
+    "playerPrivateMaximum": 3,
+    "cardSize": [64, 90],
+    "previewCardsAreExamplesOnly": true
+  },
+  "reusedRuntimeAssets": [
+    {
+      "path": "Assets/Art/Prototype/UI/PokerPredictionClean_0_6_2/poker_prediction_title_plate_308x52_0_6_2.png",
+      "sha256": "c7a75efbd2b8ca44cd15ef29927fad93db4b46a91d1461f8e17c394803097cfd"
+    },
+    {
+      "path": "Assets/Art/Prototype/UI/PokerPredictionClean_0_6_2/poker_prediction_player_idle_244x66_0_6_2.png",
+      "sha256": "eadff2792544602737cc2959ca0a6dd56a4a4b4b392ed23e933c49d152bc6ee7"
+    },
+    {
+      "path": "Assets/Art/Prototype/UI/PokerPredictionClean_0_6_2/poker_prediction_ai_idle_244x66_0_6_2.png",
+      "sha256": "09ec3efa17aacde8eb9164e8732b8b825e3320564ffbf3464deba38e732bea45"
+    },
+    {
+      "path": "Assets/Art/Prototype/UI/PokerPredictionClean_0_6_2/poker_prediction_success_icon_28_0_6_2.png",
+      "sha256": "55d337f6145d338488601a8333896178a34f8a8dfc007e7a94bd0cfb9f2b9bcb"
+    }
+  ],
+  "layout": {
+    "title": [350, 20, 260, 52],
+    "aiCards": [[374, 78, 64, 90], [448, 78, 64, 90], [522, 78, 64, 90]],
+    "communityCards": [[411, 196, 64, 90], [485, 196, 64, 90]],
+    "playerCards": [[374, 326, 64, 90], [448, 326, 64, 90], [522, 326, 64, 90]],
+    "winButton": [236, 456, 212, 64],
+    "loseButton": [512, 456, 212, 64],
+    "predictionSuccess": [716, 366, 224, 44]
+  },
+  "runtimeFilesOwnedByIntegrator": [
+    "Assets/Scripts/Presentation/Views/PokerTableLayout.cs",
+    "Assets/Scripts/Presentation/Views/PokerDevPanel.cs"
+  ],
+  "artPackageChangesRuntimeAssets": false
+}
