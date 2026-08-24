@@ -447,6 +447,9 @@ namespace CodexGame.Presentation.Views
         else if (_snapshot.Phase == PlayableGamePhase.HalliTransition)
         {
           _presentation0124Panel.DrawThreeCallToSelection(
+            _snapshot.Transition,
+            _snapshot.Selection,
+            _pokerCards,
             _presentationUiArtSet,
             _styles,
             _localization);

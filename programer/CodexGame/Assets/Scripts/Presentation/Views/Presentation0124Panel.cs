@@ -1,4 +1,5 @@
 using System;
+using CodexGame.Application.Distribution;
 using CodexGame.Application.Items;
 using CodexGame.Application.Playable;
 using CodexGame.Presentation.Art;
@@ -93,27 +94,55 @@ namespace CodexGame.Presentation.Views
     }
 
     public void DrawThreeCallToSelection(
+      PlayableTransitionSnapshot transition,
+      PrivateCardSelectionSnapshot selection,
+      PlayableCardRenderer cards,
       PresentationUiArtSet art,
       PlayableDevStyles styles,
       LocalizationRuntime localization)
     {
-      if (art?.DesaturateOverlay != null)
-      {
-        GUI.DrawTexture(FullScreen, art.DesaturateOverlay, ScaleMode.StretchToFill, true);
-      }
+      var previousColor = GUI.color;
+      GUI.color = new Color(0.025f, 0.045f, 0.037f, 0.985f);
+      GUI.DrawTexture(FullScreen, Texture2D.whiteTexture, ScaleMode.StretchToFill, true);
+      GUI.color = previousColor;
+
       if (art?.FocusMask != null)
       {
         GUI.DrawTexture(FullScreen, art.FocusMask, ScaleMode.StretchToFill, true);
       }
-      if (art?.PlayerAcquireTrail != null)
+      if (art?.ShowdownWideFrame != null)
       {
-        GUI.DrawTexture(new Rect(320f, 408f, 320f, 96f), art.PlayerAcquireTrail, ScaleMode.ScaleToFit, true);
+        GUI.DrawTexture(
+          new Rect(236f, 126f, 488f, 330f),
+          art.ShowdownWideFrame,
+          ScaleMode.StretchToFill,
+          true);
       }
-      if (art?.AiAcquireTrail != null)
-      {
-        GUI.DrawTexture(new Rect(320f, 36f, 320f, 96f), art.AiAcquireTrail, ScaleMode.ScaleToFit, true);
-      }
+
       DrawPhaseLabel(art?.ShowdownIcon, localization.Get("UI_SHOWDOWN_ENTRY"), art, styles);
+
+      if (selection == null || cards == null
+        || !selection.FirstPublicCard.HasValue
+        || !selection.SecondPublicCard.HasValue)
+      {
+        return;
+      }
+
+      var progress = transition?.Progress ?? 1f;
+      DrawCommunityReveal(
+        cards,
+        selection.FirstPublicCard.Value,
+        new Rect(366f, 190f, 104f, 148f),
+        Normalize(progress, 0.08f, 0.50f));
+      DrawCommunityReveal(
+        cards,
+        selection.SecondPublicCard.Value,
+        new Rect(490f, 190f, 104f, 148f),
+        Normalize(progress, 0.38f, 0.80f));
+
+      UiPixelSurfaceRenderer.DrawDiamond(
+        new Vector2(480f, 366f),
+        new Color(0.94f, 0.63f, 0.18f, 1f));
     }
 
     public void DrawShowdownFrame(bool showResult, PresentationUiArtSet art)
@@ -160,6 +189,32 @@ namespace CodexGame.Presentation.Views
         rect.center.y - height * 0.5f,
         width,
         height);
+    }
+
+    private static void DrawCommunityReveal(
+      PlayableCardRenderer cards,
+      CodexGame.Core.Cards.Card card,
+      Rect destination,
+      float progress)
+    {
+      if (progress <= 0f)
+      {
+        cards.DrawBackAt(destination);
+        return;
+      }
+
+      CardFlipMotion.Draw(
+        cards,
+        card,
+        destination,
+        destination,
+        progress,
+        false);
+    }
+
+    private static float Normalize(float value, float start, float end)
+    {
+      return Mathf.Clamp01((value - start) / (end - start));
     }
 
     private static void DrawSheetFrame(Texture2D sheet, int frameCount, int frameIndex, Rect rect)
