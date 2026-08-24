@@ -424,6 +424,7 @@ namespace CodexGame.Presentation.Views
           _snapshot.Transition,
           _snapshot.Health.Player,
           _snapshot.Health.Ai,
+          _snapshot.StageNumber,
           Time.unscaledTime < _playerDamageUntil,
           Time.unscaledTime < _aiDamageUntil,
           _styles,
