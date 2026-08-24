@@ -11,6 +11,39 @@ namespace CodexGame.Presentation.Audio
   public sealed class PlayableAudioDirector : MonoBehaviour
   {
     private const string BundledSampleRoot = "Audio/UnityOpenProject1/";
+    private const int SfxVoiceCount = 4;
+
+    private sealed class CueProfile
+    {
+      public readonly AudioClip[] Clips;
+      public readonly float PitchMin;
+      public readonly float PitchMax;
+      public readonly float VolumeMin;
+      public readonly float VolumeMax;
+      public readonly float PanSpread;
+      public readonly float Cooldown;
+
+      public int LastIndex = -1;
+      public float NextAllowedTime;
+
+      public CueProfile(
+        AudioClip[] clips,
+        float pitchMin,
+        float pitchMax,
+        float volumeMin,
+        float volumeMax,
+        float panSpread,
+        float cooldown)
+      {
+        Clips = clips;
+        PitchMin = pitchMin;
+        PitchMax = pitchMax;
+        VolumeMin = volumeMin;
+        VolumeMax = volumeMax;
+        PanSpread = panSpread;
+        Cooldown = cooldown;
+      }
+    }
 
     [Header("Mix")]
     [SerializeField, Range(0f, 1f)] private float _sfxVolume = 0.8f;
@@ -38,12 +71,28 @@ namespace CodexGame.Presentation.Audio
 
     private PlayableDevView _view;
     private PlayableGameSnapshot _lastSnapshot;
-    private AudioSource _sfxSource;
+    private AudioSource[] _sfxVoices;
     private AudioSource _musicSource;
+    private int _nextSfxVoice;
+
+    private CueProfile _uiSelectCue;
+    private CueProfile _uiConfirmCue;
+    private CueProfile _uiBackCue;
+    private CueProfile _uiErrorCue;
+    private CueProfile _cardFlipCue;
+    private CueProfile _bellCue;
+    private CueProfile _itemCue;
+    private CueProfile _rerollCue;
+    private CueProfile _purchaseCue;
+    private CueProfile _damageCue;
+    private CueProfile _winCue;
+    private CueProfile _loseCue;
+    private CueProfile _transitionCue;
 
     private void Awake()
     {
       LoadBundledSamples();
+      BuildCueProfiles();
       EnsureListener();
       EnsureSources();
     }
@@ -83,6 +132,7 @@ namespace CodexGame.Presentation.Audio
       _lose = lose;
       _transition = transition;
       _musicLoop = musicLoop;
+      BuildCueProfiles();
     }
 
     private void LoadBundledSamples()
@@ -107,6 +157,83 @@ namespace CodexGame.Presentation.Audio
       return current != null
         ? current
         : Resources.Load<AudioClip>(BundledSampleRoot + resourceName);
+    }
+
+    private void BuildCueProfiles()
+    {
+      _uiSelectCue = CreateCue(0.98f, 1.05f, 0.68f, 0.88f, 0.04f, 0.035f,
+        _uiSelect, _uiConfirm, _uiBack);
+      _uiConfirmCue = CreateCue(0.98f, 1.04f, 0.78f, 0.96f, 0.025f, 0.06f,
+        _uiConfirm, _uiSelect);
+      _uiBackCue = CreateCue(0.95f, 1.01f, 0.72f, 0.9f, 0.025f, 0.06f,
+        _uiBack, _uiSelect);
+      _uiErrorCue = CreateCue(0.9f, 0.98f, 0.82f, 1f, 0.015f, 0.1f,
+        _uiError);
+
+      _cardFlipCue = CreateCue(0.91f, 1.09f, 0.68f, 0.94f, 0.1f, 0.055f,
+        _cardFlip, _uiSelect, _uiConfirm);
+      _bellCue = CreateCue(0.94f, 1.04f, 0.88f, 1f, 0.035f, 0.08f,
+        _bell);
+      _itemCue = CreateCue(0.93f, 1.07f, 0.72f, 0.98f, 0.08f, 0.07f,
+        _itemUse, _reroll, _uiConfirm);
+      _rerollCue = CreateCue(0.91f, 1.08f, 0.72f, 0.96f, 0.08f, 0.1f,
+        _reroll, _itemUse);
+      _purchaseCue = CreateCue(0.98f, 1.06f, 0.82f, 1f, 0.04f, 0.09f,
+        _purchase, _uiConfirm);
+      _damageCue = CreateCue(0.9f, 1.02f, 0.86f, 1f, 0.045f, 0.12f,
+        _damage, _bell);
+      _winCue = CreateCue(0.98f, 1.06f, 0.88f, 1f, 0.055f, 0.2f,
+        _win, _uiConfirm, _transition);
+      _loseCue = CreateCue(0.9f, 0.99f, 0.84f, 1f, 0.035f, 0.2f,
+        _lose, _uiError);
+      _transitionCue = CreateCue(0.94f, 1.04f, 0.76f, 0.96f, 0.07f, 0.15f,
+        _transition, _reroll);
+    }
+
+    private static CueProfile CreateCue(
+      float pitchMin,
+      float pitchMax,
+      float volumeMin,
+      float volumeMax,
+      float panSpread,
+      float cooldown,
+      params AudioClip[] clips)
+    {
+      return new CueProfile(
+        CompactDistinct(clips),
+        pitchMin,
+        pitchMax,
+        volumeMin,
+        volumeMax,
+        panSpread,
+        cooldown);
+    }
+
+    private static AudioClip[] CompactDistinct(AudioClip[] clips)
+    {
+      if (clips == null || clips.Length == 0) return new AudioClip[0];
+
+      var count = 0;
+      var compact = new AudioClip[clips.Length];
+      foreach (var clip in clips)
+      {
+        if (clip == null || Contains(compact, count, clip)) continue;
+        compact[count++] = clip;
+      }
+
+      if (count == compact.Length) return compact;
+      var result = new AudioClip[count];
+      for (var i = 0; i < count; i++) result[i] = compact[i];
+      return result;
+    }
+
+    private static bool Contains(AudioClip[] clips, int count, AudioClip candidate)
+    {
+      for (var i = 0; i < count; i++)
+      {
+        if (clips[i] == candidate) return true;
+      }
+      return false;
     }
 
     public void Bind(PlayableDevView view)
@@ -185,7 +312,7 @@ namespace CodexGame.Presentation.Audio
 
         var healthDropped = snapshot.Health.Player < _lastSnapshot.Health.Player
           || snapshot.Health.Ai < _lastSnapshot.Health.Ai;
-        if (healthDropped && !IsTerminalPhase(snapshot.Phase)) Play(_damage);
+        if (healthDropped && !IsTerminalPhase(snapshot.Phase)) Play(_damageCue);
       }
 
       _lastSnapshot = snapshot;
@@ -193,69 +320,69 @@ namespace CodexGame.Presentation.Audio
 
     public void PlayError()
     {
-      Play(_uiError);
+      Play(_uiErrorCue);
     }
 
     private void HandleAdvance()
     {
       Play(_lastSnapshot != null && _lastSnapshot.Phase == PlayableGamePhase.Halli
-        ? _cardFlip
-        : _uiConfirm);
+        ? _cardFlipCue
+        : _uiConfirmCue);
     }
 
     private void HandleConfirm()
     {
-      Play(_uiConfirm);
+      Play(_uiConfirmCue);
     }
 
     private void HandleBack()
     {
-      Play(_uiBack);
+      Play(_uiBackCue);
     }
 
     private void HandleBell()
     {
-      Play(_bell);
+      Play(_bellCue);
     }
 
     private void HandleSelect(CardId _)
     {
-      Play(_uiSelect);
+      Play(_uiSelectCue);
     }
 
     private void HandlePrediction(PredictionChoice _)
     {
-      Play(_uiSelect);
+      Play(_uiSelectCue);
     }
 
     private void HandleJokerHand(PokerHandCategory _)
     {
-      Play(_uiSelect);
+      Play(_uiSelectCue);
     }
 
     private void HandleItemCard(CardId _)
     {
-      Play(_itemUse);
+      Play(_itemCue);
     }
 
     private void HandleWildInk(CardId _, CardSuit __)
     {
-      Play(_itemUse);
+      Play(_itemCue);
     }
 
     private void HandleItem()
     {
-      Play(_itemUse);
+      Play(_itemCue);
     }
 
     private void HandleReroll()
     {
-      Play(_reroll);
+      Play(_rerollCue);
     }
 
     private void HandlePurchase(int _)
     {
-      Play(_purchase);
+      Play(_purchaseCue);
     }
 
     private void PlayPhaseCue(PlayableGamePhase phase)
@@ -264,13 +391,13 @@ namespace CodexGame.Presentation.Audio
       {
         case PlayableGamePhase.StageWon:
         case PlayableGamePhase.RunWon:
-          Play(_win);
+          Play(_winCue);
           break;
         case PlayableGamePhase.BattleFinished:
-          Play(_lose);
+          Play(_loseCue);
           break;
         case PlayableGamePhase.NextStageTransition:
-          Play(_transition);
+          Play(_transitionCue);
           break;
       }
     }
@@ -282,13 +409,31 @@ namespace CodexGame.Presentation.Audio
         || phase == PlayableGamePhase.RunWon;
     }
 
-    private void Play(AudioClip clip)
+    private void Play(CueProfile cue)
     {
-      if (clip == null) return;
+      if (cue == null || cue.Clips.Length == 0) return;
+
+      var now = Time.unscaledTime;
+      if (now < cue.NextAllowedTime) return;
+      cue.NextAllowedTime = now + cue.Cooldown;
+
+      var index = Random.Range(0, cue.Clips.Length);
+      if (cue.Clips.Length > 1 && index == cue.LastIndex)
+      {
+        index = (index + Random.Range(1, cue.Clips.Length)) % cue.Clips.Length;
+      }
+      cue.LastIndex = index;
+
       EnsureSources();
       BeginMusicIfAvailable();
-      _sfxSource.pitch = Random.Range(0.97f, 1.03f);
-      _sfxSource.PlayOneShot(clip, _sfxVolume);
+
+      var voice = _sfxVoices[_nextSfxVoice];
+      _nextSfxVoice = (_nextSfxVoice + 1) % _sfxVoices.Length;
+      voice.Stop();
+      voice.pitch = Random.Range(cue.PitchMin, cue.PitchMax);
+      voice.volume = _sfxVolume * Random.Range(cue.VolumeMin, cue.VolumeMax);
+      voice.panStereo = Random.Range(-cue.PanSpread, cue.PanSpread);
+      voice.PlayOneShot(cue.Clips[index]);
     }
 
     private void BeginMusicIfAvailable()
@@ -301,12 +446,17 @@ namespace CodexGame.Presentation.Audio
 
     private void EnsureSources()
     {
-      if (_sfxSource == null)
+      if (_sfxVoices == null || _sfxVoices.Length != SfxVoiceCount)
       {
-        _sfxSource = gameObject.AddComponent<AudioSource>();
-        _sfxSource.playOnAwake = false;
-        _sfxSource.loop = false;
-        _sfxSource.spatialBlend = 0f;
+        _sfxVoices = new AudioSource[SfxVoiceCount];
+        for (var i = 0; i < _sfxVoices.Length; i++)
+        {
+          var source = gameObject.AddComponent<AudioSource>();
+          source.playOnAwake = false;
+          source.loop = false;
+          source.spatialBlend = 0f;
+          _sfxVoices[i] = source;
+        }
       }
 
       if (_musicSource == null)

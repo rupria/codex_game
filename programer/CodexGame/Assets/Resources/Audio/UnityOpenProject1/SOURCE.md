@@ -21,17 +21,15 @@
 | `AttackLanding_Rock.wav` | `UOP1_Project/Assets/Audio/SFX/Characters/Actions/Critters/AttackLanding_Rock.wav` | `983E84819E729F7AB60524879E663D8625F5768CFB30359E01019B27BF2FCE9D` |
 | `Swing_Cane_01.wav` | `UOP1_Project/Assets/Audio/SFX/Characters/Actions/PigChef/Swing_Cane_01.wav` | `783B9E7270486AB86A6DAA69BE9647FDB36F46FF40F8E86172F493BA4AFDCC40` |
 
-## Runtime sample mapping
+## Runtime cue decision
 
-- UI select: `Interface_08`
-- UI confirm: `Interface_06`
-- UI back: `Interface_07`
-- UI error / damage: `AttackLanding_Rock`
-- Card flip: `PhoenixChick_Flap`
-- Bell: `Env_Pots_09`
-- Item / purchase: `Grabbing_01`
-- Shop reroll: `Swing_Cane_01`
-- Win / transition: `Interface_05`
-- Lose: `Interface_07`
+- DecisionId: `SOUND-DYNAMICS-0.1.1`
+- Primary implementation: `PlayableAudioDirector.cs`
+- The original WAV files remain unmodified. Variation is applied only at playback time.
+- High-frequency UI, card and item cues use 2-3 clip pools with immediate-repeat prevention.
+- Each cue owns a constrained pitch, volume, stereo-pan and cooldown range.
+- Bell, error and terminal cues use narrower ranges so their gameplay meaning stays recognizable.
+- Four rotating SFX voices limit stacking while allowing short cues to overlap.
+- Music remains intentionally unassigned.
 
-These mappings are sample assignments and require a human listening pass before final audio approval.
+This is `CODE_BOUND` only. `SCENE_BOUND` and `BUILD_EXPOSED` are owned by the lead integration pass, and human listening approval is still required.
