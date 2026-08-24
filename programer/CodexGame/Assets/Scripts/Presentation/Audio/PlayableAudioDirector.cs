@@ -65,6 +65,7 @@ namespace CodexGame.Presentation.Audio
     [SerializeField] private AudioClip _win;
     [SerializeField] private AudioClip _lose;
     [SerializeField] private AudioClip _transition;
+    [SerializeField] private AudioClip _predictionLock;
 
     [Header("Music (optional)")]
     [SerializeField] private AudioClip _musicLoop;
@@ -88,6 +89,7 @@ namespace CodexGame.Presentation.Audio
     private CueProfile _winCue;
     private CueProfile _loseCue;
     private CueProfile _transitionCue;
+    private CueProfile _predictionLockCue;
 
     private void Awake()
     {
@@ -116,7 +118,8 @@ namespace CodexGame.Presentation.Audio
       AudioClip win,
       AudioClip lose,
       AudioClip transition,
-      AudioClip musicLoop = null)
+      AudioClip musicLoop = null,
+      AudioClip predictionLock = null)
     {
       _uiSelect = uiSelect;
       _uiConfirm = uiConfirm;
@@ -132,6 +135,7 @@ namespace CodexGame.Presentation.Audio
       _lose = lose;
       _transition = transition;
       _musicLoop = musicLoop;
+      _predictionLock = predictionLock;
       BuildCueProfiles();
     }
 
@@ -182,12 +186,14 @@ namespace CodexGame.Presentation.Audio
         _purchase, _uiConfirm);
       _damageCue = CreateCue(0.9f, 1.02f, 0.86f, 1f, 0.045f, 0.12f,
         _damage, _bell);
-      _winCue = CreateCue(0.98f, 1.06f, 0.88f, 1f, 0.055f, 0.2f,
-        _win, _uiConfirm, _transition);
-      _loseCue = CreateCue(0.9f, 0.99f, 0.84f, 1f, 0.035f, 0.2f,
-        _lose, _uiError);
+      _winCue = CreateCue(1f, 1f, 0.92f, 1f, 0f, 0.2f,
+        _win);
+      _loseCue = CreateCue(1f, 1f, 0.92f, 1f, 0f, 0.2f,
+        _lose);
       _transitionCue = CreateCue(0.94f, 1.04f, 0.76f, 0.96f, 0.07f, 0.15f,
         _transition, _reroll);
+      _predictionLockCue = CreateCue(1f, 1f, 0.92f, 1f, 0f, 0.12f,
+        _predictionLock != null ? _predictionLock : _uiSelect);
     }
 
     private static CueProfile CreateCue(
@@ -266,6 +272,7 @@ namespace CodexGame.Presentation.Audio
       _view.BarShopPurchaseRequested += HandlePurchase;
       _view.MainRequested += HandleBack;
       _view.InactivityAcknowledgedRequested += HandleConfirm;
+      BeginMusicIfAvailable();
     }
 
     public void Unbind()
@@ -352,7 +359,7 @@ namespace CodexGame.Presentation.Audio
 
     private void HandlePrediction(PredictionChoice _)
     {
-      Play(_uiSelectCue);
+      Play(_predictionLockCue);
     }
 
     private void HandleJokerHand(PokerHandCategory _)
