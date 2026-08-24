@@ -58,6 +58,8 @@ namespace CodexGame.Editor
     private const string SampleAudioPackName = "Unity Open Project #1: Chop Chop";
     private const string SampleAudioPackUrl =
       "https://github.com/UnityTechnologies/open-project-1";
+    private const string UseSavedSceneEnvironmentVariable =
+      "CODEX_GAME_USE_SAVED_SCENE";
 
     [MenuItem("Codex Game/Playable Dev/Create Scene")]
     public static void CreateScene()
@@ -555,7 +557,17 @@ namespace CodexGame.Editor
 
     private static void BuildWebGl(BuildOptions buildOptions)
     {
-      CreateScene();
+      if (string.Equals(
+        Environment.GetEnvironmentVariable(UseSavedSceneEnvironmentVariable),
+        "1",
+        StringComparison.Ordinal))
+      {
+        UseSavedSceneForBuild();
+      }
+      else
+      {
+        CreateScene();
+      }
       var output = Environment.GetEnvironmentVariable("CODEX_GAME_WEBGL_OUTPUT");
       var buildName = Environment.GetEnvironmentVariable("CODEX_GAME_BUILD_NAME");
 
@@ -590,6 +602,17 @@ namespace CodexGame.Editor
       }
 
       Debug.Log($"PLAYABLE_WEBGL_BUILD={output}");
+    }
+
+    private static void UseSavedSceneForBuild()
+    {
+      if (AssetDatabase.LoadAssetAtPath<SceneAsset>(ScenePath) == null)
+      {
+        throw new FileNotFoundException("Saved playable scene was not found.", ScenePath);
+      }
+
+      EditorBuildSettings.scenes = new[] { new EditorBuildSettingsScene(ScenePath, true) };
+      Debug.Log($"PLAYABLE_SCENE_REGEN=SKIPPED_USING_SAVED_SCENE:{ScenePath}");
     }
 
     private static void EnsureScenesFolder()
