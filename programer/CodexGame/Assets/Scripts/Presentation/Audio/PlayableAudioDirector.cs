@@ -99,6 +99,11 @@ namespace CodexGame.Presentation.Audio
       EnsureSources();
     }
 
+    private void Start()
+    {
+      BeginMusicIfAvailable();
+    }
+
     private void OnDestroy()
     {
       Unbind();
@@ -272,7 +277,6 @@ namespace CodexGame.Presentation.Audio
       _view.BarShopPurchaseRequested += HandlePurchase;
       _view.MainRequested += HandleBack;
       _view.InactivityAcknowledgedRequested += HandleConfirm;
-      BeginMusicIfAvailable();
     }
 
     public void Unbind()
