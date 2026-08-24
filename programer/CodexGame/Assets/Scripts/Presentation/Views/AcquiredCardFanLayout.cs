@@ -21,6 +21,13 @@ namespace CodexGame.Presentation.Views
       return StartX + Step * index;
     }
 
+    public static int NewestVisibleStart(int cardCount, int maximumVisible)
+    {
+      if (cardCount < 0) throw new ArgumentOutOfRangeException(nameof(cardCount));
+      if (maximumVisible < 1) throw new ArgumentOutOfRangeException(nameof(maximumVisible));
+      return Math.Max(0, cardCount - maximumVisible);
+    }
+
     public static AcquiredCardFanLayout Create(
       int count,
       float areaX,
