@@ -601,7 +601,34 @@ namespace CodexGame.Editor
           $"WebGL build failed: {report.summary.result}, errors={report.summary.totalErrors}");
       }
 
+      NormalizeWebGlCanvasLayout(output);
       Debug.Log($"PLAYABLE_WEBGL_BUILD={output}");
+    }
+
+    private static void NormalizeWebGlCanvasLayout(string output)
+    {
+      var indexPath = Path.Combine(output, "index.html");
+      var html = File.ReadAllText(indexPath);
+      const string originalBody =
+        "<body style=\"text-align: center; padding: 0; border: 0; margin: 0;\">";
+      const string normalizedBody =
+        "<body style=\"text-align: center; padding: 0; border: 0; margin: 0; overflow: hidden;\">";
+      const string originalCanvasStyle =
+        "style=\"width: 960px; height: 540px; background: #1F1F20\"";
+      const string normalizedCanvasStyle =
+        "style=\"display: block; width: 960px; height: 540px; background: #1F1F20\"";
+
+      if (!html.Contains(originalBody, StringComparison.Ordinal)
+        || !html.Contains(originalCanvasStyle, StringComparison.Ordinal))
+      {
+        throw new InvalidOperationException(
+          "Generated WebGL index.html no longer matches the expected Minimal template.");
+      }
+
+      html = html.Replace(originalBody, normalizedBody, StringComparison.Ordinal)
+        .Replace(originalCanvasStyle, normalizedCanvasStyle, StringComparison.Ordinal);
+      File.WriteAllText(indexPath, html);
+      Debug.Log("PLAYABLE_WEBGL_CANVAS_LAYOUT=960x540_NO_SCROLL");
     }
 
     private static void UseSavedSceneForBuild()
