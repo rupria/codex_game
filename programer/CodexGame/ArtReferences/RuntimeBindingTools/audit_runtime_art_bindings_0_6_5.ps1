@@ -13,6 +13,8 @@ if ([string]::IsNullOrWhiteSpace($CodexGameRoot)) {
 
 $assetsRoot = Join-Path $CodexGameRoot "Assets"
 $manifestPath = Join-Path $PSScriptRoot "current_art_runtime_manifest_0_6_5.json"
+$latestContractsPath = Join-Path $PSScriptRoot "latest_approved_art_contracts.json"
+$repoRoot = [System.IO.Path]::GetFullPath((Join-Path $CodexGameRoot "..\.."))
 $builderPath = Join-Path $assetsRoot "Editor\PlayableDevSceneBuilder.cs"
 $scenePath = Join-Path $assetsRoot "Scenes\PlayableDev.unity"
 $pokerPanelPath = Join-Path $assetsRoot "Scripts\Presentation\Views\PokerDevPanel.cs"
@@ -28,6 +30,7 @@ $pokerArtPath = Join-Path $assetsRoot "Scripts\Presentation\Art\PokerUiArtSet.cs
 
 foreach ($required in @(
   $manifestPath,
+  $latestContractsPath,
   $builderPath,
   $scenePath,
   $pokerPanelPath,
@@ -47,6 +50,7 @@ foreach ($required in @(
 }
 
 $manifest = Get-Content -LiteralPath $manifestPath -Raw | ConvertFrom-Json
+$latestContracts = Get-Content -LiteralPath $latestContractsPath -Raw | ConvertFrom-Json
 $builderText = Get-Content -LiteralPath $builderPath -Raw
 $sceneText = Get-Content -LiteralPath $scenePath -Raw
 $pokerPanelText = Get-Content -LiteralPath $pokerPanelPath -Raw
@@ -66,6 +70,61 @@ function Add-GateFailure {
 
   $failures.Add($Message)
   Write-Output "FAIL $Message"
+}
+
+Write-Output "LATEST_APPROVED_ART_CONTRACTS"
+if ($latestContracts.schemaVersion -ne 1 -or $latestContracts.policy -ne "latest-human-approval-wins") {
+  Add-GateFailure "latest art contract registry has an unsupported schema or policy"
+}
+
+$registeredIssues = [System.Collections.Generic.HashSet[int]]::new()
+foreach ($contract in $latestContracts.contracts) {
+  $issue = [int]$contract.issue
+  if (-not $registeredIssues.Add($issue)) {
+    Add-GateFailure "latest art contract registry contains more than one active contract for issue $issue"
+    continue
+  }
+
+  $approvalTime = [System.DateTimeOffset]::MinValue
+  $approvalTimeValid = [System.DateTimeOffset]::TryParse(
+    [string]$contract.approvedAtUtc,
+    [ref]$approvalTime)
+  $allowedApprovalKinds = @(
+    "human-issue-and-image",
+    "human-issue-comment-and-image"
+  )
+  $approvalSourceValid = $allowedApprovalKinds.Contains([string]$contract.approvalKind) `
+    -and ([string]$contract.approvalSourceUrl).StartsWith("https://github.com/rupria/codex_game/issues/$issue")
+  $activeDocumentPath = Join-Path $repoRoot ([string]$contract.activeDocument)
+  if (-not $approvalTimeValid -or -not $approvalSourceValid -or -not (Test-Path -LiteralPath $activeDocumentPath)) {
+    Add-GateFailure "issue ${issue}: latest approval metadata or active contract document is invalid"
+    continue
+  }
+
+  foreach ($runtimeCheck in $contract.runtimeChecks) {
+    $runtimePath = Join-Path $repoRoot ([string]$runtimeCheck.path)
+    if (-not (Test-Path -LiteralPath $runtimePath)) {
+      Add-GateFailure "issue ${issue}: registered runtime path is missing: $($runtimeCheck.path)"
+      continue
+    }
+
+    $runtimeText = Get-Content -LiteralPath $runtimePath -Raw
+    foreach ($requiredToken in $runtimeCheck.requiredTokens) {
+      if (-not $runtimeText.Contains([string]$requiredToken)) {
+        Add-GateFailure "issue ${issue}: latest required token is missing from $($runtimeCheck.path): $requiredToken"
+      }
+    }
+    foreach ($forbiddenToken in $runtimeCheck.forbiddenTokens) {
+      if ($runtimeText.Contains([string]$forbiddenToken)) {
+        Add-GateFailure "issue ${issue}: superseded token returned in $($runtimeCheck.path): $forbiddenToken"
+      }
+    }
+  }
+
+  Write-Output ("issue={0} approvedAtUtc={1} source={2}" -f `
+    $issue,
+    $contract.approvedAtUtc,
+    $contract.approvalSourceUrl)
 }
 
 function Get-PackageSceneReferenceCount {
@@ -282,6 +341,12 @@ $predictionLayoutUpdated = $pokerLayoutText.Contains("new Rect(132f, 454f, 244f,
 $resultSummaryBound = $pokerArtText.Contains("ResultSummaryPlayer") `
   -and $pokerPanelText.Contains("DrawResultSummary(") `
   -and $pokerLayoutText.Contains("new Rect(316f, 18f, 328f, 76f)")
+$issue77ResultActionsAligned = $pokerLayoutText.Contains("ContinueVisual = new Rect(388f, 461f, 184f, 50f)") `
+  -and $pokerLayoutText.Contains("ContinueHit = new Rect(378f, 451f, 204f, 70f)") `
+  -and $pokerLayoutText.Contains("PredictionSuccessPlate = new Rect(716f, 366f, 224f, 44f)") `
+  -and $pokerPanelText.Contains("PokerTableLayout.PredictionSuccessPlate") `
+  -and $pokerPanelText.Contains("fontSize = 20") `
+  -and $pokerPanelText.Contains("fontSize = 15")
 $jokerTwoColumnFallbackRemoved = -not $pokerPanelText.Contains("var column = index % 2;")
 
 Write-Output ("predictionPackageBound={0} labelsDrawn={1} layout244x66={2} resultSummaryBound={3} largeResultModalRemoved={4} legacyResultBackdropRemoved={5}" -f `
@@ -313,6 +378,9 @@ if (-not $largeResultModalRemoved) {
 if (-not $legacyResultBackdropRemoved) {
   Add-GateFailure "issues 68/73: legacy Presentation_0_1_2_4 result backdrop remains connected"
 }
+if (-not $issue77ResultActionsAligned) {
+  Add-GateFailure "issue 77: poker result actions and prediction-success metric are not aligned"
+}
 if (-not $jokerPackageBound) {
   Add-GateFailure "issue 74: joker hand-choice package is not bound"
 }
@@ -322,18 +390,24 @@ if (-not $jokerTwoColumnFallbackRemoved) {
 
 Write-Output "UI_POLISH_ACCEPTANCE_CONTRACTS"
 $privatePackageBound = $builderText.Contains("PrivateSelection_0_6_0")
-$singleConfirmHit = $privatePanelText.Contains("ConfirmHitRect = new Rect(568f, 412f, 304f, 84f)") `
-  -and $privatePanelText.Contains("ConfirmVisualRect = new Rect(580f, 424f, 280f, 60f)") `
+$singleConfirmHit = $privatePanelText.Contains("ConfirmHitRect = new Rect(60f, 400f, 304f, 84f)") `
+  -and $privatePanelText.Contains("ConfirmVisualRect = new Rect(72f, 412f, 280f, 60f)") `
   -and ([regex]::Matches($privatePanelText, "GUI\.Button\(ConfirmHitRect")).Count -eq 1 `
-  -and -not $privatePanelText.Contains("ConfirmRect = new Rect(73f, 418f, 180f, 52f)")
-$selectionCountIntegrated = $privatePanelText.Contains("SelectionCountRect = new Rect(72f, 408f, 184f, 64f)") `
-  -and $privatePanelText.Contains("selectionArt?.SelectionCountPanel") `
-  -and $privatePanelText.Contains('"UI_PRIVATE_CONFIRM"')
-$candidateGridBound = $privatePanelText.Contains("private const float GapX = 20f;") `
-  -and $privatePanelText.Contains("private const float GapY = 10f;") `
-  -and $privatePanelText.Contains("index % 4") `
-  -and $privatePanelText.Contains("index / 4") `
-  -and $privatePanelText.Contains("index < 8")
+  -and -not $privatePanelText.Contains("ConfirmRect = new Rect(73f, 418f, 180f, 52f)") `
+  -and -not $privatePanelText.Contains("ConfirmVisualRect = new Rect(580f, 424f, 280f, 60f)") `
+  -and -not $privatePanelText.Contains("ConfirmHitRect = new Rect(568f, 412f, 304f, 84f)")
+$selectionCountIntegrated = $privatePanelText.Contains("ConfirmTitleRect = new Rect(96f, 417f, 232f, 28f)") `
+  -and $privatePanelText.Contains("ConfirmProgressRect = new Rect(96f, 444f, 232f, 20f)") `
+  -and $privatePanelText.Contains('"UI_PRIVATE_CONFIRM_ACTION"') `
+  -and $privatePanelText.Contains('"UI_PRIVATE_CONFIRM_PROGRESS"') `
+  -and -not $privatePanelText.Contains("SelectionCountRect")
+$candidateRowBound = $privatePanelText.Contains("private const float GapX = 12f;") `
+  -and $privatePanelText.Contains("private const int MaximumCandidateCount = 5;") `
+  -and $privatePanelText.Contains("index < MaximumCandidateCount") `
+  -and $privatePanelText.Contains("GridX + index * (CellWidth + GapX)") `
+  -and -not $privatePanelText.Contains("index % 4") `
+  -and -not $privatePanelText.Contains("index / 4") `
+  -and -not $privatePanelText.Contains("index < 8")
 $stageRewardPackageBound = $builderText.Contains("StageReward_0_5_6")
 $stageRewardStatesBound = $economyArtText.Contains("StageRewardBaseRow") `
   -and $economyArtText.Contains("StageRewardPredictionRow") `
@@ -341,18 +415,18 @@ $stageRewardStatesBound = $economyArtText.Contains("StageRewardBaseRow") `
   -and $economyRendererText.Contains("DrawStageRewardContinue(")
 $communityMaximumTwo = $pokerPanelText.Contains("DrawFaceCards(snapshot.PublicCards, PokerTableLayout.CommunityCard, 2, cards);")
 
-Write-Output ("privatePackageBound={0} singleConfirmHit={1} selectionCountIntegrated={2} candidateGridBound={3}" -f `
+Write-Output ("privatePackageBound={0} singleConfirmHit={1} selectionCountIntegrated={2} candidateRowBound={3}" -f `
   $privatePackageBound,
   $singleConfirmHit,
   $selectionCountIntegrated,
-  $candidateGridBound)
+  $candidateRowBound)
 Write-Output ("stageRewardPackageBound={0} rewardStatesBound={1} communityMaximumTwo={2}" -f `
   $stageRewardPackageBound,
   $stageRewardStatesBound,
   $communityMaximumTwo)
 
-if (-not $privatePackageBound -or -not $singleConfirmHit -or -not $selectionCountIntegrated -or -not $candidateGridBound) {
-  Add-GateFailure "issue 66: private-selection must keep one right confirm hit, dedicated selection count, and a four-column wrapped candidate grid"
+if (-not $privatePackageBound -or -not $singleConfirmHit -or -not $selectionCountIntegrated -or -not $candidateRowBound) {
+  Add-GateFailure "issue 66: private-selection must keep one left confirm with integrated progress and at most five candidate frames in one row"
 }
 if (-not $stageRewardPackageBound -or -not $stageRewardStatesBound) {
   Add-GateFailure "issue 49: stage-reward 0.5.6 rows, total and continue states are not fully bound"
