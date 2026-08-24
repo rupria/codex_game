@@ -214,14 +214,14 @@ namespace CodexGame.Presentation.Views
     private static void DrawRoundWins(PrototypeHalliSnapshot snapshot, HalliUiArtSet uiArt)
     {
       DrawWinPips(
-        new Vector2(18f, 365f),
+        new Vector2(99f, 84f),
         snapshot.PlayerWins,
         snapshot.WinTarget,
         uiArt?.PlayerWinPipEmpty,
         uiArt?.PlayerWinPipFilled,
         new Color(0.08f, 0.85f, 0.88f));
       DrawWinPips(
-        new Vector2(790f, 92f),
+        new Vector2(737f, 84f),
         snapshot.AiWins,
         snapshot.WinTarget,
         uiArt?.AiWinPipEmpty,
