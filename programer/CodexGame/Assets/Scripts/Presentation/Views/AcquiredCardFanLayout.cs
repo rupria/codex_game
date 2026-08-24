@@ -21,13 +21,6 @@ namespace CodexGame.Presentation.Views
       return StartX + Step * index;
     }
 
-    public static int NewestVisibleStart(int cardCount, int maximumVisible)
-    {
-      if (cardCount < 0) throw new ArgumentOutOfRangeException(nameof(cardCount));
-      if (maximumVisible < 1) throw new ArgumentOutOfRangeException(nameof(maximumVisible));
-      return Math.Max(0, cardCount - maximumVisible);
-    }
-
     public static AcquiredCardFanLayout Create(
       int count,
       float areaX,
@@ -49,6 +42,27 @@ namespace CodexGame.Presentation.Views
       var occupiedWidth = cardWidth + step * (count - 1);
       var startX = areaX + Math.Max(0f, areaWidth - occupiedWidth);
       return new AcquiredCardFanLayout(count, startX, step);
+    }
+
+    public static AcquiredCardFanLayout CreateLeftAligned(
+      int count,
+      float areaX,
+      float areaWidth,
+      float cardWidth,
+      float preferredStep)
+    {
+      if (count < 0) throw new ArgumentOutOfRangeException(nameof(count));
+      if (areaWidth < 0f) throw new ArgumentOutOfRangeException(nameof(areaWidth));
+      if (cardWidth <= 0f) throw new ArgumentOutOfRangeException(nameof(cardWidth));
+      if (preferredStep < 0f) throw new ArgumentOutOfRangeException(nameof(preferredStep));
+
+      if (count == 0) return new AcquiredCardFanLayout(0, areaX, 0f);
+
+      var availableStep = count == 1
+        ? 0f
+        : Math.Max(0f, (areaWidth - cardWidth) / (count - 1));
+      var step = count == 1 ? 0f : Math.Min(preferredStep, availableStep);
+      return new AcquiredCardFanLayout(count, areaX, step);
     }
   }
 }
