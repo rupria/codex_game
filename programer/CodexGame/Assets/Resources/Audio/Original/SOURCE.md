@@ -5,7 +5,7 @@
 - Branch: `sound`
 - BaseGitCommit: `44ee0b1c5803a2c3e31df23a9a0deef191cc1148`
 - TechnicalState: `SOURCE_PRESENT`
-- ListeningState: `LISTENING_QA_PENDING`
+- ListeningState: `LISTENING_APPROVED`
 - RuntimeState: `CODE_BOUND=NO · SCENE_BOUND=NO · BUILD_EXPOSED=NO`
 
 ## Direction references
