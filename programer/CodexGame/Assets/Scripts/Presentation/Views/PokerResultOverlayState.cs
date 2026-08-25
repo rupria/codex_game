@@ -1,3 +1,5 @@
+using CodexGame.Application.Poker;
+
 namespace CodexGame.Presentation.Views
 {
   public enum PokerResultOverlayStep
@@ -23,6 +25,26 @@ namespace CodexGame.Presentation.Views
         elapsedSeconds < ResultDurationSeconds
           ? PokerResultOverlayStep.Result
           : PokerResultOverlayStep.Prediction);
+    }
+  }
+
+  public readonly struct PokerRoundActionVisibility
+  {
+    private PokerRoundActionVisibility(bool showPredictionActions, bool showContinueAction)
+    {
+      ShowPredictionActions = showPredictionActions;
+      ShowContinueAction = showContinueAction;
+    }
+
+    public bool ShowPredictionActions { get; }
+    public bool ShowContinueAction { get; }
+
+    public static PokerRoundActionVisibility FromPhase(PokerRoundPhase phase)
+    {
+      return new PokerRoundActionVisibility(
+        phase == PokerRoundPhase.AwaitingPrediction
+          || phase == PokerRoundPhase.ResultPending,
+        phase == PokerRoundPhase.Resolved);
     }
   }
 }
