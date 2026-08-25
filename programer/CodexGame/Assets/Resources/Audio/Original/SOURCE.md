@@ -1,9 +1,10 @@
 # Original Western Audio Candidates
 
-- DecisionId: `SOUND-RESULT-GUITAR-0.1.2-20260825`
-- Supersedes: `SOUND-REFERENCE-BED-0.1.2-20260824`
+- DecisionId: `SOUND-BGM-REFERENCE-BED-0.1.2-20260826`
+- Supersedes (BGM only): `SOUND-RESULT-GUITAR-0.1.2-20260825`
+- Retains: `Prediction_Lock_03.wav`, `Round_Win_06.wav`, `Round_Lose_05.wav`, and all card/UI cue decisions unchanged
 - Branch: `sound`
-- BaseGitCommit: `44ee0b1c5803a2c3e31df23a9a0deef191cc1148`
+- BaseGitCommit: `e607a56bbf420995ba1043003d00db093a0cd7be`
 - TechnicalState: `SOURCE_PRESENT`
 - ListeningState: `LISTENING_APPROVED`
 - RuntimeState: `CODE_BOUND=NO · SCENE_BOUND=NO · BUILD_EXPOSED=NO`
@@ -21,6 +22,14 @@ candidate waveforms are original local procedural
 renders. The user's later direct-creation request supersedes the older Drive rule entry
 that said direct sound creation had not started.
 
+`Western_Reference_Bed_Loop_22.wav` replaces version 12 as the approved BGM source.
+It removes the repeating arcade-like single-note lead, uses a short 112 BPM acoustic
+boom-chick chord bed, and keeps the mix nearly dry so notes remain clean and do not smear.
+The rendered loop is 25.574 seconds, peaks at 0.4700, has a maximum sample step of
+0.0397, and closes with a 0.0000 endpoint seam.
+No effect cue, card-reveal mapping, runtime code, importer metadata, or scene was changed
+for this BGM-only decision.
+
 The paired result cues preserve their wooden state signal, then introduce a short second-
 guitar answer between the opening and closing impacts. Win rises D-F-A; lose answers with
 the matching A-F-D descent. The guitar layer is deliberately brief and softly filtered so
@@ -36,7 +45,7 @@ into the Unity project:
 
 | File | Intended cue | Duration | SHA-256 |
 |---|---|---:|---|
-| `Western_Reference_Bed_Loop_12.wav` | Lost-Saga-leaning gameplay BGM loop; v11 rhythm preserved with softer guitar pick/string edge | 25.554 s | `C0A7C24BE283559909CADA13F1B7CAF009D0D9E77E81EEEF55C475C70D52A582` |
+| `Western_Reference_Bed_Loop_22.wav` | Approved gameplay BGM loop; clean short acoustic chord bed with controlled string/body response | 25.574 s | `803C8256123A29DD319F510112C910231D964A6E101AC826F061722A72E5CB77` |
 | `Prediction_Lock_03.wav` | Player submits and locks a poker prediction | 1.200 s | `A0336D1B1FAB69558C1ED35BB4056B432EBD1E2853A4F246BB8DCAD04C6D6FEB` |
 | `Round_Win_06.wav` | `StageWon` / `RunWon` wooden result cue with a rising second-guitar answer | 2.200 s | `E184A66BD5636D91322021192E82FE11085286E612045A039679153C6D6BD01D` |
 | `Round_Lose_05.wav` | `BattleFinished` wooden result cue with a descending second-guitar answer | 2.200 s | `5715DEAD1E55FD0CF8FEAE8D641D6D4052C79D98358F335AA6155CE96D32FFCF` |
@@ -44,6 +53,7 @@ into the Unity project:
 ## Integration boundary
 
 - Sound owns these new WAV candidates and sound-only runtime code after listening approval.
+- `Western_Reference_Bed_Loop_12.wav` is retained only as the prior source; integration must bind version 22.
 - Sound does not modify existing `.meta`, `PlayableDevSceneBuilder`, `PlayableDev.unity`,
   shared UI classes, or `ProjectSettings`.
 - The integration lead creates and approves importer metadata, scene binding, and build exposure.
