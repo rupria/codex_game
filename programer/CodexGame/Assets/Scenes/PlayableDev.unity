@@ -119,7 +119,7 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
---- !u!1 &552514054
+--- !u!1 &86143472
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -127,11 +127,11 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 552514059}
-  - component: {fileID: 552514058}
-  - component: {fileID: 552514057}
-  - component: {fileID: 552514056}
-  - component: {fileID: 552514055}
+  - component: {fileID: 86143477}
+  - component: {fileID: 86143476}
+  - component: {fileID: 86143475}
+  - component: {fileID: 86143474}
+  - component: {fileID: 86143473}
   m_Layer: 0
   m_Name: CodexGame.PlayableDev
   m_TagString: Untagged
@@ -139,25 +139,25 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &552514055
+--- !u!114 &86143473
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 552514054}
+  m_GameObject: {fileID: 86143472}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: e01485696a2a0564f8908e12ee526b34, type: 3}
   m_Name: 
   m_EditorClassIdentifier: CodexGame.Bootstrap::CodexGame.Bootstrap.PlayableDevGameController
---- !u!114 &552514056
+--- !u!114 &86143474
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 552514054}
+  m_GameObject: {fileID: 86143472}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 27eb85145fdccc54fac3b9f7366fe3de, type: 3}
@@ -180,31 +180,31 @@ MonoBehaviour:
   _transition: {fileID: 8300000, guid: 05cc80bfb269d374592baa41dde40473, type: 3}
   _predictionLock: {fileID: 8300000, guid: 4093605530f0fe645a835dacd359bad7, type: 3}
   _musicLoop: {fileID: 8300000, guid: 7182b94ddeadd4444992b3ce5067f220, type: 3}
---- !u!114 &552514057
+--- !u!114 &86143475
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 552514054}
+  m_GameObject: {fileID: 86143472}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 63fa6614e8e1444eb69d2c8ca6814cb3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: CodexGame.Presentation::CodexGame.Presentation.Views.TableScenePresentationRig
-  _sceneCamera: {fileID: 1045342353}
-  _view: {fileID: 552514058}
+  _sceneCamera: {fileID: 1906980179}
+  _view: {fileID: 86143476}
   _battleBackdrop: {fileID: 2800000, guid: 263d2d00d83c60947acaa998c8961e7a, type: 3}
   _introBackdrop: {fileID: 2800000, guid: 4af2605936d71a4270b671a8aadf4fef, type: 3}
   _barShopBackdrop: {fileID: 2800000, guid: c6f4b89d92a14e188cf5f1c1ae903002, type: 3}
   _backdropShader: {fileID: 4800000, guid: 9b3acbe23ca64a43b7c17fce4b297763, type: 3}
---- !u!114 &552514058
+--- !u!114 &86143476
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 552514054}
+  m_GameObject: {fileID: 86143472}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: bdb4d81e9bb4ec94681bf2457196d90b, type: 3}
@@ -1578,18 +1578,17 @@ MonoBehaviour:
     - {fileID: 2800000, guid: 12d4a963a9e74b47aa067f74bdca0104, type: 3}
   _privateSelectionUiArtSet:
     _modalDim: {fileID: 2800000, guid: 7fc5664585ab3a632fcdcb01afc8681e, type: 3}
-    _modalPanel: {fileID: 2800000, guid: 3844eea12354819b66465ec46a1d2859, type: 3}
+    _modalPanel: {fileID: 2800000, guid: 66eedeecbc4317837da1fb44570794ed, type: 3}
     _publicFrame: {fileID: 2800000, guid: 67ef30785f5366361e2083825fbf071d, type: 3}
     _candidateIdle: {fileID: 2800000, guid: 101716477d8c1bb9e29efd50e2165b3c, type: 3}
     _candidateHover: {fileID: 2800000, guid: 73c557cc33a826c3513144712b780561, type: 3}
     _candidateSelected: {fileID: 2800000, guid: 130f897ec95af608ea89ca138f855a32, type: 3}
     _candidateConfirmed: {fileID: 2800000, guid: 1ab773e4bfc983c5964bbfd4370d2efb, type: 3}
     _candidateDisabled: {fileID: 2800000, guid: f84db65dcfb0fa91ecf0d00dadc7ce9c, type: 3}
-    _confirmIdle: {fileID: 2800000, guid: 0c965c404dd0035985d8de73de5dcad0, type: 3}
-    _confirmHover: {fileID: 2800000, guid: f99d559715345ebbee9813f4ae79d38a, type: 3}
-    _confirmActive: {fileID: 2800000, guid: 058ce418c03f0ecc7c9b27c0ae6e879c, type: 3}
-    _confirmDisabled: {fileID: 2800000, guid: c603c7a1d57c21f52b2f63f61f45c401, type: 3}
-    _selectionCountPanel: {fileID: 2800000, guid: ff86266836d722263081f109722f9e32, type: 3}
+    _confirmIdle: {fileID: 2800000, guid: 1833cac569096ffcfc6154582a404fdf, type: 3}
+    _confirmHover: {fileID: 2800000, guid: bc6141359138a9e35954245b59ef9a57, type: 3}
+    _confirmActive: {fileID: 2800000, guid: 6eb23f4a3c6bdca40ff229ce23c49970, type: 3}
+    _confirmDisabled: {fileID: 2800000, guid: b751bd7c57d986e99c0b5ea53148e1fc, type: 3}
   _jokerRevealUiArtSet:
     _focusVignette: {fileID: 2800000, guid: bccacd06cb0abd5de9833e70c2afe911, type: 3}
     _arcTrailSheet: {fileID: 2800000, guid: 0eed7ff37067097a5804bc0376d31cc0, type: 3}
@@ -1606,13 +1605,13 @@ MonoBehaviour:
     _optionDisabled: {fileID: 2800000, guid: f6b6ed5aee8591462ad875f070a1d544, type: 3}
   _useSceneBackdrop: 1
   _useIntroArtLayout: 1
---- !u!4 &552514059
+--- !u!4 &86143477
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 552514054}
+  m_GameObject: {fileID: 86143472}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
@@ -1621,7 +1620,7 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &1045342352
+--- !u!1 &1906980178
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -1629,9 +1628,9 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 1045342355}
-  - component: {fileID: 1045342353}
-  - component: {fileID: 1045342354}
+  - component: {fileID: 1906980181}
+  - component: {fileID: 1906980179}
+  - component: {fileID: 1906980180}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -1639,13 +1638,13 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!20 &1045342353
+--- !u!20 &1906980179
 Camera:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1045342352}
+  m_GameObject: {fileID: 1906980178}
   m_Enabled: 1
   serializedVersion: 2
   m_ClearFlags: 2
@@ -1690,21 +1689,21 @@ Camera:
   m_OcclusionCulling: 1
   m_StereoConvergence: 10
   m_StereoSeparation: 0.022
---- !u!81 &1045342354
+--- !u!81 &1906980180
 AudioListener:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1045342352}
+  m_GameObject: {fileID: 1906980178}
   m_Enabled: 1
---- !u!4 &1045342355
+--- !u!4 &1906980181
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1045342352}
+  m_GameObject: {fileID: 1906980178}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: -10}
@@ -1717,5 +1716,5 @@ Transform:
 SceneRoots:
   m_ObjectHideFlags: 0
   m_Roots:
-  - {fileID: 1045342355}
-  - {fileID: 552514059}
+  - {fileID: 1906980181}
+  - {fileID: 86143477}
