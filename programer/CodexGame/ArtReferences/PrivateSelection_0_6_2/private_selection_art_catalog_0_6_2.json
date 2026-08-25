@@ -1,0 +1,32 @@
+{
+  "schemaVersion": 1,
+  "packageId": "PrivateSelection_0_6_2",
+  "status": "ART_HANDOFF_READY",
+  "scope": "compact-complete-button-states",
+  "issue": 66,
+  "runtimeRoot": "Assets/Art/Prototype/UI/PrivateSelection_0_6_2/",
+  "supersedesContract": "PrivateSelection_0_6_1 right-lower confirm interpretation",
+  "assets": [
+    { "file": "private_selection_complete_idle_184x64_0_6_2.png", "state": "idle" },
+    { "file": "private_selection_complete_hover_184x64_0_6_2.png", "state": "hover" },
+    { "file": "private_selection_complete_active_184x64_0_6_2.png", "state": "active" },
+    { "file": "private_selection_complete_disabled_184x64_0_6_2.png", "state": "disabled" }
+  ],
+  "layout": {
+    "completeButton": [72, 412, 184, 64],
+    "completeHit": [64, 404, 200, 80],
+    "acquiredCardPool": [270, 124, 620, 350],
+    "candidateLayout": "4+1, maximum 5 cards",
+    "communityCards": "maximum 2"
+  },
+  "runtimeReuse": {
+    "modalPanel": "PrivateSelection_0_6_1/private_selection_modal_panel_clean_860x456_0_6_1.png",
+    "allOtherFields": "PrivateSelection_0_6_0"
+  },
+  "forbidden": [
+    "Do not draw a second selection-count panel below the complete button.",
+    "Do not place the complete action over the right acquired-card pool.",
+    "Do not restore the obsolete baked lower-left frame.",
+    "Do not change the 4+1 candidate layout or two-card community maximum."
+  ]
+}
