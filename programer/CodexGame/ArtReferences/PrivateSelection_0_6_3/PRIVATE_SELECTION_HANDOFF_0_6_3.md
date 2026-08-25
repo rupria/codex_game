@@ -62,3 +62,9 @@
 - 커뮤니티 카드는 최대 2장이다.
 - 한국어·영어에서 제목과 진행 정보가 패널 밖으로 잘리지 않는다.
 - 기존 카드 데이터, 선택 상태, 사운드 및 쇼다운 전환에는 회귀가 없다.
+
+## Unity 6000.3.18f1 직렬화 승인
+
+2026-08-25 Unity 6000.3.18f1이 런타임 상태 PNG 4개의 `.meta`에서 빈 YAML 값 뒤에 공백을 추가했다. 변경 대상은 각 파일의 `customData`, `indices`, `mipmapLimitGroupName`, `userData`, `assetBundleName`, `assetBundleVariant`이며 GUID, SpriteID, TextureImporter 설정값, PNG 바이트에는 변화가 없다.
+
+아트 담당은 이 4건의 Unity 직렬화 형식을 승인한다. 총괄은 승인 커밋 이상의 `codex/art`를 통합한 뒤 장면 저장과 `0.1.2.07.14` 빌드를 재개한다. 이 승인에는 `PlayableDev.unity`, 코드, 사운드 또는 다른 아트 `.meta` 변경이 포함되지 않는다.
