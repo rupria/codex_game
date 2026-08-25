@@ -202,7 +202,7 @@ namespace CodexGame.Presentation.Views
       PlayableDevStyles styles,
       LocalizationRuntime localization)
     {
-      GUI.Label(new Rect(56f, 82f, 180f, 26f), localization.Get("UI_POKER_AI_HAND"), styles.Heading);
+      GUI.Label(new Rect(56f, 82f, 180f, 26f), localization.Get("UI_POKER_AI_PRIVATE"), styles.Heading);
       if (snapshot.VisibleAiPrivateCards.Count == 0)
       {
         for (var index = 0; index < 3; index++)
