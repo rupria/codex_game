@@ -2,6 +2,7 @@ using System;
 using CodexGame.Application.Distribution;
 using CodexGame.Application.Items;
 using CodexGame.Application.Playable;
+using CodexGame.Core.Shared;
 using CodexGame.Presentation.Art;
 using CodexGame.Presentation.Localization;
 using UnityEngine;
@@ -101,6 +102,8 @@ namespace CodexGame.Presentation.Views
       PlayableDevStyles styles,
       LocalizationRuntime localization)
     {
+      var previousDepth = GUI.depth;
+      GUI.depth = -100;
       var previousColor = GUI.color;
       GUI.color = new Color(0.025f, 0.045f, 0.037f, 0.985f);
       GUI.DrawTexture(FullScreen, Texture2D.whiteTexture, ScaleMode.StretchToFill, true);
@@ -125,6 +128,7 @@ namespace CodexGame.Presentation.Views
         || !selection.FirstPublicCard.HasValue
         || !selection.SecondPublicCard.HasValue)
       {
+        GUI.depth = previousDepth;
         return;
       }
 
@@ -133,16 +137,23 @@ namespace CodexGame.Presentation.Views
         cards,
         selection.FirstPublicCard.Value,
         new Rect(366f, 190f, 104f, 148f),
-        Normalize(progress, 0.08f, 0.50f));
+        Normalize(
+          progress,
+          0.04f,
+          GameRules.ShowdownFirstCardRevealCompleteProgress));
       DrawCommunityReveal(
         cards,
         selection.SecondPublicCard.Value,
         new Rect(490f, 190f, 104f, 148f),
-        Normalize(progress, 0.38f, 0.80f));
+        Normalize(
+          progress,
+          GameRules.ShowdownFirstCardRevealCompleteProgress,
+          GameRules.ShowdownSecondCardRevealCompleteProgress));
 
       UiPixelSurfaceRenderer.DrawDiamond(
         new Vector2(480f, 366f),
         new Color(0.94f, 0.63f, 0.18f, 1f));
+      GUI.depth = previousDepth;
     }
 
     public void DrawShowdownFrame(bool showResult, PresentationUiArtSet art)

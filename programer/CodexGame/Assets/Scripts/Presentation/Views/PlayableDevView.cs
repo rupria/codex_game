@@ -87,6 +87,10 @@ namespace CodexGame.Presentation.Views
       new StageTransitionDevPanel();
     private readonly Presentation0124Panel _presentation0124Panel =
       new Presentation0124Panel();
+    private static readonly Rect DefaultBattleEconomyHudRect =
+      new Rect(14f, 96f, 108f, 34f);
+    private static readonly Rect HalliBattleEconomyHudRect =
+      new Rect(14f, 132f, 108f, 34f);
 #if UNITY_EDITOR || ENABLE_GAMEPLAY_CHEATS
     private readonly DevelopmentCheatPanel _cheatPanel = new DevelopmentCheatPanel();
     private bool _cheatOpen;
@@ -454,7 +458,7 @@ namespace CodexGame.Presentation.Views
             _styles,
             _localization);
         }
-        DrawBattleEconomyHud();
+        DrawBattleEconomyHud(HalliBattleEconomyHudRect);
         return;
       }
 
@@ -826,8 +830,13 @@ namespace CodexGame.Presentation.Views
 
     private void DrawBattleEconomyHud()
     {
+      DrawBattleEconomyHud(DefaultBattleEconomyHudRect);
+    }
+
+    private void DrawBattleEconomyHud(Rect rect)
+    {
       EconomyUiRenderer.DrawBattleBalances(
-        new Rect(14f, 96f, 108f, 34f),
+        rect,
         _snapshot.BaseBulletCount,
         _snapshot.TemporaryBulletCount,
         _economyUiArtSet,
