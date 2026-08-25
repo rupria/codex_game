@@ -2,8 +2,9 @@
   "package": "MainMenu_0_5_8",
   "issue": 64,
   "artRevision": "0.5.8",
-  "status": "art_complete_programmer_binding_required",
-  "approvedAt": "2026-08-20",
+  "status": "art_complete_runtime_path_preserved",
+  "approvedAt": "2026-08-26",
+  "gameTitle": "Bell E Poker",
   "baseline": {
     "branch": "dev",
     "sha": "db443a7c7c0bdb37614b77c63f945f1b1991a78e",
@@ -22,7 +23,7 @@
   "runtimeRoot": "Assets/Art/Prototype/UI/MainMenu_0_5_8/",
   "assets": [
     {"file": "start_screen_background_960x540_0_5_8.png", "size": "960x540", "alpha": false, "usage": "main screen composite without baked labels"},
-    {"file": "main_menu_duel_crest_300x190_0_5_8.png", "size": "300x190", "alpha": true, "usage": "approved central crest"},
+    {"file": "main_menu_duel_crest_300x190_0_5_8.png", "size": "300x190", "alpha": true, "usage": "approved central crest with integrated Bell E Poker title"},
     {"file": "main_menu_start_idle_380x84_0_5_8.png", "size": "380x84", "alpha": true, "usage": "START idle"},
     {"file": "main_menu_start_hover_380x84_0_5_8.png", "size": "380x84", "alpha": true, "usage": "START hover/focus"},
     {"file": "main_menu_start_pressed_380x84_0_5_8.png", "size": "380x84", "alpha": true, "usage": "START pressed"},
