@@ -468,7 +468,6 @@ namespace CodexGame.Presentation.Views
         {
           DrawMercenaryAiHiddenArea(cards, art);
         }
-        DrawUseTiming(_selectedItem.Value, localization, styles);
         return;
       }
 
@@ -487,7 +486,6 @@ namespace CodexGame.Presentation.Views
           new Rect(510f, 286f, 250f, 48f),
           localization.Get(definition.LocalizationDescriptionKey),
           styles.Small);
-        DrawUseTiming(_selectedItem.Value, localization, styles);
       }
     }
 
@@ -582,18 +580,6 @@ namespace CodexGame.Presentation.Views
           && GameItemUseTimingPolicy.IsUsable(definition, snapshot.CurrentUseTiming)) return true;
       }
       return false;
-    }
-
-    private static void DrawUseTiming(
-      GameItemId itemId,
-      LocalizationRuntime localization,
-      PlayableDevStyles styles)
-    {
-      if (!GameItemCatalog.TryGet(itemId, out var definition) || definition == null) return;
-      GUI.Label(
-        new Rect(410f, 346f, 360f, 20f),
-        localization.Get(GameItemUseTimingPolicy.LocalizationKey(definition.UseTiming)),
-        styles.Small);
     }
 
     private static bool IsTargetEnabled(
