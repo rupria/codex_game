@@ -34,9 +34,13 @@ namespace CodexGame.Core.Shared
 
     public const long StageEntryPresentationMicroseconds = 6_000_000;
     public const long ThreeCallEntryPresentationMicroseconds = 1_550_000;
-    public const long ThreeCallToSelectionPresentationMicroseconds = 2_000_000;
-    public const float ShowdownFirstCardRevealCompleteProgress = 0.22f;
-    public const float ShowdownSecondCardRevealCompleteProgress = 0.46f;
+    public const long ThreeCallToSelectionPresentationMicroseconds = 10_000_000;
+    public const float ShowdownFocusCompleteProgress = 0.10f;
+    public const float ShowdownFirstCardRevealStartProgress = 0.08f;
+    public const float ShowdownFirstCardRevealCompleteProgress = 0.17f;
+    public const float ShowdownSecondCardRevealStartProgress = 0.16f;
+    public const float ShowdownSecondCardRevealCompleteProgress = 0.24f;
+    public const float ShowdownLabelRevealProgress = 0.20f;
     public const long HalliResultLockMicroseconds = 2_000_000;
     public const long PrivateSelectionTimeoutMicroseconds = 60_000_000;
     public const long PokerHandConfirmationTimeoutMicroseconds = 120_000_000;

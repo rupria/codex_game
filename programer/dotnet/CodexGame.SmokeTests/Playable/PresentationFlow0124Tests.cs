@@ -69,8 +69,8 @@ namespace CodexGame.SmokeTests.Playable
 
     private static void CheckTransitionRuleConstants(TestHarness tests)
     {
-      tests.Check(GameRules.ThreeCallToSelectionPresentationMicroseconds == 2_000_000,
-        "Three Call completion must keep input locked for exactly two seconds before selection.");
+      tests.Check(GameRules.ThreeCallToSelectionPresentationMicroseconds == 10_000_000,
+        "Three Call completion must keep input locked for the approved ten-second Showdown flow.");
     }
 
     private static void CheckShowdownPreparesTwoCommunityCards(TestHarness tests)
@@ -106,7 +106,7 @@ namespace CodexGame.SmokeTests.Playable
       game.Tick(beforeEnd);
       tests.Check(
         game.Phase == PlayableGamePhase.HalliTransition,
-        "Private-card selection must not open before the full two-second Showdown transition ends.");
+        "Private-card selection must not open before the full ten-second Showdown transition ends.");
     }
 
     private static void CheckShowdownKeepsCommunityCardsVisible(TestHarness tests)
@@ -115,8 +115,8 @@ namespace CodexGame.SmokeTests.Playable
         GameRules.ThreeCallToSelectionPresentationMicroseconds
           * (1f - GameRules.ShowdownSecondCardRevealCompleteProgress));
       tests.Check(
-        visibleHoldMicroseconds >= 1_000_000,
-        "Both community cards must remain fully visible for at least one second before selection opens.");
+        visibleHoldMicroseconds >= 7_000_000,
+        "Both community cards must remain fully visible through the approved Showdown hold without private cards.");
     }
   }
 }
