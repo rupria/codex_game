@@ -14,12 +14,21 @@ namespace CodexGame.Presentation.Views
     public static readonly Rect LoseText = LoseVisual;
     public static readonly Rect WinHit = new Rect(228f, 448f, 228f, 80f);
     public static readonly Rect LoseHit = new Rect(504f, 448f, 228f, 80f);
-    // #77: keep the resolved-state action on the same visual baseline as the
-    // prediction buttons. The former y=492 placement clipped against the
-    // 540p safe area and made CONTINUE look detached from the result flow.
-    public static readonly Rect ContinueVisual = new Rect(388f, 461f, 184f, 50f);
-    public static readonly Rect ContinueText = new Rect(414f, 471f, 132f, 30f);
-    public static readonly Rect ContinueHit = new Rect(378f, 451f, 204f, 70f);
+    public static readonly Rect ContinueVisual = new Rect(
+      PokerResultPanelLayout.ContinueVisualX,
+      PokerResultPanelLayout.ContinueVisualY,
+      PokerResultPanelLayout.ContinueVisualWidth,
+      PokerResultPanelLayout.ContinueVisualHeight);
+    public static readonly Rect ContinueText = new Rect(
+      PokerResultPanelLayout.ContinueTextX,
+      PokerResultPanelLayout.ContinueTextY,
+      PokerResultPanelLayout.ContinueTextWidth,
+      PokerResultPanelLayout.ContinueTextHeight);
+    public static readonly Rect ContinueHit = new Rect(
+      PokerResultPanelLayout.ContinueHitX,
+      PokerResultPanelLayout.ContinueHitY,
+      PokerResultPanelLayout.ContinueHitWidth,
+      PokerResultPanelLayout.ContinueHitHeight);
     public static readonly Rect PredictionTitlePlate = new Rect(350f, 20f, 260f, 52f);
     public static readonly Rect PredictionStageEmblem = new Rect(360f, 26f, 40f, 40f);
     public static readonly Rect PredictionTitleText = new Rect(410f, 32f, 180f, 28f);

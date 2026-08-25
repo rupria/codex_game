@@ -14,6 +14,18 @@ namespace CodexGame.Presentation.Views
     public const float Width = 788f;
     public const float MessageWidth = 686f;
     public const float ItemStatusHeight = 40f;
+    public const float ContinueVisualX = 398f;
+    public const float ContinueVisualY = 465f;
+    public const float ContinueVisualWidth = 164f;
+    public const float ContinueVisualHeight = 44f;
+    public const float ContinueTextX = 410f;
+    public const float ContinueTextY = 471f;
+    public const float ContinueTextWidth = 140f;
+    public const float ContinueTextHeight = 30f;
+    public const float ContinueHitX = 390f;
+    public const float ContinueHitY = 455f;
+    public const float ContinueHitWidth = 180f;
+    public const float ContinueHitHeight = 64f;
     private const float VerticalPadding = 32f;
 
     private PokerResultPanelLayout(PokerResultPanelSize size, float y, float height)
