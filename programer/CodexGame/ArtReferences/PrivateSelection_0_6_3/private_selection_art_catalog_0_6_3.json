@@ -1,0 +1,39 @@
+{
+  "schemaVersion": 1,
+  "packageId": "PrivateSelection_0_6_3",
+  "status": "ART_HANDOFF_READY",
+  "issue": 66,
+  "runtimeRoot": "Assets/Art/Prototype/UI/PrivateSelection_0_6_3/",
+  "supersedesContract": "PrivateSelection_0_6_2 compact 184x64 complete button",
+  "assets": [
+    { "file": "private_selection_hand_lock_idle_184x120_0_6_3.png", "state": "idle" },
+    { "file": "private_selection_hand_lock_hover_184x120_0_6_3.png", "state": "hover" },
+    { "file": "private_selection_hand_lock_active_184x120_0_6_3.png", "state": "active" },
+    { "file": "private_selection_hand_lock_disabled_184x120_0_6_3.png", "state": "disabled" }
+  ],
+  "layout": {
+    "handLockVisual": [72, 366, 184, 120],
+    "handLockHit": [64, 358, 200, 136],
+    "poolFrame": [270, 124, 620, 328],
+    "poolSafeContent": [286, 140, 588, 296],
+    "candidateTopY": 140,
+    "candidateBottomY": 286,
+    "candidateFirstX": 326,
+    "candidateGapX": 20,
+    "candidateFifth": [326, 286],
+    "candidateLayout": "4+1, maximum 5 cards",
+    "poolEdgeMinimum": 16,
+    "candidateSize": [112, 150],
+    "communityCards": "maximum 2"
+  },
+  "runtimeReuse": {
+    "modalPanel": "PrivateSelection_0_6_1/private_selection_modal_panel_clean_860x456_0_6_1.png",
+    "otherFields": "PrivateSelection_0_6_0"
+  },
+  "forbidden": [
+    "Do not place candidate frames against the pool border.",
+    "Do not draw a second count or confirm panel.",
+    "Do not place any action inside the right card pool.",
+    "Do not change 4+1 candidates or the two-card community maximum."
+  ]
+}
