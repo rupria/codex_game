@@ -171,7 +171,7 @@ namespace CodexGame.Presentation.Audio
         _uiError);
 
       _cardFlipCue = CreateCue(0.91f, 1.09f, 0.68f, 0.94f, 0.1f, 0.055f,
-        _cardFlip, _uiSelect, _uiConfirm);
+        _cardFlip);
       _bellCue = CreateCue(0.94f, 1.04f, 0.88f, 1f, 0.035f, 0.08f,
         _bell);
       _itemCue = CreateCue(0.93f, 1.07f, 0.72f, 0.98f, 0.08f, 0.07f,
