@@ -421,12 +421,10 @@ namespace CodexGame.Presentation.Views
       {
         _presentation0124Panel.DrawThreeCallToSelection(
           _snapshot.Transition,
-          _snapshot.Halli,
           _snapshot.Selection?.FirstPublicCard,
           _snapshot.Selection?.SecondPublicCard,
           _pokerCards,
           _presentationUiArtSet,
-          _halliUiArtSet,
           _styles,
           _localization);
         return;

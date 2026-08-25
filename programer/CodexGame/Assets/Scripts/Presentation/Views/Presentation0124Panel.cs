@@ -141,12 +141,10 @@ namespace CodexGame.Presentation.Views
 
     public void DrawThreeCallToSelection(
       PlayableTransitionSnapshot transition,
-      PrototypeHalliSnapshot halliSnapshot,
       Card? firstCommunityCard,
       Card? secondCommunityCard,
       PlayableCardRenderer cards,
       PresentationUiArtSet art,
-      HalliUiArtSet halliArt,
       PlayableDevStyles styles,
       LocalizationRuntime localization)
     {
@@ -158,29 +156,9 @@ namespace CodexGame.Presentation.Views
         progress,
         0f,
         GameRules.ShowdownFocusCompleteProgress);
-      GUI.color = new Color(0.012f, 0.021f, 0.017f, Mathf.Lerp(0.18f, 0.72f, focusProgress));
+      GUI.color = new Color(0.012f, 0.021f, 0.017f, Mathf.Lerp(0.12f, 0.48f, focusProgress));
       GUI.DrawTexture(FullScreen, Texture2D.whiteTexture, ScaleMode.StretchToFill, true);
       GUI.color = previousColor;
-
-      if (art?.FocusMask != null)
-      {
-        GUI.color = new Color(1f, 1f, 1f, Mathf.Lerp(0f, 0.9f, focusProgress));
-        GUI.DrawTexture(FullScreen, art.FocusMask, ScaleMode.StretchToFill, true);
-        GUI.color = previousColor;
-      }
-      if (art?.ShowdownWideFrame != null)
-      {
-        GUI.color = new Color(1f, 1f, 1f, 0.22f * focusProgress);
-        GUI.DrawTexture(
-          new Rect(100f, 70f, 760f, 420f),
-          art.ShowdownWideFrame,
-          ScaleMode.StretchToFill,
-          true);
-        GUI.color = previousColor;
-      }
-
-      DrawThreeCallEcho(halliSnapshot, cards, halliArt, focusProgress);
-      DrawTransitionDeck(cards, focusProgress);
 
       if (cards == null
         || !firstCommunityCard.HasValue
@@ -194,8 +172,8 @@ namespace CodexGame.Presentation.Views
       DrawCommunityReveal(
         cards,
         firstCommunityCard.Value,
-        new Rect(428f, 190f, 104f, 148f),
-        new Rect(366f, 190f, 104f, 148f),
+        new Rect(428f, 156f, 104f, 148f),
+        new Rect(372f, 156f, 104f, 148f),
         Normalize(
           progress,
           GameRules.ShowdownFirstCardRevealStartProgress,
@@ -203,8 +181,8 @@ namespace CodexGame.Presentation.Views
       DrawCommunityReveal(
         cards,
         secondCommunityCard.Value,
-        new Rect(434f, 196f, 104f, 148f),
-        new Rect(490f, 190f, 104f, 148f),
+        new Rect(434f, 162f, 104f, 148f),
+        new Rect(484f, 156f, 104f, 148f),
         Normalize(
           progress,
           GameRules.ShowdownSecondCardRevealStartProgress,
@@ -219,10 +197,8 @@ namespace CodexGame.Presentation.Views
           styles);
       }
 
+      DrawShowdownFocusRail(progress);
       DrawShowdownHoldPulse(progress);
-      UiPixelSurfaceRenderer.DrawDiamond(
-        new Vector2(480f, 366f),
-        new Color(0.94f, 0.63f, 0.18f, 1f));
       GUI.color = previousColor;
       GUI.depth = previousDepth;
     }
@@ -295,59 +271,6 @@ namespace CodexGame.Presentation.Views
         false);
     }
 
-    private static void DrawThreeCallEcho(
-      PrototypeHalliSnapshot snapshot,
-      PlayableCardRenderer cards,
-      HalliUiArtSet art,
-      float focusProgress)
-    {
-      if (snapshot == null || cards == null) return;
-
-      var previousColor = GUI.color;
-      var echoAlpha = Mathf.Lerp(0.92f, 0.24f, focusProgress);
-      GUI.color = new Color(1f, 1f, 1f, echoAlpha);
-      DrawPileEcho(snapshot.LeftPile, cards, true);
-      DrawPileEcho(snapshot.RightPile, cards, false);
-
-      var bell = art?.BellDisabled ?? art?.BellIdle;
-      if (bell != null)
-      {
-        GUI.DrawTexture(new Rect(270f, 300f, 64f, 64f), bell, ScaleMode.ScaleToFit, true);
-        GUI.DrawTexture(new Rect(626f, 300f, 64f, 64f), bell, ScaleMode.ScaleToFit, true);
-      }
-      GUI.color = previousColor;
-    }
-
-    private static void DrawPileEcho(
-      System.Collections.Generic.IReadOnlyList<Card> pile,
-      PlayableCardRenderer cards,
-      bool left)
-    {
-      if (pile == null || pile.Count == 0) return;
-      var start = Math.Max(0, pile.Count - 2);
-      var visible = pile.Count - start;
-      for (var index = 0; index < visible; index++)
-      {
-        var offset = index * 44f;
-        var rect = left
-          ? new Rect(76f + offset, 166f + index * 10f, 76f, 108f)
-          : new Rect(808f - offset, 166f + index * 10f, 76f, 108f);
-        cards.DrawAt(rect, pile[start + index], false, false);
-      }
-    }
-
-    private static void DrawTransitionDeck(PlayableCardRenderer cards, float focusProgress)
-    {
-      if (cards == null) return;
-      var previousColor = GUI.color;
-      GUI.color = new Color(1f, 1f, 1f, Mathf.Lerp(0.92f, 0.34f, focusProgress));
-      for (var index = 2; index >= 0; index--)
-      {
-        cards.DrawBackAt(new Rect(444f + index * 3f, 400f - index * 3f, 72f, 96f), 0f, false);
-      }
-      GUI.color = previousColor;
-    }
-
     private static void DrawShowdownLabel(
       float progress,
       string label,
@@ -369,13 +292,27 @@ namespace CodexGame.Presentation.Views
       GUI.color = previousColor;
     }
 
+    private static void DrawShowdownFocusRail(float progress)
+    {
+      if (progress < GameRules.ShowdownLabelRevealProgress) return;
+      var alpha = Normalize(
+        progress,
+        GameRules.ShowdownLabelRevealProgress,
+        GameRules.ShowdownSecondCardRevealCompleteProgress);
+      var color = new Color(0.94f, 0.63f, 0.18f, 0.72f * alpha);
+      UiPixelSurfaceRenderer.Fill(new Rect(344f, 332f, 272f, 2f), color);
+      UiPixelSurfaceRenderer.DrawDiamond(new Vector2(344f, 333f), color);
+      UiPixelSurfaceRenderer.DrawDiamond(new Vector2(480f, 333f), color);
+      UiPixelSurfaceRenderer.DrawDiamond(new Vector2(616f, 333f), color);
+    }
+
     private static void DrawShowdownHoldPulse(float progress)
     {
       if (progress < GameRules.ShowdownSecondCardRevealCompleteProgress) return;
       var pulse = 0.55f + Mathf.Sin(Time.unscaledTime * 2.1f) * 0.15f;
       var color = new Color(0.94f, 0.63f, 0.18f, pulse);
-      UiPixelSurfaceRenderer.DrawDiamond(new Vector2(480f, 172f), color);
-      UiPixelSurfaceRenderer.DrawDiamond(new Vector2(480f, 356f), color);
+      UiPixelSurfaceRenderer.DrawDiamond(new Vector2(480f, 138f), color);
+      UiPixelSurfaceRenderer.DrawDiamond(new Vector2(480f, 320f), color);
     }
 
     private static float Normalize(float value, float start, float end)
