@@ -1,7 +1,7 @@
 using System;
-using CodexGame.Application.Distribution;
 using CodexGame.Application.Items;
 using CodexGame.Application.Playable;
+using CodexGame.Core.Cards;
 using CodexGame.Core.Shared;
 using CodexGame.Presentation.Art;
 using CodexGame.Presentation.Localization;
@@ -96,7 +96,8 @@ namespace CodexGame.Presentation.Views
 
     public void DrawThreeCallToSelection(
       PlayableTransitionSnapshot transition,
-      PrivateCardSelectionSnapshot selection,
+      Card? firstCommunityCard,
+      Card? secondCommunityCard,
       PlayableCardRenderer cards,
       PresentationUiArtSet art,
       PlayableDevStyles styles,
@@ -124,9 +125,9 @@ namespace CodexGame.Presentation.Views
 
       DrawPhaseLabel(art?.ShowdownIcon, localization.Get("UI_SHOWDOWN_ENTRY"), art, styles);
 
-      if (selection == null || cards == null
-        || !selection.FirstPublicCard.HasValue
-        || !selection.SecondPublicCard.HasValue)
+      if (cards == null
+        || !firstCommunityCard.HasValue
+        || !secondCommunityCard.HasValue)
       {
         GUI.depth = previousDepth;
         return;
@@ -135,7 +136,7 @@ namespace CodexGame.Presentation.Views
       var progress = transition?.Progress ?? 1f;
       DrawCommunityReveal(
         cards,
-        selection.FirstPublicCard.Value,
+        firstCommunityCard.Value,
         new Rect(366f, 190f, 104f, 148f),
         Normalize(
           progress,
@@ -143,7 +144,7 @@ namespace CodexGame.Presentation.Views
           GameRules.ShowdownFirstCardRevealCompleteProgress));
       DrawCommunityReveal(
         cards,
-        selection.SecondPublicCard.Value,
+        secondCommunityCard.Value,
         new Rect(490f, 190f, 104f, 148f),
         Normalize(
           progress,

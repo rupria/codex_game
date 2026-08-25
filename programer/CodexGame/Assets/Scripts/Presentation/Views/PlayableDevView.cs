@@ -417,9 +417,21 @@ namespace CodexGame.Presentation.Views
         return;
       }
 
+      if (_snapshot.Phase == PlayableGamePhase.HalliTransition)
+      {
+        _presentation0124Panel.DrawThreeCallToSelection(
+          _snapshot.Transition,
+          _snapshot.Selection?.FirstPublicCard,
+          _snapshot.Selection?.SecondPublicCard,
+          _pokerCards,
+          _presentationUiArtSet,
+          _styles,
+          _localization);
+        return;
+      }
+
       if ((_snapshot.Phase == PlayableGamePhase.HalliOpening
-          || _snapshot.Phase == PlayableGamePhase.Halli
-          || _snapshot.Phase == PlayableGamePhase.HalliTransition)
+          || _snapshot.Phase == PlayableGamePhase.Halli)
         && _snapshot.Halli != null)
       {
         _halliPanel.Draw(
@@ -444,16 +456,6 @@ namespace CodexGame.Presentation.Views
         {
           _presentation0124Panel.DrawThreeCallEntry(
             _snapshot.Transition,
-            _presentationUiArtSet,
-            _styles,
-            _localization);
-        }
-        else if (_snapshot.Phase == PlayableGamePhase.HalliTransition)
-        {
-          _presentation0124Panel.DrawThreeCallToSelection(
-            _snapshot.Transition,
-            _snapshot.Selection,
-            _pokerCards,
             _presentationUiArtSet,
             _styles,
             _localization);
