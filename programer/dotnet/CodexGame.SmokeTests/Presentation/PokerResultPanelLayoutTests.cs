@@ -15,6 +15,16 @@ namespace CodexGame.SmokeTests.Presentation
         PokerResultPanelLayout.Select(70f, true).Size == PokerResultPanelSize.Expanded
           && PokerResultPanelLayout.Select(58f, true).Size == PokerResultPanelSize.Standard,
         "Optional item status chips must reserve their own vertical area.");
+      tests.Check(
+        PokerResultPanelLayout.ContinueVisualX == 398f
+          && PokerResultPanelLayout.ContinueVisualY == 465f
+          && PokerResultPanelLayout.ContinueVisualWidth == 164f
+          && PokerResultPanelLayout.ContinueVisualHeight == 44f
+          && PokerResultPanelLayout.ContinueHitX == 390f
+          && PokerResultPanelLayout.ContinueHitY == 455f
+          && PokerResultPanelLayout.ContinueHitWidth == 180f
+          && PokerResultPanelLayout.ContinueHitHeight == 64f,
+        "The resolved continue action must preserve the native 164x44 asset and approved hit area.");
     }
   }
 }

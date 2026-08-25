@@ -39,17 +39,12 @@ namespace CodexGame.Presentation.Views
       var firstNewIndex = Math.Max(
         0,
         snapshot.PlayerAcquiredCards.Count - snapshot.LastAcquiredCards.Count);
-      var visibleStart = playerOnly
-        ? HalliBoardLayout.PlayerOnlyVisibleStart(snapshot.PlayerAcquiredCards.Count)
-        : 0;
 
       for (var index = 0; index < snapshot.LastAcquiredCards.Count; index++)
       {
         var cardIndex = firstNewIndex + index;
-        if (cardIndex < visibleStart) continue;
         var target = PlayerCardRect(
           cardIndex,
-          visibleStart,
           snapshot.PlayerAcquiredCards.Count,
           playerOnly);
         cards.DrawAt(LerpRect(source, target, Smooth(progress)), snapshot.LastAcquiredCards[index]);
@@ -75,10 +70,7 @@ namespace CodexGame.Presentation.Views
           styles.Small);
       }
 
-      var visibleStart = playerOnly
-        ? HalliBoardLayout.PlayerOnlyVisibleStart(snapshot.PlayerAcquiredCards.Count)
-        : 0;
-      for (var cardIndex = visibleStart; cardIndex < snapshot.PlayerAcquiredCards.Count; cardIndex++)
+      for (var cardIndex = 0; cardIndex < snapshot.PlayerAcquiredCards.Count; cardIndex++)
       {
         var card = snapshot.PlayerAcquiredCards[cardIndex];
         var moving = snapshot.LastAcquirer == PrototypeAcquirer.Player
@@ -89,7 +81,6 @@ namespace CodexGame.Presentation.Views
         cards.DrawAt(
           PlayerCardRect(
             cardIndex,
-            visibleStart,
             snapshot.PlayerAcquiredCards.Count,
             playerOnly),
           card);
@@ -120,12 +111,11 @@ namespace CodexGame.Presentation.Views
 
     private static Rect PlayerCardRect(
       int cardIndex,
-      int visibleStart,
       int cardCount,
       bool playerOnly)
     {
       return playerOnly
-        ? HalliBoardLayout.PlayerOnlyAcquiredCard(cardIndex - visibleStart)
+        ? HalliBoardLayout.PlayerOnlyAcquiredCard(cardIndex, cardCount)
         : HalliBoardLayout.PlayerAcquiredCard(cardIndex, cardCount);
     }
 

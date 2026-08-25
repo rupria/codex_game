@@ -77,34 +77,38 @@ namespace CodexGame.Presentation.Views
       }
 
       DrawPredictionHeader(snapshot, pokerArt, styles, localization);
+      var actionVisibility = PokerRoundActionVisibility.FromPhase(snapshot.Phase);
       var canPredict = snapshot.Phase == PokerRoundPhase.AwaitingPrediction;
       var selectedPrediction = snapshot.Result?.Prediction.Choice ?? PredictionChoice.Skipped;
-      if (DrawPredictionButton(
-        PokerTableLayout.WinVisual,
-        PokerTableLayout.WinHit,
-        PokerTableLayout.WinText,
-        pokerArt?.PlayerPredictionIdle,
-        pokerArt?.PlayerPredictionHover,
-        pokerArt?.PlayerPredictionSelected,
-        pokerArt?.PlayerPredictionDisabled,
-        localization.Get("UI_POKER_PREDICT_PLAYER_WIN"),
-        canPredict,
-        selectedPrediction == PredictionChoice.PlayerWins,
-        styles)) predict(PredictionChoice.PlayerWins);
-      if (DrawPredictionButton(
-        PokerTableLayout.LoseVisual,
-        PokerTableLayout.LoseHit,
-        PokerTableLayout.LoseText,
-        pokerArt?.AiPredictionIdle,
-        pokerArt?.AiPredictionHover,
-        pokerArt?.AiPredictionSelected,
-        pokerArt?.AiPredictionDisabled,
-        localization.Get("UI_POKER_PREDICT_PLAYER_LOSS"),
-        canPredict,
-        selectedPrediction == PredictionChoice.PlayerLoses,
-        styles)) predict(PredictionChoice.PlayerLoses);
+      if (actionVisibility.ShowPredictionActions)
+      {
+        if (DrawPredictionButton(
+          PokerTableLayout.WinVisual,
+          PokerTableLayout.WinHit,
+          PokerTableLayout.WinText,
+          pokerArt?.PlayerPredictionIdle,
+          pokerArt?.PlayerPredictionHover,
+          pokerArt?.PlayerPredictionSelected,
+          pokerArt?.PlayerPredictionDisabled,
+          localization.Get("UI_POKER_PREDICT_PLAYER_WIN"),
+          canPredict,
+          selectedPrediction == PredictionChoice.PlayerWins,
+          styles)) predict(PredictionChoice.PlayerWins);
+        if (DrawPredictionButton(
+          PokerTableLayout.LoseVisual,
+          PokerTableLayout.LoseHit,
+          PokerTableLayout.LoseText,
+          pokerArt?.AiPredictionIdle,
+          pokerArt?.AiPredictionHover,
+          pokerArt?.AiPredictionSelected,
+          pokerArt?.AiPredictionDisabled,
+          localization.Get("UI_POKER_PREDICT_PLAYER_LOSS"),
+          canPredict,
+          selectedPrediction == PredictionChoice.PlayerLoses,
+          styles)) predict(PredictionChoice.PlayerLoses);
+      }
 
-      if (snapshot.Phase == PokerRoundPhase.Resolved
+      if (actionVisibility.ShowContinueAction
         && DrawContinueButton(pokerArt, styles, localization))
       {
         advance();

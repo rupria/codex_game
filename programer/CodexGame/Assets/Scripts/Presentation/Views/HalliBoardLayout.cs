@@ -29,10 +29,11 @@ namespace CodexGame.Presentation.Views
     private const float AcquiredCardWidth = 56f;
     private const float AcquiredCardHeight = 78f;
     private const float PreferredAcquiredCardStep = 30f;
-    public const int PlayerOnlyMaximumVisibleCards = 3;
     private const float PlayerOnlyCardStartX = 118f;
     private const float PlayerOnlyCardStartY = 29f;
     private const float PlayerOnlyCardStepX = 78f;
+    private const float PlayerOnlyCardAreaWidth =
+      AcquiredCardWidth + PlayerOnlyCardStepX * 2f;
 
     public static Rect SharedPileRail(PileSide pile)
     {
@@ -88,17 +89,16 @@ namespace CodexGame.Presentation.Views
       return new Rect(fan.X(index), AiAcquiredFan.y, AcquiredCardWidth, AcquiredCardHeight);
     }
 
-    public static int PlayerOnlyVisibleStart(int cardCount)
+    public static Rect PlayerOnlyAcquiredCard(int index, int count)
     {
-      return AcquiredCardFanLayout.NewestVisibleStart(
-        cardCount,
-        PlayerOnlyMaximumVisibleCards);
-    }
-
-    public static Rect PlayerOnlyAcquiredCard(int visibleIndex)
-    {
+      var fan = AcquiredCardFanLayout.CreateLeftAligned(
+        count,
+        PlayerTray.x + PlayerOnlyCardStartX,
+        PlayerOnlyCardAreaWidth,
+        AcquiredCardWidth,
+        PlayerOnlyCardStepX);
       return new Rect(
-        PlayerTray.x + PlayerOnlyCardStartX + visibleIndex * PlayerOnlyCardStepX,
+        fan.X(index),
         PlayerTray.y + PlayerOnlyCardStartY,
         AcquiredCardWidth,
         AcquiredCardHeight);
