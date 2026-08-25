@@ -141,64 +141,89 @@ namespace CodexGame.Presentation.Views
 
     public void DrawThreeCallToSelection(
       PlayableTransitionSnapshot transition,
+      PrototypeHalliSnapshot halliSnapshot,
       Card? firstCommunityCard,
       Card? secondCommunityCard,
       PlayableCardRenderer cards,
       PresentationUiArtSet art,
+      HalliUiArtSet halliArt,
       PlayableDevStyles styles,
       LocalizationRuntime localization)
     {
       var previousDepth = GUI.depth;
       GUI.depth = -100;
       var previousColor = GUI.color;
-      GUI.color = new Color(0.025f, 0.045f, 0.037f, 0.985f);
+      var progress = transition?.Progress ?? 1f;
+      var focusProgress = Normalize(
+        progress,
+        0f,
+        GameRules.ShowdownFocusCompleteProgress);
+      GUI.color = new Color(0.012f, 0.021f, 0.017f, Mathf.Lerp(0.18f, 0.72f, focusProgress));
       GUI.DrawTexture(FullScreen, Texture2D.whiteTexture, ScaleMode.StretchToFill, true);
       GUI.color = previousColor;
 
       if (art?.FocusMask != null)
       {
+        GUI.color = new Color(1f, 1f, 1f, Mathf.Lerp(0f, 0.9f, focusProgress));
         GUI.DrawTexture(FullScreen, art.FocusMask, ScaleMode.StretchToFill, true);
+        GUI.color = previousColor;
       }
       if (art?.ShowdownWideFrame != null)
       {
+        GUI.color = new Color(1f, 1f, 1f, 0.22f * focusProgress);
         GUI.DrawTexture(
-          new Rect(236f, 126f, 488f, 330f),
+          new Rect(100f, 70f, 760f, 420f),
           art.ShowdownWideFrame,
           ScaleMode.StretchToFill,
           true);
+        GUI.color = previousColor;
       }
 
-      DrawPhaseLabel(art?.ShowdownIcon, localization.Get("UI_SHOWDOWN_ENTRY"), art, styles);
+      DrawThreeCallEcho(halliSnapshot, cards, halliArt, focusProgress);
+      DrawTransitionDeck(cards, focusProgress);
 
       if (cards == null
         || !firstCommunityCard.HasValue
         || !secondCommunityCard.HasValue)
       {
+        GUI.color = previousColor;
         GUI.depth = previousDepth;
         return;
       }
 
-      var progress = transition?.Progress ?? 1f;
       DrawCommunityReveal(
         cards,
         firstCommunityCard.Value,
+        new Rect(428f, 190f, 104f, 148f),
         new Rect(366f, 190f, 104f, 148f),
         Normalize(
           progress,
-          0.04f,
+          GameRules.ShowdownFirstCardRevealStartProgress,
           GameRules.ShowdownFirstCardRevealCompleteProgress));
       DrawCommunityReveal(
         cards,
         secondCommunityCard.Value,
+        new Rect(434f, 196f, 104f, 148f),
         new Rect(490f, 190f, 104f, 148f),
         Normalize(
           progress,
-          GameRules.ShowdownFirstCardRevealCompleteProgress,
+          GameRules.ShowdownSecondCardRevealStartProgress,
           GameRules.ShowdownSecondCardRevealCompleteProgress));
 
+      if (progress >= GameRules.ShowdownLabelRevealProgress)
+      {
+        DrawShowdownLabel(
+          progress,
+          localization.Get("UI_SHOWDOWN_ENTRY"),
+          art,
+          styles);
+      }
+
+      DrawShowdownHoldPulse(progress);
       UiPixelSurfaceRenderer.DrawDiamond(
         new Vector2(480f, 366f),
         new Color(0.94f, 0.63f, 0.18f, 1f));
+      GUI.color = previousColor;
       GUI.depth = previousDepth;
     }
 
@@ -251,22 +276,106 @@ namespace CodexGame.Presentation.Views
     private static void DrawCommunityReveal(
       PlayableCardRenderer cards,
       CodexGame.Core.Cards.Card card,
+      Rect source,
       Rect destination,
       float progress)
     {
       if (progress <= 0f)
       {
-        cards.DrawBackAt(destination);
+        cards.DrawBackAt(source);
         return;
       }
 
       CardFlipMotion.Draw(
         cards,
         card,
-        destination,
+        source,
         destination,
         progress,
         false);
+    }
+
+    private static void DrawThreeCallEcho(
+      PrototypeHalliSnapshot snapshot,
+      PlayableCardRenderer cards,
+      HalliUiArtSet art,
+      float focusProgress)
+    {
+      if (snapshot == null || cards == null) return;
+
+      var previousColor = GUI.color;
+      var echoAlpha = Mathf.Lerp(0.92f, 0.24f, focusProgress);
+      GUI.color = new Color(1f, 1f, 1f, echoAlpha);
+      DrawPileEcho(snapshot.LeftPile, cards, true);
+      DrawPileEcho(snapshot.RightPile, cards, false);
+
+      var bell = art?.BellDisabled ?? art?.BellIdle;
+      if (bell != null)
+      {
+        GUI.DrawTexture(new Rect(270f, 300f, 64f, 64f), bell, ScaleMode.ScaleToFit, true);
+        GUI.DrawTexture(new Rect(626f, 300f, 64f, 64f), bell, ScaleMode.ScaleToFit, true);
+      }
+      GUI.color = previousColor;
+    }
+
+    private static void DrawPileEcho(
+      System.Collections.Generic.IReadOnlyList<Card> pile,
+      PlayableCardRenderer cards,
+      bool left)
+    {
+      if (pile == null || pile.Count == 0) return;
+      var start = Math.Max(0, pile.Count - 2);
+      var visible = pile.Count - start;
+      for (var index = 0; index < visible; index++)
+      {
+        var offset = index * 44f;
+        var rect = left
+          ? new Rect(76f + offset, 166f + index * 10f, 76f, 108f)
+          : new Rect(808f - offset, 166f + index * 10f, 76f, 108f);
+        cards.DrawAt(rect, pile[start + index], false, false);
+      }
+    }
+
+    private static void DrawTransitionDeck(PlayableCardRenderer cards, float focusProgress)
+    {
+      if (cards == null) return;
+      var previousColor = GUI.color;
+      GUI.color = new Color(1f, 1f, 1f, Mathf.Lerp(0.92f, 0.34f, focusProgress));
+      for (var index = 2; index >= 0; index--)
+      {
+        cards.DrawBackAt(new Rect(444f + index * 3f, 400f - index * 3f, 72f, 96f), 0f, false);
+      }
+      GUI.color = previousColor;
+    }
+
+    private static void DrawShowdownLabel(
+      float progress,
+      string label,
+      PresentationUiArtSet art,
+      PlayableDevStyles styles)
+    {
+      var alpha = Normalize(
+        progress,
+        GameRules.ShowdownLabelRevealProgress,
+        GameRules.ShowdownLabelRevealProgress + 0.04f);
+      var previousColor = GUI.color;
+      GUI.color = new Color(1f, 1f, 1f, alpha);
+      var rect = new Rect(356f, 40f, 248f, 58f);
+      if (art?.EntryLabelFrame != null)
+      {
+        GUI.DrawTexture(rect, art.EntryLabelFrame, ScaleMode.StretchToFill, true);
+      }
+      GUI.Label(new Rect(374f, 48f, 212f, 42f), label, styles.Heading);
+      GUI.color = previousColor;
+    }
+
+    private static void DrawShowdownHoldPulse(float progress)
+    {
+      if (progress < GameRules.ShowdownSecondCardRevealCompleteProgress) return;
+      var pulse = 0.55f + Mathf.Sin(Time.unscaledTime * 2.1f) * 0.15f;
+      var color = new Color(0.94f, 0.63f, 0.18f, pulse);
+      UiPixelSurfaceRenderer.DrawDiamond(new Vector2(480f, 172f), color);
+      UiPixelSurfaceRenderer.DrawDiamond(new Vector2(480f, 356f), color);
     }
 
     private static float Normalize(float value, float start, float end)

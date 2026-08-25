@@ -1,0 +1,33 @@
+{
+  "package": "ShowdownTransition_0_1_0",
+  "status": "approved_reference",
+  "authority": "three_call_to_showdown_fullflow_v02_10s.mp4",
+  "duration_seconds": 10.0,
+  "frame_rate": 30.0,
+  "resolution": [1280, 720],
+  "runtime_contract": {
+    "community_card_count": 2,
+    "private_cards_visible": false,
+    "dynamic_card_values": true,
+    "sound_assets_changed": false,
+    "unity_meta_changed": false
+  },
+  "timeline": [
+    {
+      "seconds": "0.0-1.0",
+      "beat": "Three Call board dims and focus converges on the table center."
+    },
+    {
+      "seconds": "0.8-1.7",
+      "beat": "First community card travels from the center stack and flips face-up."
+    },
+    {
+      "seconds": "1.6-2.4",
+      "beat": "Second community card follows and flips face-up."
+    },
+    {
+      "seconds": "2.0-10.0",
+      "beat": "SHOWDOWN plaque and the two revealed community cards hold; no private cards appear."
+    }
+  ]
+}
