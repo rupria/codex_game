@@ -11,7 +11,7 @@ namespace CodexGame.Presentation.Localization
   {
     public const string DefaultLanguage = "ko";
     public const string FallbackLanguage = "en";
-    public const int RequiredKeyCount = 212;
+    public const int RequiredKeyCount = 216;
 
     private static readonly string[] RequiredPrivateSelectionKeys =
     {
@@ -76,6 +76,10 @@ namespace CodexGame.Presentation.Localization
       "UI_OPPONENT_STAGE_2_NAME",
       "UI_OPPONENT_STAGE_3_NAME",
       "UI_OPPONENT_STAGE_4_NAME",
+      "UI_OPPONENT_STAGE_1_INTRO",
+      "UI_OPPONENT_STAGE_2_INTRO",
+      "UI_OPPONENT_STAGE_3_INTRO",
+      "UI_OPPONENT_STAGE_4_INTRO",
       "UI_THREE_CALL_ENTRY",
       "UI_SHOWDOWN_ENTRY",
       "UI_ITEM_LIMIT_ACTIVE",
@@ -420,6 +424,21 @@ namespace CodexGame.Presentation.Localization
         3 => "UI_OPPONENT_STAGE_3_NAME",
         4 => "UI_OPPONENT_STAGE_4_NAME",
         _ => "UI_ACTOR_AI"
+      };
+    }
+  }
+
+  public static class StageOpponentIntroKeys
+  {
+    public static string ForStage(int stageNumber)
+    {
+      return stageNumber switch
+      {
+        1 => "UI_OPPONENT_STAGE_1_INTRO",
+        2 => "UI_OPPONENT_STAGE_2_INTRO",
+        3 => "UI_OPPONENT_STAGE_3_INTRO",
+        4 => "UI_OPPONENT_STAGE_4_INTRO",
+        _ => string.Empty
       };
     }
   }

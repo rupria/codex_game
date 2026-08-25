@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using CodexGame.Application.Distribution;
 using CodexGame.Application.Items;
 using CodexGame.Application.Playable;
@@ -19,6 +20,9 @@ namespace CodexGame.Presentation.Views
     private static readonly Rect SkipButton = new Rect(816f, 476f, 120f, 44f);
     private static readonly Rect OpponentIntroFrame = new Rect(300f, 184f, 360f, 152f);
     private static readonly Rect OpponentDescriptionMask = new Rect(454f, 243f, 182f, 47f);
+    private static readonly Rect OpponentDescriptionLabel = new Rect(460f, 245f, 170f, 43f);
+    private readonly HashSet<int> _warnedOpponentIntroStages = new HashSet<int>();
+    private GUIStyle _opponentIntroStyle;
 
     public void DrawStageEntry(
       PlayableGameSnapshot snapshot,
@@ -51,6 +55,7 @@ namespace CodexGame.Presentation.Views
         new Rect(448f, 206f, 194f, 30f),
         localization.Get(StageOpponentNameKeys.ForStage(snapshot.StageNumber)),
         styles.Heading);
+      DrawOpponentIntro(snapshot.StageNumber, styles, localization);
       DrawStagePips(snapshot.StageNumber);
       DrawRestriction(snapshot.StageItemRestriction, art, styles, localization, new Rect(320f, 344f, 320f, 84f));
 
@@ -60,6 +65,46 @@ namespace CodexGame.Presentation.Views
       if (button != null) GUI.DrawTexture(SkipButton, button, ScaleMode.StretchToFill, true);
       GUI.Label(SkipButton, localization.Get("UI_STAGE_ENTRY_SKIP"), styles.Heading);
       if (GUI.Button(SkipButton, GUIContent.none, GUIStyle.none)) skip();
+    }
+
+    private void DrawOpponentIntro(
+      int stageNumber,
+      PlayableDevStyles styles,
+      LocalizationRuntime localization)
+    {
+      var key = StageOpponentIntroKeys.ForStage(stageNumber);
+      if (string.IsNullOrEmpty(key))
+      {
+        WarnMissingOpponentIntro(stageNumber, "unsupported stage");
+        return;
+      }
+
+      var text = localization.Get(key);
+      if (string.IsNullOrWhiteSpace(text)
+        || text.StartsWith("[MISSING:", StringComparison.Ordinal))
+      {
+        WarnMissingOpponentIntro(stageNumber, "missing localization key " + key);
+        return;
+      }
+
+      if (_opponentIntroStyle == null)
+      {
+        _opponentIntroStyle = new GUIStyle(styles.Small)
+        {
+          fontSize = 11,
+          alignment = TextAnchor.MiddleCenter,
+          wordWrap = true,
+          clipping = TextClipping.Clip
+        };
+      }
+      GUI.Label(OpponentDescriptionLabel, text, _opponentIntroStyle);
+    }
+
+    private void WarnMissingOpponentIntro(int stageNumber, string reason)
+    {
+      if (!_warnedOpponentIntroStages.Add(stageNumber)) return;
+      Debug.LogWarning(
+        "Stage opponent intro was hidden for stage " + stageNumber + ": " + reason + ".");
     }
 
     public void DrawThreeCallEntry(
