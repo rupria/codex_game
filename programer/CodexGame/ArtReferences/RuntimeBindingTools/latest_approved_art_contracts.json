@@ -51,12 +51,14 @@
     },
     {
       "issue": 66,
-      "approvedAtUtc": "2026-08-24T12:08:28Z",
-      "approvalKind": "human-issue-comment-and-image",
-      "approvalSourceUrl": "https://github.com/rupria/codex_game/issues/66#issuecomment-5394961918",
-      "baseGitSha": "e66d79879d171884b09b287f2e7f7c5597e9bf22",
-      "activeDocument": "project_docs/programer/26.08.22_구현결과_이슈66_개인카드선택_UI_최신배치.md",
+      "approvedAtUtc": "2026-08-25T01:26:32Z",
+      "approvalKind": "human-direct-image",
+      "approvalSourceUrl": "https://github.com/rupria/codex_game/issues/66",
+      "baseGitSha": "dfd809459e177ef7e88bbaa6fe08dbefeac4e99c",
+      "activeDocument": "programer/CodexGame/ArtReferences/PrivateSelection_0_6_3/PRIVATE_SELECTION_HANDOFF_0_6_3.md",
       "supersededSources": [
+        "https://github.com/rupria/codex_game/issues/66#issuecomment-5403716794",
+        "https://github.com/rupria/codex_game/issues/66#issuecomment-5394961918",
         "https://github.com/rupria/codex_game/issues/66#issuecomment-5392402938",
         "https://github.com/rupria/codex_game/issues/66#issuecomment-5388789887",
         "https://github.com/rupria/codex_game/issues/66#issuecomment-5366762147"
@@ -65,14 +67,16 @@
         {
           "path": "programer/CodexGame/Assets/Scripts/Presentation/Views/PrivateSelectionDevPanel.cs",
           "requiredTokens": [
-            "SelectionCountRect = new Rect(",
-            "art?.SelectionCountPanel",
             "PrivateSelectionPanelLayout.CandidateX(index, candidateCount)",
             "PrivateSelectionPanelLayout.MaximumCandidateCount",
             "UI_PRIVATE_CONFIRM_ACTION",
-            "UI_PRIVATE_CONFIRM_PROGRESS"
+            "UI_PRIVATE_CONFIRM_PROGRESS",
+            "ConfirmProgressRect"
           ],
           "forbiddenTokens": [
+            "SelectionCountRect = new Rect(",
+            "DrawSelectionCount(",
+            "art?.SelectionCountPanel",
             "ConfirmVisualRect = new Rect(72f, 412f, 280f, 60f)",
             "ConfirmHitRect = new Rect(60f, 400f, 304f, 84f)",
             "index < 8"
@@ -83,15 +87,22 @@
           "requiredTokens": [
             "CandidateColumns = 4;",
             "MaximumCandidateCount = 5;",
+            "CandidateTopY = 140f;",
+            "CandidateBottomY = 286f;",
+            "ConfirmVisualX = 72f;",
+            "ConfirmVisualY = 366f;",
+            "ConfirmVisualWidth = 184f;",
+            "ConfirmVisualHeight = 120f;",
+            "ConfirmHitX = 64f;",
+            "ConfirmHitY = 358f;",
+            "return 326f;"
+          ],
+          "forbiddenTokens": [
+            "MaximumCandidateCount = 8;",
             "CandidateBottomY = 294f;",
             "ConfirmVisualX = 580f;",
             "ConfirmHitX = 568f;",
             "return 452f;"
-          ],
-          "forbiddenTokens": [
-            "MaximumCandidateCount = 8;",
-            "ConfirmVisualX = 72f;",
-            "ConfirmHitX = 60f;"
           ]
         }
       ]
