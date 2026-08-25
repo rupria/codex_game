@@ -12,6 +12,7 @@ namespace CodexGame.SmokeTests.Playable
       CheckSkipPreservesGameState(tests);
       CheckTransitionRuleConstants(tests);
       CheckShowdownPreparesTwoCommunityCards(tests);
+      CheckShowdownKeepsCommunityCardsVisible(tests);
     }
 
     private static void CheckNormalEntryTiming(TestHarness tests)
@@ -106,6 +107,16 @@ namespace CodexGame.SmokeTests.Playable
       tests.Check(
         game.Phase == PlayableGamePhase.HalliTransition,
         "Private-card selection must not open before the full two-second Showdown transition ends.");
+    }
+
+    private static void CheckShowdownKeepsCommunityCardsVisible(TestHarness tests)
+    {
+      var visibleHoldMicroseconds = (long)(
+        GameRules.ThreeCallToSelectionPresentationMicroseconds
+          * (1f - GameRules.ShowdownSecondCardRevealCompleteProgress));
+      tests.Check(
+        visibleHoldMicroseconds >= 1_000_000,
+        "Both community cards must remain fully visible for at least one second before selection opens.");
     }
   }
 }
