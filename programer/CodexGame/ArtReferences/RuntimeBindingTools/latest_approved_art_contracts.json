@@ -52,8 +52,8 @@
     {
       "issue": 66,
       "approvedAtUtc": "2026-08-25T01:26:32Z",
-      "approvalKind": "human-direct-image",
-      "approvalSourceUrl": "https://github.com/rupria/codex_game/issues/66",
+      "approvalKind": "human-issue-comment-and-image",
+      "approvalSourceUrl": "https://github.com/rupria/codex_game/issues/66#issuecomment-5403840277",
       "baseGitSha": "dfd809459e177ef7e88bbaa6fe08dbefeac4e99c",
       "activeDocument": "programer/CodexGame/ArtReferences/PrivateSelection_0_6_3/PRIVATE_SELECTION_HANDOFF_0_6_3.md",
       "supersededSources": [
@@ -67,7 +67,7 @@
         {
           "path": "programer/CodexGame/Assets/Scripts/Presentation/Views/PrivateSelectionDevPanel.cs",
           "requiredTokens": [
-            "PrivateSelectionPanelLayout.CandidateX(index, candidateCount)",
+            "PrivateSelectionPanelLayout.CandidateX(index)",
             "PrivateSelectionPanelLayout.MaximumCandidateCount",
             "UI_PRIVATE_CONFIRM_ACTION",
             "UI_PRIVATE_CONFIRM_PROGRESS",
@@ -95,7 +95,7 @@
             "ConfirmVisualHeight = 120f;",
             "ConfirmHitX = 64f;",
             "ConfirmHitY = 358f;",
-            "return 326f;"
+            "return 326f + column * (CandidateWidth + CandidateGapX);"
           ],
           "forbiddenTokens": [
             "MaximumCandidateCount = 8;",
@@ -109,32 +109,38 @@
     },
     {
       "issue": 77,
-      "approvedAtUtc": "2026-08-24T07:50:31Z",
-      "approvalKind": "human-issue-and-image",
-      "approvalSourceUrl": "https://github.com/rupria/codex_game/issues/77",
-      "baseGitSha": "51499849445311b1651a18388afafed215476b80",
+      "approvedAtUtc": "2026-08-25T00:53:19Z",
+      "approvalKind": "human-issue-comment-and-image",
+      "approvalSourceUrl": "https://github.com/rupria/codex_game/issues/77#issuecomment-5403528666",
+      "baseGitSha": "adc9cb1ca0cde4825b5b7645220a37cfc562b3ae",
       "activeDocument": "project_docs/programer/26.08.24_이슈66_77_UI_최신승인_회귀방지_인계.md",
       "supersededSources": [],
       "runtimeChecks": [
         {
-          "path": "programer/CodexGame/Assets/Scripts/Presentation/Views/PokerTableLayout.cs",
+          "path": "programer/CodexGame/Assets/Scripts/Presentation/Views/PokerResultPanelLayout.cs",
           "requiredTokens": [
-            "ContinueVisual = new Rect(388f, 461f, 184f, 50f)",
-            "ContinueHit = new Rect(378f, 451f, 204f, 70f)",
-            "PredictionSuccessPlate = new Rect(716f, 366f, 224f, 44f)",
-            "PredictionSuccessIcon = new Rect(730f, 374f, 28f, 28f)",
-            "PredictionSuccessText = new Rect(766f, 374f, 160f, 28f)"
+            "ContinueVisualX = 398f;",
+            "ContinueVisualY = 465f;",
+            "ContinueVisualWidth = 164f;",
+            "ContinueVisualHeight = 44f;",
+            "ContinueHitX = 390f;",
+            "ContinueHitY = 455f;",
+            "ContinueHitWidth = 180f;",
+            "ContinueHitHeight = 64f;"
           ],
           "forbiddenTokens": [
-            "ContinueVisual = new Rect(398f, 492f, 164f, 44f)",
-            "ContinueHit = new Rect(390f, 482f, 180f, 56f)",
-            "PredictionSuccessIcon = new Rect(746f, 374f, 28f, 28f)",
-            "PredictionSuccessText = new Rect(780f, 374f, 170f, 28f)"
+            "ContinueVisualWidth = 184f;",
+            "ContinueVisualHeight = 50f;",
+            "ContinueHitWidth = 204f;",
+            "ContinueHitHeight = 70f;"
           ]
         },
         {
           "path": "programer/CodexGame/Assets/Scripts/Presentation/Views/PokerDevPanel.cs",
           "requiredTokens": [
+            "PokerRoundActionVisibility.FromPhase(snapshot.Phase)",
+            "actionVisibility.ShowPredictionActions",
+            "actionVisibility.ShowContinueAction",
             "PokerTableLayout.PredictionSuccessPlate",
             "fontSize = 20",
             "fontSize = 15"
