@@ -47,6 +47,8 @@ namespace CodexGame.Editor
     private const string JokerRevealUi054ArtRoot = UiArtRoot + "JokerReveal_0_5_4/";
     private const string JokerHandChoiceUi060ArtRoot = UiArtRoot + "JokerHandChoice_0_6_0/";
     private const string PrivateSelectionUi060ArtRoot = UiArtRoot + "PrivateSelection_0_6_0/";
+    private const string PrivateSelectionUi061ArtRoot = UiArtRoot + "PrivateSelection_0_6_1/";
+    private const string PrivateSelectionUi063ArtRoot = UiArtRoot + "PrivateSelection_0_6_3/";
     private const string PokerItemActionUi060ArtRoot = UiArtRoot + "PokerItemAction_0_6_0/";
     private const string PokerPredictionCleanUi062ArtRoot =
       UiArtRoot + "PokerPredictionClean_0_6_2/";
@@ -440,18 +442,17 @@ namespace CodexGame.Editor
         LoadTexture(JokerHandChoiceUi060ArtRoot + "joker_hand_option_disabled_440x44_0_6_0.png"));
       var privateSelectionUiArtSet = new PrivateSelectionUiArtSet(
         LoadTexture(PrivateSelectionUi060ArtRoot + "private_selection_modal_dim_960x540_0_6_0.png"),
-        LoadTexture(PrivateSelectionUi060ArtRoot + "private_selection_modal_panel_860x456_0_6_0.png"),
+        LoadTexture(PrivateSelectionUi061ArtRoot + "private_selection_modal_panel_clean_860x456_0_6_1.png"),
         LoadTexture(PrivateSelectionUi060ArtRoot + "private_selection_public_frame_166x198_0_6_0.png"),
         LoadTexture(PrivateSelectionUi060ArtRoot + "private_selection_candidate_idle_112x150_0_6_0.png"),
         LoadTexture(PrivateSelectionUi060ArtRoot + "private_selection_candidate_hover_112x150_0_6_0.png"),
         LoadTexture(PrivateSelectionUi060ArtRoot + "private_selection_candidate_selected_112x150_0_6_0.png"),
         LoadTexture(PrivateSelectionUi060ArtRoot + "private_selection_candidate_confirmed_112x150_0_6_0.png"),
         LoadTexture(PrivateSelectionUi060ArtRoot + "private_selection_candidate_disabled_112x150_0_6_0.png"),
-        LoadTexture(PrivateSelectionUi060ArtRoot + "private_selection_confirm_idle_280x60_0_6_0.png"),
-        LoadTexture(PrivateSelectionUi060ArtRoot + "private_selection_confirm_hover_280x60_0_6_0.png"),
-        LoadTexture(PrivateSelectionUi060ArtRoot + "private_selection_confirm_active_280x60_0_6_0.png"),
-        LoadTexture(PrivateSelectionUi060ArtRoot + "private_selection_confirm_disabled_280x60_0_6_0.png"),
-        LoadTexture(PrivateSelectionUi060ArtRoot + "private_selection_count_panel_184x64_0_6_0.png"));
+        LoadTexture(PrivateSelectionUi063ArtRoot + "private_selection_hand_lock_idle_184x120_0_6_3.png"),
+        LoadTexture(PrivateSelectionUi063ArtRoot + "private_selection_hand_lock_hover_184x120_0_6_3.png"),
+        LoadTexture(PrivateSelectionUi063ArtRoot + "private_selection_hand_lock_active_184x120_0_6_3.png"),
+        LoadTexture(PrivateSelectionUi063ArtRoot + "private_selection_hand_lock_disabled_184x120_0_6_3.png"));
       view.Configure(
         boardTexture,
         cardArtSet,

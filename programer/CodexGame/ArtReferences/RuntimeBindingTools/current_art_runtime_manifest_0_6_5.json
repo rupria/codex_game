@@ -73,9 +73,17 @@
     },
     {
       "issue": 66,
-      "package": "PrivateSelection_0_6_0",
-      "runtimeRoot": "Assets/Art/Prototype/UI/PrivateSelection_0_6_0/",
-      "replaces": ["PrivateSelection_0_5_5"],
+      "package": "PrivateSelection_0_6_1",
+      "runtimeRoot": "Assets/Art/Prototype/UI/PrivateSelection_0_6_1/",
+      "replaces": ["PrivateSelection_0_6_0 modal panel"],
+      "requireBuilderBinding": true,
+      "requireSceneBinding": true
+    },
+    {
+      "issue": 66,
+      "package": "PrivateSelection_0_6_3",
+      "runtimeRoot": "Assets/Art/Prototype/UI/PrivateSelection_0_6_3/",
+      "replaces": ["PrivateSelection_0_6_2 confirm states", "PrivateSelection_0_6_0 confirm states"],
       "requireBuilderBinding": true,
       "requireSceneBinding": true
     },
@@ -185,7 +193,7 @@
     },
     {
       "package": "PrivateSelection_0_5_5",
-      "useInstead": "PrivateSelection_0_6_0"
+      "useInstead": "PrivateSelection_0_6_3"
     },
     {
       "package": "PokerPredictionResult_0_5_7",
