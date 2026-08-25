@@ -19,6 +19,8 @@ $builderPath = Join-Path $assetsRoot "Editor\PlayableDevSceneBuilder.cs"
 $scenePath = Join-Path $assetsRoot "Scenes\PlayableDev.unity"
 $pokerPanelPath = Join-Path $assetsRoot "Scripts\Presentation\Views\PokerDevPanel.cs"
 $pokerLayoutPath = Join-Path $assetsRoot "Scripts\Presentation\Views\PokerTableLayout.cs"
+$pokerResultPanelLayoutPath = Join-Path $assetsRoot "Scripts\Presentation\Views\PokerResultPanelLayout.cs"
+$pokerActionStatePath = Join-Path $assetsRoot "Scripts\Presentation\Views\PokerResultOverlayState.cs"
 $playableDevViewPath = Join-Path $assetsRoot "Scripts\Presentation\Views\PlayableDevView.cs"
 $halliLayoutPath = Join-Path $assetsRoot "Scripts\Presentation\Views\HalliPileOverlapLayout.cs"
 $halliPanelPath = Join-Path $assetsRoot "Scripts\Presentation\Views\HalliDevPanel.cs"
@@ -36,6 +38,8 @@ foreach ($required in @(
   $scenePath,
   $pokerPanelPath,
   $pokerLayoutPath,
+  $pokerResultPanelLayoutPath,
+  $pokerActionStatePath,
   $playableDevViewPath,
   $halliLayoutPath,
   $halliPanelPath,
@@ -57,6 +61,8 @@ $builderText = Get-Content -LiteralPath $builderPath -Raw
 $sceneText = Get-Content -LiteralPath $scenePath -Raw
 $pokerPanelText = Get-Content -LiteralPath $pokerPanelPath -Raw
 $pokerLayoutText = Get-Content -LiteralPath $pokerLayoutPath -Raw
+$pokerResultPanelLayoutText = Get-Content -LiteralPath $pokerResultPanelLayoutPath -Raw
+$pokerActionStateText = Get-Content -LiteralPath $pokerActionStatePath -Raw
 $playableDevViewText = Get-Content -LiteralPath $playableDevViewPath -Raw
 $halliLayoutText = Get-Content -LiteralPath $halliLayoutPath -Raw
 $halliPanelText = Get-Content -LiteralPath $halliPanelPath -Raw
@@ -174,6 +180,8 @@ Write-Output "ART_PACKAGE_INTEGRITY"
 foreach ($package in @(
   "PokerPredictionClean_0_6_2",
   "PrivateSelection_0_6_0",
+  "PrivateSelection_0_6_1",
+  "PrivateSelection_0_6_3",
   "StageReward_0_5_6"
 )) {
   $referenceRoot = Join-Path $CodexGameRoot ("ArtReferences\" + $package)
@@ -207,15 +215,18 @@ foreach ($package in @(
 
   $validFolderMeta = Test-Path -LiteralPath $folderMeta
   if ($validFolderMeta) {
-    $bytes = [System.IO.File]::ReadAllBytes($folderMeta)
-    $validFolderMeta = $bytes.Length -gt 0 -and ($bytes[$bytes.Length - 1] -eq 10 -or $bytes[$bytes.Length - 1] -eq 13)
+    $folderMetaText = Get-Content -LiteralPath $folderMeta -Raw
+    $validFolderMeta = $folderMetaText -match '(?m)^fileFormatVersion: 2$' `
+      -and $folderMetaText -match '(?m)^guid: [0-9a-f]{32}$' `
+      -and $folderMetaText -match '(?m)^folderAsset: yes$' `
+      -and $folderMetaText -match '(?m)^DefaultImporter:$'
   }
   Write-Output ("package={0} approvedHashFailures={1} unityFolderMetaValid={2}" -f `
     $package,
     $hashFailures,
     $validFolderMeta)
   if (-not $validFolderMeta) {
-    Add-GateFailure "${package}: Unity folder .meta is malformed or missing its final newline"
+    Add-GateFailure "${package}: Unity folder .meta is missing or structurally malformed"
   }
 }
 
@@ -346,10 +357,19 @@ $predictionLayoutUpdated = $pokerLayoutText.Contains("new Rect(236f, 456f, 212f,
 $resultSummaryBound = $pokerArtText.Contains("ResultSummaryPlayer") `
   -and $pokerPanelText.Contains("DrawResultSummary(") `
   -and $pokerLayoutText.Contains("new Rect(316f, 18f, 328f, 76f)")
-$issue77ResultActionsAligned = $pokerLayoutText.Contains("ContinueVisual = new Rect(388f, 461f, 184f, 50f)") `
-  -and $pokerLayoutText.Contains("ContinueHit = new Rect(378f, 451f, 204f, 70f)") `
+$issue77ResultActionsAligned = $pokerResultPanelLayoutText.Contains("ContinueVisualX = 398f;") `
+  -and $pokerResultPanelLayoutText.Contains("ContinueVisualY = 465f;") `
+  -and $pokerResultPanelLayoutText.Contains("ContinueVisualWidth = 164f;") `
+  -and $pokerResultPanelLayoutText.Contains("ContinueVisualHeight = 44f;") `
+  -and $pokerResultPanelLayoutText.Contains("ContinueHitX = 390f;") `
+  -and $pokerResultPanelLayoutText.Contains("ContinueHitY = 455f;") `
+  -and $pokerResultPanelLayoutText.Contains("ContinueHitWidth = 180f;") `
+  -and $pokerResultPanelLayoutText.Contains("ContinueHitHeight = 64f;") `
   -and $pokerLayoutText.Contains("PredictionSuccessPlate = new Rect(716f, 366f, 224f, 44f)") `
   -and $pokerPanelText.Contains("PokerTableLayout.PredictionSuccessPlate") `
+  -and $pokerPanelText.Contains("actionVisibility.ShowPredictionActions") `
+  -and $pokerPanelText.Contains("actionVisibility.ShowContinueAction") `
+  -and $pokerActionStateText.Contains("phase == PokerRoundPhase.Resolved") `
   -and $pokerPanelText.Contains("fontSize = 20") `
   -and $pokerPanelText.Contains("fontSize = 15")
 $jokerTwoColumnFallbackRemoved = -not $pokerPanelText.Contains("var column = index % 2;")
@@ -396,23 +416,31 @@ if (-not $jokerTwoColumnFallbackRemoved) {
 Write-Output "UI_POLISH_ACCEPTANCE_CONTRACTS"
 $halliLockedPublicSlotRemoved = -not $halliPanelText.Contains("DrawLockedPublicSlot") `
   -and -not $halliPanelText.Contains("HalliBoardLayout.LockedPublicCard")
-$privatePackageBound = $builderText.Contains("PrivateSelection_0_6_0")
-$singleConfirmHit = $privateLayoutText.Contains("ConfirmHitX = 568f;") `
-  -and $privateLayoutText.Contains("ConfirmVisualX = 580f;") `
-  -and ([regex]::Matches($privatePanelText, "GUI\.Button\(ConfirmHitRect")).Count -eq 1 `
-  -and -not $privatePanelText.Contains("ConfirmRect = new Rect(73f, 418f, 180f, 52f)") `
-  -and -not $privatePanelText.Contains("ConfirmVisualRect = new Rect(72f, 412f, 280f, 60f)") `
-  -and -not $privatePanelText.Contains("ConfirmHitRect = new Rect(60f, 400f, 304f, 84f)")
-$selectionCountIntegrated = $privatePanelText.Contains("SelectionCountRect = new Rect(") `
-  -and $privatePanelText.Contains("art?.SelectionCountPanel") `
+$privatePackageBound = $builderText.Contains("PrivateSelection_0_6_0") `
+  -and $builderText.Contains("PrivateSelection_0_6_1") `
+  -and $builderText.Contains("PrivateSelection_0_6_3")
+$singleConfirmHit = $privateLayoutText.Contains("ConfirmHitX = 64f;") `
+  -and $privateLayoutText.Contains("ConfirmHitY = 358f;") `
+  -and $privateLayoutText.Contains("ConfirmHitWidth = 200f;") `
+  -and $privateLayoutText.Contains("ConfirmHitHeight = 136f;") `
+  -and $privateLayoutText.Contains("ConfirmVisualX = 72f;") `
+  -and $privateLayoutText.Contains("ConfirmVisualY = 366f;") `
+  -and $privateLayoutText.Contains("ConfirmVisualWidth = 184f;") `
+  -and $privateLayoutText.Contains("ConfirmVisualHeight = 120f;") `
+  -and ([regex]::Matches($privatePanelText, "GUI\.Button\(ConfirmHitRect")).Count -eq 1
+$confirmProgressIntegrated = $privatePanelText.Contains("ConfirmProgressRect") `
   -and $privatePanelText.Contains('"UI_PRIVATE_CONFIRM_ACTION"') `
   -and $privatePanelText.Contains('"UI_PRIVATE_CONFIRM_PROGRESS"') `
-  -and -not $privatePanelText.Contains("ConfirmProgressRect")
+  -and -not $privatePanelText.Contains("SelectionCountRect = new Rect(") `
+  -and -not $privatePanelText.Contains("DrawSelectionCount(") `
+  -and -not $privatePanelText.Contains("art?.SelectionCountPanel") `
+  -and -not $privateArtText.Contains("SelectionCountPanel")
 $candidateGridBound = $privateLayoutText.Contains("CandidateColumns = 4;") `
   -and $privateLayoutText.Contains("MaximumCandidateCount = 5;") `
-  -and $privateLayoutText.Contains("CandidateBottomY = 294f;") `
-  -and $privateLayoutText.Contains("return 452f;") `
-  -and $privatePanelText.Contains("PrivateSelectionPanelLayout.CandidateX(index, candidateCount)") `
+  -and $privateLayoutText.Contains("CandidateTopY = 140f;") `
+  -and $privateLayoutText.Contains("CandidateBottomY = 286f;") `
+  -and $privateLayoutText.Contains("return 326f + column * (CandidateWidth + CandidateGapX);") `
+  -and $privatePanelText.Contains("PrivateSelectionPanelLayout.CandidateX(index)") `
   -and -not $privateLayoutText.Contains("MaximumCandidateCount = 8;")
 $stageRewardPackageBound = $builderText.Contains("StageReward_0_5_6")
 $stageRewardStatesBound = $economyArtText.Contains("StageRewardBaseRow") `
@@ -422,10 +450,10 @@ $stageRewardStatesBound = $economyArtText.Contains("StageRewardBaseRow") `
 $communityMaximumTwo = $pokerPanelText.Contains("DrawFaceCards(snapshot.PublicCards, PokerTableLayout.CommunityCard, 2, cards);")
 
 Write-Output ("halliLockedPublicSlotRemoved={0}" -f $halliLockedPublicSlotRemoved)
-Write-Output ("privatePackageBound={0} singleConfirmHit={1} selectionCountIntegrated={2} candidateGridBound={3}" -f `
+Write-Output ("privatePackageBound={0} singleConfirmHit={1} confirmProgressIntegrated={2} candidateGridBound={3}" -f `
   $privatePackageBound,
   $singleConfirmHit,
-  $selectionCountIntegrated,
+  $confirmProgressIntegrated,
   $candidateGridBound)
 Write-Output ("stageRewardPackageBound={0} rewardStatesBound={1} communityMaximumTwo={2}" -f `
   $stageRewardPackageBound,
@@ -435,8 +463,8 @@ Write-Output ("stageRewardPackageBound={0} rewardStatesBound={1} communityMaximu
 if (-not $halliLockedPublicSlotRemoved) {
   Add-GateFailure "Halli presentation: obsolete second-community-card lock slot returned"
 }
-if (-not $privatePackageBound -or -not $singleConfirmHit -or -not $selectionCountIntegrated -or -not $candidateGridBound) {
-  Add-GateFailure "issue 66: private-selection must keep a count-only left panel, one right confirm and the maximum-five four-plus-one candidate layout"
+if (-not $privatePackageBound -or -not $singleConfirmHit -or -not $confirmProgressIntegrated -or -not $candidateGridBound) {
+  Add-GateFailure "issue 66: private-selection must keep one tall lower-left confirm, no separate count panel, and the maximum-five four-plus-one candidate layout"
 }
 if (-not $stageRewardPackageBound -or -not $stageRewardStatesBound) {
   Add-GateFailure "issue 49: stage-reward 0.5.6 rows, total and continue states are not fully bound"
