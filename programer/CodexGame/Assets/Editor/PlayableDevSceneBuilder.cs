@@ -696,7 +696,7 @@ namespace CodexGame.Editor
 
     private static readonly string[] ApprovedOriginalAudioFileNames =
     {
-      "Western_Reference_Bed_Loop_12.wav",
+      "Western_Reference_Bed_Loop_22.wav",
       "Prediction_Lock_03.wav",
       "Round_Win_06.wav",
       "Round_Lose_05.wav"
@@ -718,7 +718,7 @@ namespace CodexGame.Editor
         win: FindRequiredAudioClip("Round_Win_06.wav"),
         lose: FindRequiredAudioClip("Round_Lose_05.wav"),
         transition: FindAudioClip("Interface_05.wav"),
-        musicLoop: FindRequiredAudioClip("Western_Reference_Bed_Loop_12.wav"),
+        musicLoop: FindRequiredAudioClip("Western_Reference_Bed_Loop_22.wav"),
         predictionLock: FindRequiredAudioClip("Prediction_Lock_03.wav"));
     }
 
