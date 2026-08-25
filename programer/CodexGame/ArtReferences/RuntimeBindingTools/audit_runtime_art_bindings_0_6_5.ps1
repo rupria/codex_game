@@ -350,8 +350,10 @@ $predictionLabelsDrawn = $pokerPanelText.Contains("UI_POKER_PREDICTION_TITLE") `
 $largeResultModalRemoved = -not $pokerPanelText.Contains("PokerResultOverlayRenderer.Draw(")
 $legacyResultBackdropRemoved = $playableDevViewText -match '(?s)if \(_snapshot\.Phase == PlayableGamePhase\.PokerPrediction\)\s*\{\s*_presentation0124Panel\.DrawShowdownFrame\(\s*false,\s*_presentationUiArtSet\);' `
   -and $playableDevViewText -notmatch '(?s)DrawShowdownFrame\(\s*_snapshot\.Phase == PlayableGamePhase\.PokerResult'
-$predictionLayoutUpdated = $pokerLayoutText.Contains("new Rect(132f, 454f, 244f, 66f)") `
-  -and $pokerLayoutText.Contains("new Rect(584f, 454f, 244f, 66f)")
+$predictionLayoutUpdated = $pokerLayoutText.Contains("new Rect(236f, 456f, 212f, 64f)") `
+  -and $pokerLayoutText.Contains("new Rect(512f, 456f, 212f, 64f)") `
+  -and $pokerLayoutText.Contains("new Rect(228f, 448f, 228f, 80f)") `
+  -and $pokerLayoutText.Contains("new Rect(504f, 448f, 228f, 80f)")
 $resultSummaryBound = $pokerArtText.Contains("ResultSummaryPlayer") `
   -and $pokerPanelText.Contains("DrawResultSummary(") `
   -and $pokerLayoutText.Contains("new Rect(316f, 18f, 328f, 76f)")
@@ -372,7 +374,7 @@ $issue77ResultActionsAligned = $pokerResultPanelLayoutText.Contains("ContinueVis
   -and $pokerPanelText.Contains("fontSize = 15")
 $jokerTwoColumnFallbackRemoved = -not $pokerPanelText.Contains("var column = index % 2;")
 
-Write-Output ("predictionPackageBound={0} labelsDrawn={1} layout244x66={2} resultSummaryBound={3} largeResultModalRemoved={4} legacyResultBackdropRemoved={5}" -f `
+Write-Output ("predictionPackageBound={0} labelsDrawn={1} layout212x64={2} resultSummaryBound={3} largeResultModalRemoved={4} legacyResultBackdropRemoved={5}" -f `
   $predictionPackageBound,
   $predictionLabelsDrawn,
   $predictionLayoutUpdated,
@@ -390,7 +392,7 @@ if (-not $predictionLabelsDrawn) {
   Add-GateFailure "issues 67/73: prediction button labels are not drawn"
 }
 if (-not $predictionLayoutUpdated) {
-  Add-GateFailure "issue 73: prediction layout is not 244x66"
+  Add-GateFailure "issue 79: prediction layout is not the approved 212x64 two-button contract with 8px hit expansion"
 }
 if (-not $resultSummaryBound) {
   Add-GateFailure "issue 68: winner and winning-hand result summary is not bound"
