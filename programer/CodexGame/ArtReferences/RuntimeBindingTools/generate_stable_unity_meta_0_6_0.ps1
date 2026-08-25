@@ -35,7 +35,7 @@ DefaultImporter:
   assetBundleName:
   assetBundleVariant:
 "@
-[System.IO.File]::WriteAllText($runtimeRoot + '.meta', $folderMeta, $utf8)
+[System.IO.File]::WriteAllText($runtimeRoot + '.meta', $folderMeta.TrimEnd() + "`n", $utf8)
 
 $template = [System.IO.File]::ReadAllText($TemplateMeta)
 Get-ChildItem -LiteralPath $runtimeRoot -Filter '*.png' | ForEach-Object {
@@ -45,7 +45,7 @@ Get-ChildItem -LiteralPath $runtimeRoot -Filter '*.png' | ForEach-Object {
   $meta = $template -replace '(?m)^guid: [0-9a-f]+$', ('guid: ' + $guid)
   $meta = $meta -replace '(?m)^    spriteID: [0-9a-f]+$', ('    spriteID: ' + $spriteId)
   $meta = $meta -replace '(?m)[ \t]+$', ''
-  [System.IO.File]::WriteAllText($_.FullName + '.meta', $meta, $utf8)
+  [System.IO.File]::WriteAllText($_.FullName + '.meta', $meta.TrimEnd() + "`n", $utf8)
 }
 
 $md5.Dispose()
