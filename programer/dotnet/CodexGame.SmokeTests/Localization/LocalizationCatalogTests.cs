@@ -54,6 +54,21 @@ namespace CodexGame.SmokeTests.Localization
           && StageOpponentNameKeys.ForStage(5) == "UI_ACTOR_AI",
         "Every supported stage must resolve the same localized opponent name in entry and battle HUDs.");
       tests.Check(
+        catalog.Get("UI_OPPONENT_STAGE_1_INTRO", "ko") == "첫 종을 울릴 자가 기다리고 있다."
+          && catalog.Get("UI_OPPONENT_STAGE_2_INTRO", "ko") == "아름다운 꽃엔 가시가 있다."
+          && catalog.Get("UI_OPPONENT_STAGE_3_INTRO", "en") == "HERE TO MINE VICTORY, NOT GOLD."
+          && catalog.Get("UI_OPPONENT_STAGE_4_INTRO", "en")
+            == "THE LOSER'S PLACE IS ALREADY PREPARED.",
+        "Stage-entry opponent introductions must come from the ko/en runtime catalog.");
+      tests.Check(
+        StageOpponentIntroKeys.ForStage(1) == "UI_OPPONENT_STAGE_1_INTRO"
+          && StageOpponentIntroKeys.ForStage(2) == "UI_OPPONENT_STAGE_2_INTRO"
+          && StageOpponentIntroKeys.ForStage(3) == "UI_OPPONENT_STAGE_3_INTRO"
+          && StageOpponentIntroKeys.ForStage(4) == "UI_OPPONENT_STAGE_4_INTRO"
+          && StageOpponentIntroKeys.ForStage(0) == string.Empty
+          && StageOpponentIntroKeys.ForStage(5) == string.Empty,
+        "Only supported stages may resolve an opponent-introduction localization key.");
+      tests.Check(
         catalog.Get(
           "UI_BAR_REROLL_FREE",
           "ko",
