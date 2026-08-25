@@ -1,0 +1,32 @@
+{
+  "schemaVersion": 1,
+  "packageId": "PrivateSelection_0_6_1",
+  "status": "ART_HANDOFF_READY",
+  "scope": "partial-runtime-override",
+  "issue": 66,
+  "runtimeRoot": "Assets/Art/Prototype/UI/PrivateSelection_0_6_1/",
+  "sourcePackage": "PrivateSelection_0_6_0",
+  "assets": [
+    {
+      "file": "private_selection_modal_panel_clean_860x456_0_6_1.png",
+      "size": [860, 456],
+      "replaces": "Assets/Art/Prototype/UI/PrivateSelection_0_6_0/private_selection_modal_panel_860x456_0_6_0.png",
+      "bindingType": "CodexGame.Presentation.Art.PrivateSelectionUiArtSet",
+      "bindingField": "ModalPanel",
+      "change": "Remove the obsolete baked lower-left button frame only."
+    }
+  ],
+  "preserve": {
+    "candidateLayout": "4+1, maximum 5 cards",
+    "selectionCount": "left lower independent runtime panel",
+    "confirmAction": "right lower single runtime action",
+    "otherArtFields": "reuse PrivateSelection_0_6_0",
+    "communityCards": "maximum 2"
+  },
+  "forbidden": [
+    "Do not restore the obsolete baked lower-left frame.",
+    "Do not change CandidateColumns=4 or MaximumCandidateCount=5.",
+    "Do not bind UI_PRIVATE_CONFIRM legacy copy to both lower panels.",
+    "Do not change scenes, sound assets, or unrelated approved art."
+  ]
+}
