@@ -28,8 +28,9 @@ powershell -ExecutionPolicy Bypass -File "<PROJECT_DRIVE>\multi_pc\SETUP_OTHER_P
 
 
 상기 작업의 경우 실제 플레이 가능한 링크를 공유드립니다.
-### https://e9466ade.codex-game-web.pages.dev/
+__### https://e9466ade.codex-game-web.pages.dev/__
 해당 링크로 접속 시 플레이 가능합니다.
+__치트 버전으로 ` 키 입력 시 치트 활성화가 가능합니다.__
 
 
 
