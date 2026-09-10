@@ -13,15 +13,25 @@ Git에는 실행 가능한 게임 코드와 빌드·배포 설정을 두고, 기
 
 사용자가 명시적으로 Git 공유를 요청했거나 공동 검토·이력 관리·자동화에 필요한 비코드 산출물은 별도 목적의 커밋으로 공유할 수 있습니다. Drive 기준 원본이 있으면 같은 문서를 두 위치에서 독립 수정하지 않습니다.
 
-## 다른 PC 시작
 
-Google Drive 동기화 후 다음 파일을 실행합니다.
+
+
+~~## 다른 PC 시작~~
+
+~~Google Drive 동기화 후 다음 파일을 실행합니다.~~
 
 ```powershell
 powershell -ExecutionPolicy Bypass -File "G:\내 드라이브\codex_game\multi_pc\SETUP_OTHER_PC.ps1"
 ```
 
-Drive 문자가 다르면 스크립트의 `DriveWorkspacePath` 매개변수로 실제 경로를 지정합니다. Drive 최상위의 예전 `.git`은 사용하지 않습니다.
+~~Drive 문자가 다르면 스크립트의 `DriveWorkspacePath` 매개변수로 실제 경로를 지정합니다. Drive 최상위의 예전 `.git`은 사용하지 않습니다.~~
+
+
+상기 작업의 경우 실제 플레이 가능한 링크를 공유드립니다.
+### https://e9466ade.codex-game-web.pages.dev/
+해당 링크로 접속 시 플레이 가능합니다.
+
+
 
 ## 브랜치
 
