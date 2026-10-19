@@ -7,6 +7,9 @@ namespace CodexGame.Presentation.Views
   {
     private static readonly Color BaseFallback = new Color(0.68f, 0.46f, 0.14f, 0.96f);
     private static readonly Color TemporaryFallback = new Color(0.36f, 0.32f, 0.26f, 0.96f);
+    private static readonly Color RewardLabelColor = new Color(0.96f, 0.9f, 0.74f, 1f);
+    private static readonly Color BaseRewardValueColor = new Color(1f, 0.78f, 0.24f, 1f);
+    private static readonly Color PredictionRewardValueColor = new Color(0.18f, 0.92f, 0.96f, 1f);
 
     public static void DrawShopBalances(
       Rect area,
@@ -66,7 +69,11 @@ namespace CodexGame.Presentation.Views
       int baseReward,
       int temporaryReward,
       EconomyUiArtSet art,
-      GUIStyle countStyle)
+      GUIStyle labelStyle,
+      GUIStyle countStyle,
+      string baseLabel,
+      string predictionLabel,
+      string totalLabel)
     {
       if (art?.StageRewardSummaryPanel != null)
       {
@@ -92,19 +99,19 @@ namespace CodexGame.Presentation.Views
       DrawRewardRow(
         new Rect(first.X, first.Y, StageRewardGridLayout.RowWidth, StageRewardGridLayout.RowHeight),
         baseReward,
-        art?.BaseCurrencyIcon,
         art?.StageRewardBaseRow,
-        BaseFallback,
-        "●",
+        baseLabel,
+        BaseRewardValueColor,
+        labelStyle,
         countStyle);
       var second = StageRewardGridLayout.Slot(2, 0, 1);
       DrawRewardRow(
         new Rect(second.X, second.Y, StageRewardGridLayout.RowWidth, StageRewardGridLayout.RowHeight),
         temporaryReward,
-        art?.TemporaryCurrencyIcon,
         art?.StageRewardPredictionRow,
-        TemporaryFallback,
-        "◇",
+        predictionLabel,
+        PredictionRewardValueColor,
+        labelStyle,
         countStyle);
       GUI.EndGroup();
 
@@ -118,9 +125,20 @@ namespace CodexGame.Presentation.Views
         GUI.DrawTexture(totalRect, art.StageRewardTotalRow, ScaleMode.StretchToFill, true);
       }
       else GUI.Box(totalRect, GUIContent.none);
-      GUI.Label(
-        new Rect(totalRect.x + 184f, totalRect.y + 6f, 116f, 36f),
+      DrawRewardText(
+        totalRect,
+        totalLabel,
         "+" + (baseReward + temporaryReward),
+        StageRewardGridLayout.TotalLabelX,
+        StageRewardGridLayout.TotalLabelY,
+        StageRewardGridLayout.TotalLabelWidth,
+        StageRewardGridLayout.TotalLabelHeight,
+        StageRewardGridLayout.TotalValueX,
+        StageRewardGridLayout.TotalValueY,
+        StageRewardGridLayout.TotalValueWidth,
+        StageRewardGridLayout.TotalValueHeight,
+        BaseRewardValueColor,
+        labelStyle,
         countStyle);
     }
 
@@ -245,24 +263,68 @@ namespace CodexGame.Presentation.Views
     private static void DrawRewardRow(
       Rect rect,
       int count,
-      Texture2D icon,
       Texture2D frame,
-      Color fallback,
-      string fallbackGlyph,
+      string label,
+      Color valueColor,
+      GUIStyle labelStyle,
       GUIStyle countStyle)
     {
       if (frame != null) GUI.DrawTexture(rect, frame, ScaleMode.StretchToFill, true);
       else GUI.Box(rect, GUIContent.none);
-      DrawIcon(
-        new Rect(rect.x + 16f, rect.y + 12f, 40f, 40f),
-        icon,
-        fallback,
-        fallbackGlyph,
-        countStyle);
-      GUI.Label(
-        new Rect(rect.x + 72f, rect.y + 8f, rect.width - 88f, rect.height - 16f),
+      DrawRewardText(
+        rect,
+        label,
         "+" + count,
+        StageRewardGridLayout.RowLabelX,
+        StageRewardGridLayout.RowLabelY,
+        StageRewardGridLayout.RowLabelWidth,
+        StageRewardGridLayout.RowLabelHeight,
+        StageRewardGridLayout.RowValueX,
+        StageRewardGridLayout.RowValueY,
+        StageRewardGridLayout.RowValueWidth,
+        StageRewardGridLayout.RowValueHeight,
+        valueColor,
+        labelStyle,
         countStyle);
+    }
+
+    private static void DrawRewardText(
+      Rect rect,
+      string label,
+      string value,
+      float labelX,
+      float labelY,
+      float labelWidth,
+      float labelHeight,
+      float valueX,
+      float valueY,
+      float valueWidth,
+      float valueHeight,
+      Color valueColor,
+      GUIStyle labelStyle,
+      GUIStyle countStyle)
+    {
+      var readableLabelStyle = new GUIStyle(labelStyle)
+      {
+        alignment = TextAnchor.MiddleCenter,
+        wordWrap = false
+      };
+      readableLabelStyle.normal.textColor = RewardLabelColor;
+      var readableValueStyle = new GUIStyle(countStyle)
+      {
+        alignment = TextAnchor.MiddleCenter,
+        fontStyle = FontStyle.Bold,
+        wordWrap = false
+      };
+      readableValueStyle.normal.textColor = valueColor;
+      GUI.Label(
+        new Rect(rect.x + labelX, rect.y + labelY, labelWidth, labelHeight),
+        label,
+        readableLabelStyle);
+      GUI.Label(
+        new Rect(rect.x + valueX, rect.y + valueY, valueWidth, valueHeight),
+        value,
+        readableValueStyle);
     }
 
     private static void DrawIcon(

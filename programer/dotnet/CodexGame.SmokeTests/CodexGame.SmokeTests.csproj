@@ -56,6 +56,9 @@
       Include="..\..\CodexGame\Assets\Scripts\Presentation\Views\PrivateSelectionJokerRevealState.cs"
       Link="Presentation\PrivateSelectionJokerRevealState.cs" />
     <Compile
+      Include="..\..\CodexGame\Assets\Scripts\Presentation\Views\PrivateSelectionPanelLayout.cs"
+      Link="Presentation\PrivateSelectionPanelLayout.cs" />
+    <Compile
       Include="..\..\CodexGame\Assets\Scripts\Presentation\Views\ThreeCallEntryAnimationState.cs"
       Link="Presentation\ThreeCallEntryAnimationState.cs" />
     <None

@@ -31,6 +31,7 @@ namespace CodexGame.Presentation.Views
       PlayableTransitionSnapshot transition,
       int playerHealth,
       int aiHealth,
+      int stageNumber,
       bool playerDamage,
       bool aiDamage,
       PlayableDevStyles styles,
@@ -60,6 +61,7 @@ namespace CodexGame.Presentation.Views
           transition.Progress,
           playerHealth,
           aiHealth,
+          stageNumber,
           playerDamage,
           aiDamage,
           styles,
@@ -79,6 +81,7 @@ namespace CodexGame.Presentation.Views
       DrawScoreboard(
         playerHealth,
         aiHealth,
+        stageNumber,
         playerDamage,
         aiDamage,
         styles,
@@ -113,6 +116,7 @@ namespace CodexGame.Presentation.Views
       float progress,
       int playerHealth,
       int aiHealth,
+      int stageNumber,
       bool playerDamage,
       bool aiDamage,
       PlayableDevStyles styles,
@@ -123,6 +127,7 @@ namespace CodexGame.Presentation.Views
       DrawScoreboard(
         playerHealth,
         aiHealth,
+        stageNumber,
         playerDamage,
         aiDamage,
         styles,
@@ -136,15 +141,12 @@ namespace CodexGame.Presentation.Views
         cards.DrawAt(cardRect, snapshot.FirstPublicCard.Value);
       }
 
-      if (progress >= 0.55f)
-      {
-        DrawLockedPublicSlot(styles, uiArt);
-      }
     }
 
     private void DrawScoreboard(
       int playerHealth,
       int aiHealth,
+      int stageNumber,
       bool playerDamage,
       bool aiDamage,
       PlayableDevStyles styles,
@@ -165,7 +167,7 @@ namespace CodexGame.Presentation.Views
       GUI.Box(HalliBoardLayout.AiScore, GUIContent.none);
       GUI.Label(
         new Rect(674f, 24f, 250f, 26f),
-        L("UI_ACTOR_AI"),
+        L(StageOpponentNameKeys.ForStage(stageNumber)),
         styles.Small);
       HealthHeartRenderer.Draw(
         new Rect(674f, 48f, 250f, 30f),
@@ -264,7 +266,6 @@ namespace CodexGame.Presentation.Views
       {
         cards.DrawAt(HalliBoardLayout.PublicCard, snapshot.FirstPublicCard.Value);
       }
-      DrawLockedPublicSlot(styles, uiArt);
     }
 
     private static void DrawAiDeck(PlayableCardRenderer cards)
@@ -278,22 +279,6 @@ namespace CodexGame.Presentation.Views
             HalliBoardLayout.AiDeck.width,
             HalliBoardLayout.AiDeck.height),
           180f);
-      }
-    }
-
-    private void DrawLockedPublicSlot(PlayableDevStyles styles, HalliUiArtSet uiArt)
-    {
-      if (uiArt != null && uiArt.PublicCardLockedSlot != null)
-      {
-        GUI.DrawTexture(
-          HalliBoardLayout.LockedPublicCard,
-          uiArt.PublicCardLockedSlot,
-          ScaleMode.ScaleToFit,
-          true);
-      }
-      else
-      {
-        GUI.Box(HalliBoardLayout.LockedPublicCard, L("UI_COMMON_LOCKED"), styles.Card);
       }
     }
 

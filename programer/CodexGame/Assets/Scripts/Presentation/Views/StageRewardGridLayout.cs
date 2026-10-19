@@ -43,6 +43,22 @@ namespace CodexGame.Presentation.Views
     public const float TotalHeight = 48f;
     public const float RowWidth = 304f;
     public const float RowHeight = 64f;
+    public const float RowLabelX = 48f;
+    public const float RowLabelY = 14f;
+    public const float RowLabelWidth = 148f;
+    public const float RowLabelHeight = 36f;
+    public const float RowValueX = 208f;
+    public const float RowValueY = 14f;
+    public const float RowValueWidth = 76f;
+    public const float RowValueHeight = 36f;
+    public const float TotalLabelX = 24f;
+    public const float TotalLabelY = 6f;
+    public const float TotalLabelWidth = 160f;
+    public const float TotalLabelHeight = 36f;
+    public const float TotalValueX = 184f;
+    public const float TotalValueY = 6f;
+    public const float TotalValueWidth = 116f;
+    public const float TotalValueHeight = 36f;
     public const float GapX = 24f;
     public const float GapY = 12f;
 
