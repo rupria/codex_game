@@ -1,0 +1,136 @@
+{
+  "schemaVersion": 1,
+  "policy": "latest-human-approval-wins",
+  "contracts": [
+    {
+      "issue": 49,
+      "approvedAtUtc": "2026-08-24T08:24:49Z",
+      "approvalKind": "human-issue-comment-and-image",
+      "approvalSourceUrl": "https://github.com/rupria/codex_game/issues/49#issuecomment-5392579050",
+      "baseGitSha": "f12a8655c072f3fbe316b06b2835d2433e3f83b7",
+      "activeDocument": "project_docs/programer/26.08.24_이슈49_보상정산_라벨가독성_회귀수정.md",
+      "supersededSources": [
+        "https://github.com/rupria/codex_game/issues/49#issuecomment-5388789968"
+      ],
+      "runtimeChecks": [
+        {
+          "path": "programer/CodexGame/Assets/Scripts/Presentation/Views/EconomyUiRenderer.cs",
+          "requiredTokens": [
+            "StageRewardGridLayout.RowLabelX",
+            "StageRewardGridLayout.RowValueX",
+            "StageRewardGridLayout.TotalLabelX",
+            "StageRewardGridLayout.TotalValueX",
+            "baseLabel",
+            "predictionLabel",
+            "totalLabel"
+          ],
+          "forbiddenTokens": [
+            "new Rect(rect.x + 16f, rect.y + 12f, 40f, 40f)",
+            "new Rect(totalRect.x + 184f, totalRect.y + 6f, 116f, 36f)"
+          ]
+        },
+        {
+          "path": "programer/CodexGame/Assets/Scripts/Presentation/Views/PlayableDevView.cs",
+          "requiredTokens": [
+            "UI_STAGE_REWARD_BASE_LABEL",
+            "UI_STAGE_REWARD_PREDICTION_LABEL",
+            "UI_STAGE_REWARD_TOTAL_LABEL"
+          ],
+          "forbiddenTokens": []
+        },
+        {
+          "path": "programer/CodexGame/Assets/StreamingAssets/Localization/ui_strings.csv",
+          "requiredTokens": [
+            "UI_STAGE_REWARD_BASE_LABEL,기본 보상,BASE REWARD",
+            "UI_STAGE_REWARD_PREDICTION_LABEL,예측 보너스,PREDICTION BONUS",
+            "UI_STAGE_REWARD_TOTAL_LABEL,총 획득,TOTAL GAINED"
+          ],
+          "forbiddenTokens": []
+        }
+      ]
+    },
+    {
+      "issue": 66,
+      "approvedAtUtc": "2026-08-24T12:08:28Z",
+      "approvalKind": "human-issue-comment-and-image",
+      "approvalSourceUrl": "https://github.com/rupria/codex_game/issues/66#issuecomment-5394961918",
+      "baseGitSha": "e66d79879d171884b09b287f2e7f7c5597e9bf22",
+      "activeDocument": "project_docs/programer/26.08.22_구현결과_이슈66_개인카드선택_UI_최신배치.md",
+      "supersededSources": [
+        "https://github.com/rupria/codex_game/issues/66#issuecomment-5392402938",
+        "https://github.com/rupria/codex_game/issues/66#issuecomment-5388789887",
+        "https://github.com/rupria/codex_game/issues/66#issuecomment-5366762147"
+      ],
+      "runtimeChecks": [
+        {
+          "path": "programer/CodexGame/Assets/Scripts/Presentation/Views/PrivateSelectionDevPanel.cs",
+          "requiredTokens": [
+            "SelectionCountRect = new Rect(",
+            "art?.SelectionCountPanel",
+            "PrivateSelectionPanelLayout.CandidateX(index, candidateCount)",
+            "PrivateSelectionPanelLayout.MaximumCandidateCount",
+            "UI_PRIVATE_CONFIRM_ACTION",
+            "UI_PRIVATE_CONFIRM_PROGRESS"
+          ],
+          "forbiddenTokens": [
+            "ConfirmVisualRect = new Rect(72f, 412f, 280f, 60f)",
+            "ConfirmHitRect = new Rect(60f, 400f, 304f, 84f)",
+            "index < 8"
+          ]
+        },
+        {
+          "path": "programer/CodexGame/Assets/Scripts/Presentation/Views/PrivateSelectionPanelLayout.cs",
+          "requiredTokens": [
+            "CandidateColumns = 4;",
+            "MaximumCandidateCount = 5;",
+            "CandidateBottomY = 294f;",
+            "ConfirmVisualX = 580f;",
+            "ConfirmHitX = 568f;",
+            "return 452f;"
+          ],
+          "forbiddenTokens": [
+            "MaximumCandidateCount = 8;",
+            "ConfirmVisualX = 72f;",
+            "ConfirmHitX = 60f;"
+          ]
+        }
+      ]
+    },
+    {
+      "issue": 77,
+      "approvedAtUtc": "2026-08-24T07:50:31Z",
+      "approvalKind": "human-issue-and-image",
+      "approvalSourceUrl": "https://github.com/rupria/codex_game/issues/77",
+      "baseGitSha": "51499849445311b1651a18388afafed215476b80",
+      "activeDocument": "project_docs/programer/26.08.24_이슈66_77_UI_최신승인_회귀방지_인계.md",
+      "supersededSources": [],
+      "runtimeChecks": [
+        {
+          "path": "programer/CodexGame/Assets/Scripts/Presentation/Views/PokerTableLayout.cs",
+          "requiredTokens": [
+            "ContinueVisual = new Rect(388f, 461f, 184f, 50f)",
+            "ContinueHit = new Rect(378f, 451f, 204f, 70f)",
+            "PredictionSuccessPlate = new Rect(716f, 366f, 224f, 44f)",
+            "PredictionSuccessIcon = new Rect(730f, 374f, 28f, 28f)",
+            "PredictionSuccessText = new Rect(766f, 374f, 160f, 28f)"
+          ],
+          "forbiddenTokens": [
+            "ContinueVisual = new Rect(398f, 492f, 164f, 44f)",
+            "ContinueHit = new Rect(390f, 482f, 180f, 56f)",
+            "PredictionSuccessIcon = new Rect(746f, 374f, 28f, 28f)",
+            "PredictionSuccessText = new Rect(780f, 374f, 170f, 28f)"
+          ]
+        },
+        {
+          "path": "programer/CodexGame/Assets/Scripts/Presentation/Views/PokerDevPanel.cs",
+          "requiredTokens": [
+            "PokerTableLayout.PredictionSuccessPlate",
+            "fontSize = 20",
+            "fontSize = 15"
+          ],
+          "forbiddenTokens": []
+        }
+      ]
+    }
+  ]
+}

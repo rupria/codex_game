@@ -1,0 +1,73 @@
+{
+  "integrationId": "HALLI-PREDICTION-UI-0.6.9",
+  "decisionId": "D-ART-HALLI-SCORE-CARDS-2026-08-24-01",
+  "package": "HalliScoreCardUi_0_6_9",
+  "baseGitCommit": "3005bc8121530657ffd0e5627ae5bd1017244c21",
+  "integratedReferenceCommit": "12aa900094388f96c11329d3d05adbbb1b5e9bf3",
+  "status": {
+    "artProduced": true,
+    "artHandoffReady": true,
+    "artApproved": true,
+    "runtimeBound": false,
+    "sceneSaved": false,
+    "buildVerified": false
+  },
+  "preview": {
+    "path": "preview/halli_score_card_ui_approved_960x540_0_6_9.png",
+    "width": 960,
+    "height": 540,
+    "sha256": "cb34b121a8b02eba3f90930dcda335be71a41b9c3b2b0e2730f4e14f814e08f5"
+  },
+  "reusedRuntimeAssets": [
+    {
+      "path": "Assets/Art/Prototype/UI/IconOverhaul_0_5_0/round_win_badge_player_filled_32_0_5_0.png",
+      "size": "32x32",
+      "sha256": "659307190bb6356e4311e1904bdac34ef430ecbb85ef6bfc5acd579409c5fb42"
+    },
+    {
+      "path": "Assets/Art/Prototype/UI/IconOverhaul_0_5_0/round_win_badge_player_empty_32_0_5_0.png",
+      "size": "32x32",
+      "sha256": "5e588f6955f6e0d480fb43e108984ff1e6812bcff13106e4fa57c7d3fb6eea04"
+    },
+    {
+      "path": "Assets/Art/Prototype/UI/IconOverhaul_0_5_0/round_win_badge_ai_filled_32_0_5_0.png",
+      "size": "32x32",
+      "sha256": "d1442d9d9aeecac306ba797fd2d2630e78e15ac670508d07abeaa43bb3b3bce9"
+    },
+    {
+      "path": "Assets/Art/Prototype/UI/IconOverhaul_0_5_0/round_win_badge_ai_empty_32_0_5_0.png",
+      "size": "32x32",
+      "sha256": "5e588f6955f6e0d480fb43e108984ff1e6812bcff13106e4fa57c7d3fb6eea04"
+    },
+    {
+      "path": "Assets/Art/Prototype/UI/Halli_0_3_4/player_acquired_tray_open_378x130_0_3_4.png",
+      "size": "378x130",
+      "sha256": "36f7793bf2bb176ce0d87146ab51d0f29bfe479e5b7a1262147802fbeccb0c8c"
+    }
+  ],
+  "layout": {
+    "playerPipOrigin": [99, 84],
+    "aiPipOrigin": [737, 84],
+    "pipSize": [32, 32],
+    "pipStepX": 46,
+    "acquiredSlots": [
+      [152, 419, 56, 78],
+      [230, 419, 56, 78],
+      [308, 419, 56, 78]
+    ],
+    "maximumVisibleAcquiredCards": 3,
+    "halliPileContract": {
+      "maximumCards": 2,
+      "cardSize": [64, 90],
+      "cardStepX": 59,
+      "overlapPercent": 7.8125,
+      "newestCardOnTop": true
+    }
+  },
+  "runtimeFilesOwnedByIntegrator": [
+    "Assets/Scripts/Presentation/Views/HalliDevPanel.cs",
+    "Assets/Scripts/Presentation/Views/HalliBoardLayout.cs",
+    "Assets/Scripts/Presentation/Views/HalliLowerHudRenderer.cs"
+  ],
+  "artPackageChangesRuntimeAssets": false
+}

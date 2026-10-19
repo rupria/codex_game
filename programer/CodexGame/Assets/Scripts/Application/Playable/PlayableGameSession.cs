@@ -876,7 +876,12 @@ namespace CodexGame.Application.Playable
 
     private void RecordPredictionIfReady(GameTimestamp now)
     {
-      if (_pokerPredictionRecorded || _poker?.Result == null) return;
+      if (_pokerPredictionRecorded
+        || _poker?.Result == null
+        || _poker.Phase != PokerRoundPhase.Resolved)
+      {
+        return;
+      }
       if (_poker.Result.PredictionEligibleForInsurance)
       {
         var record = _predictionStreak.RecordWithAudit(_poker.Result.Prediction);

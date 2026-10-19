@@ -2,6 +2,7 @@ using System;
 using System.IO;
 using CodexGame.Bootstrap;
 using CodexGame.Presentation.Art;
+using CodexGame.Presentation.Audio;
 using CodexGame.Presentation.Views;
 using UnityEditor;
 using UnityEditor.Build;
@@ -54,6 +55,9 @@ namespace CodexGame.Editor
     private const string IntroArtPath =
       MainMenuUi058ArtRoot + "start_screen_background_960x540_0_5_8.png";
     private const string BackdropShaderPath = "Assets/Shaders/RuntimeBackdropLit.shader";
+    private const string SampleAudioPackName = "Unity Open Project #1: Chop Chop";
+    private const string SampleAudioPackUrl =
+      "https://github.com/UnityTechnologies/open-project-1";
 
     [MenuItem("Codex Game/Playable Dev/Create Scene")]
     public static void CreateScene()
@@ -67,6 +71,7 @@ namespace CodexGame.Editor
       camera.clearFlags = CameraClearFlags.SolidColor;
       camera.backgroundColor = new Color(0.035f, 0.055f, 0.08f, 1f);
       camera.transform.position = new Vector3(0f, 0f, -10f);
+      cameraObject.AddComponent<AudioListener>();
 
       var gameObject = new GameObject("CodexGame.PlayableDev");
       var boardTexture = AssetDatabase.LoadAssetAtPath<Texture2D>(BoardArtPath);
@@ -480,6 +485,7 @@ namespace CodexGame.Editor
         introTexture,
         barShopUiArtSet.Background,
         backdropShader);
+      ConfigureSampleAudio(gameObject.AddComponent<PlayableAudioDirector>());
       gameObject.AddComponent<PlayableDevGameController>();
 
       if (!EditorSceneManager.SaveScene(scene, ScenePath))
@@ -592,6 +598,75 @@ namespace CodexGame.Editor
       {
         AssetDatabase.CreateFolder("Assets", "Scenes");
       }
+    }
+
+    [MenuItem("Codex Game/Audio/Validate Unity Open Project Samples")]
+    public static void ValidateSampleAudio()
+    {
+      var missing = 0;
+      foreach (var fileName in SampleAudioFileNames)
+      {
+        if (FindAudioClip(fileName) != null) continue;
+        missing++;
+        Debug.LogWarning($"Missing sample audio clip: {fileName}");
+      }
+
+      if (missing == 0)
+      {
+        Debug.Log("Unity Open Project #1 sample clips are ready.");
+        return;
+      }
+
+      Debug.LogWarning(
+        $"Sample audio is running in silent-fallback mode. Missing clips: {missing}. "
+        + $"Restore the selected clips from {SampleAudioPackName}. "
+        + SampleAudioPackUrl);
+    }
+
+    private static readonly string[] SampleAudioFileNames =
+    {
+      "Interface_05.wav",
+      "Interface_06.wav",
+      "Interface_07.wav",
+      "Interface_08.wav",
+      "PhoenixChick_Flap.wav",
+      "Env_Pots_09.wav",
+      "Grabbing_01.wav",
+      "AttackLanding_Rock.wav",
+      "Swing_Cane_01.wav"
+    };
+
+    private static void ConfigureSampleAudio(PlayableAudioDirector audio)
+    {
+      audio.Configure(
+        uiSelect: FindAudioClip("Interface_08.wav"),
+        uiConfirm: FindAudioClip("Interface_06.wav"),
+        uiBack: FindAudioClip("Interface_07.wav"),
+        uiError: FindAudioClip("AttackLanding_Rock.wav"),
+        cardFlip: FindAudioClip("PhoenixChick_Flap.wav"),
+        bell: FindAudioClip("Env_Pots_09.wav"),
+        itemUse: FindAudioClip("Grabbing_01.wav"),
+        reroll: FindAudioClip("Swing_Cane_01.wav"),
+        purchase: FindAudioClip("Grabbing_01.wav"),
+        damage: FindAudioClip("AttackLanding_Rock.wav"),
+        win: FindAudioClip("Interface_05.wav"),
+        lose: FindAudioClip("Interface_07.wav"),
+        transition: FindAudioClip("Interface_05.wav"));
+    }
+
+    private static AudioClip FindAudioClip(string fileName)
+    {
+      var assetName = Path.GetFileNameWithoutExtension(fileName);
+      foreach (var guid in AssetDatabase.FindAssets($"{assetName} t:AudioClip"))
+      {
+        var path = AssetDatabase.GUIDToAssetPath(guid);
+        if (!string.Equals(Path.GetFileName(path), fileName, StringComparison.OrdinalIgnoreCase))
+        {
+          continue;
+        }
+        return AssetDatabase.LoadAssetAtPath<AudioClip>(path);
+      }
+      return null;
     }
 
     private static Texture2D LoadTexture(string path)

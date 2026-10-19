@@ -46,6 +46,14 @@ namespace CodexGame.SmokeTests.Localization
           && catalog.Get("UI_OPPONENT_STAGE_4_NAME", "en") == "BLACKFIELD UNDERTAKER",
         "Stage-entry opponent names must come from the ko/en runtime catalog.");
       tests.Check(
+        StageOpponentNameKeys.ForStage(1) == "UI_OPPONENT_STAGE_1_NAME"
+          && StageOpponentNameKeys.ForStage(2) == "UI_OPPONENT_STAGE_2_NAME"
+          && StageOpponentNameKeys.ForStage(3) == "UI_OPPONENT_STAGE_3_NAME"
+          && StageOpponentNameKeys.ForStage(4) == "UI_OPPONENT_STAGE_4_NAME"
+          && StageOpponentNameKeys.ForStage(0) == "UI_ACTOR_AI"
+          && StageOpponentNameKeys.ForStage(5) == "UI_ACTOR_AI",
+        "Every supported stage must resolve the same localized opponent name in entry and battle HUDs.");
+      tests.Check(
         catalog.Get(
           "UI_BAR_REROLL_FREE",
           "ko",
