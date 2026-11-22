@@ -1,8 +1,9 @@
 ﻿[CmdletBinding()]
 param(
-    [string]$SourceRoot = '<PROJECT_DRIVE>\art_source\02_working',
-    [string]$ExportRoot = '<PROJECT_DRIVE>\art_source\03_exports',
-    [string]$UnityRoot = '<LOCAL_REPO>\programer\CodexGame\Assets\Art\Prototype',
+    [string]$ProjectDrivePath = $env:CODEX_GAME_DRIVE_ROOT,
+    [string]$SourceRoot,
+    [string]$ExportRoot,
+    [string]$UnityRoot = (Join-Path (Split-Path -Parent $PSScriptRoot) 'programer\CodexGame\Assets\Art\Prototype'),
     [string]$AsepriteExe = 'D:\Program Files (x86)\steamapps\common\Aseprite\Aseprite.exe',
     [switch]$Force,
     [switch]$Watch,
@@ -12,6 +13,18 @@ param(
 
 Set-StrictMode -Version Latest
 $ErrorActionPreference = 'Stop'
+
+if ([string]::IsNullOrWhiteSpace($SourceRoot) -or [string]::IsNullOrWhiteSpace($ExportRoot)) {
+    if ([string]::IsNullOrWhiteSpace($ProjectDrivePath)) {
+        throw '아트 작업공간은 -ProjectDrivePath 또는 CODEX_GAME_DRIVE_ROOT 환경 변수로 지정해야 합니다.'
+    }
+    if ([string]::IsNullOrWhiteSpace($SourceRoot)) {
+        $SourceRoot = Join-Path $ProjectDrivePath 'art_source\02_working'
+    }
+    if ([string]::IsNullOrWhiteSpace($ExportRoot)) {
+        $ExportRoot = Join-Path $ProjectDrivePath 'art_source\03_exports'
+    }
+}
 
 function Get-NormalizedPath {
     param([Parameter(Mandatory = $true)][string]$Path)

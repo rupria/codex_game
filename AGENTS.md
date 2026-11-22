@@ -9,6 +9,8 @@
 - 여러 PC의 코드는 GitHub `dev`를 기준으로 동기화한다.
 - G 최상위의 예전 `.git`은 이전 작업 보존본이며 Git 명령에 사용하지 않는다.
 
+`<LOCAL_REPO>`는 현재 Git 체크아웃, `<PROJECT_DRIVE>`는 공개 저장소 밖의 비공개 문서·아트 작업공간을 뜻한다. 자동화에서는 Drive 루트를 `CODEX_GAME_DRIVE_ROOT` 환경 변수 또는 명시적 경로 매개변수로 전달한다.
+
 ## 작업 시작 전
 
 1. Drive의 `obsidian\rules`에서 공통 규칙과 자신의 역할 규칙을 확인한다.

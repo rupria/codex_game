@@ -1,12 +1,20 @@
 ﻿[CmdletBinding()]
 param(
-    [string]$RepositoryPath = '<LOCAL_REPO>',
-    [string]$SourceCardsPath = '<PROJECT_DRIVE>\art_source\02_working\Cards'
+    [string]$RepositoryPath = (Split-Path -Parent $PSScriptRoot),
+    [string]$ProjectDrivePath = $env:CODEX_GAME_DRIVE_ROOT,
+    [string]$SourceCardsPath
 )
 
 Set-StrictMode -Version Latest
 $ErrorActionPreference = 'Stop'
 Add-Type -AssemblyName System.Drawing
+
+if ([string]::IsNullOrWhiteSpace($SourceCardsPath)) {
+    if ([string]::IsNullOrWhiteSpace($ProjectDrivePath)) {
+        throw '카드 원본 경로는 -SourceCardsPath, -ProjectDrivePath 또는 CODEX_GAME_DRIVE_ROOT 환경 변수로 지정해야 합니다.'
+    }
+    $SourceCardsPath = Join-Path $ProjectDrivePath 'art_source\02_working\Cards'
+}
 
 $unityCardsPath = Join-Path $RepositoryPath 'programer\CodexGame\Assets\Art\Prototype\Cards'
 $catalogPath = Join-Path $unityCardsPath 'card_art_catalog.json'

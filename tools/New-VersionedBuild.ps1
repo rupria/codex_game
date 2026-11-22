@@ -6,8 +6,8 @@ param(
     [Parameter(Mandatory = $true)]
     [string]$ArtifactPath,
 
-    [string]$RepositoryPath = '<LOCAL_REPO>',
-    [string]$DriveWorkspacePath = '<PROJECT_DRIVE>',
+    [string]$RepositoryPath = (Split-Path -Parent $PSScriptRoot),
+    [string]$DriveWorkspacePath = $env:CODEX_GAME_DRIVE_ROOT,
     [string]$OutputRoot,
     [string[]]$SpecificationPaths
 )
@@ -35,6 +35,10 @@ function Assert-ChildPath {
 
 if ($Version -notmatch '^(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)$') {
     throw "버전은 선행 0이 없는 Major.Minor.Patch 형식이어야 합니다: $Version"
+}
+
+if ([string]::IsNullOrWhiteSpace($DriveWorkspacePath)) {
+    throw 'Drive 작업공간은 -DriveWorkspacePath 또는 CODEX_GAME_DRIVE_ROOT 환경 변수로 지정해야 합니다.'
 }
 
 $repository = Get-ResolvedDirectory -Path $RepositoryPath -Label 'Git 저장소'

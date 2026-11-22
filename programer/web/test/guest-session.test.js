@@ -5,7 +5,7 @@ import {
   verifyGuestToken,
 } from "../functions/_shared/guest-session.js";
 
-const SECRET = "0123456789abcdef0123456789abcdef";
+const SECRET = "0123456789abcdef0123456789abcdef"; // pragma: allowlist secret
 const GUEST_ID = "123e4567-e89b-42d3-a456-426614174000";
 
 test("a signed guest token verifies without a login", async () => {
